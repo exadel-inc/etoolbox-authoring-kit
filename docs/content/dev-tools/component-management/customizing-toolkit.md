@@ -280,7 +280,7 @@ You can debug the ToolKit's plugin while building your AEM project. In order to 
 1) Make sure that the two projects are open each in its own window of your IDE:
 - the Toolkit itself,
 - and the "target" project (the one that contains the Toolkit plugin in its POM file).
-2) Launch the build of the **target** project with `mvndebug` instead of `mvn`. Do it like.
+2) Launch the build of the **target** project with `mvndebug` instead of `mvn`. Do it like this: 
 ```
 mvnDebug clean install -PautoInstallPackage
 ```
