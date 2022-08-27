@@ -123,7 +123,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
      * @param index     Action index
      * @return {@code Map} representing settings for the {@code DependsOn} instance
      */
-    private static Map<String, String> buildParamsMap(DependsOn dependsOn, int index){
+    private static Map<String, String> buildParamsMap(DependsOn dependsOn, int index) {
         Map<String, String> valueMap = new HashMap<>();
         for (DependsOnParam param : dependsOn.params()) {
             String paramName =

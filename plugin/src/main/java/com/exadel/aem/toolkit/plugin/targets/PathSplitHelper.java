@@ -131,6 +131,7 @@ class PathSplitHelper {
     /**
      * Initializes a class instance with the absolute or relative paths specified
      * @param path Path value, non-blank string expected
+     * @return A new {@link PathSplitHelper} instance
      */
     static PathSplitHelper of(String path) {
         return new PathSplitHelper(path);

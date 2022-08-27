@@ -19,7 +19,7 @@ We actively welcome your pull requests:
 2. Do code changes. Whenever you create new files, add the "Licenced under the Apache Licence..." header (use any of the  existing files to copy the full header). Whenever you create new methods, add Javadoc / JSDoc. Alter existing Javadoc
    / JSDoc if you change a method's signature.
 3. If you've added code that should be tested, add tests. Make sure that the tests pass.
-4. If you've changed APIs, update the README and/or documentation under `docs` if needed.
+4. If you've changed APIs, update the documentation under `docs/content` if needed.
 5. Make sure your code lints.
 6. Issue the pull request.
 
@@ -56,17 +56,21 @@ Report a bug by opening a new issue.
 
 #### For Java code
 
-* We stick to the [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html) in essential parts.
+* We stick to the [Code Conventions for the Java Programming Language](https://www.oracle.com/java/technologies/javase/codeconventions-contents.html) and also to the [Google Java Style Guide](https://google.github.io/styleguide/javaguide.html) in essential parts.
 * We use 4 spaces for indentation rather than tabs.
 * Every import is a separate line, no wildcard imports.
-* Avoid static imports (like constants, etc.) unless absolutely must.
+* Avoid static imports (like constants, etc.).
 * Give meaningful names to classes, methods, and variables.
-* Split lengthy methods into smaller parts.
-* Observe the length of lines, and split lengthy lines where appropriate (between method arguments, before ternary
-  operators, etc.).
+* Observe the proper sequence of imports: `java.*`, then `javax.*`, then all the third-part packages after an empty line, last come `com.exadel.*` packages.
+* Avoid long lines. No line should exceed 150 characters. Split lengthy lines where appropriate (between method arguments, before ternary operators, etc.).
+* Split lengthy methods into smaller parts. A method body must not exceed 20-25 lines.
 * Avoid introducing multi-line lambdas.
-* Observe succession of methods: public, then package-private, then private; public static, then package-private static, etc. You may place a private method immediately after the preceding public if called from this public as a secondary routine.
-* Declare methods that do not have a context (neither read nor mutate the instance fields of a class) as static.
+* Observe the proper sequence of declarations: static variables (constants), then instance variables, then constructors, then instance methods, then static methods, then static nested classes.
+* Observe the proper sequence of visibility modifiers: public, then protected, then package-private, then private; public static, then package-private static, etc. You may place a private method immediately after the preceding public if called from this public as a secondary routine.
+* Avoid excessive visibility of classes or class member. E.g., do not make a class `public` if it is only called from other classes within this very package. In a public class, do not make a method `public` unless it will be called from a class residing in another package.
+* Declare methods that do not have a context (neither read nor mutate the instance fields of a class) as `static`.
+* Do not create methods with number of parameters greater than 4.
+* Use constants: no "magic" numbers and literals.
 * Add `try-catch` blocks to reduce the risk of code termination. Never ignore caught exceptions.
 * When unsure, follow the style of the existing code files.
 

@@ -140,7 +140,7 @@ public class ListHelper {
      */
     @Nonnull
     public static Map<String, String> getMap(ResourceResolver resourceResolver, String path) {
-        return getMap(
+        return getMapInternal(
             resourceResolver,
             path,
             JcrConstants.JCR_TITLE,
@@ -162,7 +162,7 @@ public class ListHelper {
      */
     @Nonnull
     public static <T> Map<String, T> getMap(ResourceResolver resourceResolver, String path, String keyName, Class<T> itemType) {
-        return getMap(resourceResolver, path, keyName, getMapperFunction(itemType));
+        return getMapInternal(resourceResolver, path, keyName, getMapperFunction(itemType));
     }
 
 
@@ -189,7 +189,7 @@ public class ListHelper {
             return null;
         }
 
-        Class<?> modelType = CollectionUtils.isNotEmpty(values)? values.get(0).getClass() : null;
+        Class<?> modelType = CollectionUtils.isNotEmpty(values) ? values.get(0).getClass() : null;
 
         Function<Object, Map<String, Object>> mapping = ListResourceUtil.getMappingFunction(modelType);
 
@@ -259,7 +259,6 @@ public class ListHelper {
         return listPage;
     }
 
-
     /* -----------------------
        Private utility methods
        ----------------------- */
@@ -274,7 +273,7 @@ public class ListHelper {
      * @param <T>              Type of map values
      * @return Map containing {@code <T>}-typed instances
      */
-    private static <T> Map<String, T> getMap(
+    private static <T> Map<String, T> getMapInternal(
         ResourceResolver resourceResolver,
         String path,
         String keyName,

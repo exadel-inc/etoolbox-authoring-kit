@@ -14,7 +14,8 @@
 package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 /**
- * Contains possible values of {@code filter} property of node picking components such as {@link com.exadel.aem.toolkit.api.annotations.widgets.PathField}
+ * Contains possible values of {@code filter} property of node picking components such as {@link
+ * com.exadel.aem.toolkit.api.annotations.widgets.PathField}
  */
 public enum NodeFilter {
     FOLDER, HIERARCHY, HIERARCHY_NOT_FILE, NOSYSTEM

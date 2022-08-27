@@ -28,6 +28,7 @@ class ClassSourceImpl extends SourceImpl {
 
     /**
      * Initializes a class instance storing a reference to the {@code Class} that serves as the metadata source
+     * @param value The metadata source
      */
     ClassSourceImpl(Class<?> value) {
         this.value = value;

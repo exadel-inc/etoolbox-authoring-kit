@@ -175,7 +175,6 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
         return DialogLayout.DEFAULT_COLUMN;
     }
 
-
     /**
      * Called by {@link CqDialogHandler#accept(Source, Target)} to add to the dialog's markup the component
      * responsible for inserting {@code forceIgnoreFreshness} value into the current Sling HTTP request

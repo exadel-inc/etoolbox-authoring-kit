@@ -24,10 +24,40 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 @Retention(RetentionPolicy.RUNTIME)
 @ValueRestriction("com.exadel.aem.toolkit.plugin.validators.DateTimeValidator")
 public @interface DateTimeValue {
+
+    /**
+     * Specifies the day in a month
+     * @return Integer value between {@code 1} and {@code 31}
+     */
     int day() default 0;
+
+    /**
+     * Specifies the number of a month
+     * @return Integer value between {@code 1} and {@code 12}
+     */
     int month() default 0;
+
+    /**
+     * Specifies the year
+     * @return Arbitrary integer number
+     */
     int year() default 0;
+
+    /**
+     * Specifies the hour
+     * @return Integer value between {@code 0} and {@code 23}
+     */
     int hour() default 0;
+
+    /**
+     * Specifies the minute
+     * @return Integer value between {@code 0} and {@code 59}
+     */
     int minute() default 0;
+
+    /**
+     * Specifies the timezone
+     * @return Optional string value
+     */
     String timezone() default "";
 }

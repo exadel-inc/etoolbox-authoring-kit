@@ -64,10 +64,16 @@ public class ResourceTypes {
 
         public static final String IGNORE_FRESHNESS_TOGGLER = "etoolbox-authoring-kit/components/authoring/ignoreFreshnessToggler";
 
+        /**
+         * Default (instantiation-preventing) constructor
+         */
         private Service() {
         }
     }
 
+    /**
+     * Default (instantiation-preventing) constructor
+     */
     private ResourceTypes() {
     }
 }

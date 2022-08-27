@@ -143,7 +143,6 @@ class ReplacementHelper {
         return SOURCE_REPLACING;
     }
 
-
     /* ---------------
        Utility methods
        --------------- */

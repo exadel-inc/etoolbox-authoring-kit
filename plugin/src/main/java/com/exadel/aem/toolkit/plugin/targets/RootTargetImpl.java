@@ -27,7 +27,7 @@ class RootTargetImpl extends TargetImpl implements RootTarget {
     /**
      * Default constructor. Creates an unattached {@code Target} instance with the {@code jcr:root} node name
      */
-    public RootTargetImpl() {
+    RootTargetImpl() {
         super(DialogConstants.NN_ROOT, null);
     }
 

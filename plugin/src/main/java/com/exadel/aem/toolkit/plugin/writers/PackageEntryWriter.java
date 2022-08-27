@@ -58,7 +58,6 @@ abstract class PackageEntryWriter {
         this.transformer = transformer;
     }
 
-
     /* -----------------------
        Common instance members
        ----------------------- */

@@ -75,7 +75,12 @@ public class TopLevelPolicyFilter implements Filter {
      * {@inheritDoc}
      */
     @Override
-    public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
+    public void doFilter(
+        ServletRequest servletRequest,
+        ServletResponse servletResponse,
+        FilterChain filterChain)
+        throws IOException, ServletException {
+
         SlingHttpServletRequest request = ((SlingHttpServletRequest) servletRequest);
         ResourceResolver resourceResolver = request.getResourceResolver();
 
@@ -129,7 +134,7 @@ public class TopLevelPolicyFilter implements Filter {
     }
 
     /**
-     * Reads the stored script template and retrieves an embeddable {@code <script></script} tag populated with the
+     * Reads the stored script template and retrieves an embeddable {@code <script/>} tag populated with the
      * given policy rules
      * @param rules String value representing policy rules
      * @return String value or null if the bundle resource is not present

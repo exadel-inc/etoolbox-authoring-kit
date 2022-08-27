@@ -39,7 +39,7 @@ public class PasswordHandler implements Handler {
     @Override
     public void accept(Source source, Target target) {
         Password password = source.adaptTo(Password.class);
-        if(source.adaptTo(DialogField.class) == null || password.retype().isEmpty()) {
+        if (source.adaptTo(DialogField.class) == null || password.retype().isEmpty()) {
             return;
         }
         // "Retype name" is expected to preserve same structure (prefix. postfix) as the original name

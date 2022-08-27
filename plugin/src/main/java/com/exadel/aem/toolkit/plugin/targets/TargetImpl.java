@@ -50,13 +50,13 @@ import com.exadel.aem.toolkit.plugin.utils.StringUtil;
  * Implements {@link Target} to manage a tree-like data structure that is further rendered in a Granite UI component
  * or component configurations
  */
+@SuppressWarnings("HiddenField") // Allows to pass {@code name} arguments in attribute constructors
 class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandlerAcceptor {
-
-    private static final String PARENT_PATH = "..";
-    private static final String SELF_PATH = ".";
 
     static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
+    private static final String PARENT_PATH = "..";
+    private static final String SELF_PATH = ".";
 
     /* -----------------------------
        Local fields and constructors
@@ -73,7 +73,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
 
     /**
      * Initializes a class instance with the instance name and parent reference specified
-     * @param name   Non-blank string representing the name of the new instance
+     * @param name   A non-blank string representing the name of the new instance
      * @param parent Nullable {@code Target} object that will serve as the parent reference
      */
     TargetImpl(String name, Target parent) {
@@ -85,7 +85,6 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
         this.scope = parent != null ? parent.getScope() : Scopes.COMPONENT;
         this.attributes.put(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED);
     }
-
 
     /* -----------------
        Naming operations
@@ -197,7 +196,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
 
     @Override
     public Target getTarget(String path) {
-        return getTarget(path, false);
+        return getTargetInternal(path, false);
     }
 
     /**
@@ -205,7 +204,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
      */
     @Override
     public Target getOrCreateTarget(String path) {
-        return getTarget(path, true);
+        return getTargetInternal(path, true);
     }
 
     /**
@@ -246,7 +245,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
      * @param createIfMissing True to create a {@code Target} for the unmatched path segment; otherwise, false
      * @return New {@code Target} instance
      */
-    private Target getTarget(String path, boolean createIfMissing) {
+    private Target getTargetInternal(String path, boolean createIfMissing) {
         if (StringUtils.isBlank(path)) {
             return null;
         }
@@ -259,7 +258,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
             Target current = this;
             while (!pathChunks.isEmpty()) {
                 String currentChunk = pathChunks.poll();
-                current = ((TargetImpl) current).getTarget(currentChunk, createIfMissing);
+                current = ((TargetImpl) current).getTargetInternal(currentChunk, createIfMissing);
                 if (current == null) {
                     break;
                 }
@@ -373,7 +372,8 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
             return match;
         }
         for (Target child : current.getChildren()) {
-            if ((match = findChild(child, filter)) != null) {
+            match = findChild(child, filter);
+            if (match != null) {
                 return match;
             }
         }

@@ -155,5 +155,8 @@ public class DialogConstants {
     public static final String VALUE_ALL = "all";
     public static final String VALUE_NONE = "none";
 
+    /**
+     * Default (instantiation-preventing) constructor
+     */
     private DialogConstants() {}
 }
