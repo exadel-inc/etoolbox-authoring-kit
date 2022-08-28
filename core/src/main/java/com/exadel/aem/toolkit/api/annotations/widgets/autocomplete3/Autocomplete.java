@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.api.annotations.widgets.autocompletecoral3;
+package com.exadel.aem.toolkit.api.annotations.widgets.autocomplete3;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -27,15 +27,15 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@ResourceType(ResourceTypes.AUTOCOMPLETE_CORAL_3)
+@ResourceType(ResourceTypes.AUTOCOMPLETE_EAK)
 @AnnotationRendering(properties = "all")
 public @interface Autocomplete {
 
     /**
-     * Used to specify the collection of {@link AutocompleteOption}s within this Autocomplete
-     * @return Single {@code AutocompleteOption} annotation, or an array of AutocompleteOptions
+     * Used to specify the collection of {@link AutocompleteItem}s within this Autocomplete
+     * @return Single {@code AutocompleteItem} annotation, or an array of AutocompleteItem
      */
-    AutocompleteOption[] options() default {};
+    AutocompleteItem[] items() default {};
 
     /**
      * Used to specify the source for options handled by the ToolKit's {@code OptionProvider} mechanism
@@ -51,10 +51,12 @@ public @interface Autocomplete {
     String placeholder() default StringUtils.EMPTY;
 
     /**
-     * When set to true, maps to the {@code match} attribute with 'startswith' value of this Granite UI component's node.
-     * @return true or false
+     * Maps to the {@code match} attribute of this Granite UI component's node.
+     * Used to define Autocomplete match mode
+     * @return One of {@code MatchMode} values
+     * @see MatchMode
      */
-    boolean matchStartsWith() default false;
+    MatchMode matchMode() default MatchMode.CONTAINS;
 
     /**
      * When set to a non-blank string, maps to the {@code icon} attribute of this Granite UI component's node.
@@ -65,7 +67,7 @@ public @interface Autocomplete {
 
     /**
      * When set to true, maps to the {@code disabled} attribute of this Granite UI component's node.
-     * Defines that the current option is shown in the disabled state
+     * Changing the state of the autocomplete widget
      * @return True or false
      */
     boolean disabled() default false;
@@ -78,6 +80,7 @@ public @interface Autocomplete {
 
     /**
      * When set to true, maps to the {@code loading} attribute of this Granite UI component's node.
+     * Used to show the loading spinner while preparing options
      * @return True or false
      */
     boolean loading() default false;

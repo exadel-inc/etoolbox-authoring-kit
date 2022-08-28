@@ -19,6 +19,8 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.inject.Named;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
+
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
@@ -32,13 +34,13 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
 
 /**
- * Represents the back-end part of the {@code Autocomplete} component for Granite UI dialogs. His Sling model
- * is responsible for injecting and retrieving the properties of component's node.
+ * Represents the back-end part of the {@code Autocomplete} component for Granite UI dialogs.
+ * This Sling model is responsible for retrieving the properties of the component's node.
  */
 @Model(adaptables = SlingHttpServletRequest.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 @AemComponent(
     path = "components/authoring/autocomplete",
-    title = "Autocomplete Coral 3",
+    title = "Autocomplete",
     resourceSuperType = "etoolbox-authoring-kit/components/authoring/base"
 )
 public class Autocomplete extends BaseModel {
@@ -52,15 +54,17 @@ public class Autocomplete extends BaseModel {
     @OSGiService
     private ModelFactory modelFactory;
 
-    @ChildResource
-    @Named("items")
+    @ValueMapValue(name = CoreConstants.PN_VALUE)
+    private String defaultValue;
+
+    @ChildResource(name = "items")
     private List<Option> options = new ArrayList<>();
 
     @ValueMapValue
     private String placeholder;
 
     @ValueMapValue
-    private boolean matchStartsWith;
+    private String matchMode;
 
     @ValueMapValue
     private String icon;
@@ -87,18 +91,18 @@ public class Autocomplete extends BaseModel {
 
     /**
      * Retrieves the specified placeholder value of the autocomplete
-     * @return String
+     * @return String value
      */
     public String getPlaceholder() {
         return placeholder;
     }
 
     /**
-     * Retrieves the specification of the autocomplete if it is match text by starting with or contains
-     * @return true or false
+     * Retrieves the specification of the autocomplete match mode
+     * @return String value
      */
-    public boolean isMatchStartsWith() {
-        return matchStartsWith;
+    public String getMatchMode() {
+        return matchMode;
     }
 
     /**
@@ -111,7 +115,7 @@ public class Autocomplete extends BaseModel {
 
     /**
      * Retrieves the specification of the autocomplete if it is disabled or not
-     * @return true or false
+     * @return True or False
      */
     public boolean isDisabled() {
         return disabled;
@@ -119,15 +123,15 @@ public class Autocomplete extends BaseModel {
 
     /**
      * Retrieves the specification of the autocomplete if it is invalid or not
-     * @return true or false
+     * @return True or False
      */
     public boolean isInvalid() {
         return invalid;
     }
 
     /**
-     * Retrieves the specification of the autocomplete if it is show loading or not
-     * @return true or false
+     * Retrieves whether the {@code Autocomplete} shows the loading spinner while preparing options.
+     * @return True or False
      */
     public boolean isLoading() {
         return loading;
@@ -135,7 +139,7 @@ public class Autocomplete extends BaseModel {
 
     /**
      * Retrieves the specification of the autocomplete if it is support multiple values or not
-     * @return true or false
+     * @return True or False
      */
     public boolean isMultiple() {
         return multiple;
@@ -152,5 +156,10 @@ public class Autocomplete extends BaseModel {
             .map(option -> modelFactory.createModel(option, Option.class))
             .collect(Collectors.toList());
         this.options.addAll(optionsModels);
+    }
+
+    @Override
+    public Object getDefaultValue() {
+        return defaultValue;
     }
 }

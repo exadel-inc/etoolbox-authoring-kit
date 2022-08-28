@@ -13,10 +13,11 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widgets;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete3.AutocompleteItem;
+
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.autocompletecoral3.Autocomplete;
-import com.exadel.aem.toolkit.api.annotations.widgets.autocompletecoral3.AutocompleteOption;
+import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete3.Autocomplete;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
@@ -41,10 +42,10 @@ public class AutocompleteCoral3Handler extends OptionProviderHandler implements 
         if (hasProvidedOptions(autocomplete.optionProvider())) {
             appendOptionProvider(autocomplete.optionProvider(), target);
         }
-        if (ArrayUtils.isNotEmpty(autocomplete.options())) {
+        if (ArrayUtils.isNotEmpty(autocomplete.items())) {
             Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
-            for (AutocompleteOption autocompleteOption : autocomplete.options()) {
-                appendOption(autocompleteOption, autocompleteOption.value(), items);
+            for (AutocompleteItem autocompleteItem : autocomplete.items()) {
+                appendOption(autocompleteItem, autocompleteItem.value(), items);
             }
         }
     }
