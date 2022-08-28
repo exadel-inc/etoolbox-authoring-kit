@@ -19,8 +19,8 @@ import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 /**
- * Represents the back-end part of the {@code AutocompleteOption} of the {@code Autocomplete} component for Granite UI dialogs. His Sling model
- * is responsible for injecting and retrieving the properties of component's node.
+ * Represents the back-end part of the {@code AutocompleteItem} used within the {@code Autocomplete} component.
+ * This Sling model is responsible for retrieving the properties of the component's node.
  */
 @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class Option {
@@ -30,6 +30,15 @@ public class Option {
 
     @ValueMapValue
     private String value;
+
+    @ValueMapValue
+    private boolean disabled;
+
+    @ValueMapValue
+    private boolean hidden;
+
+    @ValueMapValue
+    private boolean selected;
 
     /**
      * Retrieves the specified text value of the autocomplete option
@@ -45,5 +54,29 @@ public class Option {
      */
     public String getValue() {
         return value;
+    }
+
+    /**
+     * Retrieves the specification of the autocomplete item if it is disabled or not
+     * @return True or False
+     */
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    /**
+     * Retrieves the specification of the autocomplete item if it is hidden or not
+     * @return True or False
+     */
+    public boolean isHidden() {
+        return hidden;
+    }
+
+    /**
+     * Retrieves the specification of the autocomplete item if it is selected or not
+     * @return True or False
+     */
+    public boolean isSelected() {
+        return selected;
     }
 }

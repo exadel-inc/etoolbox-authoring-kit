@@ -16,6 +16,8 @@ package com.exadel.aem.toolkit.core.authoring.models;
 import java.util.Map;
 import javax.script.SimpleBindings;
 
+import com.adobe.granite.ui.components.Config;
+import com.adobe.granite.ui.components.Value;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -61,22 +63,25 @@ public class BaseModel {
             return getDefaultValue();
         }
 
+        Resource dataResource = getDataResource();
+        Config config = new Config(dataResource);
+        Value value = new Value(request, config);
+
+        String propertyName = name.contains(CoreConstants.SEPARATOR_SLASH)
+            ? StringUtils.substringAfterLast(name, CoreConstants.SEPARATOR_SLASH)
+            : name;
+        return value.get(CoreConstants.RELATIVE_PATH_PREFIX + propertyName);
+    }
+
+    private Resource getDataResource() {
         Resource suffixResource = request.getRequestPathInfo().getSuffixResource();
         String relativePath = name.contains(CoreConstants.SEPARATOR_SLASH)
             ? StringUtils.substringBeforeLast(name, CoreConstants.SEPARATOR_SLASH)
             : StringUtils.EMPTY;
-        String propertyName = name.contains(CoreConstants.SEPARATOR_SLASH)
-            ? StringUtils.substringAfterLast(name, CoreConstants.SEPARATOR_SLASH)
-            : name;
 
-        Resource endResource = StringUtils.isNotBlank(relativePath)
+        return StringUtils.isNotBlank(relativePath)
             ? request.getResourceResolver().getResource(suffixResource, relativePath)
             : suffixResource;
-        if (endResource == null) {
-            return getDefaultValue();
-        }
-
-        return endResource.getValueMap().get(propertyName);
     }
 
 

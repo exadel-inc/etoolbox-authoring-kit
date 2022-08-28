@@ -14,16 +14,22 @@
 
 <sly data-sly-use.autocomplete="com.exadel.aem.toolkit.core.authoring.models.Autocomplete"></sly>
 <coral-autocomplete
+    data-sly-attribute="${autocomplete.commonAttributes}"
+    name="${autocomplete.name}"
+    value="${autocomplete.value}"
     placeholder="${autocomplete.placeholder}"
-    match="${autocomplete.matchStartsWith ? 'startswith' : ''}"
+    data-sly-attribute.match="${autocomplete.matchMode}"
     data-sly-attribute.icon="${autocomplete.icon}"
     data-sly-attribute.disabled="${autocomplete.disabled}"
     data-sly-attribute.invalid="${autocomplete.invalid}"
     data-sly-attribute.loading="${autocomplete.loading}"
     data-sly-attribute.multiple="${autocomplete.multiple}">
-    <sly data-sly-list.autocompleteOption="${autocomplete.options}">
-        <coral-autocomplete-item value="${autocompleteOption.value}">
-            ${autocompleteOption.text}
+    <sly data-sly-list.autocompleteItem="${autocomplete.options}">
+        <coral-autocomplete-item value="${autocompleteItem.value}"
+                                 data-sly-attribute.disabled="${autocompleteItem.disabled}"
+                                 data-sly-attribute.hidden="${autocompleteItem.hidden}"
+                                 data-sly-attribute.selected="${(autocompleteItem.selected && (autocomplete.value == null || autocomplete.value == '')) || autocomplete.value == autocompleteItem.value}">
+            ${autocompleteItem.text}
         </coral-autocomplete-item>
     </sly>
 </coral-autocomplete>

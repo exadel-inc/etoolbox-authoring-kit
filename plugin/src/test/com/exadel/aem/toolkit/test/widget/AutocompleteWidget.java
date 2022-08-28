@@ -17,17 +17,17 @@ package com.exadel.aem.toolkit.test.widget;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.autocompletecoral3.Autocomplete;
-import com.exadel.aem.toolkit.api.annotations.widgets.autocompletecoral3.AutocompleteOption;
+import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete3.Autocomplete;
+import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete3.AutocompleteItem;
+import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete3.MatchMode;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionSource;
-import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
 
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @AemComponent(
     path = DEFAULT_COMPONENT_NAME,
-    title = "Autocomplete Widget Dialog"
+    title = "Autocomplete"
 )
 @Dialog
 @SuppressWarnings("unused")
@@ -37,12 +37,12 @@ public class AutocompleteWidget {
 
     @DialogField(label = "Autocomplete")
     @Autocomplete(
-        options = {
-            @AutocompleteOption(text = "Text1", value = "value1"),
-            @AutocompleteOption(text = "Text2", value = "value2")
+        items = {
+            @AutocompleteItem(text = "Text1", value = "value1"),
+            @AutocompleteItem(text = "Text2", value = "value2")
         },
         placeholder = "placeholder",
-        matchStartsWith = true,
+        matchMode = MatchMode.STARTS_WITH,
         icon = "icon",
         multiple = true
     )
