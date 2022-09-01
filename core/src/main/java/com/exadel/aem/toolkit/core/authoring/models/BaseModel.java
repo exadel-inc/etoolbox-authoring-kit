@@ -25,6 +25,8 @@ import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.SlingObject;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 import com.adobe.granite.ui.components.AttrBuilder;
+import com.adobe.granite.ui.components.Config;
+import com.adobe.granite.ui.components.Value;
 import com.adobe.granite.ui.components.htl.ComponentHelper;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
@@ -76,9 +78,10 @@ public class BaseModel {
             return getDefaultValue();
         }
 
-        return endResource.getValueMap().get(propertyName);
+        Config config = new Config(endResource);
+        Value value = new Value(request, config);
+        return value.get(CoreConstants.RELATIVE_PATH_PREFIX + propertyName);
     }
-
 
     public Object getDefaultValue() {
         return null;
