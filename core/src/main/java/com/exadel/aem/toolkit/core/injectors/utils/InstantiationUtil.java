@@ -14,8 +14,10 @@
 package com.exadel.aem.toolkit.core.injectors.utils;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
@@ -25,6 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.day.crx.JcrConstants;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
+
+import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * Contains utility methods for creating instances ob objects
@@ -78,11 +82,20 @@ public class InstantiationUtil {
             .collect(Collectors.toMap(
                 entry -> clearPrefixOrPostfix(entry.getKey(), prefix, postfix),
                 Map.Entry::getValue));
+        List<Resource> children = StreamSupport.stream(current.getChildren().spliterator(), false)
+            .filter(child -> isMatchByPrefixOrPostfix(child.getName(), prefix, postfix))
+            .map(child -> new ValueMapResource(
+                current.getResourceResolver(),
+                clearPrefixOrPostfixFromPath(child.getPath(), prefix, postfix),
+                child.getResourceType(),
+                child.getValueMap()))
+            .collect(Collectors.toList());
         return new ValueMapResource(
             current.getResourceResolver(),
             current.getPath(),
-            values.getOrDefault(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, JcrConstants.NT_UNSTRUCTURED).toString(),
-            new ValueMapDecorator(values));
+            values.getOrDefault(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, current.getResourceType()).toString(),
+            new ValueMapDecorator(values),
+            children);
     }
 
     /**
@@ -121,5 +134,27 @@ public class InstantiationUtil {
             result = StringUtils.removeEnd(result, postfix);
         }
         return result;
+    }
+
+    /**
+     * Removes the given prefix and/or postfix from the provided resource path
+     * @param path String value representing the path
+     * @param prefix   String value representing an optional prefix
+     * @param postfix  String value representing an optional postfix
+     * @return String value
+     */
+    private static String clearPrefixOrPostfixFromPath(String path, String prefix, String postfix) {
+        if (!StringUtils.contains(path, CoreConstants.SEPARATOR_SLASH)) {
+            return path;
+        }
+        String parentPath = StringUtils.substringBeforeLast(path, CoreConstants.SEPARATOR_SLASH);
+        String name = StringUtils.substringAfterLast(path, CoreConstants.SEPARATOR_SLASH);
+        if (StringUtils.isNotEmpty(prefix)) {
+            name = StringUtils.removeStart(name, prefix);
+        }
+        if (StringUtils.isNotEmpty(postfix)) {
+            name = StringUtils.removeEnd(name, postfix);
+        }
+        return parentPath + CoreConstants.SEPARATOR_SLASH + name;
     }
 }

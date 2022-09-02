@@ -1,0 +1,21 @@
+{
+  "testModel": {
+    "jcr:primaryType": "nt:unstructured",
+    "outerModelStringField": "Outer model string field",
+    "testModelChildInner": {
+      "prefix-innerModelResource-postfix": {
+        "jcr:primaryType": "nt:unstructured",
+        "title": "Inner model resource title"
+      },
+      "prefix-innerModelStringField-postfix": "Inner model text field"
+    },
+    "testName": {
+      "innerModelResource": {
+        "jcr:primaryType": "nt:unstructured",
+        "title": "Second inner model resource title"
+      },
+      "innerModelStringField": "Second inner model text field"
+    }
+  }
+}
+
