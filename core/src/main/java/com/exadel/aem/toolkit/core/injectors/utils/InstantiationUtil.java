@@ -25,7 +25,6 @@ import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.day.crx.JcrConstants;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
