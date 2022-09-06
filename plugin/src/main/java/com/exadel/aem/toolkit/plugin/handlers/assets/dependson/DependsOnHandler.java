@@ -33,6 +33,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
+import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
@@ -70,7 +71,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
             return;
         }
         Map<String, Object> valueMap = Maps.newHashMap();
-        String escapedQuery = StringUtils.replace(value.query(), ";", "\\\\;");
+        String escapedQuery = StringUtil.escapeValue(value.query());
         valueMap.put(DialogConstants.PN_DEPENDS_ON, escapedQuery);
         valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, value.action());
         valueMap.putAll(buildParamsMap(value, 0));

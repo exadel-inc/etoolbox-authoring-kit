@@ -43,4 +43,9 @@ public class DependsOnSemicolon {
     @DependsOn(query = "';' === ';'")
     @DependsOn(query = "';' === ';'", action = DependsOnActions.REQUIRED)
     private String multipleActions;
+
+    @DialogField
+    @TextField
+    @DependsOn(query = "['a', 'b', 'c', 'd', 'e'].includes(@type(coral-multifield-item))")
+    private String literalEscapingSpecialCharactersTest;
 }
