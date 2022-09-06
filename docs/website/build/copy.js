@@ -7,9 +7,9 @@ const chokidar = require('chokidar');
 const INPUT_DIR = path.resolve(__dirname, '../../content');
 const INPUT_GLOB = '**/*.{md,html,njk}';
 const OUTPUT_DIR = path.resolve(__dirname, '../views/content');
-const DELETE_PATH = path.join(OUTPUT_DIR, '/', 'delete.tmp');
+const TIMESTAMP_PATH = path.join(OUTPUT_DIR, '/timestamp.tmp');
 
-const DELAY = 5000;
+const DELAY = 2000;
 
 console.log(`Searching for files in ${INPUT_DIR}`);
 
@@ -32,52 +32,55 @@ const createFileCopy = async (inputPath, outputPath) => {
   await fs.promises.writeFile(outputPath, parsedContent);
 }
 
-const deleteFile = async (outputPath) => {
-  await fs.promises.writeFile(DELETE_PATH, '');
-  await fs.promises.unlink(outputPath);
-}
+const deleteFile = async (outputPath) => fs.promises.unlink(outputPath);
+
+const updateTimestamp = async () => {
+  const time = (new Date()).toISOString();
+  return fs.promises.writeFile(TIMESTAMP_PATH, time);
+};
 
 (async () => {
   await del(OUTPUT_DIR);
 
-  glob(INPUT_GLOB, { cwd: INPUT_DIR }, async (err, files) => {
+  glob(INPUT_GLOB, { cwd: INPUT_DIR }, async (_err, files) => {
     await Promise.all(
       files.map(async (fileName) => {
         const { inputPath, outputPath } = getPaths(fileName);
-        createFileCopy(inputPath, outputPath);
+        return createFileCopy(inputPath, outputPath);
       })
     );
   });
 })();
 
 if (process.argv.includes('watch')) {
-  const watch = chokidar.watch('../content');
   const pathsToUpdate = new Set();
-  let timer;
-
   const updateData = async () => {
-    pathsToUpdate.forEach(async (path) => {
-      const { inputPath, outputPath } = getPaths(path);
-
+    for (const filePath of pathsToUpdate) {
+      const { inputPath, outputPath } = getPaths(filePath);
       const isDeleted = !fs.existsSync(inputPath);
 
       if (isDeleted) {
         await deleteFile(outputPath);
-        console.log(`\t - ${path} - deleted`)
+        console.log(`\t - ${filePath} - deleted`)
       } else {
         await createFileCopy(inputPath, outputPath);
-        console.log(`\t - ${path} - updated`);
+        console.log(`\t - ${filePath} - updated`);
       }
-    })
+    }
     pathsToUpdate.clear();
-  }
+    await updateTimestamp();
+  };
 
+  // Debounced watch task
+  let timer;
   const deferredSync = async (fileName) => {
     pathsToUpdate.add(fileName);
     clearTimeout(timer);
     timer = setTimeout(() => updateData(), DELAY);
-  }
+  };
 
+  // Run watch process
+  const watch = chokidar.watch('../content');
   watch.on('change', deferredSync);
   watch.on('add', deferredSync);
   watch.on('unlink', deferredSync);
