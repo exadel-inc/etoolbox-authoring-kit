@@ -8,10 +8,10 @@
     <div class="sidebar-content">
       <div class="sidebar-scrollable-content esl-scrollable-content">
         <ul class="sidebar-nav-list">
-          {% set collection = collections.content | sortByNameAndOrder | navigation %}
+          {% set collection = collections.content | findRoot %}
           {% if collection.children.length %}
-            {% for item in collection.children %}
 
+            {% for item in collection.children | sortByNameAndOrder %}
             <li class="sidebar-nav-item">
               <div class="sidebar-nav-item-heading">
                 {{ item.data.title }}
