@@ -175,6 +175,14 @@
       "created_at": "2022-08-25T07:20:28Z",
       "repoId": 206580735,
       "pullRequestNo": 384
+    },
+    {
+      "name": "rodrigoVargasR",
+      "id": 111460327,
+      "comment_id": 1238629777,
+      "created_at": "2022-09-06T20:43:17Z",
+      "repoId": 206580735,
+      "pullRequestNo": 389
     }
   ]
 }
