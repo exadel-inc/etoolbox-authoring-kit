@@ -12,15 +12,13 @@ module.exports = (config) => {
       item.navPath = getNavPath(item.filePathStem);
       item.key = item.navPath.join('|');
       item.parent = item.navPath.slice(0, -1).join('|');
-      item.mainParent = item.navPath.slice(0, 3).join('|');
     });
 
     items.forEach((item) => {
       item.parentPage = items.find((itm) => itm.key === item.parent);
-      item.mainParentPage = items.find((itm) => itm.key === item.mainParent);
       item.children = items.filter((itm) => itm.parent === item.key);
     });
-    
+
     return items;
   });
 
@@ -30,5 +28,15 @@ module.exports = (config) => {
 
   config.addNunjucksFilter('findByPage', function (collection, page) {
     return collection.find((item) => page.filePathStem === item.filePathStem);
+  });
+
+  config.addNunjucksFilter('pageParents', function (currentPage) {
+    const pages = [];
+    let page = currentPage.parentPage;
+    while (page) {
+      pages.push(page);
+      page = page.parentPage
+    }
+    return pages.reverse().slice(1);
   });
 };
