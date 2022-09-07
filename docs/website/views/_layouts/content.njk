@@ -4,13 +4,17 @@
   {% include 'navigation/header.njk' %}
   {% include 'navigation/sidebar.njk' %}
   <main class="esl-scrollable-content">
-    <div class="content {{ containerCls or 'container markdown-container' }} {{ 'container-aside' if aside }}">
+    <div class="content {{ containerCls or 'container markdown-container' }}">
       {% set fullPage = collections.content | findByPage(page) %}
-      
-      {% if fullPage and fullPage.mainParentPage %}
-        <h1>{{ fullPage.mainParentPage.data.title }}</h1>
+      {% if fullPage %}
+        <div class="content-page-title">
+          {% for page in fullPage | pageParents %}
+            <span class="parent-page">{{ page.data.title }} / </span>
+          {% endfor %}
+          <h1 class="current-page">{{ fullPage.data.title }}</h1>
+        </div>
       {% endif %}
-      
+
       {{ content | safe or 'No content.' }}
     </div>
     <footer class="footer-compact container-fluid">
