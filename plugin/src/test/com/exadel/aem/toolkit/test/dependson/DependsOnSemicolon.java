@@ -46,6 +46,6 @@ public class DependsOnSemicolon {
 
     @DialogField
     @TextField
-    @DependsOn(query = "['a', 'b', 'c', 'd', 'e'].includes(@type(coral-multifield-item))")
+    @DependsOn(query = "['a', 'b', 'c', 'd', 'e','[]','t;rex'].includes(@type(coral-multifield-item));")
     private String literalEscapingSpecialCharactersTest;
 }

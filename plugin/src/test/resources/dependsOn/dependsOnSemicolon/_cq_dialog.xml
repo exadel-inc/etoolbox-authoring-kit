@@ -53,7 +53,7 @@
                           renderHidden="{Boolean}false"
                           required="{Boolean}false">
                         <granite:data jcr:primaryType="nt:unstructured"
-                            dependsOn="\['a', 'b', 'c', 'd', 'e'\].includes(@type(coral-multifield-item))"
+                            dependsOn="\['a', 'b', 'c', 'd', 'e','\[\]','t\\;rex'\].includes(@type(coral-multifield-item))\\;"
                             dependsOnAction="visibility"/>
                     </literalEscapingSpecialCharactersTest>
                 </items>

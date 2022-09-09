@@ -45,10 +45,8 @@ public class StringUtil {
 
     private static final String ARRAY_OPENING = "[";
     private static final String ARRAY_CLOSING = "]";
-    private static final String SEMICOLON = ";";
     private static final String ESCAPE_STRING = "\\";
     private static final String SPLITTING_PATTERN = "\\s*,\\s*";
-    private static final String[] CHARACTERS_TO_ESCAPE = {ARRAY_OPENING, ARRAY_CLOSING, SEMICOLON};
 
     private static final Pattern ATTRIBUTE_LIST_PATTERN = Pattern.compile("^\\[.+]$");
 
@@ -182,19 +180,4 @@ public class StringUtil {
             .split(SPLITTING_PATTERN));
     }
 
-    /**
-     * Escape characters given a string.
-     * @param value The string to process
-     * @return escapedValue. The string with scaped values
-     * */
-    public static String escapeValue(String value) {
-        for (String str : CHARACTERS_TO_ESCAPE) {
-            if (str.equals(SEMICOLON)) {
-                value = StringUtils.replace(value, str, "\\\\" + str);
-            } else {
-                value = StringUtils.replace(value, str, "\\" + str);
-            }
-        }
-        return value;
-    }
 }

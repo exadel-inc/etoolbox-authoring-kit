@@ -33,7 +33,6 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
-import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
@@ -44,6 +43,9 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
     static final String EMPTY_VALUES_EXCEPTION_MESSAGE = "Non-empty string values required for DependsOn params";
 
     private static final String TERM_SEPARATOR = "-";
+    private static final String SEMICOLON = ";";
+    private static final String ARRAY_OPENING = "[";
+    private static final String ARRAY_CLOSING = "]";
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
@@ -71,7 +73,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
             return;
         }
         Map<String, Object> valueMap = Maps.newHashMap();
-        String escapedQuery = StringUtil.escapeValue(value.query());
+        String escapedQuery = DependsOnHandler.escapeValue(value.query());
         valueMap.put(DialogConstants.PN_DEPENDS_ON, escapedQuery);
         valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, value.action());
         valueMap.putAll(buildParamsMap(value, 0));
@@ -162,5 +164,18 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
             valueMap.put(DialogConstants.PN_DEPENDS_ON_REFLAZY, StringUtils.EMPTY);
         }
         target.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA).attributes(valueMap);
+    }
+
+    /**
+     * Escape characters given a string.
+     * @param value The string to process
+     * @return escapedValue. The string with escaped values
+     * */
+    public static String escapeValue(String value) {
+        String result = StringUtils.replace(value, SEMICOLON, "\\\\" + SEMICOLON);
+        for (String bracket : new String[] {ARRAY_OPENING, ARRAY_CLOSING}) {
+            result = StringUtils.replace(result, bracket, "\\" + bracket);
+        }
+        return result;
     }
 }
