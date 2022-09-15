@@ -1,0 +1,35 @@
+<!--/*
+  Licensed under the Apache License, Version 2.0 (the "License").
+  You may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*/-->
+
+<sly data-sly-use.autocomplete="com.exadel.aem.toolkit.core.authoring.models.Autocomplete"></sly>
+<coral-autocomplete
+    data-sly-attribute="${autocomplete.commonAttributes}"
+    name="${autocomplete.name}"
+    value="${autocomplete.value}"
+    placeholder="${autocomplete.placeholder}"
+    data-sly-attribute.match="${autocomplete.matchMode}"
+    data-sly-attribute.icon="${autocomplete.icon}"
+    data-sly-attribute.disabled="${autocomplete.disabled}"
+    data-sly-attribute.invalid="${autocomplete.invalid}"
+    data-sly-attribute.loading="${autocomplete.loading}"
+    data-sly-attribute.multiple="${autocomplete.multiple}">
+    <sly data-sly-list.autocompleteItem="${autocomplete.options}">
+        <coral-autocomplete-item value="${autocompleteItem.value}"
+                                 data-sly-attribute.disabled="${autocompleteItem.disabled}"
+                                 data-sly-attribute.hidden="${autocompleteItem.hidden}"
+                                 data-sly-attribute.selected="${(autocompleteItem.selected && (autocomplete.value == null || autocomplete.value == '')) || autocomplete.value == autocompleteItem.value}">
+            ${autocompleteItem.text}
+        </coral-autocomplete-item>
+    </sly>
+</coral-autocomplete>

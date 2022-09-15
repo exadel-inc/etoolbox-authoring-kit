@@ -24,6 +24,7 @@ public class ResourceTypes {
     public static final String ALERT = "granite/ui/components/coral/foundation/alert";
     public static final String ANCHOR_BUTTON = "granite/ui/components/coral/foundation/anchorbutton";
     public static final String AUTOCOMPLETE = "granite/ui/components/coral/foundation/form/autocomplete";
+    public static final String AUTOCOMPLETE_EAK = "etoolbox-authoring-kit/components/authoring/autocomplete";
     public static final String AUTOCOMPLETE_LIST = "granite/ui/components/coral/foundation/form/autocomplete/list";
     public static final String AUTOCOMPLETE_TAG = "granite/ui/components/coral/foundation/form/autocomplete/tags";
     public static final String BUTTON = "granite/ui/components/coral/foundation/button";

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="nt:unstructured"
+          sling:resourceType="cq/gui/components/authoring/dialog"
+          jcr:title="Autocomplete"
+          width="{Double}560.0"
+          height="{Double}480.0">
+    <content jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
+        <layout jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"/>
+        <items jcr:primaryType="nt:unstructured">
+            <column jcr:primaryType="nt:unstructured" sling:resourceType="granite/ui/components/coral/foundation/container">
+                <items jcr:primaryType="nt:unstructured">
+                    <autocomplete jcr:primaryType="nt:unstructured"
+                            sling:resourceType="etoolbox-authoring-kit/components/authoring/autocomplete"
+                            name="./autocomplete"
+                            fieldLabel="Autocomplete"
+                            disabled="{Boolean}false"
+                            placeholder="placeholder"
+                            matchMode="startswith"
+                            icon="icon"
+                            multiple="{Boolean}true">
+                        <items jcr:primaryType="nt:unstructured">
+                            <item jcr:primaryType="nt:unstructured" text="Text1" value="value1"/>
+                            <item1 jcr:primaryType="nt:unstructured" text="Text2" value="value2"/>
+                        </items>
+                    </autocomplete>
+                    <providedAutocomplete jcr:primaryType="nt:unstructured"
+                                sling:resourceType="etoolbox-authoring-kit/components/authoring/autocomplete"
+                                name="./providedAutocomplete"
+                                fieldLabel="Provided autocomplete"
+                                disabled="{Boolean}false"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false">
+                        <datasource jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="/apps/etoolbox-authoring-kit/datasources/option-provider"
+                                    prepend="[None:none]"
+                                    path1="/path/to/acs/list"
+                                    path2="/path/to/acs/list2"
+                                    fallbackPath2="/path/to/acs/list3"
+                                    textMember2="pageTitle"
+                                    selected="none"
+                                    sorted="{Boolean}true"/>
+                    </providedAutocomplete>
+                </items>
+            </column>
+        </items>
+    </content>
+</jcr:root>
