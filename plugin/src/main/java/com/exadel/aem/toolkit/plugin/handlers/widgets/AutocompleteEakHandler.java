@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
  * object that define the Granite UI {@code Autocomplete} widget look and behavior
  */
 @Handles(Autocomplete.class)
-public class AutocompleteCoral3Handler extends OptionProviderHandler implements Handler {
+public class AutocompleteEakHandler extends OptionProviderHandler implements Handler {
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
