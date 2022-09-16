@@ -34,6 +34,14 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 public @interface CodeEditor {
 
     /**
+     * Specifies a particular link to the editor's {@code js} file in an external repository or CDN. Can be used to
+     * require a specific version or a custom build
+     * @return Optional string value
+     */
+    @ValueRestriction(ValueRestrictions.NOT_BLANK_OR_DEFAULT)
+    String source() default "";
+
+    /**
      * Defines the code highlighting completion mode of the editor (the "language" or markup format it works with). Must
      * match one of the built-in modes enumerated in the <a href="https://github.com/ajaxorg/ace-builds/tree/master/src-noconflict">project's
      * repository</a> (unless a custom mode is supplied). By default, the {@code json} mode is used
@@ -41,14 +49,6 @@ public @interface CodeEditor {
      */
     @ValueRestriction(ValueRestrictions.NOT_BLANK_OR_DEFAULT)
     String mode() default "";
-
-    /**
-     * Specifies a particular link to the editor's {@code js} file in an external repository or CDN. Can be used to
-     * require a specific version or a custom build
-     * @return Optional string value
-     */
-    @ValueRestriction(ValueRestrictions.NOT_BLANK_OR_DEFAULT)
-    String source() default "";
 
     /**
      * Defines the visual and code highlighting theme of the editor. Must match one of the built-in themes enumerated in
