@@ -15,10 +15,18 @@
             <column jcr:primaryType="nt:unstructured"
                     sling:resourceType="granite/ui/components/coral/foundation/container">
                 <items jcr:primaryType="nt:unstructured">
-                    <code disabled="{Boolean}false"
+                    <code
                           jcr:primaryType="nt:unstructured"
-                          name="./code" renderHidden="{Boolean}false" required="{Boolean}false"
-                          sling:resourceType="etoolbox-authoring-kit/components/authoring/codeeditor"/>
+                          sling:resourceType="etoolbox-authoring-kit/components/authoring/codeeditor"
+                          name="./code"
+                          dataPrefix="js:"
+                          disabled="{Boolean}false"
+                          mode="js"
+                          options="\{&quot;wrap&quot;:true,&quot;maxLines&quot;:&quot;Infinity&quot;\}"
+                          renderHidden="{Boolean}false"
+                          required="{Boolean}false"
+                          source="https://cdnjs.cloudflare.com/ajax/libs/ace/1.10.0/ace.js"
+                          theme="crimson_editor"/>
                 </items>
             </column>
         </items>

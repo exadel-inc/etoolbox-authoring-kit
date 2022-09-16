@@ -17,6 +17,7 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.codeeditor.CodeEditor;
+import com.exadel.aem.toolkit.api.annotations.widgets.codeeditor.CodeEditorOption;
 import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
 @AemComponent(
@@ -28,6 +29,15 @@ import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 public class CodeEditorWidget {
 
     @DialogField
-    @CodeEditor
+    @CodeEditor(
+        source = "https://cdnjs.cloudflare.com/ajax/libs/ace/1.10.0/ace.js",
+        mode = "js",
+        theme = "crimson_editor",
+        options = {
+            @CodeEditorOption(name = "wrap", value = "true", type = boolean.class),
+            @CodeEditorOption(name = "maxLines", value = "Infinity"),
+        },
+        dataPrefix = "js:"
+    )
     String code;
 }
