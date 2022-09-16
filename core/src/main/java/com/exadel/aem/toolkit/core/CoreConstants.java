@@ -21,15 +21,18 @@ public class CoreConstants {
     public static final String NN_LIST = "list";
 
     public static final String PN_APPEND = "append";
+    public static final String PN_DISABLED = "disabled";
     public static final String PN_ITEM_RESOURCE_TYPE = "itemResourceType";
     public static final String PN_LIMIT = "limit";
     public static final String PN_LIST_ITEM = "listItem";
     public static final String PN_OFFSET = "offset";
     public static final String PN_PATH = "path";
     public static final String PN_PREPEND = "prepend";
+    public static final String PN_REQUIRED = "required";
     public static final String PN_SELECTED = "selected";
     public static final String PN_TEXT = "text";
     public static final String PN_UPDATE_COMPONENT_LIST = "updatecomponentlist";
+    public static final String PN_VALIDATION = "validation";
     public static final String PN_VALUE = "value";
 
     public static final String PARAMETER_ID = "@id";
