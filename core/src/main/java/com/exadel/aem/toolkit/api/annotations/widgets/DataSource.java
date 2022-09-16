@@ -45,6 +45,7 @@ public @interface DataSource {
      * of the current widget
      * @return Valid JCR path, or an empty string
      */
+    @ValueRestriction(ValueRestrictions.NOT_BLANK_OR_DEFAULT)
     String path() default "";
 
     /**
