@@ -1,0 +1,14 @@
+.eak-editor {
+    width: 100%;
+    min-height: 100px;
+    font-size: 15px;
+    margin: 8px 0;
+}
+
+.eak-editor.is-invalid {
+    border: 1px solid #e14132;
+ }
+
+.eak-editor[disabled] {
+    background-color: #f5f5f5;
+}
