@@ -11,10 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-"use strict";
+'use strict';
 
-(function(window, document, $, Granite) {
-
+(function (window, document, $, Granite) {
     const DEFAULT_SCRIPT_SOURCE = 'https://ajaxorg.github.io/ace-builds/src-min-noconflict/ace.js';
     const EDITOR_SELECTOR = '.eak-editor';
     const VALIDATION_MESSAGE = 'Error: Please fill out this field.';
@@ -33,7 +32,7 @@
         const scriptSrc = scriptSrcAttribute && scriptSrcAttribute.length ? scriptSrcAttribute[0] : DEFAULT_SCRIPT_SOURCE;
         $.getScript(scriptSrc)
             .done(appendEditors)
-            .fail(function(jqxhr, settings, ex) {
+            .fail(function (jqxhr, settings, ex) {
                 console.error('Could not retrieve the editor script', ex);
             });
     }
@@ -45,7 +44,7 @@
         $(window).adaptTo('foundation-registry').register('foundation.adapters', {
             type: 'foundation-field',
             selector: EDITOR_SELECTOR,
-            adapter: function(el) {
+            adapter: function (el) {
                 const input = $(el).find('input')[0];
                 return {
                     getName: function () {
@@ -75,7 +74,7 @@
                         $(el).attr('readonly', readOnly);
                         el.editor && el.editor.setReadOnly(readOnly || this.isDisabled());
                     },
-                    isRequired: function() {
+                    isRequired: function () {
                         return $(el).attr('aria-required') === 'true';
                     },
                     setRequired: function (required) {
@@ -90,24 +89,24 @@
                     getLabelledBy: function () {
                         return $(el).attr('aria-labelledby');
                     },
-                    setLabelledBy: function(labelledBy) {
+                    setLabelledBy: function (labelledBy) {
                         $(el).attr('aria-labelledby', labelledBy);
                     },
                     getValues: function () {
-                        return [ el.value ];
+                        return [el.value];
                     },
                     setValues: function (values) {
                         el.value = values[0];
                     },
-                    clear: function() {
+                    clear: function () {
                         el.editor && el.editor.setValue('');
                     }
                 };
             }
         });
 
-        $(document).on("change", EDITOR_SELECTOR, function() {
-            $(this).trigger("foundation-field-change");
+        $(document).on('change', EDITOR_SELECTOR, function () {
+            $(this).trigger('foundation-field-change');
         });
     }
 
@@ -121,9 +120,9 @@
             candidate: EDITOR_SELECTOR + ':not([readonly]):not([disabled])',
             exclusion: EDITOR_SELECTOR + ' *'
         });
-        registry.register("foundation.validation.validator", {
+        registry.register('foundation.validation.validator', {
             selector: EDITOR_SELECTOR,
-            validate: function(el) {
+            validate: function (el) {
                 const isRequired = $(el).attr('aria-required') === 'true';
                 if (!isRequired) {
                     return;
@@ -138,7 +137,7 @@
      * in property accessors, such as {@code DependsOn}'s
      */
     function registerValueHook() {
-        $(EDITOR_SELECTOR).each(function() {
+        $(EDITOR_SELECTOR).each(function () {
             const editorHost = this;
             Object.defineProperty(this, 'value', {
                 get() {
@@ -165,11 +164,11 @@
      * options
      */
     function appendEditors() {
-        $(EDITOR_SELECTOR).each(function() {
+        $(EDITOR_SELECTOR).each(function () {
             const $this = $(this);
             const $input = $this.siblings('input');
 
-            const editor = ace.edit(this);
+            const editor = window.ace.edit(this);
             $this.data('theme') && editor.setTheme($this.data('theme'));
             $this.data('mode') && editor.session.setMode($this.data('mode'));
 
@@ -179,7 +178,7 @@
                     if (options[key] === 'Infinity') {
                         options[key] = Infinity;
                     }
-                })
+                });
                 editor.setOptions(options);
             }
 
@@ -187,12 +186,11 @@
                 editor.setReadOnly(true);
             }
 
-            editor.on('change', function() {
+            editor.on('change', function () {
                 $input.val(($this.data('prefix') || '') + editor.getValue());
             });
 
             this.editor = editor;
         });
     }
-
 })(window, document, Granite.$, Granite);
