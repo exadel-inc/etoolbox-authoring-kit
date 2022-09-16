@@ -109,11 +109,11 @@ public class DialogConstants {
     public static final String PN_DEPENDS_ON_REF = "dependsOnRef";
     public static final String PN_DEPENDS_ON_REFTYPE = "dependsOnRefType";
     public static final String PN_DEPENDS_ON_REFLAZY = "dependsOnRefLazy";
-    public static final String PN_DISABLED = "disabled";
     public static final String PN_DISCONNECTED = "disconnected";
     public static final String PN_EDIT_ELEMENT_QUERY = "editElementQuery";
     public static final String PN_EDITOR_TYPE = "editorType";
     public static final String PN_EXTERNAL_STYLESHEETS = "externalStyleSheets";
+    public static final String PN_EXTRA_CLIENTLIBS = "extraClientlibs";
     public static final String PN_FALLBACK_BLOCK_TAG = "fallbackBlockTag";
     public static final String PN_FALLBACK_PATH = "fallbackPath";
     public static final String PN_FEATURES = "features";
@@ -133,7 +133,6 @@ public class DialogConstants {
     public static final String PN_PROTOCOLS = "protocols";
     public static final String PN_REF = "ref";
     public static final String PN_RENDER_HIDDEN = "renderHidden";
-    public static final String PN_REQUIRED = "required";
     public static final String PN_RETYPE = "retype";
     public static final String PN_SLING_RESOURCE_TYPE = "sling:resourceType";
     public static final String PN_TAB_SIZE = "tabSize";

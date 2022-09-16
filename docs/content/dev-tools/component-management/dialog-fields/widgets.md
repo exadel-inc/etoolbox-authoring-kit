@@ -226,6 +226,45 @@ public class NestedCheckboxListDialog {
 }
 ```
 
+### CodeEditor
+* Resource type: /apps/etoolbox-authoring-kit/components/authoring/codeeditor"
+
+Used to render a customizable code editor with syntax highlighting, autocompletion, and similar facilities inside the Granite UI.
+
+Current implementation is based on the freeware open-source [Ace Editor](https://ace.c9.io/).
+
+You can set up the code editor in your dialog as follows:
+```java
+@Dialog
+public class CodeEditorDialog {
+    @DialogField
+    @CodeEditor(
+        source = "https://cdnjs.cloudflare.com/ajax/libs/ace/1.10.0/ace.js",
+        mode = "js",
+        theme = "crimson_editor",
+        options = {
+            @CodeEditorOption(name = "wrap", value = "true", type = boolean.class),
+            @CodeEditorOption(name = "maxLines", value = "Infinity"),
+        }
+    )
+    private String code;
+}
+
+```
+_All_ of the properties of the `@CodeEditor` are optional and have meaningful defaults.
+
+You can specify _source_ to make sure that the code editor's library is fetched from the particular URL. This can be a specific version or a modified build of a library, e.g., packed with specific plugins. (Note: the source is selected once per a dialog; you cannot specify different sources for different instances of code editor within the same Touch UI experience).
+
+The _mode_ property is responsible for the "language" or markup the current editor supports. See [this link](https://github.com/ajaxorg/ace-builds/tree/master/src-noconflict) for the common variants. Default mode is `json`.
+
+The _theme_ property defines the graphic theme. See [link](https://github.com/ajaxorg/ace-builds/tree/master/src-noconflict) for available options. Default is the "_crimson_editor_" theme.
+
+_Options_ are essentially a set of key-value pairs used to initialize and profile an instance of the editor for different needs. You can specify keys and values that follow the [API reference](https://ajaxorg.github.io/ace-api-docs/index.html). Different instanced of the editor can have different modes, themes, and options even whet situated in the same dialog.
+
+There's also the possibility to set up _dataPrefix_. This is a rather rarely used setting that helps to differentiate code snippets as stored in the JCR and also prevents false handling of a value by the Granite engine. (For instance, if you would like to save a collection of JSON values inside a multifield, Granite could potentially "misunderstand" them for the JSON-encoded contents of the multifield itself, which would lead to a bad display. The use of prefixes helps to "escape" such values.)
+
+_Note:_ we do not modify, adapt, support, or redistribute the code of _Ace Editor_. We use it as-is by referencing a publicly available version of the code directly from the Internet. User experience can change with the release of a new version of _Ace Editor_ which we don't manage or control.
+
 ### ColorField
 
 * [@ColorField](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/color/ColorField.html)

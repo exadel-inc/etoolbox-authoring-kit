@@ -220,11 +220,11 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
             .forEach(property -> transferPolicies.put(CoreConstants.SEPARATOR_AT + property.name(), PropertyTransferPolicy.LEAVE_IN_MULTIFIELD));
         // However, we need to override policies for some properties that have been stored in a loop above
         transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_NAME, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
-        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_REQUIRED, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
+        transferPolicies.put(CoreConstants.SEPARATOR_AT + CoreConstants.PN_REQUIRED, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
         transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_WRAPPER_CLASS, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
         // Some attribute values are expected to be moved or copied though have set to "skipped" above
         transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_PRIMARY_TYPE, PropertyTransferPolicy.COPY_TO_NESTED_NODE);
-        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_DISABLED, PropertyTransferPolicy.COPY_TO_NESTED_NODE);
+        transferPolicies.put(CoreConstants.SEPARATOR_AT + CoreConstants.PN_DISABLED, PropertyTransferPolicy.COPY_TO_NESTED_NODE);
         transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_RENDER_HIDDEN, PropertyTransferPolicy.COPY_TO_NESTED_NODE);
         // Rest of element attributes will move to the inner node
         transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.WILDCARD, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);

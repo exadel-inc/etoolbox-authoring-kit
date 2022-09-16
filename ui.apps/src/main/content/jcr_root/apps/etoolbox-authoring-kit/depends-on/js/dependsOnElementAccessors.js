@@ -47,7 +47,13 @@
             notify && $el.trigger('change');
         },
         readonly: function ($el, state) {
-            $el.attr('readonly', state ? 'true' : null);
+            const fieldApi = $el.adaptTo('foundation-field');
+            if (fieldApi && typeof fieldApi.setReadOnly === 'function') {
+                fieldApi.setReadOnly(state);
+            } else {
+                $el.attr('readonly', state ? 'true' : null);
+            }
+            ns.ElementAccessors.updateValidity($el, true);
         },
         required: function ($el, val) {
             const fieldApi = $el.adaptTo('foundation-field');

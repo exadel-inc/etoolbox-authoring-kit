@@ -11,7 +11,6 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   --%>
-
 <%@ include file="/libs/granite/ui/global.jsp" %>
 <%@ page session="false" import="com.adobe.granite.ui.components.ComponentHelper.Options" %>
 <%

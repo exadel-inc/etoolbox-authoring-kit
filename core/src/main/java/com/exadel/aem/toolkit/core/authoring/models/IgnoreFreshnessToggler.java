@@ -39,7 +39,7 @@ public class IgnoreFreshnessToggler {
     private SlingHttpServletRequest request;
 
     /**
-     * Sets or unsets the {@code forceIgnoreFreshness} flag to the Sling HTTP requests upon this Sling model initialization
+     * Performs post-inject model initialization
      */
     @PostConstruct
     private void init() {
