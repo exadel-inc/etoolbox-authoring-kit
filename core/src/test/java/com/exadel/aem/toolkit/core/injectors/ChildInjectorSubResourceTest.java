@@ -10,7 +10,7 @@ import com.exadel.aem.toolkit.core.injectors.models.TestModelChildOuter;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 
-public class ChildInjectorFixTest {
+public class ChildInjectorSubResourceTest {
     @Rule
     public final AemContext context = new AemContext();
 
@@ -19,7 +19,7 @@ public class ChildInjectorFixTest {
         context.addModelsForClasses(TestModelChildOuter.class, TestModelChildOuter.class);
         context.registerInjectActivateService(new ChildInjector());
         context.registerInjectActivateService(new MockAdapterManagerImpl());
-        context.load().json("/com/exadel/aem/toolkit/core/injectors/childinjectorfix.json", "/content");
+        context.load().json("/com/exadel/aem/toolkit/core/injectors/childinjectorsubresource.json", "/content");
     }
 
     @Test

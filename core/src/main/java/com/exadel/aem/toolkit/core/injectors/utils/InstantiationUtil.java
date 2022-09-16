@@ -21,6 +21,10 @@ import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.api.wrappers.DeepReadValueMapDecorator;
+import org.apache.sling.api.wrappers.ModifiableValueMapDecorator;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.slf4j.Logger;
@@ -79,7 +83,8 @@ public class InstantiationUtil {
             .stream()
             .filter(entry -> isMatchByPrefixOrPostfix(entry.getKey(), prefix, postfix))
             .collect(Collectors.toMap(
-                entry -> clearPrefixOrPostfix(entry.getKey(), prefix, postfix),
+                Map.Entry::getKey,
+                //entry -> clearPrefixOrPostfix(entry.getKey(), prefix, postfix),
                 Map.Entry::getValue));
         List<Resource> children = StreamSupport.stream(current.getChildren().spliterator(), false)
             .filter(child -> isMatchByPrefixOrPostfix(child.getName(), prefix, postfix))
@@ -93,7 +98,7 @@ public class InstantiationUtil {
             current.getResourceResolver(),
             current.getPath(),
             values.getOrDefault(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, current.getResourceType()).toString(),
-            new ValueMapDecorator(values),
+            new SubNameDeepReadValueMapDecorator(current, new ModifiableValueMapDecorator(values), prefix, postfix),
             children);
     }
 
@@ -155,5 +160,64 @@ public class InstantiationUtil {
             name = StringUtils.removeEnd(name, postfix);
         }
         return parentPath + CoreConstants.SEPARATOR_SLASH + name;
+    }
+}
+
+class SubNameDeepReadValueMapDecorator extends DeepReadValueMapDecorator {
+    private final String prefix;
+
+    private final String postfix;
+
+    private final ValueMap base;
+
+    private final ResourceResolver resolver;
+
+    private final String pathPrefix;
+
+    public SubNameDeepReadValueMapDecorator(Resource resource, ValueMap base, String prefix, String postfix) {
+        super(resource, base);
+        this.resolver = resource.getResourceResolver();
+        this.pathPrefix = resource.getPath() + CoreConstants.SEPARATOR_SLASH;
+        this.base = base;
+        this.prefix = prefix;
+        this.postfix = postfix;
+    }
+
+    private ValueMap getValueMap(final String name) {
+        final int position = name.lastIndexOf(CoreConstants.SEPARATOR_SLASH);
+        if ( position == -1 ) {
+            return this.base;
+        }
+        final Resource resource = this.resolver.getResource(this.pathPrefix + this.getNameWithPrefixAndPostfix(name.substring(0, position)));
+        if ( resource != null ) {
+            final ValueMap valueMap = resource.adaptTo(ValueMap.class);
+            if ( valueMap != null ) {
+                return valueMap;
+            }
+        }
+        return ValueMap.EMPTY;
+    }
+
+    @Override
+    public <T> T get(String name, Class<T> type) {
+        return this.getValueMap(name).get(this.getPropertyName(name), type);
+    }
+
+    private String getNameWithPrefixAndPostfix(String name) {
+        if (StringUtils.isNotEmpty(prefix)) {
+            name = prefix + name;
+        }
+        if (StringUtils.isNotEmpty(postfix)) {
+            name = name + postfix;
+        }
+        return name;
+    }
+
+    private String getPropertyName(final String name) {
+        final int pos = name.lastIndexOf(CoreConstants.SEPARATOR_SLASH);
+        if ( pos == -1 ) {
+            return name;
+        }
+        return name.substring(pos + 1);
     }
 }

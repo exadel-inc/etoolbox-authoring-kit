@@ -13,7 +13,7 @@ public class TestModelChildInner {
     @Child
     private Resource innerModelResource;
 
-    @ValueMapValue
+    @ValueMapValue(name = "stringFieldResource/stringField")
     private String innerModelStringField;
 
     public Resource getInnerModelResource() {
