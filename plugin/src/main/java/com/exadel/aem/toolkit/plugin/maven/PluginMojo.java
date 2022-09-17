@@ -79,10 +79,14 @@ public class PluginMojo extends AbstractMojo {
         }
         pluginDependencies.stream().findFirst().ifPresent(d -> classpathElements.add(d.getFile().getPath()));
 
+        PluginSettings settings = PluginSettings.builder()
+            .componentsPathBase(componentsPathBase)
+            .componentsReferenceBase(componentsReferenceBase)
+            .terminateOn(terminateOn)
+            .build();
         PluginRuntime.contextBuilder()
             .classPathElements(classpathElements)
-            .packageBase(componentsReferenceBase)
-            .terminateOn(terminateOn)
+            .settings(settings)
             .build();
 
         int processedCount = 0;

@@ -29,6 +29,14 @@ class EmptyRuntimeContext implements PluginRuntimeContext {
      * Throws a {@code PluginException} upon call since the runtime has not been initialized
      */
     @Override
+    public PluginSettings getSettings() {
+        throw new PluginException(NOT_INITIALIZED_EXCEPTION_MESSAGE);
+    }
+
+    /**
+     * Throws a {@code PluginException} upon call since the runtime has not been initialized
+     */
+    @Override
     public ReflectionContextHelper getReflection() {
         throw new PluginException(NOT_INITIALIZED_EXCEPTION_MESSAGE);
     }
