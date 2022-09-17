@@ -24,6 +24,7 @@ import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingTest;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
+    AnnotationUtilTest.class,
     TargetsTest.class,
     OrderingTest.class,
     ComponentsTest.class,
