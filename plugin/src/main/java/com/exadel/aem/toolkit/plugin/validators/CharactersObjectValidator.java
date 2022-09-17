@@ -66,9 +66,9 @@ public class CharactersObjectValidator extends AllNotBlankValidator {
      */
     public Characters getFilteredInstance(Characters source) {
         if (super.test(source)) {
-            return AnnotationUtil.filterInstance(source, Characters.class, Arrays.asList(METHOD_RANGE_START, METHOD_RANGE_END));
+            return AnnotationUtil.filterInstance(source, Arrays.asList(METHOD_RANGE_START, METHOD_RANGE_END));
         }
-        return AnnotationUtil.filterInstance(source, Characters.class, Arrays.asList(METHOD_NAME, METHOD_ENTITY));
+        return AnnotationUtil.filterInstance(source, Arrays.asList(METHOD_NAME, METHOD_ENTITY));
     }
 
     /**
