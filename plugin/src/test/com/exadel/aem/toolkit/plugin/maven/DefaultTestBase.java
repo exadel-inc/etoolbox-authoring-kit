@@ -28,16 +28,15 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
-import com.exadel.aem.toolkit.plugin.utils.FileSystemHelper;
-import com.exadel.aem.toolkit.plugin.utils.TestConstants;
-import com.exadel.aem.toolkit.plugin.writers.TestXmlUtility;
-
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.RESOURCE_FOLDER_COMMON;
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.RESOURCE_FOLDER_COMPONENT;
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.RESOURCE_FOLDER_DEPENDSON;
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.RESOURCE_FOLDER_WIDGET;
+
+import com.exadel.aem.toolkit.plugin.accessories.FileSystemHost;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
+import com.exadel.aem.toolkit.plugin.utils.TestConstants;
+import com.exadel.aem.toolkit.plugin.writers.TestXmlUtility;
 
 public abstract class DefaultTestBase {
     static final Logger LOG = LoggerFactory.getLogger("EToolbox Authoring Kit Unit Tests");
@@ -57,15 +56,19 @@ public abstract class DefaultTestBase {
 
     private static final String SUFFIX_PATTERN = "(Widget|Annotation)$";
 
-    private static FileSystemHelper fileSystemHelper;
+    private static FileSystemHost fileSystemHelper;
 
     @BeforeClass
     public static void setUp() {
-        fileSystemHelper = new FileSystemHelper();
+        fileSystemHelper = new FileSystemHost();
+        PluginSettings settings = PluginSettings
+            .builder()
+            .componentsPathBase(TestConstants.PACKAGE_ROOT_PATH)
+            .terminateOn(DialogConstants.VALUE_NONE)
+            .build();
         PluginRuntime.contextBuilder()
                 .classPathElements(CLASSPATH_ELEMENTS)
-                .packageBase(StringUtils.EMPTY)
-                .terminateOn(DialogConstants.VALUE_NONE)
+                .settings(settings)
                 .build();
     }
 
@@ -106,11 +109,14 @@ public abstract class DefaultTestBase {
         if (preparation != null) {
             preparation.accept(fileSystemHelper.getFileSystem());
         }
+        Path effectivePath = createdFilesPath != null
+            ? fileSystemHelper.getFileSystem().getPath(TestConstants.PACKAGE_ROOT_PATH + createdFilesPath)
+            : null;
         try {
             boolean result = TestXmlUtility.doTest(
                 fileSystemHelper.getFileSystem(),
                 testable.getName(),
-                createdFilesPath != null ? fileSystemHelper.getFileSystem().getPath(createdFilesPath) : null,
+                effectivePath,
                 sampleFilesPath);
             Assert.assertTrue(result);
         } catch (ClassNotFoundException cnfEx) {

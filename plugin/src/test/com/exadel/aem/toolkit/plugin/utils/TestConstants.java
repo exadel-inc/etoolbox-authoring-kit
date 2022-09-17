@@ -18,6 +18,7 @@ import java.nio.file.Paths;
 public class TestConstants {
 
     public static final String CONTENT_ROOT_PATH = "src/test/resources";
+    public static final String PACKAGE_ROOT_PATH = "jcr_root/apps/eak/";
 
     public static final String RESOURCE_FOLDER_COMMON = "common";
     public static final String RESOURCE_FOLDER_COMPONENT = "component";
