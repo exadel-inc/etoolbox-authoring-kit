@@ -20,6 +20,7 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
 import com.exadel.aem.toolkit.api.annotations.policies.PolicyTarget;
+import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing subsidiary authoring process parameters for an AEM component,
@@ -47,11 +48,12 @@ class CqEditConfigWriter extends PackageEntryWriter {
 
     /**
      * Gets whether the current {@code Class} is eligible for populating a {@code _cq_editConfig.xml} structure
-     * @param componentClass The {@code Class} under consideration
+     * @param source The {@code Source} that refers to a class under consideration
      * @return True if the current {@code Class} is annotated with {@link EditConfig}; otherwise, false
      */
     @Override
-    boolean canProcess(Class<?> componentClass) {
+    boolean canProcess(Source source) {
+        Class<?> componentClass = (Class<?>) source.adaptTo(Class.class);
         return componentClass.isAnnotationPresent(EditConfig.class)
                 || Arrays.stream(componentClass.getAnnotationsByType(AllowedChildren.class))
                 .anyMatch(ac -> PolicyTarget.CURRENT.equals(ac.targetContainer()));
