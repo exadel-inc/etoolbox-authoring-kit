@@ -76,7 +76,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
         try {
             xmlRuntime = new XmlContextHelper(XmlFactory.newDocument());
         } catch (ParserConfigurationException e) {
-            // Cannot proceed with the plugin flow if XML subsystem fails this early
+            // Cannot proceed with the plugin flow if the XML subsystem fails this early
             throw new PluginException(XML_EXCEPTION_MESSAGE, e);
         }
         return xmlRuntime;
@@ -114,8 +114,8 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
         }
 
         /**
-         * Assigns the {@link PluginSettings} object to this instance. Settings are defined within Maven subsystem to
-         * control the plugin execution
+         * Assigns the {@link PluginSettings} object to this instance. Settings are defined within the Maven subsystem
+         * to control the plugin execution
          * @param value {@code PluginSettings} object. A non-null value is expected
          * @return This instance
          */
@@ -125,8 +125,8 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
         }
 
         /**
-         * Assigns a particular {@link ExceptionHandler}. This is used to override the exception handler derived from
-         * the plugin's settings (usually in test cases)
+         * Assigns a particular {@link ExceptionHandler}. The handler is used to override the exception handler derived
+         * from the plugin's settings (usually in test cases)
          * @param value {@code ExceptionHandler} object. A non-null value is expected
          * @return This instance
          */

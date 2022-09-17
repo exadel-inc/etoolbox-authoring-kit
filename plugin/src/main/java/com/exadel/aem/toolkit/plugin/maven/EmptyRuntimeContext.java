@@ -20,7 +20,7 @@ import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
 
 /**
  * The fallback implementation of {@link PluginRuntimeContext} for the ToolKit Maven plugin instance that
- * has not been properly and completely initialized
+ * has not been properly initialized
  */
 class EmptyRuntimeContext implements PluginRuntimeContext {
     private static final String NOT_INITIALIZED_EXCEPTION_MESSAGE = "Plugin was not properly initialized";

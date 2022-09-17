@@ -30,7 +30,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
 /**
- * Implements {@link Source} to expose the metadata that is specific for Java class representing an AEM component
+ * Implements {@link Source} to expose the metadata that is specific for the Java class representing an AEM component
  */
 class ComponentSourceImpl extends ClassSourceImpl implements ComponentSource {
 
@@ -94,7 +94,7 @@ class ComponentSourceImpl extends ClassSourceImpl implements ComponentSource {
     }
 
     /**
-     * Completes if necessary the path specified for the current AEM component so that it represents an absolute
+     * Completes, if necessary, the path specified for the current AEM component so that it represents an absolute
      * repository path
      * @return A nullable string value
      */
@@ -118,7 +118,9 @@ class ComponentSourceImpl extends ClassSourceImpl implements ComponentSource {
             return ROOT_DIRECTORY + effectivePath;
         }
 
-        String result = StringUtils.stripEnd(PluginRuntime.context().getSettings().getComponentsPathBase(), CoreConstants.SEPARATOR_SLASH)
+        String result = StringUtils.stripEnd(
+            PluginRuntime.context().getSettings().getComponentsPathBase(),
+            CoreConstants.SEPARATOR_SLASH)
             + CoreConstants.SEPARATOR_SLASH
             + effectivePath;
         return StringUtils.strip(result, CoreConstants.SEPARATOR_SLASH);

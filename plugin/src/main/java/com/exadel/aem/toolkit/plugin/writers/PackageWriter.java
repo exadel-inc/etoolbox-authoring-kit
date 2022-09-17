@@ -48,8 +48,8 @@ import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
 import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 /**
- * Implements actions needed to store collected/processed data into AEM package, optimal for use in "try-with-resources"
- * block
+ * Implements actions needed to store collected/processed data into an AEM package, optimal for use in
+ * "try-with-resources" block
  */
 public class PackageWriter implements AutoCloseable {
 
@@ -105,7 +105,7 @@ public class PackageWriter implements AutoCloseable {
        ---------------- */
 
     /**
-     * Stores information about the current binary into the package for the purposes of versioning
+     * Stores information about the current binary into the package for the version tracking
      * @param info {@link PluginInfo} object
      */
     public void writeInfo(PluginInfo info) {
@@ -156,7 +156,7 @@ public class PackageWriter implements AutoCloseable {
 
         Map<PackageEntryWriter, Source> viewsByWriter = getViewsByWriter(component);
 
-        // Raise an exception in case there's no data to write to .content.xml file/node
+        // Raise an exception in case there's no data to write to {@code .content.xml} file/node
         if (viewsByWriter.keySet().stream().noneMatch(writer -> Scopes.COMPONENT.equals(writer.getScope()))) {
             InvalidSettingException e = new InvalidSettingException(
                 COMPONENT_DATA_MISSING_EXCEPTION_MESSAGE + component.adaptTo(Class.class).getName());
@@ -185,8 +185,8 @@ public class PackageWriter implements AutoCloseable {
     }
 
     /**
-     * Called by {@link PackageWriter#write(ComponentSource)} to make sure that the target folder for storing component's
-     * markup is accessible
+     * Called by {@link PackageWriter#write(ComponentSource)} to make sure that the target folder for storing the
+     * component's markup is accessible
      * @param component {@link ComponentSource} instance representing the component class
      * @param path      {@code Path} object representing the required folder
      * @return True or false
