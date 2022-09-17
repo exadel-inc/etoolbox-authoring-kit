@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
+import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.writers.PackageWriter;
 
@@ -60,13 +61,14 @@ public class PluginMojo extends AbstractMojo {
     private String terminateOn;
 
     /**
-     * Executes the ToolKit Maven plugin. This is done by initializing {@link PluginRuntime} and then
-     * enumerating classpath entries present in the Maven reactor. Relevant AEM component classes (POJOs or Sling models)
-     * are extracted and processed with {@link PackageWriter} instance created for a particular Maven project; the result
-     * is written down to the AEM package zip file. The method is run once for each package module that has the ToolKit
+     * Executes the ToolKit Maven plugin. This is done by initializing {@link PluginRuntime} and then enumerating
+     * classpath entries present in the Maven reactor. Relevant AEM component classes (POJOs or Sling models) are
+     * extracted and processed with {@link PackageWriter} instance created for a particular Maven project; the result is
+     * written down to the AEM package zip file. The method is run once for each package module that has the ToolKit
      * plugin included in the POM file
      * @throws MojoExecutionException if work on a package cannot proceed (due to e.g. file system failure or improper
-     * initialization) or in case an internal exception is thrown that corresponds to the {@code terminateOn} setting
+     *                                initialization) or in case an internal exception is thrown that corresponds to the
+     *                                {@code terminateOn} setting
      */
     public void execute() throws MojoExecutionException {
         List<String> classpathElements;
@@ -74,8 +76,8 @@ public class PluginMojo extends AbstractMojo {
             classpathElements = project.getCompileClasspathElements();
         } catch (DependencyResolutionRequiredException e) {
             throw new MojoExecutionException(String.format(DEPENDENCY_RESOLUTION_EXCEPTION_MESSAGE,
-                    project.getBuild().getFinalName(),
-                    e.getMessage()), e);
+                project.getBuild().getFinalName(),
+                e.getMessage()), e);
         }
         pluginDependencies.stream().findFirst().ifPresent(d -> classpathElements.add(d.getFile().getPath()));
 
@@ -90,16 +92,16 @@ public class PluginMojo extends AbstractMojo {
             .build();
 
         int processedCount = 0;
-        try (PackageWriter packageWriter = PackageWriter.forMavenProject(project, componentsPathBase)) {
+        try (PackageWriter packageWriter = PackageWriter.forMavenProject(project)) {
             packageWriter.writeInfo(PluginInfo.getInstance());
-            for (Class<?> componentClass : PluginRuntime.context().getReflection().getComponentClasses()) {
-                processedCount += packageWriter.write(componentClass) ? 1 : 0;
+            for (ComponentSource component : PluginRuntime.context().getReflection().getComponents()) {
+                processedCount += packageWriter.write(component) ? 1 : 0;
             }
         } catch (PluginException e) {
             throw new MojoExecutionException(String.format(PLUGIN_EXECUTION_EXCEPTION_MESSAGE,
-                    e.getCause() != null ? e.getCause().getClass().getSimpleName() : e.getClass().getSimpleName(),
-                    project.getBuild().getFinalName(),
-                    e.getMessage()), e);
+                e.getCause() != null ? e.getCause().getClass().getSimpleName() : e.getClass().getSimpleName(),
+                project.getBuild().getFinalName(),
+                e.getMessage()), e);
         }
 
         PluginRuntime.close();

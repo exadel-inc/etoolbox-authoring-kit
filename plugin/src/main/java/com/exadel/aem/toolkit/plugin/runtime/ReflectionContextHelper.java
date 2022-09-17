@@ -47,6 +47,8 @@ import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
 import com.exadel.aem.toolkit.plugin.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntimeContext;
+import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
+import com.exadel.aem.toolkit.plugin.sources.Sources;
 import com.exadel.aem.toolkit.plugin.utils.ScopeUtil;
 import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 
@@ -61,6 +63,8 @@ public class ReflectionContextHelper {
 
     private org.reflections.Reflections reflections;
 
+    private List<ComponentSource> components;
+
     private List<Handler> handlers;
 
     private List<Validator> validators;
@@ -71,17 +75,21 @@ public class ReflectionContextHelper {
     private ReflectionContextHelper() {
     }
 
-    /* --------------------------
-       Retrieving managed classes
-       -------------------------- */
+    /* -----------------------------
+       Retrieving managed components
+       ----------------------------- */
 
     /**
-     * Returns the list of {@code AemComponent}-annotated and {@code @Dialog}-annotated classes within the scope of the
-     * plugin to determine which of the component folders to process. If {@code componentsPath} is set for this
-     * instance, the classes are tested to be under that path
-     * @return {@code Set} of class references
+     * Retrieves a collection of unique {@code ComponentSource} objects that encapsulate {@code AemComponent}-annotated
+     * and {@code @Dialog}-annotated classes. If the processing is restricted to certain package(-s) in the plugin's
+     * settings, the classes are made sure to conform
+     * @return A non-null {@code Set} of {@code ComponentSource} objects; can be empty
      */
-    public Set<Class<?>> getComponentClasses() {
+    public List<ComponentSource> getComponents() {
+        if (components != null) {
+            return components;
+        }
+
         Set<Class<?>> classesAnnotatedWithComponent = reflections.getTypesAnnotatedWith(AemComponent.class, true).stream()
             .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
             .collect(Collectors.toSet());
@@ -96,7 +104,34 @@ public class ReflectionContextHelper {
             .filter(cls -> !componentViews.contains(cls))
             .collect(Collectors.toList()));
 
-        return classesAnnotatedWithComponent;
+        components = classesAnnotatedWithComponent.stream().map(Sources::fromComponentClass).collect(Collectors.toList());
+        return components;
+    }
+
+    /**
+     * Retrieves a {@link ComponentSource} that encapsulates the given AEM component's {@code Class}
+     * @param componentClass {@code Class} reference; a non-null value is expected
+     * @return {@code ComponentSource} value; can be null if there's no match
+     */
+    public ComponentSource getComponent(Class<?> componentClass) {
+        return getComponents()
+            .stream()
+            .filter(comp -> comp.matches(componentClass))
+            .findFirst()
+            .orElse(null);
+    }
+
+    /**
+     * Retrieves a {@link ComponentSource} that matches the given {@code path} (either an absolute one or a chunk)
+     * @param path {@code String} value; a non-blank string is expected
+     * @return {@code ComponentSource} value; can be null if there's no match
+     */
+    public ComponentSource getComponent(String path) {
+        return getComponents()
+            .stream()
+            .filter(comp -> comp.matches(path))
+            .findFirst()
+            .orElse(null);
     }
 
     /* -------------------
