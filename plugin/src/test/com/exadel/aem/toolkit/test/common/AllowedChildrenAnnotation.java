@@ -10,6 +10,8 @@ import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
 import com.exadel.aem.toolkit.api.annotations.policies.PolicyMergeMode;
 import com.exadel.aem.toolkit.api.annotations.policies.PolicyTarget;
 import com.exadel.aem.toolkit.plugin.utils.TestConstants;
+import com.exadel.aem.toolkit.test.component.ComplexComponent1;
+import com.exadel.aem.toolkit.test.component.ComplexComponent2;
 
 public class AllowedChildrenAnnotation {
 
@@ -38,7 +40,34 @@ public class AllowedChildrenAnnotation {
             resourceNames = {"resource1, resource2", "resource3"},
             mode = PolicyMergeMode.OVERRIDE
     )
-    public static class Test1 {
+    public static class SimpleContainer {
+    }
+
+    @AemComponent(
+        title = TestConstants.DEFAULT_COMPONENT_TITLE,
+        path = TestConstants.DEFAULT_COMPONENT_NAME
+    )
+    @AllowedChildren(
+        classes = {ComplexComponent1.class, ComplexComponent2.class},
+        pagePaths = {"page/Path1, page/Path2"},
+        targetContainer = PolicyTarget.CURRENT,
+        mode = PolicyMergeMode.MERGE
+    )
+    public static class ClassBasedContainer {
+    }
+
+    @AemComponent(
+        title = TestConstants.DEFAULT_COMPONENT_TITLE,
+        path = TestConstants.DEFAULT_COMPONENT_NAME
+    )
+    @AllowedChildren(
+        value = "restype1",
+        classes = {ComplexComponent1.class, ComplexComponent2.class},
+        pagePaths = {"page/Path1, page/Path2"},
+        targetContainer = PolicyTarget.CURRENT,
+        mode = PolicyMergeMode.MERGE
+    )
+    public static class MixedContainer {
     }
 
     @AemComponent(
@@ -69,7 +98,7 @@ public class AllowedChildrenAnnotation {
     @AllowedChildren(
             value = {}
     )
-    public static class Test2 {
+    public static class ContainerChildEditConfig {
     }
 
     @AemComponent(
@@ -104,6 +133,6 @@ public class AllowedChildrenAnnotation {
             value = {},
             targetContainer = PolicyTarget.CURRENT
     )
-    public static class Test3 {
+    public static class ContainerEditConfig {
     }
 }

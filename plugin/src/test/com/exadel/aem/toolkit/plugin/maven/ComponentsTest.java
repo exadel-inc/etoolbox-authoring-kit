@@ -26,7 +26,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.plugin.utils.TestConstants;
-import com.exadel.aem.toolkit.test.common.AllowedChildrenAnnotation;
 import com.exadel.aem.toolkit.test.common.ChildEditConfigAnnotation;
 import com.exadel.aem.toolkit.test.common.EditConfigAnnotation;
 import com.exadel.aem.toolkit.test.component.ComplexComponent1;
@@ -92,21 +91,6 @@ public class ComponentsTest extends DefaultTestBase {
     }
 
     @Test
-    public void testAllowedChildren1() {
-        test(AllowedChildrenAnnotation.Test1.class, "common/allowedChildren/test1");
-    }
-
-    @Test
-    public void testAllowedChildren2() {
-        test(AllowedChildrenAnnotation.Test2.class, "common/allowedChildren/test2");
-    }
-
-    @Test
-    public void testAllowedChildren3() {
-        test(AllowedChildrenAnnotation.Test3.class, "common/allowedChildren/test3");
-    }
-
-    @Test
     public void testComponentWithoutDialog() {
         test(ComponentWithoutDialog.class);
     }
@@ -126,7 +110,7 @@ public class ComponentsTest extends DefaultTestBase {
         test(
             ComplexComponentHolder.class,
             targetPath,
-            fileSystem -> writeFile(fileSystem.getPath(TestConstants.DEFAULT_COMPONENT_NAME, ".content.xml"), outdatedContentXml));
+            fileSystem -> writeFile(fileSystem.getPath(TestConstants.PACKAGE_ROOT_PATH, TestConstants.DEFAULT_COMPONENT_NAME, ".content.xml"), outdatedContentXml));
     }
 
     @Test

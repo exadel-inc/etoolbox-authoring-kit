@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.exadel.aem.toolkit.plugin.utils.AnnotationUtilTest;
 import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingTest;
 
 /**
@@ -26,10 +27,11 @@ import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingTest;
 @SuiteClasses({
     AnnotationUtilTest.class,
     TargetsTest.class,
-    OrderingTest.class,
     ComponentsTest.class,
     WidgetsTest.class,
+    PoliciesTest.class,
     PlacementTest.class,
+    OrderingTest.class,
     ValidationsTest.class,
     IgnoreTest.class,
     ExceptionsTest.class,
