@@ -20,6 +20,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import com.exadel.aem.toolkit.plugin.exceptions.TerminateOnTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.AllowedChildrenTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.ComponentsTest;
+import com.exadel.aem.toolkit.plugin.handlers.common.EditConfigTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.IgnoreFreshnessTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.WriteModeTest;
 import com.exadel.aem.toolkit.plugin.handlers.dependson.DependsOnTest;
@@ -45,6 +46,7 @@ import com.exadel.aem.toolkit.plugin.validators.ValidatorsTest;
     TargetsTest.class,
 
     ComponentsTest.class,
+    EditConfigTest.class,
     WriteModeTest.class,
     WidgetsTest.class,
     WidgetsMetaTest.class,

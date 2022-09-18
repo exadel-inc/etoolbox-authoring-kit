@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.common;
+package com.exadel.aem.toolkit.plugin.handlers.common.cases.editconfig;
 
 import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.COPYMOVE;
 import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.DELETE;
@@ -25,8 +25,8 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.ListenerConstants;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.FileUploadWidget;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomChildEditConfigAnnotationAuto;
-import com.exadel.aem.toolkit.test.widget.FileUploadWidget;
 
 @AemComponent(
     path = DEFAULT_COMPONENT_NAME,

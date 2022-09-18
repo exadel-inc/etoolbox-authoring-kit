@@ -34,8 +34,8 @@ import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentW
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentWithTabsAndInnerClass;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentWithTabsAsNestedClasses;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentWithoutDialog;
-import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.MultiColumnDialog;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.viewpattern.component1.ComplexComponentHolder;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.MultiColumnDialog;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
