@@ -11,42 +11,41 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.widget;
+package com.exadel.aem.toolkit.plugin.handlers.widgets.cases;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
-import com.exadel.aem.toolkit.api.annotations.widgets.Password;
+import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.NodeFilter;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 @AemComponent(
         path = TestConstants.DEFAULT_COMPONENT_NAME,
-        title = "Password Widget Dialog"
+        title = "PathField Widget Dialog"
 )
 @Dialog
 @SuppressWarnings("unused")
-public class PasswordWidget {
+public class PathFieldWidget {
 
-    @DialogField(validation = "foundation.jcr.name")
-    @Password(
-            emptyText = "test-password",
-            autocomplete = "on",
-            autofocus = true,
-            retype = "retype-password"
+    @DialogField(label = "Edit path")
+    @PathField(
+        deleteHint = false,
+        emptyText = "Path goes here",
+        droppable = true,
+        filter = NodeFilter.NOSYSTEM,
+        multiple = true,
+        rootPath = "/content",
+        suggestionSrc = "suggestion"
     )
-    String password;
+    String path;
 
-    @FieldSet(
-        value = NestedPassword.class,
-        namePrefix = "../../",
-        namePostfix = "21"
+    @DialogField(label = "Edit path 2")
+    @PathField(
+        emptyText = "Path goes here",
+        rootPath = "/content/dam",
+        forceSelection = true,
+        pickerSrc = "picker"
     )
-    private String nestedPassword;
-
-    private static class NestedPassword {
-        @DialogField
-        @Password(retype = "retype-password")
-        String password;
-    }
+    String path2;
 }

@@ -11,35 +11,49 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.widget;
+package com.exadel.aem.toolkit.plugin.handlers.widgets.cases;
 
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.FileUpload;
+import com.exadel.aem.toolkit.api.annotations.widgets.button.Button;
+import com.exadel.aem.toolkit.api.annotations.widgets.button.ButtonType;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariant;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 
 @AemComponent(
         path = DEFAULT_COMPONENT_NAME,
-        title = "FileUpload Widget Dialog"
+        title = "Button Widget Dialog"
 )
 @Dialog
 @SuppressWarnings("unused")
-public class FileUploadWidget {
-    @DialogField
-    @FileUpload(
-            emptyText = "empty text",
-            async = false,
-            autoStart = false,
-            uploadUrl = "/content/dam/acme/uploads",
-            mimeTypes = {".png", ".jpg"},
-            variant = ElementVariant.MINIMAL,
+public class ButtonWidget {
+
+    @Button(
+            type = ButtonType.SUBMIT,
+            autocomplete = "on",
+            formId = "test-form",
+            text = "test-text",
+            textComment = "test-comment",
+            hideText = true,
+            active = true,
+            icon = "search",
+            iconSize = Size.LARGE,
             size = Size.LARGE,
-            sizeLimit = 10000,
-            text = "Upload File"
+            block = true,
+            command = "shift+s",
+            trackingElement = "test-element",
+            trackingFeature = "test-feature"
     )
-    String file1;
+    String buttonField1;
+
+    @Button(
+            type = ButtonType.RESET,
+            text = "test-text",
+            icon = "delete",
+            variant = ElementVariant.ACTION_BAR,
+            command = "backspace"
+    )
+    String buttonField2;
 }

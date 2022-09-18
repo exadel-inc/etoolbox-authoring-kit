@@ -11,32 +11,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.widget;
-
-import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
+package com.exadel.aem.toolkit.plugin.handlers.widgets.cases;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
-import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextAreaResizeType;
+import com.exadel.aem.toolkit.api.annotations.widgets.Hidden;
 
 @AemComponent(
-        path = DEFAULT_COMPONENT_NAME,
-        title = "TextArea Widget Dialog"
+        path = "test-component",
+        title = "test-component-dialog"
 )
 @Dialog
 @SuppressWarnings("unused")
-public class TextAreaWidget {
-    @DialogField(label = "Valid TextArea")
-    @TextArea(
-        value = "default value",
-        emptyText = "empty text",
-        autocomplete = "name",
-        autofocus = true,
-        rows = 10,
-        cols = 50,
-        resize = TextAreaResizeType.BOTH
-    )
-    String text1;
+public class HiddenWidget {
+
+    @DialogField
+    @Hidden("test-hidden")
+    String field;
+
+    @DialogField(name = "field@Delete")
+    @Hidden
+    String fieldRemover;
+
 }

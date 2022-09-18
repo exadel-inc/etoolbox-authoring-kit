@@ -11,27 +11,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.widget;
+package com.exadel.aem.toolkit.plugin.handlers.widgets.cases;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.Hidden;
+import com.exadel.aem.toolkit.api.annotations.widgets.Hyperlink;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.LinkCheckerVariant;
+import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 @AemComponent(
-        path = "test-component",
-        title = "test-component-dialog"
+    path = TestConstants.DEFAULT_COMPONENT_NAME,
+    title = TestConstants.DEFAULT_COMPONENT_TITLE
 )
 @Dialog
 @SuppressWarnings("unused")
-public class HiddenWidget {
+public class HyperlinkWidget {
 
-    @DialogField
-    @Hidden("test-hidden")
+    @Hyperlink(
+        href = "http://acme.com/en/content/page.html",
+        hrefI18n = "http://acme.com/fr/content/page.html",
+        text = "Link Text",
+        hideText = true,
+        rel = "that",
+        linkChecker = LinkCheckerVariant.SKIP
+    )
     String field;
-
-    @DialogField(name = "field@Delete")
-    @Hidden
-    String fieldRemover;
-
 }

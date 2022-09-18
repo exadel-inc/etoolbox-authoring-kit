@@ -11,23 +11,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.widget;
-
-import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
+package com.exadel.aem.toolkit.plugin.handlers.widgets.cases;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.Text;
+import com.exadel.aem.toolkit.api.annotations.widgets.Include;
+import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 @AemComponent(
-    path = DEFAULT_COMPONENT_NAME,
-    title = "Text Widget Dialog"
+    path = TestConstants.DEFAULT_COMPONENT_NAME,
+    title = TestConstants.DEFAULT_COMPONENT_TITLE
 )
 @Dialog
 @SuppressWarnings("unused")
-public class TextWidget {
-    @DialogField(label = "Valid Text")
-    @Text("TEXT")
-    String text1;
+public class IncludeWidget {
+
+    @Include(
+        path = "/content/path/to/resource",
+        resourceType = "component/resource/type"
+    )
+    String field;
 }

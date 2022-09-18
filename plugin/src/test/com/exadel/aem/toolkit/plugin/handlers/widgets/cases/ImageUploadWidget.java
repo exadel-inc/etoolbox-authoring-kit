@@ -11,29 +11,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.widget;
+package com.exadel.aem.toolkit.plugin.handlers.widgets.cases;
 
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 
 @AemComponent(
         path = DEFAULT_COMPONENT_NAME,
-        title = "TextField Widget Dialog"
+        title = "ImageUpload Widget Dialog"
 )
 @Dialog
 @SuppressWarnings("unused")
-public class TextFieldWidget {
-    @DialogField(label = "Enter text")
-    @TextField(
-        value = "default value",
-        emptyText = "empty text",
-        autofocus = true,
-        autocomplete = "on",
-        maxLength = 150
+public class ImageUploadWidget {
+    @DialogField
+    @ImageUpload(
+            mimeTypes=".png",
+            sizeLimit = 100000,
+            fileNameParameter = "./image/fileName",
+            fileReferenceParameter = "./image/fileRef"
     )
-    String text;
+    String file1;
+
+    @DialogField
+    @ImageUpload(
+        mimeTypes=".png",
+        sizeLimit = 100000,
+        fileNameParameter = "./image/fileName",
+        fileReferenceParameter = "image/fileRef",
+        allowUpload = true,
+        viewInAdminURI = "admin/uri",
+        icon = "search"
+    )
+    String file2;
 }

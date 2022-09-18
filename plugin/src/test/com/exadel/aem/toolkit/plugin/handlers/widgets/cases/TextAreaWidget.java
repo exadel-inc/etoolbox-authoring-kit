@@ -11,37 +11,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.widget;
+package com.exadel.aem.toolkit.plugin.handlers.widgets.cases;
 
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
+import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextAreaResizeType;
 
 @AemComponent(
         path = DEFAULT_COMPONENT_NAME,
-        title = "Nested CheckboxList Widget Dialog"
+        title = "TextArea Widget Dialog"
 )
 @Dialog
 @SuppressWarnings("unused")
-public class NestedCheckboxListWidget {
-    @Checkbox(text = "Level 1 Checkbox", sublist = Sublist.class)
-    boolean option1L1;
-
-    static class Sublist {
-        @Checkbox(text = "Level 2 Checkbox 1")
-        boolean option2L1;
-
-        @Checkbox(text = "Level 2 Checkbox 2", sublist = Sublist2.class)
-        boolean option2L2;
-    }
-
-    private static class Sublist2 {
-        @Checkbox(text = "Level 3 Checkbox 1")
-        boolean option3L1;
-
-        @Checkbox(text = "Level 3 Checkbox 2")
-        boolean option3L2;
-    }
+public class TextAreaWidget {
+    @DialogField(label = "Valid TextArea")
+    @TextArea(
+        value = "default value",
+        emptyText = "empty text",
+        autocomplete = "name",
+        autofocus = true,
+        rows = 10,
+        cols = 50,
+        resize = TextAreaResizeType.BOTH
+    )
+    String text1;
 }

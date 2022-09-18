@@ -11,34 +11,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.widget;
+package com.exadel.aem.toolkit.plugin.handlers.widgets.cases;
 
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
 
-import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.TagField;
+import com.exadel.aem.toolkit.api.annotations.widgets.Alert;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.StatusVariant;
 
-@AemComponent(
-        path = DEFAULT_COMPONENT_NAME,
-        title = "TagField Widget Dialog"
+@Dialog(
+        name = DEFAULT_COMPONENT_NAME, // name property is retained for compatibility testing
+        title = "Alert Widget Dialog"
 )
-@Dialog
-@SuppressWarnings("unused")
-public class TagFieldWidget {
-    @DialogField(label = "Tag1")
-    @TagField
-    String tag1;
+@SuppressWarnings({"unused", "deprecation"})
+public class AlertWidget {
 
-    @DialogField
-    @TagField(
-        rootPath = "/content",
-        multiple = true,
-        forceSelection = true,
-        autocreateTag = false,
-        emptyText = "empty text",
-        deleteHint = false
+    @Alert(
+            text = "Alert content",
+            title = "Alert title",
+            size = Size.LARGE,
+            variant = StatusVariant.SUCCESS
     )
-    String tag2;
+    String alertField;
 }

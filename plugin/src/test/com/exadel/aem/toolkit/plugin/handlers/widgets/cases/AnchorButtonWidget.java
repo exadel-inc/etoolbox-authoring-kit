@@ -11,24 +11,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.widget;
+package com.exadel.aem.toolkit.plugin.handlers.widgets.cases;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.Include;
+import com.exadel.aem.toolkit.api.annotations.widgets.AnchorButton;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.LinkCheckerVariant;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 @AemComponent(
     path = TestConstants.DEFAULT_COMPONENT_NAME,
     title = TestConstants.DEFAULT_COMPONENT_TITLE
 )
-@Dialog
+@Dialog(title = TestConstants.DEFAULT_COMPONENT_TITLE + " 2")
 @SuppressWarnings("unused")
-public class IncludeWidget {
+public class AnchorButtonWidget {
 
-    @Include(
-        path = "/content/path/to/resource",
-        resourceType = "component/resource/type"
+    @AnchorButton(
+        href = "http://acme.com/en/content/page.html",
+        hrefI18n = "http://acme.com/fr/content/page.html",
+        text = "Link Text",
+        linkChecker = LinkCheckerVariant.SKIP,
+        icon = "search",
+        actionConfigName = "actionConfig"
     )
     String field;
 }

@@ -11,40 +11,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.widget;
+package com.exadel.aem.toolkit.plugin.handlers.widgets.cases;
 
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
+import com.exadel.aem.toolkit.api.annotations.widgets.FileUpload;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.ElementVariant;
+import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 
 @AemComponent(
         path = DEFAULT_COMPONENT_NAME,
-        title = "ImageUpload Widget Dialog"
+        title = "FileUpload Widget Dialog"
 )
 @Dialog
 @SuppressWarnings("unused")
-public class ImageUploadWidget {
+public class FileUploadWidget {
     @DialogField
-    @ImageUpload(
-            mimeTypes=".png",
-            sizeLimit = 100000,
-            fileNameParameter = "./image/fileName",
-            fileReferenceParameter = "./image/fileRef"
+    @FileUpload(
+            emptyText = "empty text",
+            async = false,
+            autoStart = false,
+            uploadUrl = "/content/dam/acme/uploads",
+            mimeTypes = {".png", ".jpg"},
+            variant = ElementVariant.MINIMAL,
+            size = Size.LARGE,
+            sizeLimit = 10000,
+            text = "Upload File"
     )
     String file1;
-
-    @DialogField
-    @ImageUpload(
-        mimeTypes=".png",
-        sizeLimit = 100000,
-        fileNameParameter = "./image/fileName",
-        fileReferenceParameter = "image/fileRef",
-        allowUpload = true,
-        viewInAdminURI = "admin/uri",
-        icon = "search"
-    )
-    String file2;
 }

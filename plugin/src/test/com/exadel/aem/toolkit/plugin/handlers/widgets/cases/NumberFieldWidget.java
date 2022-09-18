@@ -11,23 +11,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.widget;
+package com.exadel.aem.toolkit.plugin.handlers.widgets.cases;
+
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
-import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 
 @AemComponent(
-        path = "test-component",
-        title = "test-component-dialog"
+        path = DEFAULT_COMPONENT_NAME,
+        title = "NumberField Widget Dialog"
 )
 @Dialog
 @SuppressWarnings("unused")
-public class HeadingWidget {
+public class NumberFieldWidget {
+    @DialogField(label = "Valid number")
+    @NumberField(
+            min = -10,
+            max = 10
+    )
+    String number1;
 
-    @Heading("test-text")
-    String heading1;
-
-    @Heading(value = "test-text", level = 6)
-    String heading2;
+    @DialogField(label = "No value preset")
+    @NumberField(
+        value = "",
+        min = -10,
+        max = 10,
+        step = 2
+    )
+    String number2;
 }

@@ -11,41 +11,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.widget;
+package com.exadel.aem.toolkit.plugin.handlers.widgets.cases;
+
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
-import com.exadel.aem.toolkit.api.annotations.widgets.common.NodeFilter;
-import com.exadel.aem.toolkit.plugin.maven.TestConstants;
+import com.exadel.aem.toolkit.api.annotations.widgets.TagField;
 
 @AemComponent(
-        path = TestConstants.DEFAULT_COMPONENT_NAME,
-        title = "PathField Widget Dialog"
+        path = DEFAULT_COMPONENT_NAME,
+        title = "TagField Widget Dialog"
 )
 @Dialog
 @SuppressWarnings("unused")
-public class PathFieldWidget {
+public class TagFieldWidget {
+    @DialogField(label = "Tag1")
+    @TagField
+    String tag1;
 
-    @DialogField(label = "Edit path")
-    @PathField(
-        deleteHint = false,
-        emptyText = "Path goes here",
-        droppable = true,
-        filter = NodeFilter.NOSYSTEM,
-        multiple = true,
+    @DialogField
+    @TagField(
         rootPath = "/content",
-        suggestionSrc = "suggestion"
-    )
-    String path;
-
-    @DialogField(label = "Edit path 2")
-    @PathField(
-        emptyText = "Path goes here",
-        rootPath = "/content/dam",
+        multiple = true,
         forceSelection = true,
-        pickerSrc = "picker"
+        autocreateTag = false,
+        emptyText = "empty text",
+        deleteHint = false
     )
-    String path2;
+    String tag2;
 }
