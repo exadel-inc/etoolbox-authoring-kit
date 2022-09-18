@@ -32,12 +32,12 @@ public class EditConfigTest {
 
     @Test
     public void testEditConfig() {
-        pluginContext.test(EditConfigAnnotation.class);
+        pluginContext.test(EditConfigAnnotation.class, "handlers/common/editConfig");
     }
 
     @Test
     public void testChildEditConfig() {
-        pluginContext.test(ChildEditConfigAnnotation.class);
+        pluginContext.test(ChildEditConfigAnnotation.class, "handlers/common/childEditConfig");
     }
 
 

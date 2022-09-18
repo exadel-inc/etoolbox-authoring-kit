@@ -100,7 +100,7 @@ public class ComponentsTest {
     @Test
     public void testComponentViewPattern() {
         Path targetPath = Paths.get(TestConstants.CONTENT_ROOT_PATH, "component/viewPattern/component1").toAbsolutePath();
-        String outdatedContentXml = readFile(Paths.get(TestConstants.CONTENT_ROOT_PATH, "common/editConfig/.content.xml"));
+        String outdatedContentXml = readFile(Paths.get(TestConstants.CONTENT_ROOT_PATH, "handlers/common/editConfig/.content.xml"));
         pluginContext.test(
             ComplexComponentHolder.class,
             targetPath,

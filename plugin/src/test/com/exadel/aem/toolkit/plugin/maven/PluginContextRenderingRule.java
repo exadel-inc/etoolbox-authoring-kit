@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_COMMON;
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_COMPONENT;
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_DEPENDSON;
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_WIDGETS;
@@ -41,7 +40,6 @@ public class PluginContextRenderingRule extends PluginContextRule {
     private static final String EXCEPTION_WRONG_TYPE_MESSAGE = "Exception of type %s was expected but actual exception was %s";
     private static final String EXCEPTION_WRONG_DETAILS_MESSAGE = "Exception with a message containing \"%s\" was expected but actual message was \"%s\"";
 
-    private static final String KEYWORD_ANNOTATION = "Annotation";
     private static final String KEYWORD_DEPENDSON = "DependsOn";
     private static final String KEYWORD_WIDGET = "Widget";
 
@@ -60,8 +58,6 @@ public class PluginContextRenderingRule extends PluginContextRule {
             subfolderName = RESOURCE_FOLDER_WIDGETS;
         } else if (component.getSimpleName().startsWith(KEYWORD_DEPENDSON)) {
             subfolderName = RESOURCE_FOLDER_DEPENDSON;
-        } else if (component.getSimpleName().endsWith(KEYWORD_ANNOTATION)) {
-            subfolderName = RESOURCE_FOLDER_COMMON;
         }
         test(component,
             subfolderName,
@@ -73,8 +69,8 @@ public class PluginContextRenderingRule extends PluginContextRule {
     }
 
     @SuppressWarnings("SameParameterValue")
-    public void test(Class<?> testable, String createdFilesPath, Path sampleFilesPath) {
-        test(testable, createdFilesPath, sampleFilesPath, null);
+    public void test(Class<?> component, String createdFilesPath, Path sampleFilesPath) {
+        test(component, createdFilesPath, sampleFilesPath, null);
     }
 
     @SuppressWarnings("SameParameterValue")
