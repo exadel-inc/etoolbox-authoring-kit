@@ -27,9 +27,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.exadel.aem.toolkit.plugin.base.FileSystemRule;
-import com.exadel.aem.toolkit.plugin.base.TestConstants;
+import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
+import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 import com.exadel.aem.toolkit.test.common.ChildEditConfigAnnotation;
 import com.exadel.aem.toolkit.test.common.EditConfigAnnotation;
 import com.exadel.aem.toolkit.test.component.ComplexComponent1;

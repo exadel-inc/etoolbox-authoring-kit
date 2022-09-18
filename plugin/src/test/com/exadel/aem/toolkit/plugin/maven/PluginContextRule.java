@@ -20,10 +20,6 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import com.exadel.aem.toolkit.plugin.base.MuteableExceptionHandler;
-import com.exadel.aem.toolkit.plugin.base.TestConstants;
-import com.exadel.aem.toolkit.plugin.base.ThrowsPluginException;
-
 public class PluginContextRule implements TestRule {
 
     private static final List<String> CLASSPATH_ELEMENTS = Arrays.asList(

@@ -21,10 +21,10 @@ import org.junit.Test;
 import org.junit.internal.matchers.ThrowableMessageMatcher;
 import org.junit.rules.ExpectedException;
 
-import com.exadel.aem.toolkit.plugin.base.FileSystemRule;
-import com.exadel.aem.toolkit.plugin.base.ThrowsPluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
+import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
+import com.exadel.aem.toolkit.plugin.maven.ThrowsPluginException;
 import com.exadel.aem.toolkit.test.component.ValidationTestCases;
 
 @ThrowsPluginException

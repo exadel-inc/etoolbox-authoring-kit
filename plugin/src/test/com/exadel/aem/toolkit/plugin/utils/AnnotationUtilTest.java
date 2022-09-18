@@ -21,6 +21,7 @@ import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 import com.google.common.collect.ImmutableMap;
 
@@ -28,7 +29,8 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.WriteMode;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
-import com.exadel.aem.toolkit.plugin.maven.UtilityClassesTestBase;
+import com.exadel.aem.toolkit.plugin.maven.PluginContextRule;
+import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 import com.exadel.aem.toolkit.test.component.ComplexComponent1;
 import com.exadel.aem.toolkit.test.component.ComplexComponent2;
 import com.exadel.aem.toolkit.test.widget.RichTextEditorWidget;

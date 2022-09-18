@@ -25,12 +25,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static com.exadel.aem.toolkit.plugin.base.TestConstants.RESOURCE_FOLDER_COMMON;
-import static com.exadel.aem.toolkit.plugin.base.TestConstants.RESOURCE_FOLDER_COMPONENT;
-import static com.exadel.aem.toolkit.plugin.base.TestConstants.RESOURCE_FOLDER_DEPENDSON;
-import static com.exadel.aem.toolkit.plugin.base.TestConstants.RESOURCE_FOLDER_WIDGET;
-
-import com.exadel.aem.toolkit.plugin.base.TestConstants;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_COMMON;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_COMPONENT;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_DEPENDSON;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_WIDGET;
 
 public class PluginContextRenderingRule extends PluginContextRule {
 

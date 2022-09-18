@@ -16,9 +16,9 @@ package com.exadel.aem.toolkit.plugin.handlers.widgets;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import static com.exadel.aem.toolkit.plugin.base.TestConstants.RESOURCE_FOLDER_WIDGET;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_WIDGET;
 
-import com.exadel.aem.toolkit.plugin.base.FileSystemRule;
+import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.test.common.AttributesAnnotation;
 import com.exadel.aem.toolkit.test.common.PropertiesAnnotation;

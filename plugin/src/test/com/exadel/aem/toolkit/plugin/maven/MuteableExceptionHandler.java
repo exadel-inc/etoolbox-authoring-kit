@@ -11,14 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.accessories;
+package com.exadel.aem.toolkit.plugin.maven;
 
 import com.exadel.aem.toolkit.api.runtime.ExceptionHandler;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 
-public class ModifiableExceptionHandler implements ExceptionHandler {
+class MuteableExceptionHandler implements ExceptionHandler {
 
-    private ExceptionHandlerState state = ExceptionHandlerState.SKIP;
+    private boolean muted = true;
 
     @Override
     public void handle(String message, Exception cause) {
@@ -29,10 +29,14 @@ public class ModifiableExceptionHandler implements ExceptionHandler {
 
     @Override
     public boolean shouldTerminateOn(Class<? extends Exception> exceptionType) {
-        return state == ExceptionHandlerState.CATCH;
+        return !muted;
     }
 
-    public void setState(ExceptionHandlerState state) {
-        this.state = state;
+    public void mute() {
+        muted = true;
+    }
+
+    public void unmute() {
+        muted = false;
     }
 }

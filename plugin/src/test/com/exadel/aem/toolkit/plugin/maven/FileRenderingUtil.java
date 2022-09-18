@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.exadel.aem.toolkit.plugin.base.TestConstants;
 import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
 import com.exadel.aem.toolkit.plugin.writers.PackageWriter;

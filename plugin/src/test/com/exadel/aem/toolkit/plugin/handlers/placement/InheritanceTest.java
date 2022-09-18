@@ -17,10 +17,10 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.exadel.aem.toolkit.plugin.base.FileSystemRule;
-import com.exadel.aem.toolkit.plugin.base.ThrowsPluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
+import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
+import com.exadel.aem.toolkit.plugin.maven.ThrowsPluginException;
 import com.exadel.aem.toolkit.test.component.InheritanceExceptionTestCases;
 import com.exadel.aem.toolkit.test.component.InheritanceTestCases;
 
