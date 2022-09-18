@@ -34,7 +34,7 @@ public class InheritanceTest {
 
     @Test
     public void testInheritanceOverride() {
-        pluginContext.test(InheritanceTestCases.Child.class, "placement/inheritanceOverride");
+        pluginContext.test(InheritanceTestCases.Child.class, "handlers/placement/inheritance");
     }
 
     @Test

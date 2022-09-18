@@ -26,7 +26,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_WIDGET;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_WIDGETS;
 
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComplexComponent1;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComplexComponent2;
@@ -89,7 +89,7 @@ public class ComponentsTest {
 
     @Test
     public void testCustomAnnotationsComponent() {
-        pluginContext.test(CustomAnnotationsComponent.class, RESOURCE_FOLDER_WIDGET, "custom");
+        pluginContext.test(CustomAnnotationsComponent.class, RESOURCE_FOLDER_WIDGETS, "custom");
     }
 
     @Test

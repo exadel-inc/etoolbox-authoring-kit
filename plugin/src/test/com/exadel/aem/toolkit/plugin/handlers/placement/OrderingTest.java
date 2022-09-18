@@ -17,7 +17,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.exadel.aem.toolkit.plugin.handlers.placement.cases.ordering.OrderingTestCases;
+import com.exadel.aem.toolkit.plugin.handlers.placement.cases.memberordering.MemberOrderingTestCases;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 
@@ -31,7 +31,7 @@ public class OrderingTest {
 
     @Test
     public void testOrdering() {
-        pluginContext.test(OrderingTestCases.Test1.class,  "placement/ordering1");
-        pluginContext.test(OrderingTestCases.Test2.class, "placement/ordering2");
+        pluginContext.test(MemberOrderingTestCases.Test1.class,  "handlers/placement/memberOrdering/ordering1");
+        pluginContext.test(MemberOrderingTestCases.Test2.class, "handlers/placement/memberOrdering/ordering2");
     }
 }

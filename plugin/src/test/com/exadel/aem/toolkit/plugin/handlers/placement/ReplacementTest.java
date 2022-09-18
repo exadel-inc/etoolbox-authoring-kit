@@ -24,8 +24,8 @@ import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 
 public class ReplacementTest {
 
-    private static final String FOLDER_REPLACE = "placement/replace";
-    private static final String FOLDER_MULTIPLE_REPLACE = "placement/multipleReplace";
+    private static final String FOLDER_REPLACE = "handlers/placement/replace/plain";
+    private static final String FOLDER_MULTIPLE_REPLACE = "handlers/placement/replace/multiple";
 
     @ClassRule
     public static FileSystemRule fileSystemHost = new FileSystemRule();

@@ -27,7 +27,7 @@ import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.plugin.maven.ThrowsPluginException;
 
 public class CoincidenceTest {
-    private static final String FOLDER_COINCIDING = "placement/coincidingNames";
+    private static final String FOLDER_COINCIDENCE = "handlers/placement/coincidence";
 
     @ClassRule
     public static FileSystemRule fileSystemHost = new FileSystemRule();
@@ -39,30 +39,30 @@ public class CoincidenceTest {
     public void testCoincidingNamesResolved() {
         pluginContext.test(
             SameClassCoincidenceTestCases.NoIssue.class,
-            FOLDER_COINCIDING,
+            FOLDER_COINCIDENCE,
             "noIssue");
         pluginContext.test(
             SameClassCoincidenceTestCases.CoincidenceResolved.class,
-            FOLDER_COINCIDING,
+            FOLDER_COINCIDENCE,
             "resolved");
 
         pluginContext.test(
             ClassInterfaceCoincidenceTestCases.NoIssue.class,
-            FOLDER_COINCIDING,
+            FOLDER_COINCIDENCE,
             "noIssue");
         pluginContext.test(
             ClassInterfaceCoincidenceTestCases.CoincidenceResolved.class,
-            FOLDER_COINCIDING,
+            FOLDER_COINCIDENCE,
             "resolved");
 
         pluginContext.test(
             ClassParentCoincidenceTestCases.CoincidenceResolved.class,
-            FOLDER_COINCIDING,
+            FOLDER_COINCIDENCE,
             "resolved");
 
         pluginContext.test(
             ClassParentInterfaceCoincidenceTestCases.CoincidenceResolved.class,
-            FOLDER_COINCIDING,
+            FOLDER_COINCIDENCE,
             "resolved");
     }
 
