@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.custom.annotation;
+package com.exadel.aem.toolkit.plugin.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -11,25 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.custom.annotation;
+package com.exadel.aem.toolkit.plugin.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 
-@Target(ElementType.TYPE)
+@Target({ElementType.FIELD,ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@AnnotationRendering(properties = "!field3")
-// This will have its scope defined dynamically: when appended to a class already
-// possessing e.g. @Dialog, it will have cq:dialog scope, etc.
-public @interface CustomDialogAnnotationAuto {
-
-    String field1() default "";
-
-    long field2();
-
-    boolean field3() default false; // will not be rendered
+@ResourceType("test")
+public @interface WidgetAnnotationForOrderingTest {
 }

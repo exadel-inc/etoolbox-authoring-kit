@@ -20,7 +20,7 @@ import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.test.custom.annotation.WidgetAnnotationForOrderingTest;
+import com.exadel.aem.toolkit.plugin.annotations.WidgetAnnotationForOrderingTest;
 
 @SuppressWarnings("unused")
 public class ManualOrderingTestCases {

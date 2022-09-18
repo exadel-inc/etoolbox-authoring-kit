@@ -25,8 +25,8 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.ListenerConstants;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.plugin.annotations.CustomChildEditConfigAnnotationAuto;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.FileUploadWidget;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomChildEditConfigAnnotationAuto;
 
 @AemComponent(
     path = DEFAULT_COMPONENT_NAME,

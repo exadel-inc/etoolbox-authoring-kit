@@ -11,14 +11,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.custom.annotation;
+package com.exadel.aem.toolkit.plugin.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.TYPE)
+import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+
+@Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DialogAnnotationForOrderingTest {
+@DialogWidgetAnnotation(source = "testCustomAnnotation")
+@ResourceType("test-components/form/customfield")
+@SuppressWarnings({"unused", "deprecation"}) // @DialogWidgetAnnotation is retained for compatibility testing;
+// will be removed in a version after 2.0.0
+public @interface CustomWidgetAnnotation {
+
+    @PropertyRendering(name = "custom")
+    String customField() default "Non-overridden value";
 }

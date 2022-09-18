@@ -37,9 +37,9 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.Style;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomLegacyDialogAnnotation;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
+import com.exadel.aem.toolkit.plugin.annotations.CustomLegacyDialogAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.CustomWidgetAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.CustomWidgetAnnotationAuto;
 
 @AemComponent(
     path = DEFAULT_COMPONENT_NAME,

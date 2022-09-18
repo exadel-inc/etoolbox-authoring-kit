@@ -11,14 +11,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.custom.annotation;
+package com.exadel.aem.toolkit.plugin.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.FIELD)
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
+
+@Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
+@AnnotationRendering(properties = "none", scope = {Scopes.COMPONENT, Scopes.CQ_DIALOG})
+@ResourceType("test-components/form/customfield")
 @SuppressWarnings("unused")
-public @interface CustomNonMappingWidgetAnnotation {}
+public @interface CustomScopedNonMappingWidgetAnnotation {
+    String customField();
+}
