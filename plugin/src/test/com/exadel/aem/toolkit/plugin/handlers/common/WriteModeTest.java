@@ -41,7 +41,7 @@ public class WriteModeTest {
         pluginContext.test(
             WriteModeTestCases.FolderCreatingComponent.class,
             TestConstants.NONEXISTENT_COMPONENT_NAME,
-            Paths.get(TestConstants.CONTENT_ROOT_PATH, TestConstants.RESOURCE_FOLDER_COMPONENTS, "createdFolder").toAbsolutePath());
+            Paths.get(TestConstants.CONTENT_ROOT_PATH, "handlers/common/writeMode/new").toAbsolutePath());
         Files.delete(fileSystemHost
             .getFileSystem()
             .getPath(TestConstants.PACKAGE_ROOT_PATH, TestConstants.NONEXISTENT_COMPONENT_NAME));
