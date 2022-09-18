@@ -11,28 +11,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.component;
+package com.exadel.aem.toolkit.plugin.handlers.common.cases.components;
 
+import com.exadel.aem.toolkit.api.annotations.layouts.Column;
+import com.exadel.aem.toolkit.api.annotations.layouts.FixedColumns;
+import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
-import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 
+@FixedColumns(@Column(title = "Default"))
 @SuppressWarnings("unused")
-class SampleMultifieldExtension extends SampleMultifieldBase {
-    @DialogField(
-            name = "additional label",
-            label = "Additional info",
-            description = "Sample multifield - additional info"
-    )
+class MultiColumnDialogBase {
+
+    @DialogField(label = "Parent text")
     @TextField
-    private String additionalLabel;
+    @Place("Default")
+    private String text; // This field will not be rendered because "Default" section is set to be ignored in MultiCommonDialog
 
-    @DialogField(
-            name = "additional info",
-            label = "Additional info",
-            description = "Sample multifield - additional info"
-    )
-    @TextArea(rows = 15)
-    private String additionalInfo;
-
+    @DialogField(label = "Parent alt text")
+    @TextField
+    @Place("First column")
+    private String altText;
 }

@@ -11,14 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.component.viewpattern.component1;
+package com.exadel.aem.toolkit.plugin.handlers.common.cases.viewpattern.component1;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComplexComponent1;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.viewpattern.component1.views.ChildEditConfigView;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.viewpattern.component1.views.DesignDialogView;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.viewpattern.component1.views.HtmlTagView;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
-import com.exadel.aem.toolkit.test.component.ComplexComponent1;
-import com.exadel.aem.toolkit.test.component.viewpattern.component1.views.ChildEditConfigView;
-import com.exadel.aem.toolkit.test.component.viewpattern.component1.views.DesignDialogView;
-import com.exadel.aem.toolkit.test.component.viewpattern.component1.views.HtmlTagView;
 
 @AemComponent(
     path = TestConstants.DEFAULT_COMPONENT_NAME,

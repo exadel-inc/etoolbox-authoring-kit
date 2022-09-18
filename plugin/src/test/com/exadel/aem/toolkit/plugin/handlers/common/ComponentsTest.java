@@ -27,22 +27,21 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComplexComponent1;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComplexComponent2;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentWithPanelsAsNestedClasses;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentWithRichTextAndExternalClasses;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentWithTabsAndInnerClass;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentWithTabsAsNestedClasses;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentWithoutDialog;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.MultiColumnDialog;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.viewpattern.component1.ComplexComponentHolder;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
-import com.exadel.aem.toolkit.test.common.ChildEditConfigAnnotation;
-import com.exadel.aem.toolkit.test.common.EditConfigAnnotation;
-import com.exadel.aem.toolkit.test.component.ComplexComponent1;
-import com.exadel.aem.toolkit.test.component.ComplexComponent2;
-import com.exadel.aem.toolkit.test.component.ComponentWithPanelsAsNestedClasses;
-import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalClasses;
-import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
-import com.exadel.aem.toolkit.test.component.ComponentWithTabsAsNestedClasses;
-import com.exadel.aem.toolkit.test.component.ComponentWithoutDialog;
-import com.exadel.aem.toolkit.test.component.layout.MultiColumnDialog;
-import com.exadel.aem.toolkit.test.component.viewpattern.component1.ComplexComponentHolder;
 
 public class ComponentsTest {
+
     private static final Logger LOG = LoggerFactory.getLogger(ComponentsTest.class);
 
     @ClassRule
@@ -84,16 +83,6 @@ public class ComponentsTest {
     @Test
     public void testComplexComponent2() {
         pluginContext.test(ComplexComponent2.class);
-    }
-
-    @Test
-    public void testEditConfig() {
-        pluginContext.test(EditConfigAnnotation.class);
-    }
-
-    @Test
-    public void testChildEditConfig() {
-        pluginContext.test(ChildEditConfigAnnotation.class);
     }
 
     @Test

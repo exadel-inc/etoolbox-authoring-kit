@@ -29,11 +29,11 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.WriteMode;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComplexComponent1;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComplexComponent2;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.RichTextEditorWidget;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRule;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
-import com.exadel.aem.toolkit.test.component.ComplexComponent1;
-import com.exadel.aem.toolkit.test.component.ComplexComponent2;
-import com.exadel.aem.toolkit.test.widget.RichTextEditorWidget;
 
 public class AnnotationUtilTest {
 

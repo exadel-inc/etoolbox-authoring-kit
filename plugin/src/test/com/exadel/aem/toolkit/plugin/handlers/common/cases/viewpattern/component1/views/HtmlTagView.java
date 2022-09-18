@@ -11,18 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.component;
+package com.exadel.aem.toolkit.plugin.handlers.common.cases.viewpattern.component1.views;
 
-import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
-import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
-@AemComponent(
-    path = TestConstants.DEFAULT_COMPONENT_NAME,
-    title = TestConstants.DEFAULT_COMPONENT_TITLE,
-    description = TestConstants.DEFAULT_COMPONENT_DESCRIPTION,
-    componentGroup = TestConstants.DEFAULT_COMPONENT_GROUP,
-    resourceSuperType = TestConstants.DEFAULT_COMPONENT_SUPERTYPE,
-    disableTargeting = true
+import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
+
+@HtmlTag(
+    className = "wrapper",
+    tagName = "span"
 )
-public class ComponentWithoutDialog {
+public class HtmlTagView {
 }

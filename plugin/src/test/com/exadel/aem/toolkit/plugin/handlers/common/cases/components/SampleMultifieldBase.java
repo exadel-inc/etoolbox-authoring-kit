@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.component;
+package com.exadel.aem.toolkit.plugin.handlers.common.cases.components;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
@@ -21,8 +21,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Properties;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 
-@SuppressWarnings("unused")
-class SampleMultifieldBase {
+public class SampleMultifieldBase {
     @DialogField(
             name = "Label's name",
             label = "Label",

@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.component;
+package com.exadel.aem.toolkit.plugin.handlers.common.cases.components;
 
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.LABEL_TAB_1;
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.LABEL_TAB_2;
@@ -83,7 +83,7 @@ public class ComponentWithTabsAndInnerClass {
     @Place(LABEL_TAB_2)
     FieldSetExample fieldSet;
 
-    static class FieldSetExample{
+    public static class FieldSetExample{
         @DialogField
         @TextField
         String field6;

@@ -11,17 +11,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.component.viewpattern.component1.views;
-
-import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
-import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
-import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
-import com.exadel.aem.toolkit.api.annotations.editconfig.listener.ListenerConstants;
+package com.exadel.aem.toolkit.plugin.handlers.common.cases.viewpattern.component1.views;
 
 import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.COPYMOVE;
 import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.DELETE;
 import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.EDIT;
 import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.INSERT;
+
+import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
+import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
+import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
+import com.exadel.aem.toolkit.api.annotations.editconfig.listener.ListenerConstants;
 
 @ChildEditConfig(
     actions = {
