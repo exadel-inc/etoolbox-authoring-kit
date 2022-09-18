@@ -17,13 +17,13 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.plugin.handlers.dependson.cases.DependsOnRefAnnotation;
+import com.exadel.aem.toolkit.plugin.handlers.dependson.cases.DependsOnRequiredAnnotation;
+import com.exadel.aem.toolkit.plugin.handlers.dependson.cases.DependsOnSemicolon;
+import com.exadel.aem.toolkit.plugin.handlers.dependson.cases.DependsOnSetFragmentReference;
+import com.exadel.aem.toolkit.plugin.handlers.dependson.cases.DependsOnTabAnnotation;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
-import com.exadel.aem.toolkit.test.dependson.DependsOnRefAnnotation;
-import com.exadel.aem.toolkit.test.dependson.DependsOnRequiredAnnotation;
-import com.exadel.aem.toolkit.test.dependson.DependsOnSemicolon;
-import com.exadel.aem.toolkit.test.dependson.DependsOnSetFragmentReference;
-import com.exadel.aem.toolkit.test.dependson.DependsOnTabAnnotation;
 
 public class DependsOnTest {
 

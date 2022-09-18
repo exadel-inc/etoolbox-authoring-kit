@@ -11,13 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.dependson;
+package com.exadel.aem.toolkit.plugin.handlers.dependson.cases;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnActions;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
+import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 @AemComponent(
@@ -26,9 +27,9 @@ import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 )
 @Dialog
 @SuppressWarnings("unused")
-public class DependsOnSetFragmentReference {
+public class DependsOnRequiredAnnotation {
     @DialogField
-    @PathField(rootPath = "/content")
-    @DependsOn(query = "@referenceType === 'fragment'")
-    private String fragmentPath;
+    @ImageUpload
+    @DependsOn(action = DependsOnActions.REQUIRED, query = "true")
+    String file;
 }

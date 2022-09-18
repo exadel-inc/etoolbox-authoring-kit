@@ -11,25 +11,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.dependson;
+package com.exadel.aem.toolkit.plugin.handlers.dependson.cases;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnActions;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
-import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUpload;
+import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 @AemComponent(
-        path = TestConstants.DEFAULT_COMPONENT_NAME,
-        title = TestConstants.DEFAULT_COMPONENT_TITLE
+    path = TestConstants.DEFAULT_COMPONENT_NAME,
+    title = TestConstants.DEFAULT_COMPONENT_TITLE
 )
 @Dialog
 @SuppressWarnings("unused")
-public class DependsOnRequiredAnnotation {
+public class DependsOnSemicolon {
     @DialogField
-    @ImageUpload
-    @DependsOn(action = DependsOnActions.REQUIRED, query = "true")
-    String file;
+    @TextField
+    @DependsOn(query = "@field1 === ';'")
+    private String literalEscapingTest;
+
+    @DialogField
+    @TextField
+    @DependsOn(query = "(function() { var sum = @a + @b; return sum * sum; })()")
+    private String iifeQueryTest;
+
+    @DialogField
+    @TextField
+    @DependsOn(query = "';' === ';'")
+    @DependsOn(query = "';' === ';'", action = DependsOnActions.REQUIRED)
+    private String multipleActions;
 }

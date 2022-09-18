@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.dependson;
+package com.exadel.aem.toolkit.plugin.handlers.dependson.cases;
 
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRefTypes;
