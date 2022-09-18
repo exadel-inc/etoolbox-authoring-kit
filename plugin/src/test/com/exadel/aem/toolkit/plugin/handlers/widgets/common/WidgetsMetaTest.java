@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.plugin.handlers.widgets.common;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_WIDGET;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_WIDGETS;
 
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.cases.AttributesAnnotation;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.cases.PropertiesAnnotation;
@@ -33,11 +33,11 @@ public class WidgetsMetaTest {
 
     @Test
     public void testAttributes() {
-        pluginContext.test(AttributesAnnotation.class, RESOURCE_FOLDER_WIDGET, "graniteAttributes");
+        pluginContext.test(AttributesAnnotation.class, RESOURCE_FOLDER_WIDGETS, "graniteAttributes");
     }
 
     @Test
     public void testCustomProperties() {
-        pluginContext.test(PropertiesAnnotation.class, RESOURCE_FOLDER_WIDGET, "customProperties");
+        pluginContext.test(PropertiesAnnotation.class, RESOURCE_FOLDER_WIDGETS, "customProperties");
     }
 }

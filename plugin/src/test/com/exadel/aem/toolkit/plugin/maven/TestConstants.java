@@ -22,8 +22,8 @@ public class TestConstants {
 
     public static final String RESOURCE_FOLDER_COMMON = "common";
     public static final String RESOURCE_FOLDER_COMPONENT = "component";
-    public static final String RESOURCE_FOLDER_DEPENDSON = "dependsOn";
-    public static final String RESOURCE_FOLDER_WIDGET = "widget";
+    public static final String RESOURCE_FOLDER_DEPENDSON = "handlers/dependsOn";
+    public static final String RESOURCE_FOLDER_WIDGETS = "handlers/widgets";
 
     public static final String PLUGIN_MODULE_TARGET = Paths.get("target", "classes").toAbsolutePath().toString();
     public static final String PLUGIN_MODULE_TEST_TARGET = Paths.get( "target", "test-classes").toAbsolutePath().toString();

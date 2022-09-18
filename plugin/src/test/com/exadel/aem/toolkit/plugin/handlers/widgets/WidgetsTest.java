@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.plugin.handlers.widgets;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_WIDGET;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_WIDGETS;
 
 import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.AccordionWidget;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.AlertWidget;
@@ -60,7 +60,7 @@ public class WidgetsTest {
 
     @Test
     public void testAccordion() {
-        pluginContext.test(AccordionWidget.class, RESOURCE_FOLDER_WIDGET, "accordion");
+        pluginContext.test(AccordionWidget.class, RESOURCE_FOLDER_WIDGETS, "accordion");
     }
 
     @Test
@@ -185,7 +185,7 @@ public class WidgetsTest {
 
     @Test
     public void testTabs() {
-        pluginContext.test(TabsWidget.class, RESOURCE_FOLDER_WIDGET, "tabs");
+        pluginContext.test(TabsWidget.class, RESOURCE_FOLDER_WIDGETS, "tabs");
     }
 
     @Test
@@ -200,6 +200,6 @@ public class WidgetsTest {
 
     @Test
     public void testWidgetAnnotatedWithMultiple() {
-        pluginContext.test(MultipleAnnotatedWidget.class, RESOURCE_FOLDER_WIDGET, "multiple");
+        pluginContext.test(MultipleAnnotatedWidget.class, RESOURCE_FOLDER_WIDGETS, "multiple");
     }
 }

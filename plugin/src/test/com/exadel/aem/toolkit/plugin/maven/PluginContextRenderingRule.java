@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_COMMON;
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_COMPONENT;
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_DEPENDSON;
-import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_WIDGET;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_WIDGETS;
 
 public class PluginContextRenderingRule extends PluginContextRule {
 
@@ -57,7 +57,7 @@ public class PluginContextRenderingRule extends PluginContextRule {
     public void test(Class<?> component) {
         String subfolderName = RESOURCE_FOLDER_COMPONENT;
         if (component.getSimpleName().endsWith(KEYWORD_WIDGET)) {
-            subfolderName = RESOURCE_FOLDER_WIDGET;
+            subfolderName = RESOURCE_FOLDER_WIDGETS;
         } else if (component.getSimpleName().startsWith(KEYWORD_DEPENDSON)) {
             subfolderName = RESOURCE_FOLDER_DEPENDSON;
         } else if (component.getSimpleName().endsWith(KEYWORD_ANNOTATION)) {
