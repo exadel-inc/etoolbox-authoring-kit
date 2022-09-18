@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.custom.handler;
+package com.exadel.aem.toolkit.plugin.handlers.common.cases.custom;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -31,9 +31,9 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomNonMappingWidgetAnnotation;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomScopedNonMappingWidgetAnnotation;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.CustomNonMappingWidgetAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.CustomScopedNonMappingWidgetAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.CustomWidgetAnnotation;
 
 @SuppressWarnings("unused")
 public class CustomWidgetHandlers {

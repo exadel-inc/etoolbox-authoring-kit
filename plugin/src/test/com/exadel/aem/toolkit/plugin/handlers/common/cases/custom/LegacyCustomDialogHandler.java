@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.custom.handler;
+package com.exadel.aem.toolkit.plugin.handlers.common.cases.custom;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -28,8 +28,8 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
+import com.exadel.aem.toolkit.plugin.annotations.CustomLegacyDialogAnnotation;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomLegacyDialogAnnotation;
 
 @Handles(value = CustomLegacyDialogAnnotation.class)
 @SuppressWarnings("deprecation") // References to DialogHandler, RuntimeContext are retained for compatibility

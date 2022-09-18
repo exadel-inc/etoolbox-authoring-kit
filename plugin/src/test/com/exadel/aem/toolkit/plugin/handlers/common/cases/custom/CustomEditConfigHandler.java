@@ -11,24 +11,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.custom.handler;
+package com.exadel.aem.toolkit.plugin.handlers.common.cases.custom;
 
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomLegacyDialogAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.CustomEditConfigAnnotation;
 
-@Handles(value = CustomLegacyDialogAnnotation.class)
-@SuppressWarnings("unused") // Used by ToolKit Plugin logic
-public class CustomDialogHandler implements Handler {
+@Handles(value = CustomEditConfigAnnotation.class)
+@SuppressWarnings("unused") // Used by ToolKit logic
+public class CustomEditConfigHandler implements Handler {
 
     @Override
     public void accept(Source source, Target target) {
-        String field1Value = target.getAttribute("field1");
-        target.removeAttribute("field1");
-        target
-            .attribute("autoField1", field1Value)
-            .attribute("fullyQualifiedClassName", source.adaptTo(Class.class).getCanonicalName());
+        target.attribute("editConfigHandlerProp1", "value1");
     }
 }

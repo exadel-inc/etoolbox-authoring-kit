@@ -11,20 +11,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.custom.handler;
+package com.exadel.aem.toolkit.plugin.handlers.common.cases.custom;
 
+import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomEditConfigAnnotation;
 
-@Handles(value = CustomEditConfigAnnotation.class)
+@Handles(value = ChildEditConfig.class)
 @SuppressWarnings("unused") // Used by ToolKit logic
-public class CustomEditConfigHandler implements Handler {
+public class CustomChildEditConfigHandler implements Handler {
 
     @Override
     public void accept(Source source, Target target) {
-        target.attribute("editConfigHandlerProp1", "value1");
+        target.attribute("childEditConfigHandlerProp1", "value1");
     }
 }
