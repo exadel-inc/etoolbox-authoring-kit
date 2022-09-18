@@ -17,9 +17,9 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.plugin.handlers.placement.cases.ordering.OrderingTestCases;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
-import com.exadel.aem.toolkit.test.component.placement.OrderingTestCases;
 
 public class OrderingTest {
 
