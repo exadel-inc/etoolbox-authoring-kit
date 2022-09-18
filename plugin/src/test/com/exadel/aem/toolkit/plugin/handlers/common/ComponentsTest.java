@@ -39,7 +39,6 @@ import com.exadel.aem.toolkit.test.component.ComponentWithRichTextAndExternalCla
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAsNestedClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithoutDialog;
-import com.exadel.aem.toolkit.test.component.ForceIgnoreFreshnessTestCases;
 import com.exadel.aem.toolkit.test.component.layout.MultiColumnDialog;
 import com.exadel.aem.toolkit.test.component.viewpattern.component1.ComplexComponentHolder;
 
@@ -51,8 +50,6 @@ public class ComponentsTest {
 
     @Rule
     public PluginContextRenderingRule pluginContext = new PluginContextRenderingRule(fileSystemHost.getFileSystem());
-
-    private static final String FOLDER_IGNORE_FRESHNESS = "forceIgnoreFreshness";
 
     @Test
     public void testMultiColumnLayout() {
@@ -113,23 +110,6 @@ public class ComponentsTest {
             targetPath,
             fileSystem -> writeFile(fileSystem.getPath(TestConstants.PACKAGE_ROOT_PATH, TestConstants.DEFAULT_COMPONENT_NAME, ".content.xml"), outdatedContentXml));
     }
-
-    @Test
-    public void testForceIgnoreFreshness() {
-        pluginContext.test(ForceIgnoreFreshnessTestCases.SimpleDialog.class,
-            TestConstants.RESOURCE_FOLDER_COMPONENT,
-            FOLDER_IGNORE_FRESHNESS,
-            "simple");
-        pluginContext.test(ForceIgnoreFreshnessTestCases.TabbedDialog.class,
-            TestConstants.RESOURCE_FOLDER_COMPONENT,
-            FOLDER_IGNORE_FRESHNESS,
-            "tabbed");
-        pluginContext.test(ForceIgnoreFreshnessTestCases.AccordionDialog.class,
-            TestConstants.RESOURCE_FOLDER_COMPONENT,
-            FOLDER_IGNORE_FRESHNESS,
-            "accordion");
-    }
-
 
     private static String readFile(Path path) {
         try {
