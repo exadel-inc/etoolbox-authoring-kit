@@ -25,9 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_COMPONENT;
-import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_DEPENDSON;
-import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_WIDGETS;
 
 public class PluginContextRenderingRule extends PluginContextRule {
 
@@ -40,6 +37,7 @@ public class PluginContextRenderingRule extends PluginContextRule {
     private static final String EXCEPTION_WRONG_TYPE_MESSAGE = "Exception of type %s was expected but actual exception was %s";
     private static final String EXCEPTION_WRONG_DETAILS_MESSAGE = "Exception with a message containing \"%s\" was expected but actual message was \"%s\"";
 
+    private static final String PATH_POSTFIX_GENERIC = "/generic";
     private static final String KEYWORD_DEPENDSON = "DependsOn";
     private static final String KEYWORD_WIDGET = "Widget";
 
@@ -53,11 +51,11 @@ public class PluginContextRenderingRule extends PluginContextRule {
     }
 
     public void test(Class<?> component) {
-        String subfolderName = RESOURCE_FOLDER_COMPONENT;
+        String subfolderName = TestConstants.RESOURCE_FOLDER_COMPONENTS + PATH_POSTFIX_GENERIC;
         if (component.getSimpleName().endsWith(KEYWORD_WIDGET)) {
-            subfolderName = RESOURCE_FOLDER_WIDGETS;
+            subfolderName = TestConstants.RESOURCE_FOLDER_WIDGETS;
         } else if (component.getSimpleName().startsWith(KEYWORD_DEPENDSON)) {
-            subfolderName = RESOURCE_FOLDER_DEPENDSON;
+            subfolderName = TestConstants.RESOURCE_FOLDER_DEPENDSON;
         }
         test(component,
             subfolderName,

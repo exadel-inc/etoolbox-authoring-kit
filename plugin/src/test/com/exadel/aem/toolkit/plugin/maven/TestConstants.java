@@ -13,24 +13,14 @@
  */
 package com.exadel.aem.toolkit.plugin.maven;
 
-import java.nio.file.Paths;
-
 public class TestConstants {
 
     public static final String CONTENT_ROOT_PATH = "src/test/resources";
     public static final String PACKAGE_ROOT_PATH = "jcr_root/apps/eak/";
 
-    public static final String RESOURCE_FOLDER_COMMON = "common";
-    public static final String RESOURCE_FOLDER_COMPONENT = "component";
+    public static final String RESOURCE_FOLDER_COMPONENTS = "handlers/common/components";
     public static final String RESOURCE_FOLDER_DEPENDSON = "handlers/dependsOn";
     public static final String RESOURCE_FOLDER_WIDGETS = "handlers/widgets";
-
-    public static final String PLUGIN_MODULE_TARGET = Paths.get("target", "classes").toAbsolutePath().toString();
-    public static final String PLUGIN_MODULE_TEST_TARGET = Paths.get( "target", "test-classes").toAbsolutePath().toString();
-
-    private static final String API_MODULE_NAME = "etoolbox-authoring-kit-core";
-    private static final String PLUGIN_MODULE_NAME = "etoolbox-authoring-kit-plugin";
-    public static final String API_MODULE_TARGET = PLUGIN_MODULE_TARGET.replace(PLUGIN_MODULE_NAME, API_MODULE_NAME);
 
     public static final String DEFAULT_COMPONENT_NAME = "test-component";
     public static final String NONEXISTENT_COMPONENT_NAME = "nonexistent/component";

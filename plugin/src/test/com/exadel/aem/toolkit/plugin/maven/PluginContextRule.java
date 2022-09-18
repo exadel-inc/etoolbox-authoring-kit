@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.plugin.maven;
 
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -22,10 +23,14 @@ import org.junit.runners.model.Statement;
 
 public class PluginContextRule implements TestRule {
 
+    private static final String PLUGIN_MODULE_TARGET = Paths.get("target", "classes").toAbsolutePath().toString();
+    private static final String PLUGIN_MODULE_TEST_TARGET = Paths.get( "target", "test-classes").toAbsolutePath().toString();
+    private static final String API_MODULE_TARGET = PLUGIN_MODULE_TARGET.replace("etoolbox-authoring-kit-plugin", "etoolbox-authoring-kit-core");
+
     private static final List<String> CLASSPATH_ELEMENTS = Arrays.asList(
-        TestConstants.PLUGIN_MODULE_TARGET,
-        TestConstants.API_MODULE_TARGET,
-        TestConstants.PLUGIN_MODULE_TEST_TARGET
+        PLUGIN_MODULE_TARGET,
+        PLUGIN_MODULE_TEST_TARGET,
+        API_MODULE_TARGET
     );
 
     private static MuteableExceptionHandler exceptionHandler;
