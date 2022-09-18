@@ -13,13 +13,10 @@
  */
 package com.exadel.aem.toolkit.plugin.maven;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,11 +37,21 @@ class FileRenderingUtil {
     private FileRenderingUtil() {
     }
 
-    public static boolean doTest(FileSystem fileSystem, String className, Path sampleFilesPath) throws ClassNotFoundException, IOException {
-        return doTest(fileSystem, className, null, sampleFilesPath);
+    public static boolean doRenderingTest(
+        FileSystem fileSystem,
+        String className,
+        Path sampleFilesPath)
+        throws ClassNotFoundException, IOException {
+
+        return doRenderingTest(fileSystem, className, null, sampleFilesPath);
     }
 
-    public static boolean doTest(FileSystem fileSystem, String className, Path createdFilesPath, Path sampleFilesPath) throws ClassNotFoundException, IOException {
+    public static boolean doRenderingTest(
+        FileSystem fileSystem,
+        String className,
+        Path createdFilesPath,
+        Path sampleFilesPath)
+        throws ClassNotFoundException, IOException {
 
         Class<?> testableClass = Class.forName(className);
         ComponentSource testable =  Sources.fromComponentClass(testableClass);
@@ -62,7 +69,7 @@ class FileRenderingUtil {
             Files.delete(filePath);
         }
 
-        return compare(actualFiles, expectedFiles, sampleFilesPath.toString());
+        return FileComparingUtil.compare(actualFiles, expectedFiles, sampleFilesPath.toString());
     }
 
     private static Map<String, String> getFiles(Path componentPath) {
@@ -75,41 +82,5 @@ class FileRenderingUtil {
             LOG.error("Could not read the package " + componentPath, ex);
         }
         return files;
-    }
-
-    private static boolean compare(Map<String, String> actualFiles, Map<String, String> expectedFiles, String resourcePath) {
-        if (!filesetsAreSame(actualFiles, expectedFiles)) {
-            LOG.error(
-                "File sets differ: expected {}, received {}",
-                Arrays.toString(expectedFiles.keySet().toArray()),
-                Arrays.toString(actualFiles.keySet().toArray()));
-            return false;
-        }
-        Collection<String> fileNames = expectedFiles.keySet();
-        for (String fileName : fileNames) {
-            String actualContent = actualFiles.get(fileName);
-            String expectedContent = expectedFiles.get(fileName);
-            boolean isMatch;
-            try {
-                isMatch = FilesComparator.compareXml(
-                    actualContent,
-                    expectedContent,
-                    resourcePath + File.separator + fileName);
-            } catch (Exception ex) {
-                LOG.error("Could not implement XML files comparison", ex);
-                isMatch = false;
-            }
-            if (!isMatch) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean filesetsAreSame(Map<String, String> first, Map<String, String> second) {
-        if (first == null || second == null || first.size() != second.size()) {
-            return false;
-        }
-        return first.keySet().stream().allMatch(second::containsKey);
     }
 }
