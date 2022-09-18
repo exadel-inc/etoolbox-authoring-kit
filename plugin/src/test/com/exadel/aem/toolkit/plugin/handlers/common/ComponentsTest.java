@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.maven;
+package com.exadel.aem.toolkit.plugin.handlers.common;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -21,11 +21,15 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
 import org.apache.commons.lang3.StringUtils;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.exadel.aem.toolkit.plugin.utils.TestConstants;
+import com.exadel.aem.toolkit.plugin.base.FileSystemRule;
+import com.exadel.aem.toolkit.plugin.base.TestConstants;
+import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.test.common.ChildEditConfigAnnotation;
 import com.exadel.aem.toolkit.test.common.EditConfigAnnotation;
 import com.exadel.aem.toolkit.test.component.ComplexComponent1;
@@ -36,11 +40,10 @@ import com.exadel.aem.toolkit.test.component.ComponentWithTabsAndInnerClass;
 import com.exadel.aem.toolkit.test.component.ComponentWithTabsAsNestedClasses;
 import com.exadel.aem.toolkit.test.component.ComponentWithoutDialog;
 import com.exadel.aem.toolkit.test.component.ForceIgnoreFreshnessTestCases;
-import com.exadel.aem.toolkit.test.component.WriteModeTestCases;
 import com.exadel.aem.toolkit.test.component.layout.MultiColumnDialog;
 import com.exadel.aem.toolkit.test.component.viewpattern.component1.ComplexComponentHolder;
 
-public class ComponentsTest extends DefaultTestBase {
+public class ComponentsTest {
     private static final Logger LOG = LoggerFactory.getLogger(ComponentsTest.class);
 
     @ClassRule
@@ -53,47 +56,47 @@ public class ComponentsTest extends DefaultTestBase {
 
     @Test
     public void testMultiColumnLayout() {
-        test(MultiColumnDialog.class);
+        pluginContext.test(MultiColumnDialog.class);
     }
 
     @Test
     public void testComponentWithRichTextAndExternalClasses() {
-        test(ComponentWithRichTextAndExternalClasses.class);
+        pluginContext.test(ComponentWithRichTextAndExternalClasses.class);
     }
 
     @Test
     public void testDialogWithTabsAndInnerClass() {
-        test(ComponentWithTabsAndInnerClass.class);
+        pluginContext.test(ComponentWithTabsAndInnerClass.class);
     }
 
     @Test
     public void testDialogWithTabsAsNestedClasses() {
-        test(ComponentWithTabsAsNestedClasses.class);
+        pluginContext.test(ComponentWithTabsAsNestedClasses.class);
     }
 
     @Test
     public void testDialogWithPanelsAsNestedClasses() {
-        test(ComponentWithPanelsAsNestedClasses.class);
+        pluginContext.test(ComponentWithPanelsAsNestedClasses.class);
     }
 
     @Test
     public void testComplexComponent1() {
-        test(ComplexComponent1.class);
+        pluginContext.test(ComplexComponent1.class);
     }
 
     @Test
     public void testComplexComponent2() {
-        test(ComplexComponent2.class);
+        pluginContext.test(ComplexComponent2.class);
     }
 
     @Test
     public void testEditConfig() {
-        test(EditConfigAnnotation.class);
+        pluginContext.test(EditConfigAnnotation.class);
     }
 
     @Test
     public void testChildEditConfig() {
-        test(ChildEditConfigAnnotation.class);
+        pluginContext.test(ChildEditConfigAnnotation.class);
     }
 
     @Test
@@ -105,7 +108,7 @@ public class ComponentsTest extends DefaultTestBase {
     public void testComponentViewPattern() {
         Path targetPath = Paths.get(TestConstants.CONTENT_ROOT_PATH, "component/viewPattern/component1").toAbsolutePath();
         String outdatedContentXml = readFile(Paths.get(TestConstants.CONTENT_ROOT_PATH, "common/editConfig/.content.xml"));
-        test(
+        pluginContext.test(
             ComplexComponentHolder.class,
             targetPath,
             fileSystem -> writeFile(fileSystem.getPath(TestConstants.PACKAGE_ROOT_PATH, TestConstants.DEFAULT_COMPONENT_NAME, ".content.xml"), outdatedContentXml));
@@ -113,15 +116,15 @@ public class ComponentsTest extends DefaultTestBase {
 
     @Test
     public void testForceIgnoreFreshness() {
-        test(ForceIgnoreFreshnessTestCases.SimpleDialog.class,
+        pluginContext.test(ForceIgnoreFreshnessTestCases.SimpleDialog.class,
             TestConstants.RESOURCE_FOLDER_COMPONENT,
             FOLDER_IGNORE_FRESHNESS,
             "simple");
-        test(ForceIgnoreFreshnessTestCases.TabbedDialog.class,
+        pluginContext.test(ForceIgnoreFreshnessTestCases.TabbedDialog.class,
             TestConstants.RESOURCE_FOLDER_COMPONENT,
             FOLDER_IGNORE_FRESHNESS,
             "tabbed");
-        test(ForceIgnoreFreshnessTestCases.AccordionDialog.class,
+        pluginContext.test(ForceIgnoreFreshnessTestCases.AccordionDialog.class,
             TestConstants.RESOURCE_FOLDER_COMPONENT,
             FOLDER_IGNORE_FRESHNESS,
             "accordion");

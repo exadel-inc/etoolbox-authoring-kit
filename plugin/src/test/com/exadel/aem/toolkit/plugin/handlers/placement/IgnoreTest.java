@@ -11,16 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.maven;
+package com.exadel.aem.toolkit.plugin.handlers.placement;
 
 import org.apache.commons.lang3.StringUtils;
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
-import com.exadel.aem.toolkit.plugin.utils.TestConstants;
+import com.exadel.aem.toolkit.plugin.base.FileSystemRule;
+import com.exadel.aem.toolkit.plugin.base.TestConstants;
+import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.test.component.IgnoreMembersTestCases;
 import com.exadel.aem.toolkit.test.component.IgnoreSectionsTestCases;
 
-public class IgnoreTest extends DefaultTestBase {
+public class IgnoreTest {
+
     private static final String LOCAL_RESOURCE_FOLDER_NAME = "ignore";
 
     @ClassRule
@@ -31,7 +36,7 @@ public class IgnoreTest extends DefaultTestBase {
 
     @Test
     public void testFixedColumnsLayout() {
-        test(IgnoreMembersTestCases.IgnoreMembersFixedColumnsLayout.class,
+        pluginContext.test(IgnoreMembersTestCases.IgnoreMembersFixedColumnsLayout.class,
             TestConstants.RESOURCE_FOLDER_COMMON,
             LOCAL_RESOURCE_FOLDER_NAME,
             getFolderName(IgnoreMembersTestCases.IgnoreMembersFixedColumnsLayout.class));
@@ -39,7 +44,7 @@ public class IgnoreTest extends DefaultTestBase {
 
     @Test
     public void testTabsLayout() {
-        test(IgnoreMembersTestCases.IgnoreMembersTabsLayout.class,
+        pluginContext.test(IgnoreMembersTestCases.IgnoreMembersTabsLayout.class,
             TestConstants.RESOURCE_FOLDER_COMMON,
             LOCAL_RESOURCE_FOLDER_NAME,
             getFolderName(IgnoreMembersTestCases.IgnoreMembersTabsLayout.class));
@@ -47,7 +52,7 @@ public class IgnoreTest extends DefaultTestBase {
 
     @Test
     public void testAccordionLayout() {
-        test(IgnoreSectionsTestCases.IgnoreMemberAndSectionAccordionLayout.class,
+        pluginContext.test(IgnoreSectionsTestCases.IgnoreMemberAndSectionAccordionLayout.class,
             TestConstants.RESOURCE_FOLDER_COMMON,
             LOCAL_RESOURCE_FOLDER_NAME,
             getFolderName(IgnoreSectionsTestCases.IgnoreMemberAndSectionAccordionLayout.class));
@@ -55,7 +60,7 @@ public class IgnoreTest extends DefaultTestBase {
 
     @Test
     public void testFieldSet1() {
-        test(IgnoreMembersTestCases.IgnoreMembersInFieldSet.class,
+        pluginContext.test(IgnoreMembersTestCases.IgnoreMembersInFieldSet.class,
             TestConstants.RESOURCE_FOLDER_COMMON,
             LOCAL_RESOURCE_FOLDER_NAME,
             getFolderName(IgnoreMembersTestCases.IgnoreMembersInFieldSet.class));
@@ -63,7 +68,7 @@ public class IgnoreTest extends DefaultTestBase {
 
     @Test
     public void testFieldSet2() {
-        test(IgnoreMembersTestCases.IgnoreMembersImposedOnFieldSet.class,
+        pluginContext.test(IgnoreMembersTestCases.IgnoreMembersImposedOnFieldSet.class,
             TestConstants.RESOURCE_FOLDER_COMMON,
             LOCAL_RESOURCE_FOLDER_NAME,
             getFolderName(IgnoreMembersTestCases.IgnoreMembersInFieldSet.class));
@@ -71,7 +76,7 @@ public class IgnoreTest extends DefaultTestBase {
 
     @Test
     public void testFieldSet3() {
-        test(IgnoreMembersTestCases.IgnoreMembersImposedOnFieldSetClassLevel.class,
+        pluginContext.test(IgnoreMembersTestCases.IgnoreMembersImposedOnFieldSetClassLevel.class,
             TestConstants.RESOURCE_FOLDER_COMMON,
             LOCAL_RESOURCE_FOLDER_NAME,
             getFolderName(IgnoreMembersTestCases.IgnoreMembersInFieldSet.class));
@@ -79,7 +84,7 @@ public class IgnoreTest extends DefaultTestBase {
 
     @Test
     public void testMutlifield1() {
-        test(IgnoreMembersTestCases.IgnoreMembersInMultifield.class,
+        pluginContext.test(IgnoreMembersTestCases.IgnoreMembersInMultifield.class,
             TestConstants.RESOURCE_FOLDER_COMMON,
             LOCAL_RESOURCE_FOLDER_NAME,
             getFolderName(IgnoreMembersTestCases.IgnoreMembersInMultifield.class));
@@ -87,7 +92,7 @@ public class IgnoreTest extends DefaultTestBase {
 
     @Test
     public void testMutlifield2() {
-        test(IgnoreMembersTestCases.IgnoreMembersImposedOnMultifield.class,
+        pluginContext.test(IgnoreMembersTestCases.IgnoreMembersImposedOnMultifield.class,
             TestConstants.RESOURCE_FOLDER_COMMON,
             LOCAL_RESOURCE_FOLDER_NAME,
             getFolderName(IgnoreMembersTestCases.IgnoreMembersInMultifield.class));
@@ -95,7 +100,7 @@ public class IgnoreTest extends DefaultTestBase {
 
     @Test
     public void testMutlifield3() {
-        test(IgnoreMembersTestCases.IgnoreMembersImposedOnMultifieldClassLevel.class,
+        pluginContext.test(IgnoreMembersTestCases.IgnoreMembersImposedOnMultifieldClassLevel.class,
             TestConstants.RESOURCE_FOLDER_COMMON,
             LOCAL_RESOURCE_FOLDER_NAME,
             getFolderName(IgnoreMembersTestCases.IgnoreMembersInMultifield.class));
@@ -103,7 +108,7 @@ public class IgnoreTest extends DefaultTestBase {
 
     @Test
     public void testNoMissingSectionErrorWhenSectionIgnored() {
-        test(IgnoreSectionsTestCases.IgnoreSection.class,
+        pluginContext.test(IgnoreSectionsTestCases.IgnoreSection.class,
             TestConstants.RESOURCE_FOLDER_COMMON,
             LOCAL_RESOURCE_FOLDER_NAME,
             getFolderName(IgnoreSectionsTestCases.IgnoreSection.class));

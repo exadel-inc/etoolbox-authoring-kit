@@ -11,10 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.maven;
+package com.exadel.aem.toolkit.plugin.handlers.dependson;
 
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.plugin.base.FileSystemRule;
+import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.test.dependson.DependsOnRefAnnotation;
 import com.exadel.aem.toolkit.test.dependson.DependsOnRequiredAnnotation;
 import com.exadel.aem.toolkit.test.dependson.DependsOnSemicolon;
@@ -31,26 +35,26 @@ public class DependsOnTest {
 
     @Test
     public void testDependsOnRequired() {
-        test(DependsOnRequiredAnnotation.class);
+        pluginContext.test(DependsOnRequiredAnnotation.class);
     }
 
     @Test
     public void testDependsOnSetFragmentReference() {
-        test(DependsOnSetFragmentReference.class);
+        pluginContext.test(DependsOnSetFragmentReference.class);
     }
 
     @Test
     public void testDependsOnRef() {
-        test(DependsOnRefAnnotation.class);
+        pluginContext.test(DependsOnRefAnnotation.class);
     }
 
     @Test
     public void testDependsOnTabAnnotation(){
-        test(DependsOnTabAnnotation.class);
+        pluginContext.test(DependsOnTabAnnotation.class);
     }
 
     @Test
     public void testDependsOnSemicolon() {
-        test(DependsOnSemicolon.class);
+        pluginContext.test(DependsOnSemicolon.class);
     }
 }

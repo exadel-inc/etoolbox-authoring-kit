@@ -11,10 +11,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.maven;
+package com.exadel.aem.toolkit.plugin.handlers.common;
 
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.plugin.base.FileSystemRule;
+import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.test.common.AllowedChildrenAnnotation;
 
 public class PoliciesTest {
@@ -27,26 +31,26 @@ public class PoliciesTest {
 
     @Test
     public void testSimpleContainer() {
-        test(AllowedChildrenAnnotation.SimpleContainer.class, "common/allowedChildren/simple");
+        pluginContext.test(AllowedChildrenAnnotation.SimpleContainer.class, "common/allowedChildren/simple");
     }
 
     @Test
     public void testClassBasedContainer() {
-        test(AllowedChildrenAnnotation.ClassBasedContainer.class, "common/allowedChildren/classBased");
+        pluginContext.test(AllowedChildrenAnnotation.ClassBasedContainer.class, "common/allowedChildren/classBased");
     }
 
     @Test
     public void testMixedContainer() {
-        test(AllowedChildrenAnnotation.MixedContainer.class, "common/allowedChildren/mixed");
+        pluginContext.test(AllowedChildrenAnnotation.MixedContainer.class, "common/allowedChildren/mixed");
     }
 
     @Test
     public void testContainerWithChildEditConfig() {
-        test(AllowedChildrenAnnotation.ContainerChildEditConfig.class, "common/allowedChildren/childEditConfig");
+        pluginContext.test(AllowedChildrenAnnotation.ContainerChildEditConfig.class, "common/allowedChildren/childEditConfig");
     }
 
     @Test
     public void testContainerWithEditConfig() {
-        test(AllowedChildrenAnnotation.ContainerEditConfig.class, "common/allowedChildren/editConfig");
+        pluginContext.test(AllowedChildrenAnnotation.ContainerEditConfig.class, "common/allowedChildren/editConfig");
     }
 }

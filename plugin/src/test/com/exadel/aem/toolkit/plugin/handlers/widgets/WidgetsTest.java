@@ -11,10 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.maven;
+package com.exadel.aem.toolkit.plugin.handlers.widgets;
 
+import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
+import static com.exadel.aem.toolkit.plugin.base.TestConstants.RESOURCE_FOLDER_WIDGET;
 
+import com.exadel.aem.toolkit.plugin.base.FileSystemRule;
+import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.test.common.AttributesAnnotation;
 import com.exadel.aem.toolkit.test.common.PropertiesAnnotation;
 import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
@@ -48,7 +53,7 @@ import com.exadel.aem.toolkit.test.widget.TextAreaWidget;
 import com.exadel.aem.toolkit.test.widget.TextFieldWidget;
 import com.exadel.aem.toolkit.test.widget.TextWidget;
 
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.RESOURCE_FOLDER_WIDGET;
+public class WidgetsTest {
 
     @ClassRule
     public static FileSystemRule fileSystemHost = new FileSystemRule();
@@ -58,161 +63,161 @@ import static com.exadel.aem.toolkit.plugin.utils.TestConstants.RESOURCE_FOLDER_
 
     @Test
     public void testAccordion() {
-        test(AccordionWidget.class, RESOURCE_FOLDER_WIDGET, "accordion");
+        pluginContext.test(AccordionWidget.class, RESOURCE_FOLDER_WIDGET, "accordion");
     }
 
     @Test
     public void testAlert() {
-        test(AlertWidget.class);
+        pluginContext.test(AlertWidget.class);
     }
 
     @Test
     public void testAttributes() {
-        test(AttributesAnnotation.class, RESOURCE_FOLDER_WIDGET, "graniteAttributes");
+        pluginContext.test(AttributesAnnotation.class, RESOURCE_FOLDER_WIDGET, "graniteAttributes");
     }
 
     @Test
     public void testAnchorButton() {
-        test(AnchorButtonWidget.class);
+        pluginContext.test(AnchorButtonWidget.class);
     }
 
     @Test
     public void testButton() {
-        test(ButtonWidget.class);
+        pluginContext.test(ButtonWidget.class);
     }
 
     @Test
     public void testButtonGroup() {
-        test(ButtonGroupWidget.class);
+        pluginContext.test(ButtonGroupWidget.class);
     }
 
     @Test
     public void testColorFieldAndHtmlTag() {
-        test(ColorFieldWidget.class);
+        pluginContext.test(ColorFieldWidget.class);
     }
 
     @Test
     public void testCustom() {
-        test(CustomAnnotations.class, RESOURCE_FOLDER_WIDGET, "custom");
+        pluginContext.test(CustomAnnotations.class, RESOURCE_FOLDER_WIDGET, "custom");
     }
 
     @Test
     public void testCustomProperties() {
-        test(PropertiesAnnotation.class, RESOURCE_FOLDER_WIDGET, "customProperties");
+        pluginContext.test(PropertiesAnnotation.class, RESOURCE_FOLDER_WIDGET, "customProperties");
     }
 
     @Test
     public void testDatePicker() {
-        test(DatePickerWidget.class);
+        pluginContext.test(DatePickerWidget.class);
     }
 
     @Test
     public void testFieldSet() {
-        test(FieldSetWidget.class);
+        pluginContext.test(FieldSetWidget.class);
     }
 
     @Test
     public void testFileUpload() {
-        test(FileUploadWidget.class);
+        pluginContext.test(FileUploadWidget.class);
     }
 
     @Test
     public void testFixedColumns() {
-        test(FixedColumnsWidget.class);
+        pluginContext.test(FixedColumnsWidget.class);
     }
 
     @Test
     public void testHeading() {
-        test(HeadingWidget.class);
+        pluginContext.test(HeadingWidget.class);
     }
 
     @Test
     public void testHidden() {
-        test(HiddenWidget.class);
+        pluginContext.test(HiddenWidget.class);
     }
 
     @Test
     public void testHyperlink() {
-        test(HyperlinkWidget.class);
+        pluginContext.test(HyperlinkWidget.class);
     }
 
     @Test
     public void testImageUpload() {
-        test(ImageUploadWidget.class);
+        pluginContext.test(ImageUploadWidget.class);
     }
 
     @Test
     public void testInclude() {
-        test(IncludeWidget.class);
+        pluginContext.test(IncludeWidget.class);
     }
 
     @Test
     public void testMultiField() {
-        test(MultiFieldWidget.class);
+        pluginContext.test(MultiFieldWidget.class);
     }
 
     @Test
     public void testNestedCheckboxList() {
-        test(NestedCheckboxListWidget.class);
+        pluginContext.test(NestedCheckboxListWidget.class);
     }
 
     @Test
     public void testNumberField() {
-        test(NumberFieldWidget.class);
+        pluginContext.test(NumberFieldWidget.class);
     }
 
     @Test
     public void testPassword() {
-        test(PasswordWidget.class);
+        pluginContext.test(PasswordWidget.class);
     }
 
     @Test
     public void testPathField() {
-        test(PathFieldWidget.class);
+        pluginContext.test(PathFieldWidget.class);
     }
 
     @Test
     public void testRadioGroup() {
-        test(RadioGroupWidget.class);
+        pluginContext.test(RadioGroupWidget.class);
     }
 
     @Test
     public void testSelect() {
-        test(SelectWidget.class);
+        pluginContext.test(SelectWidget.class);
     }
 
     @Test
     public void testText() {
-        test(TextWidget.class);
+        pluginContext.test(TextWidget.class);
     }
 
     @Test
     public void testTextArea() {
-        test(TextAreaWidget.class);
+        pluginContext.test(TextAreaWidget.class);
     }
 
     @Test
     public void testRichTextEditor() {
-        test(RichTextEditorWidget.class);
+        pluginContext.test(RichTextEditorWidget.class);
     }
 
     @Test
     public void testTabs() {
-        test(TabsWidget.class, RESOURCE_FOLDER_WIDGET, "tabs");
+        pluginContext.test(TabsWidget.class, RESOURCE_FOLDER_WIDGET, "tabs");
     }
 
     @Test
     public void testTagField() {
-        test(TagFieldWidget.class);
+        pluginContext.test(TagFieldWidget.class);
     }
 
     @Test
     public void testTextField() {
-        test(TextFieldWidget.class);
+        pluginContext.test(TextFieldWidget.class);
     }
 
     @Test
     public void testWidgetAnnotatedWithMultiple() {
-        test(MultipleAnnotatedWidget.class, RESOURCE_FOLDER_WIDGET, "multiple");
+        pluginContext.test(MultipleAnnotatedWidget.class, RESOURCE_FOLDER_WIDGET, "multiple");
     }
 }
