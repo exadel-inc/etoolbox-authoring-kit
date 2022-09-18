@@ -36,7 +36,10 @@ public class PluginContextRenderingRule extends PluginContextRule {
 
     private static final String INSTANTIATION_EXCEPTION_MESSAGE = "Could not start testing class {}";
     private static final String CLEANUP_EXCEPTION_MESSAGE = "Could not complete testing class {}";
+
     private static final String EXCEPTION_MISSING_MESSAGE = "Exception of type %s was expected, none thrown";
+    private static final String EXCEPTION_WRONG_TYPE_MESSAGE = "Exception of type %s was expected but actual exception was %s";
+    private static final String EXCEPTION_WRONG_DETAILS_MESSAGE = "Exception with a message containing \"%s\" was expected but actual message was \"%s\"";
 
     private static final String KEYWORD_ANNOTATION = "Annotation";
     private static final String KEYWORD_DEPENDSON = "DependsOn";
@@ -105,9 +108,13 @@ public class PluginContextRenderingRule extends PluginContextRule {
             test(component);
             throw new AssertionError(String.format(EXCEPTION_MISSING_MESSAGE, exceptionType));
         } catch (Throwable e) {
-            Assert.assertTrue(e.getClass().equals(exceptionType) || (e.getCause() != null && e.getCause().getClass().equals(exceptionType)));
+            Assert.assertTrue(
+                String.format(EXCEPTION_WRONG_TYPE_MESSAGE, exceptionType, e.getClass()),
+                e.getClass().equals(exceptionType) || (e.getCause() != null && e.getCause().getClass().equals(exceptionType)));
             for (String message : ArrayUtils.nullToEmpty(messages)) {
-                Assert.assertTrue(e.getMessage().contains(message));
+                Assert.assertTrue(
+                    String.format(EXCEPTION_WRONG_DETAILS_MESSAGE, message, e.getMessage()),
+                    e.getMessage().contains(message));
             }
         }
     }
