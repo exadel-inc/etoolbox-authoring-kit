@@ -21,7 +21,7 @@ import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.test.common.AllowedChildrenAnnotation;
 
-public class PoliciesTest {
+public class AllowedChildrenTest {
 
     @ClassRule
     public static FileSystemRule fileSystemHost = new FileSystemRule();
