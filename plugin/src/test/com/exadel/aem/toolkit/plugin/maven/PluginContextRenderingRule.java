@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.function.Consumer;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
@@ -35,8 +36,9 @@ public class PluginContextRenderingRule extends PluginContextRule {
 
     private static final Logger LOG = LoggerFactory.getLogger(PluginContextRenderingRule.class);
 
-    static final String INSTANTIATION_EXCEPTION_MESSAGE = "Could not start testing class {}";
-    static final String CLEANUP_EXCEPTION_MESSAGE = "Could not complete testing class {}";
+    private static final String INSTANTIATION_EXCEPTION_MESSAGE = "Could not start testing class {}";
+    private static final String CLEANUP_EXCEPTION_MESSAGE = "Could not complete testing class {}";
+    private static final String EXCEPTION_MISSING_MESSAGE = "Exception of type %s was expected, none thrown";
 
     private static final String KEYWORD_ANNOTATION = "Annotation";
     private static final String KEYWORD_DEPENDSON = "DependsOn";
@@ -51,22 +53,22 @@ public class PluginContextRenderingRule extends PluginContextRule {
         this.fileSystem = fileSystem;
     }
 
-    public void test(Class<?> testable) {
+    public void test(Class<?> component) {
         String subfolderName = RESOURCE_FOLDER_COMPONENT;
-        if (testable.getSimpleName().endsWith(KEYWORD_WIDGET)) {
+        if (component.getSimpleName().endsWith(KEYWORD_WIDGET)) {
             subfolderName = RESOURCE_FOLDER_WIDGET;
-        } else if (testable.getSimpleName().startsWith(KEYWORD_DEPENDSON)) {
+        } else if (component.getSimpleName().startsWith(KEYWORD_DEPENDSON)) {
             subfolderName = RESOURCE_FOLDER_DEPENDSON;
-        } else if (testable.getSimpleName().endsWith(KEYWORD_ANNOTATION)) {
+        } else if (component.getSimpleName().endsWith(KEYWORD_ANNOTATION)) {
             subfolderName = RESOURCE_FOLDER_COMMON;
         }
-        test(testable,
+        test(component,
             subfolderName,
-            StringUtils.uncapitalize(RegExUtils.removePattern(testable.getSimpleName(), SUFFIX_PATTERN)));
+            StringUtils.uncapitalize(RegExUtils.removePattern(component.getSimpleName(), SUFFIX_PATTERN)));
     }
 
-    public void test(Class<?> testable, String... pathElements) {
-        test(testable, null, Paths.get(TestConstants.CONTENT_ROOT_PATH, pathElements).toAbsolutePath(), null);
+    public void test(Class<?> component, String... pathElements) {
+        test(component, null, Paths.get(TestConstants.CONTENT_ROOT_PATH, pathElements).toAbsolutePath(), null);
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -75,11 +77,11 @@ public class PluginContextRenderingRule extends PluginContextRule {
     }
 
     @SuppressWarnings("SameParameterValue")
-    public void test(Class<?> testable, Path sampleFilesPath, Consumer<FileSystem> preparation) {
-        test(testable, null, sampleFilesPath, preparation);
+    public void test(Class<?> component, Path sampleFilesPath, Consumer<FileSystem> preparation) {
+        test(component, null, sampleFilesPath, preparation);
     }
 
-    private void test(Class<?> testable, String createdFilesPath, Path sampleFilesPath, Consumer<FileSystem> preparation) {
+    private void test(Class<?> component, String createdFilesPath, Path sampleFilesPath, Consumer<FileSystem> preparation) {
         if (preparation != null) {
             preparation.accept(fileSystem);
         }
@@ -89,14 +91,26 @@ public class PluginContextRenderingRule extends PluginContextRule {
         try {
             boolean result = FileRenderingUtil.doRenderingTest(
                 fileSystem,
-                testable.getName(),
+                component.getName(),
                 effectivePath,
                 sampleFilesPath);
             Assert.assertTrue(result);
         } catch (ClassNotFoundException cnfEx) {
-            LOG.error(INSTANTIATION_EXCEPTION_MESSAGE, testable.getName(), cnfEx);
+            LOG.error(INSTANTIATION_EXCEPTION_MESSAGE, component.getName(), cnfEx);
         } catch (IOException ioEx) {
-            LOG.error(CLEANUP_EXCEPTION_MESSAGE, testable.getName(), ioEx);
+            LOG.error(CLEANUP_EXCEPTION_MESSAGE, component.getName(), ioEx);
+        }
+    }
+
+    public void testThrows(Class<?> component, Class<? extends Exception> exceptionType, String... messages) {
+        try {
+            test(component);
+            throw new AssertionError(String.format(EXCEPTION_MISSING_MESSAGE, exceptionType));
+        } catch (Throwable e) {
+            Assert.assertTrue(e.getClass().equals(exceptionType) || (e.getCause() != null && e.getCause().getClass().equals(exceptionType)));
+            for (String message : ArrayUtils.nullToEmpty(messages)) {
+                Assert.assertTrue(e.getMessage().contains(message));
+            }
         }
     }
 }
