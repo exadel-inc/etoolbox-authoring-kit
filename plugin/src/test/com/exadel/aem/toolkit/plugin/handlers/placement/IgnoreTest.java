@@ -22,11 +22,10 @@ import com.exadel.aem.toolkit.plugin.handlers.placement.cases.ignore.IgnoreMembe
 import com.exadel.aem.toolkit.plugin.handlers.placement.cases.ignore.IgnoreSectionsTestCases;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
-import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 public class IgnoreTest {
 
-    private static final String LOCAL_RESOURCE_FOLDER_NAME = "ignore";
+    private static final String RESOURCE_FOLDER = "handlers/placement/ignore";
 
     @ClassRule
     public static FileSystemRule fileSystemHost = new FileSystemRule();
@@ -37,80 +36,70 @@ public class IgnoreTest {
     @Test
     public void testFixedColumnsLayout() {
         pluginContext.test(IgnoreMembersTestCases.IgnoreMembersFixedColumnsLayout.class,
-            TestConstants.RESOURCE_FOLDER_COMMON,
-            LOCAL_RESOURCE_FOLDER_NAME,
+            RESOURCE_FOLDER,
             getFolderName(IgnoreMembersTestCases.IgnoreMembersFixedColumnsLayout.class));
     }
 
     @Test
     public void testTabsLayout() {
         pluginContext.test(IgnoreMembersTestCases.IgnoreMembersTabsLayout.class,
-            TestConstants.RESOURCE_FOLDER_COMMON,
-            LOCAL_RESOURCE_FOLDER_NAME,
+            RESOURCE_FOLDER,
             getFolderName(IgnoreMembersTestCases.IgnoreMembersTabsLayout.class));
     }
 
     @Test
     public void testAccordionLayout() {
         pluginContext.test(IgnoreSectionsTestCases.IgnoreMemberAndSectionAccordionLayout.class,
-            TestConstants.RESOURCE_FOLDER_COMMON,
-            LOCAL_RESOURCE_FOLDER_NAME,
+            RESOURCE_FOLDER,
             getFolderName(IgnoreSectionsTestCases.IgnoreMemberAndSectionAccordionLayout.class));
     }
 
     @Test
     public void testFieldSet1() {
         pluginContext.test(IgnoreMembersTestCases.IgnoreMembersInFieldSet.class,
-            TestConstants.RESOURCE_FOLDER_COMMON,
-            LOCAL_RESOURCE_FOLDER_NAME,
+            RESOURCE_FOLDER,
             getFolderName(IgnoreMembersTestCases.IgnoreMembersInFieldSet.class));
     }
 
     @Test
     public void testFieldSet2() {
         pluginContext.test(IgnoreMembersTestCases.IgnoreMembersImposedOnFieldSet.class,
-            TestConstants.RESOURCE_FOLDER_COMMON,
-            LOCAL_RESOURCE_FOLDER_NAME,
+            RESOURCE_FOLDER,
             getFolderName(IgnoreMembersTestCases.IgnoreMembersInFieldSet.class));
     }
 
     @Test
     public void testFieldSet3() {
         pluginContext.test(IgnoreMembersTestCases.IgnoreMembersImposedOnFieldSetClassLevel.class,
-            TestConstants.RESOURCE_FOLDER_COMMON,
-            LOCAL_RESOURCE_FOLDER_NAME,
+            RESOURCE_FOLDER,
             getFolderName(IgnoreMembersTestCases.IgnoreMembersInFieldSet.class));
     }
 
     @Test
     public void testMutlifield1() {
         pluginContext.test(IgnoreMembersTestCases.IgnoreMembersInMultifield.class,
-            TestConstants.RESOURCE_FOLDER_COMMON,
-            LOCAL_RESOURCE_FOLDER_NAME,
+            RESOURCE_FOLDER,
             getFolderName(IgnoreMembersTestCases.IgnoreMembersInMultifield.class));
     }
 
     @Test
     public void testMutlifield2() {
         pluginContext.test(IgnoreMembersTestCases.IgnoreMembersImposedOnMultifield.class,
-            TestConstants.RESOURCE_FOLDER_COMMON,
-            LOCAL_RESOURCE_FOLDER_NAME,
+            RESOURCE_FOLDER,
             getFolderName(IgnoreMembersTestCases.IgnoreMembersInMultifield.class));
     }
 
     @Test
     public void testMutlifield3() {
         pluginContext.test(IgnoreMembersTestCases.IgnoreMembersImposedOnMultifieldClassLevel.class,
-            TestConstants.RESOURCE_FOLDER_COMMON,
-            LOCAL_RESOURCE_FOLDER_NAME,
+            RESOURCE_FOLDER,
             getFolderName(IgnoreMembersTestCases.IgnoreMembersInMultifield.class));
     }
 
     @Test
     public void testNoMissingSectionErrorWhenSectionIgnored() {
         pluginContext.test(IgnoreSectionsTestCases.IgnoreSection.class,
-            TestConstants.RESOURCE_FOLDER_COMMON,
-            LOCAL_RESOURCE_FOLDER_NAME,
+            RESOURCE_FOLDER,
             getFolderName(IgnoreSectionsTestCases.IgnoreSection.class));
 
     }
