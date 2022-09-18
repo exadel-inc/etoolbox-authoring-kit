@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.placement.cases.ordering;
+package com.exadel.aem.toolkit.plugin.handlers.placement.cases.memberordering;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
@@ -23,9 +23,9 @@ import com.exadel.aem.toolkit.api.markers._Super;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 @SuppressWarnings("unused")
-public class OrderingTestCases {
+public class MemberOrderingTestCases {
 
-    private OrderingTestCases() {
+    private MemberOrderingTestCases() {
     }
 
     @AemComponent(
