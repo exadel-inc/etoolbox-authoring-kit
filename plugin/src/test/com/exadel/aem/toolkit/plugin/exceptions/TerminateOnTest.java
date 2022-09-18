@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.maven;
+package com.exadel.aem.toolkit.plugin.exceptions;
 
 import java.io.IOException;
 import java.util.Map;
@@ -21,10 +21,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import com.google.common.collect.ImmutableMap;
 
-import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
 
-public class ExceptionsTest {
+public class TerminateOnTest {
     private static final String NOT_AN_EXCEPTION_MESSAGE = "NOT AN EXCEPTION: testing terminateOn logic";
     private static final String SHOULD_TERMINATE_TEMPLATE = "Setting \"%s\" should have caused termination with %s";
 

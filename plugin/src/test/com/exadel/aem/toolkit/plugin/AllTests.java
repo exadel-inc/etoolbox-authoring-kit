@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.exadel.aem.toolkit.plugin.exceptions.TerminateOnTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.ComponentsTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.PoliciesTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.WriteModeTest;
@@ -28,7 +29,6 @@ import com.exadel.aem.toolkit.plugin.handlers.placement.OrderingTest;
 import com.exadel.aem.toolkit.plugin.handlers.placement.ReplacementTest;
 import com.exadel.aem.toolkit.plugin.handlers.placement.layouts.LayoutTest;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.WidgetsTest;
-import com.exadel.aem.toolkit.plugin.maven.ExceptionsTest;
 import com.exadel.aem.toolkit.plugin.targets.TargetsTest;
 import com.exadel.aem.toolkit.plugin.utils.AnnotationUtilTest;
 import com.exadel.aem.toolkit.plugin.utils.ordering.TopologicalSorterTest;
@@ -57,7 +57,7 @@ import com.exadel.aem.toolkit.plugin.validators.ValidatorsTest;
     TopologicalSorterTest.class,
 
     ValidatorsTest.class,
-    ExceptionsTest.class,
+    TerminateOnTest.class,
 })
 public class AllTests {
 }
