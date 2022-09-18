@@ -31,26 +31,26 @@ public class AllowedChildrenTest {
 
     @Test
     public void testSimpleContainer() {
-        pluginContext.test(AllowedChildrenAnnotation.SimpleContainer.class, "common/allowedChildren/simple");
+        pluginContext.test(AllowedChildrenAnnotation.SimpleContainer.class, "handlers/common/policies/allowedChildren/simple");
     }
 
     @Test
     public void testClassBasedContainer() {
-        pluginContext.test(AllowedChildrenAnnotation.ClassBasedContainer.class, "common/allowedChildren/classBased");
+        pluginContext.test(AllowedChildrenAnnotation.ClassBasedContainer.class, "handlers/common/policies/allowedChildren/classBased");
     }
 
     @Test
     public void testMixedContainer() {
-        pluginContext.test(AllowedChildrenAnnotation.MixedContainer.class, "common/allowedChildren/mixed");
+        pluginContext.test(AllowedChildrenAnnotation.MixedContainer.class, "handlers/common/policies/allowedChildren/mixed");
     }
 
     @Test
     public void testContainerWithChildEditConfig() {
-        pluginContext.test(AllowedChildrenAnnotation.ContainerChildEditConfig.class, "common/allowedChildren/childEditConfig");
+        pluginContext.test(AllowedChildrenAnnotation.ContainerChildEditConfig.class, "handlers/common/policies/allowedChildren/childEditConfig");
     }
 
     @Test
     public void testContainerWithEditConfig() {
-        pluginContext.test(AllowedChildrenAnnotation.ContainerEditConfig.class, "common/allowedChildren/editConfig");
+        pluginContext.test(AllowedChildrenAnnotation.ContainerEditConfig.class, "handlers/common/policies/allowedChildren/editConfig");
     }
 }
