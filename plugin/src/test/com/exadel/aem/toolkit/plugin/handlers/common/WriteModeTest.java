@@ -22,11 +22,11 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.exadel.aem.toolkit.plugin.exceptions.MissingResourceException;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.WriteModeTestCases;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 import com.exadel.aem.toolkit.plugin.maven.ThrowsPluginException;
-import com.exadel.aem.toolkit.test.component.WriteModeTestCases;
 
 public class WriteModeTest {
 
