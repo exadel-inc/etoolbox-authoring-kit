@@ -29,10 +29,10 @@ import com.exadel.aem.toolkit.plugin.handlers.placement.ReplacementTest;
 import com.exadel.aem.toolkit.plugin.handlers.placement.layouts.LayoutTest;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.WidgetsTest;
 import com.exadel.aem.toolkit.plugin.maven.ExceptionsTest;
-import com.exadel.aem.toolkit.plugin.maven.ValidationsTest;
 import com.exadel.aem.toolkit.plugin.targets.TargetsTest;
 import com.exadel.aem.toolkit.plugin.utils.AnnotationUtilTest;
 import com.exadel.aem.toolkit.plugin.utils.ordering.TopologicalSorterTest;
+import com.exadel.aem.toolkit.plugin.validators.ValidatorsTest;
 
 /**
  * Shortcut class for running all available test cases in a batch
@@ -56,7 +56,7 @@ import com.exadel.aem.toolkit.plugin.utils.ordering.TopologicalSorterTest;
     OrderingTest.class,
     TopologicalSorterTest.class,
 
-    ValidationsTest.class,
+    ValidatorsTest.class,
     ExceptionsTest.class,
 })
 public class AllTests {
