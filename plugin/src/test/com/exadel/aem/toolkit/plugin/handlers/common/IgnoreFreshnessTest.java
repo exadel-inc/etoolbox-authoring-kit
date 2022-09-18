@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 public class IgnoreFreshnessTest {
 
-    private static final String FOLDER_IGNORE_FRESHNESS = "forceIgnoreFreshness";
+    private static final String FOLDER_IGNORE_FRESHNESS = "ignoreFreshness";
 
     @ClassRule
     public static FileSystemRule fileSystemHost = new FileSystemRule();
@@ -35,15 +35,15 @@ public class IgnoreFreshnessTest {
     @Test
     public void testForceIgnoreFreshness() {
         pluginContext.test(IgnoreFreshnessTestCases.SimpleDialog.class,
-            TestConstants.RESOURCE_FOLDER_COMPONENT,
+            TestConstants.RESOURCE_FOLDER_COMPONENTS,
             FOLDER_IGNORE_FRESHNESS,
             "simple");
         pluginContext.test(IgnoreFreshnessTestCases.TabbedDialog.class,
-            TestConstants.RESOURCE_FOLDER_COMPONENT,
+            TestConstants.RESOURCE_FOLDER_COMPONENTS,
             FOLDER_IGNORE_FRESHNESS,
             "tabbed");
         pluginContext.test(IgnoreFreshnessTestCases.AccordionDialog.class,
-            TestConstants.RESOURCE_FOLDER_COMPONENT,
+            TestConstants.RESOURCE_FOLDER_COMPONENTS,
             FOLDER_IGNORE_FRESHNESS,
             "accordion");
     }
