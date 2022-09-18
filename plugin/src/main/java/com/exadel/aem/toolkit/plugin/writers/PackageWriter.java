@@ -280,7 +280,7 @@ public class PackageWriter implements AutoCloseable {
      * @param projectName Name of the project this file system contains information for
      * @return {@code PackageWriter} instance
      */
-    static PackageWriter forFileSystem(FileSystem fileSystem, String projectName) {
+    public static PackageWriter forFileSystem(FileSystem fileSystem, String projectName) {
         List<PackageEntryWriter> writers;
         try {
             Transformer transformer = XmlFactory.newDocumentTransformer();
