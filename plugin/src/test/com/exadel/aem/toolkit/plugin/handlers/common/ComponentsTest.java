@@ -26,6 +26,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_WIDGET;
 
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComplexComponent1;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComplexComponent2;
@@ -34,8 +35,9 @@ import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentW
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentWithTabsAndInnerClass;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentWithTabsAsNestedClasses;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentWithoutDialog;
-import com.exadel.aem.toolkit.plugin.handlers.common.cases.viewpattern.component1.ComplexComponentHolder;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.CustomAnnotationsComponent;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.MultiColumnDialog;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.viewpattern.component1.ComplexComponentHolder;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
@@ -83,6 +85,11 @@ public class ComponentsTest {
     @Test
     public void testComplexComponent2() {
         pluginContext.test(ComplexComponent2.class);
+    }
+
+    @Test
+    public void testCustomAnnotationsComponent() {
+        pluginContext.test(CustomAnnotationsComponent.class, RESOURCE_FOLDER_WIDGET, "custom");
     }
 
     @Test

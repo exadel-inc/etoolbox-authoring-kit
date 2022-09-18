@@ -11,21 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.custom;
+package com.exadel.aem.toolkit.plugin.handlers.common.cases.components;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomDialogAnnotationAuto;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomLegacyDialogAnnotation;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomNonMappingWidgetAnnotation;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomScopedNonMappingWidgetAnnotation;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotation;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
-import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAutoOrder;
-import com.exadel.aem.toolkit.test.custom.annotation.DialogAnnotationForOrderingTest;
-import com.exadel.aem.toolkit.test.custom.annotation.WidgetAnnotationForOrderingTest;
+import com.exadel.aem.toolkit.plugin.annotations.CustomDialogAnnotationAuto;
+import com.exadel.aem.toolkit.plugin.annotations.CustomLegacyDialogAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.CustomNonMappingWidgetAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.CustomScopedNonMappingWidgetAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.CustomWidgetAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.CustomWidgetAnnotationAuto;
+import com.exadel.aem.toolkit.plugin.annotations.CustomWidgetAutoOrder;
+import com.exadel.aem.toolkit.plugin.annotations.DialogAnnotationForOrderingTest;
+import com.exadel.aem.toolkit.plugin.annotations.WidgetAnnotationForOrderingTest;
 
 @AemComponent(
     path = "test-component",
@@ -40,7 +40,7 @@ import com.exadel.aem.toolkit.test.custom.annotation.WidgetAnnotationForOrdering
 @DialogAnnotationForOrderingTest
 @CustomScopedNonMappingWidgetAnnotation(customField = "dummy value")
 @SuppressWarnings("unused")
-public class CustomAnnotations {
+public class CustomAnnotationsComponent {
     @DialogField
     @CustomWidgetAnnotation(customField = "Overridden value")
     @CustomNonMappingWidgetAnnotation

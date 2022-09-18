@@ -49,7 +49,6 @@ import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.TextFieldWidget;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.TextWidget;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
-import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
 
 public class WidgetsTest {
 
@@ -87,11 +86,6 @@ public class WidgetsTest {
     @Test
     public void testColorFieldAndHtmlTag() {
         pluginContext.test(ColorFieldWidget.class);
-    }
-
-    @Test
-    public void testCustom() {
-        pluginContext.test(CustomAnnotations.class, RESOURCE_FOLDER_WIDGET, "custom");
     }
 
     @Test
