@@ -18,40 +18,38 @@ import org.junit.Rule;
 import org.junit.Test;
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_WIDGET;
 
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.AccordionWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.AlertWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.AnchorButtonWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.ButtonGroupWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.ButtonWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.ColorFieldWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.DatePickerWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.FieldSetWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.FileUploadWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.FixedColumnsWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.HeadingWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.HiddenWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.HyperlinkWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.ImageUploadWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.IncludeWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.MultiFieldWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.MultipleAnnotatedWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.NestedCheckboxListWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.NumberFieldWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.PasswordWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.PathFieldWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.RadioGroupWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.RichTextEditorWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.SelectWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.TabsWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.TagFieldWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.TextAreaWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.TextFieldWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.TextWidget;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
-import com.exadel.aem.toolkit.test.common.AttributesAnnotation;
-import com.exadel.aem.toolkit.test.common.PropertiesAnnotation;
 import com.exadel.aem.toolkit.test.custom.CustomAnnotations;
-import com.exadel.aem.toolkit.test.widget.AccordionWidget;
-import com.exadel.aem.toolkit.test.widget.AlertWidget;
-import com.exadel.aem.toolkit.test.widget.AnchorButtonWidget;
-import com.exadel.aem.toolkit.test.widget.ButtonGroupWidget;
-import com.exadel.aem.toolkit.test.widget.ButtonWidget;
-import com.exadel.aem.toolkit.test.widget.ColorFieldWidget;
-import com.exadel.aem.toolkit.test.widget.DatePickerWidget;
-import com.exadel.aem.toolkit.test.widget.FieldSetWidget;
-import com.exadel.aem.toolkit.test.widget.FileUploadWidget;
-import com.exadel.aem.toolkit.test.widget.FixedColumnsWidget;
-import com.exadel.aem.toolkit.test.widget.HeadingWidget;
-import com.exadel.aem.toolkit.test.widget.HiddenWidget;
-import com.exadel.aem.toolkit.test.widget.HyperlinkWidget;
-import com.exadel.aem.toolkit.test.widget.ImageUploadWidget;
-import com.exadel.aem.toolkit.test.widget.IncludeWidget;
-import com.exadel.aem.toolkit.test.widget.MultiFieldWidget;
-import com.exadel.aem.toolkit.test.widget.MultipleAnnotatedWidget;
-import com.exadel.aem.toolkit.test.widget.NestedCheckboxListWidget;
-import com.exadel.aem.toolkit.test.widget.NumberFieldWidget;
-import com.exadel.aem.toolkit.test.widget.PasswordWidget;
-import com.exadel.aem.toolkit.test.widget.PathFieldWidget;
-import com.exadel.aem.toolkit.test.widget.RadioGroupWidget;
-import com.exadel.aem.toolkit.test.widget.RichTextEditorWidget;
-import com.exadel.aem.toolkit.test.widget.SelectWidget;
-import com.exadel.aem.toolkit.test.widget.TabsWidget;
-import com.exadel.aem.toolkit.test.widget.TagFieldWidget;
-import com.exadel.aem.toolkit.test.widget.TextAreaWidget;
-import com.exadel.aem.toolkit.test.widget.TextFieldWidget;
-import com.exadel.aem.toolkit.test.widget.TextWidget;
 
 public class WidgetsTest {
 
@@ -69,11 +67,6 @@ public class WidgetsTest {
     @Test
     public void testAlert() {
         pluginContext.test(AlertWidget.class);
-    }
-
-    @Test
-    public void testAttributes() {
-        pluginContext.test(AttributesAnnotation.class, RESOURCE_FOLDER_WIDGET, "graniteAttributes");
     }
 
     @Test
@@ -99,11 +92,6 @@ public class WidgetsTest {
     @Test
     public void testCustom() {
         pluginContext.test(CustomAnnotations.class, RESOURCE_FOLDER_WIDGET, "custom");
-    }
-
-    @Test
-    public void testCustomProperties() {
-        pluginContext.test(PropertiesAnnotation.class, RESOURCE_FOLDER_WIDGET, "customProperties");
     }
 
     @Test

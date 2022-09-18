@@ -18,9 +18,9 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import com.exadel.aem.toolkit.plugin.exceptions.TerminateOnTest;
+import com.exadel.aem.toolkit.plugin.handlers.common.AllowedChildrenTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.ComponentsTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.IgnoreFreshnessTest;
-import com.exadel.aem.toolkit.plugin.handlers.common.PoliciesTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.WriteModeTest;
 import com.exadel.aem.toolkit.plugin.handlers.dependson.DependsOnTest;
 import com.exadel.aem.toolkit.plugin.handlers.placement.CoincidingNamesTest;
@@ -30,6 +30,7 @@ import com.exadel.aem.toolkit.plugin.handlers.placement.OrderingTest;
 import com.exadel.aem.toolkit.plugin.handlers.placement.ReplacementTest;
 import com.exadel.aem.toolkit.plugin.handlers.placement.layouts.LayoutTest;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.WidgetsTest;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.common.WidgetsMetaTest;
 import com.exadel.aem.toolkit.plugin.targets.TargetsTest;
 import com.exadel.aem.toolkit.plugin.utils.AnnotationUtilTest;
 import com.exadel.aem.toolkit.plugin.utils.ordering.TopologicalSorterTest;
@@ -46,7 +47,8 @@ import com.exadel.aem.toolkit.plugin.validators.ValidatorsTest;
     ComponentsTest.class,
     WriteModeTest.class,
     WidgetsTest.class,
-    PoliciesTest.class,
+    WidgetsMetaTest.class,
+    AllowedChildrenTest.class,
     DependsOnTest.class,
     IgnoreFreshnessTest.class,
 
