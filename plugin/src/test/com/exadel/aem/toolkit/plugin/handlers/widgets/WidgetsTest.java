@@ -50,7 +50,11 @@ import com.exadel.aem.toolkit.test.widget.TextWidget;
 
 import static com.exadel.aem.toolkit.plugin.utils.TestConstants.RESOURCE_FOLDER_WIDGET;
 
-public class WidgetsTest extends DefaultTestBase {
+    @ClassRule
+    public static FileSystemRule fileSystemHost = new FileSystemRule();
+
+    @Rule
+    public PluginContextRenderingRule pluginContext = new PluginContextRenderingRule(fileSystemHost.getFileSystem());
 
     @Test
     public void testAccordion() {

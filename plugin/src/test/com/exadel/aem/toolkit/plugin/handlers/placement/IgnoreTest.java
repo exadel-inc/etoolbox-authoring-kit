@@ -23,6 +23,12 @@ import com.exadel.aem.toolkit.test.component.IgnoreSectionsTestCases;
 public class IgnoreTest extends DefaultTestBase {
     private static final String LOCAL_RESOURCE_FOLDER_NAME = "ignore";
 
+    @ClassRule
+    public static FileSystemRule fileSystemHost = new FileSystemRule();
+
+    @Rule
+    public PluginContextRenderingRule pluginContext = new PluginContextRenderingRule(fileSystemHost.getFileSystem());
+
     @Test
     public void testFixedColumnsLayout() {
         test(IgnoreMembersTestCases.IgnoreMembersFixedColumnsLayout.class,

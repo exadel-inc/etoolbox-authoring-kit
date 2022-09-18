@@ -33,7 +33,10 @@ import com.exadel.aem.toolkit.test.component.ComplexComponent1;
 import com.exadel.aem.toolkit.test.component.ComplexComponent2;
 import com.exadel.aem.toolkit.test.widget.RichTextEditorWidget;
 
-public class AnnotationUtilTest extends UtilityClassesTestBase {
+public class AnnotationUtilTest {
+
+    @Rule
+    public final PluginContextRule pluginContext = new PluginContextRule();
 
     @Test
     public void testIsNotDefault() throws NoSuchFieldException {

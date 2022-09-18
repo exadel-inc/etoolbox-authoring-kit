@@ -21,7 +21,14 @@ import com.exadel.aem.toolkit.test.dependson.DependsOnSemicolon;
 import com.exadel.aem.toolkit.test.dependson.DependsOnSetFragmentReference;
 import com.exadel.aem.toolkit.test.dependson.DependsOnTabAnnotation;
 
-public class DependsOnTest extends DefaultTestBase {
+public class DependsOnTest {
+
+    @ClassRule
+    public static FileSystemRule fileSystemHost = new FileSystemRule();
+
+    @Rule
+    public PluginContextRenderingRule pluginContext = new PluginContextRenderingRule(fileSystemHost.getFileSystem());
+
     @Test
     public void testDependsOnRequired() {
         test(DependsOnRequiredAnnotation.class);

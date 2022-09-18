@@ -17,7 +17,13 @@ import org.junit.Test;
 
 import com.exadel.aem.toolkit.test.common.AllowedChildrenAnnotation;
 
-public class PoliciesTest extends DefaultTestBase {
+public class PoliciesTest {
+
+    @ClassRule
+    public static FileSystemRule fileSystemHost = new FileSystemRule();
+
+    @Rule
+    public PluginContextRenderingRule pluginContext = new PluginContextRenderingRule(fileSystemHost.getFileSystem());
 
     @Test
     public void testSimpleContainer() {

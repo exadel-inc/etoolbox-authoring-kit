@@ -43,6 +43,12 @@ import com.exadel.aem.toolkit.test.component.viewpattern.component1.ComplexCompo
 public class ComponentsTest extends DefaultTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(ComponentsTest.class);
 
+    @ClassRule
+    public static FileSystemRule fileSystemHost = new FileSystemRule();
+
+    @Rule
+    public PluginContextRenderingRule pluginContext = new PluginContextRenderingRule(fileSystemHost.getFileSystem());
+
     private static final String FOLDER_IGNORE_FRESHNESS = "forceIgnoreFreshness";
 
     @Test
