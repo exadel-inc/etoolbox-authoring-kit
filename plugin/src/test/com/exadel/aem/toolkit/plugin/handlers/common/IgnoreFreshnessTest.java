@@ -17,10 +17,10 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.IgnoreFreshnessTestCases;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
-import com.exadel.aem.toolkit.test.component.ForceIgnoreFreshnessTestCases;
 
 public class IgnoreFreshnessTest {
 
@@ -34,15 +34,15 @@ public class IgnoreFreshnessTest {
 
     @Test
     public void testForceIgnoreFreshness() {
-        pluginContext.test(ForceIgnoreFreshnessTestCases.SimpleDialog.class,
+        pluginContext.test(IgnoreFreshnessTestCases.SimpleDialog.class,
             TestConstants.RESOURCE_FOLDER_COMPONENT,
             FOLDER_IGNORE_FRESHNESS,
             "simple");
-        pluginContext.test(ForceIgnoreFreshnessTestCases.TabbedDialog.class,
+        pluginContext.test(IgnoreFreshnessTestCases.TabbedDialog.class,
             TestConstants.RESOURCE_FOLDER_COMPONENT,
             FOLDER_IGNORE_FRESHNESS,
             "tabbed");
-        pluginContext.test(ForceIgnoreFreshnessTestCases.AccordionDialog.class,
+        pluginContext.test(IgnoreFreshnessTestCases.AccordionDialog.class,
             TestConstants.RESOURCE_FOLDER_COMPONENT,
             FOLDER_IGNORE_FRESHNESS,
             "accordion");

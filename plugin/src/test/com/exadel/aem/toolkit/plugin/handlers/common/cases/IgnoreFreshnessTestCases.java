@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.component;
+package com.exadel.aem.toolkit.plugin.handlers.common.cases;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
@@ -27,7 +27,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 @SuppressWarnings("unused")
-public class ForceIgnoreFreshnessTestCases {
+public class IgnoreFreshnessTestCases {
 
     @AemComponent(
         path = TestConstants.DEFAULT_COMPONENT_NAME,
