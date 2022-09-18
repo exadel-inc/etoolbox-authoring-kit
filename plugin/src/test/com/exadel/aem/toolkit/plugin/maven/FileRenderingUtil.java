@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.writers;
+package com.exadel.aem.toolkit.plugin.maven;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,16 +27,17 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.exadel.aem.toolkit.plugin.base.TestConstants;
 import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
-import com.exadel.aem.toolkit.plugin.utils.TestConstants;
+import com.exadel.aem.toolkit.plugin.writers.PackageWriter;
 
-public class TestXmlUtility {
-    private static final Logger LOG = LoggerFactory.getLogger(TestXmlUtility.class);
+class FileRenderingUtil {
+    private static final Logger LOG = LoggerFactory.getLogger(FileRenderingUtil.class);
 
     private static final String PROJECT_NAME = "test-package";
 
-    private TestXmlUtility() {
+    private FileRenderingUtil() {
     }
 
     public static boolean doTest(FileSystem fileSystem, String className, Path sampleFilesPath) throws ClassNotFoundException, IOException {
