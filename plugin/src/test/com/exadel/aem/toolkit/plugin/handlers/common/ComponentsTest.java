@@ -98,15 +98,7 @@ public class ComponentsTest extends DefaultTestBase {
 
     @Test
     public void testComponentWithoutDialog() {
-        test(ComponentWithoutDialog.class);
-    }
-
-    @Test
-    public void testComponentCreatingFolder() {
-        test(
-            WriteModeTestCases.FolderCreatingComponent.class,
-            TestConstants.NONEXISTENT_COMPONENT_NAME,
-            Paths.get(TestConstants.CONTENT_ROOT_PATH, TestConstants.RESOURCE_FOLDER_COMPONENT, "createdFolder").toAbsolutePath());
+        pluginContext.test(ComponentWithoutDialog.class);
     }
 
     @Test
