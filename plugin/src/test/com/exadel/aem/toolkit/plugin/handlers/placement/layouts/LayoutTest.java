@@ -19,13 +19,15 @@ import org.junit.Test;
 
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidContainerException;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
+import com.exadel.aem.toolkit.plugin.handlers.placement.layouts.cases.LayoutExceptionTestCases;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.plugin.maven.ThrowsPluginException;
-import com.exadel.aem.toolkit.test.component.LayoutExceptionTestCases;
 
 @ThrowsPluginException
 public class LayoutTest {
+
+    private static final String MESSAGE_RECURSION_PROHIBITED = "Recursive rendering prohibited";
 
     @ClassRule
     public static FileSystemRule fileSystemHost = new FileSystemRule();
@@ -54,7 +56,9 @@ public class LayoutTest {
         pluginContext.testThrows(
             LayoutExceptionTestCases.ComponentWithRecursiveMember1.class,
             InvalidLayoutException.class,
-            "container created with a member of type \"com.exadel.aem.toolkit.test.component.LayoutExceptionTestCases$RecursionParent\"");
+            MESSAGE_RECURSION_PROHIBITED,
+            "LayoutExceptionTestCases$ComponentWithRecursiveMember1",
+            "LayoutExceptionTestCases$RecursionParent");
     }
 
     @Test
@@ -62,7 +66,9 @@ public class LayoutTest {
         pluginContext.testThrows(
             LayoutExceptionTestCases.ComponentWithRecursiveMember2.class,
             InvalidLayoutException.class,
-            "container created with a member of type \"com.exadel.aem.toolkit.test.component.LayoutExceptionTestCases$RecursionInterface\"");
+            MESSAGE_RECURSION_PROHIBITED,
+            "LayoutExceptionTestCases$ComponentWithRecursiveMember2",
+            "LayoutExceptionTestCases$RecursionInterface");
     }
 
     @Test
@@ -70,7 +76,9 @@ public class LayoutTest {
         pluginContext.testThrows(
             LayoutExceptionTestCases.ComponentWithRecursiveMember3.class,
             InvalidLayoutException.class,
-            "container created with a member of type \"com.exadel.aem.toolkit.test.component.LayoutExceptionTestCases$ComponentWithRecursiveMember3\"");
+            MESSAGE_RECURSION_PROHIBITED,
+            "LayoutExceptionTestCases$RecursionChild",
+            "LayoutExceptionTestCases$ComponentWithRecursiveMember3");
     }
 
     @Test

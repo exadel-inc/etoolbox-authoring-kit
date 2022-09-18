@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.component;
+package com.exadel.aem.toolkit.plugin.handlers.placement.layouts.cases;
 
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_TITLE;
@@ -26,6 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComplexComponent1;
 
 @SuppressWarnings("unused")
 public class LayoutExceptionTestCases {
