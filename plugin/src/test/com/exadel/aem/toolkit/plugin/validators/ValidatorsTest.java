@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.plugin.maven.ThrowsPluginException;
-import com.exadel.aem.toolkit.test.component.ValidationTestCases;
+import com.exadel.aem.toolkit.plugin.validators.cases.ValidatorTestCases;
 
 @ThrowsPluginException
 public class ValidatorsTest {
@@ -43,28 +43,28 @@ public class ValidatorsTest {
     public void testNonBlankValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("' ' provided");
-        pluginContext.test(ValidationTestCases.InvalidTitleDialog.class);
+        pluginContext.test(ValidatorTestCases.InvalidTitleDialog.class);
     }
 
     @Test
     public void testAllNotBlankValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("string properties must not be blank");
-        pluginContext.test(ValidationTestCases.InvalidRteParaformatDialog.class);
+        pluginContext.test(ValidatorTestCases.InvalidRteParaformatDialog.class);
     }
 
     @Test
     public void testNumberValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("'not-a-number' provided");
-        pluginContext.test(ValidationTestCases.InvalidNumberFieldDialog.class);
+        pluginContext.test(ValidatorTestCases.InvalidNumberFieldDialog.class);
     }
 
     @Test
     public void testNonNegativeNumberValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("'-99' provided");
-        pluginContext.test(ValidationTestCases.InvalidImageUploadDialog.class);
+        pluginContext.test(ValidatorTestCases.InvalidImageUploadDialog.class);
     }
 
     @Test
@@ -74,35 +74,35 @@ public class ValidatorsTest {
             ThrowableMessageMatcher.hasMessage(CoreMatchers.containsString("'0' provided")),
             ThrowableMessageMatcher.hasMessage(CoreMatchers.containsString("'-99' provided"))
         ));
-        pluginContext.test(ValidationTestCases.InvalidTextAreaDialog.class);
+        pluginContext.test(ValidatorTestCases.InvalidTextAreaDialog.class);
     }
 
     @Test
     public void testCharactersValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("a character range (start < end) or entity definition must be set");
-        pluginContext.test(ValidationTestCases.InvalidRteCharactersDialog.class);
+        pluginContext.test(ValidatorTestCases.InvalidRteCharactersDialog.class);
     }
 
     @Test
     public void testJcrPathValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("'wrong path' provided");
-        pluginContext.test(ValidationTestCases.InvalidPathDialog.class);
+        pluginContext.test(ValidatorTestCases.InvalidPathDialog.class);
     }
 
     @Test
     public void testDateValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("valid date/time value expected");
-        pluginContext.test(ValidationTestCases.InvalidDatePickerDialog.class);
+        pluginContext.test(ValidatorTestCases.InvalidDatePickerDialog.class);
     }
 
     @Test
     public void testCustomValidation() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("one of 'red', 'green', or 'blue' must be provided");
-        pluginContext.test(ValidationTestCases.InvalidCustomAnnotationDialog.class);
+        pluginContext.test(ValidatorTestCases.InvalidCustomAnnotationDialog.class);
     }
 
 
@@ -110,20 +110,20 @@ public class ValidatorsTest {
     public void testComponentWithWrongHtmlTag1() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("'' provided, non-blank string expected");
-        pluginContext.test(ValidationTestCases.ComponentWithWrongHtmlTag1.class);
+        pluginContext.test(ValidatorTestCases.ComponentWithWrongHtmlTag1.class);
     }
 
     @Test
     public void testComponentWithWrongHtmlTag2() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("' ' provided, non-blank string expected");
-        pluginContext.test(ValidationTestCases.ComponentWithWrongHtmlTag2.class);
+        pluginContext.test(ValidatorTestCases.ComponentWithWrongHtmlTag2.class);
     }
 
     @Test
     public void testDialogTitleMissing() {
         exceptionRule.expectCause(IsInstanceOf.instanceOf(ValidationException.class));
         exceptionRule.expectMessage("Title property is missing for dialog");
-        pluginContext.test(ValidationTestCases.MissingTitleDialog.class);
+        pluginContext.test(ValidatorTestCases.MissingTitleDialog.class);
     }
 }

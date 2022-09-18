@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.component;
+package com.exadel.aem.toolkit.plugin.validators.cases;
 
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_TITLE;
@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
 
 @SuppressWarnings("unused")
-public class ValidationTestCases {
+public class ValidatorTestCases {
     @AemComponent(path = DEFAULT_COMPONENT_NAME, title = " ")
     @Dialog
     public static class InvalidTitleDialog {}
