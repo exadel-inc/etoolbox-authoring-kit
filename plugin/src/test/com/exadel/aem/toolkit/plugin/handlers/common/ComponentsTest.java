@@ -37,7 +37,7 @@ import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentW
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentWithoutDialog;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.CustomAnnotationsComponent;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.MultiColumnDialog;
-import com.exadel.aem.toolkit.plugin.handlers.common.cases.viewpattern.component1.ComplexComponentHolder;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.viewpattern.component1.ComplexComponentHolder;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
@@ -99,7 +99,7 @@ public class ComponentsTest {
 
     @Test
     public void testComponentViewPattern() {
-        Path targetPath = Paths.get(TestConstants.CONTENT_ROOT_PATH, "component/viewPattern/component1").toAbsolutePath();
+        Path targetPath = Paths.get(TestConstants.CONTENT_ROOT_PATH, "handlers/common/components/viewPattern/component1").toAbsolutePath();
         String outdatedContentXml = readFile(Paths.get(TestConstants.CONTENT_ROOT_PATH, "handlers/common/editConfig/.content.xml"));
         pluginContext.test(
             ComplexComponentHolder.class,

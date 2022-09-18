@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.handlers.common.cases.viewpattern.component1.views;
+package com.exadel.aem.toolkit.plugin.handlers.common.cases.components.viewpattern.component1.views;
 
 import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.COPYMOVE;
 import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.DELETE;
