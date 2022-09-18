@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.component.placement;
+package com.exadel.aem.toolkit.plugin.handlers.placement.cases.replace;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
@@ -24,7 +24,29 @@ import com.exadel.aem.toolkit.api.markers._Super;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 @SuppressWarnings("unused")
-public class MultipleReplaceTestCases {
+public class ReplaceTestCases {
+
+    public static class Parent {
+
+        @DialogField(
+            label = "Title"
+        )
+        @TextField
+        private int title;
+
+        @DialogField(
+            label = "Another Field"
+        )
+        @TextField
+        private int anotherField;
+
+
+        @DialogField(
+            label = "Untouched Field"
+        )
+        @TextField
+        private int untouchedField;
+    }
 
     @AemComponent(
         path = TestConstants.DEFAULT_COMPONENT_NAME,
@@ -32,59 +54,21 @@ public class MultipleReplaceTestCases {
         title = TestConstants.DEFAULT_COMPONENT_TITLE
     )
     @Dialog
-    public static class SameClassReplacement {
+    public static class Child extends Parent {
 
         @DialogField(
-            label = "Title"
-        )
-        @TextField
-        private int title;
-
-        @DialogField(
-            label = "Title Replace First"
-        )
-        @TextField
-        @Replace(@ClassMember(value = "title"))
-        private int replacementTitle;
-
-        @DialogField(
-            label = "Title Replace Second"
-        )
-        @TextField
-        @Replace(@ClassMember(value = "title"))
-        private int anotherReplacementTitle;
-    }
-
-    static class GrandParent {
-        @DialogField(
-            label = "Title"
-        )
-        @TextField
-        private int title;
-    }
-
-    static class Parent extends GrandParent {
-        @DialogField(
-            label = "Title Replace First"
+            label = "Title Child"
         )
         @TextField
         @Replace(@ClassMember(source = _Super.class, value = "title"))
-        private int replacementTitle;
-    }
+        private int childTitle;
 
-    @AemComponent(
-        path = TestConstants.DEFAULT_COMPONENT_NAME,
-        writeMode = WriteMode.CREATE,
-        title = TestConstants.DEFAULT_COMPONENT_TITLE
-    )
-    @Dialog
-    public static class HierarchyReplacement extends Parent {
 
         @DialogField(
-            label = "Title Replace Second"
+            label = "Another Field Child"
         )
         @TextField
-        @Replace(@ClassMember(source = GrandParent.class, value = "title"))
-        private int anotherReplacementTitle;
+        @Replace(@ClassMember(source = Parent.class, value = "anotherField"))
+        private int anotherFieldChild;
     }
 }

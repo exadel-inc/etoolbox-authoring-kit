@@ -17,10 +17,10 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.plugin.handlers.placement.cases.replace.MultipleReplaceTestCases;
+import com.exadel.aem.toolkit.plugin.handlers.placement.cases.replace.ReplaceTestCases;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
-import com.exadel.aem.toolkit.test.component.placement.MultipleReplaceTestCases;
-import com.exadel.aem.toolkit.test.component.placement.ReplaceTestCases;
 
 public class ReplacementTest {
 
