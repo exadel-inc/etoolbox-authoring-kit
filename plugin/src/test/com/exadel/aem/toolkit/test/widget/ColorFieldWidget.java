@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorField;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.ColorVariant;
 import com.exadel.aem.toolkit.api.annotations.widgets.color.GenerateColorsState;
-import com.exadel.aem.toolkit.plugin.utils.TestConstants;
+import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 @AemComponent(
         path = TestConstants.DEFAULT_COMPONENT_NAME,

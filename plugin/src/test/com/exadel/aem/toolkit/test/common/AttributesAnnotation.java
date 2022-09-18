@@ -19,7 +19,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
-import com.exadel.aem.toolkit.plugin.utils.TestConstants;
+import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 @SuppressWarnings("unused")
 @AemComponent(

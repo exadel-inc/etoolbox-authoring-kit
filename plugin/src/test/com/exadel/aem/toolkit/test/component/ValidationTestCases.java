@@ -13,6 +13,9 @@
  */
 package com.exadel.aem.toolkit.test.component;
 
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_TITLE;
+
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
@@ -26,9 +29,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.ParagraphFormat;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomWidgetAnnotationAuto;
-
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_TITLE;
 
 @SuppressWarnings("unused")
 public class ValidationTestCases {

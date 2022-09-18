@@ -13,6 +13,12 @@
  */
 package com.exadel.aem.toolkit.test.common;
 
+import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.COPYMOVE;
+import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.DELETE;
+import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.EDIT;
+import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.INSERT;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
+
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.listener.Listener;
@@ -21,12 +27,6 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.test.custom.annotation.CustomChildEditConfigAnnotationAuto;
 import com.exadel.aem.toolkit.test.widget.FileUploadWidget;
-
-import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.COPYMOVE;
-import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.DELETE;
-import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.EDIT;
-import static com.exadel.aem.toolkit.api.annotations.editconfig.ActionConstants.INSERT;
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @AemComponent(
     path = DEFAULT_COMPONENT_NAME,

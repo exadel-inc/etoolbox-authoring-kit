@@ -13,6 +13,8 @@
  */
 package com.exadel.aem.toolkit.test.widget;
 
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
+
 import com.exadel.aem.toolkit.api.annotations.layouts.Column;
 import com.exadel.aem.toolkit.api.annotations.layouts.FixedColumns;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
@@ -23,8 +25,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.NumberField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
-
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
 
 @AemComponent(
     path = DEFAULT_COMPONENT_NAME,

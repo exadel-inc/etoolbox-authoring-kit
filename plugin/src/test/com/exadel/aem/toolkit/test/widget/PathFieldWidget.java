@@ -18,7 +18,7 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.NodeFilter;
-import com.exadel.aem.toolkit.plugin.utils.TestConstants;
+import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 @AemComponent(
         path = TestConstants.DEFAULT_COMPONENT_NAME,

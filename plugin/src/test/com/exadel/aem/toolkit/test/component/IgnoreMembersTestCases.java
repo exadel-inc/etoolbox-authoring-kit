@@ -15,6 +15,9 @@ package com.exadel.aem.toolkit.test.component;
 
 import java.util.List;
 
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.LABEL_TAB_2;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.LABEL_TAB_3;
+
 import com.exadel.aem.toolkit.api.annotations.container.IgnoreTabs;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
@@ -27,12 +30,9 @@ import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
-import com.exadel.aem.toolkit.plugin.utils.TestConstants;
+import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 import com.exadel.aem.toolkit.test.widget.SelectWidget;
 import com.exadel.aem.toolkit.test.widget.TabsWidget;
-
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_2;
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_3;
 
 @SuppressWarnings("unused")
 public class IgnoreMembersTestCases {

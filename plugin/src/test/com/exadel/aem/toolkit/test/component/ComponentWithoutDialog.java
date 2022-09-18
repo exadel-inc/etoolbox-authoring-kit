@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.test.component;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
-import com.exadel.aem.toolkit.plugin.utils.TestConstants;
+import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 @AemComponent(
     path = TestConstants.DEFAULT_COMPONENT_NAME,

@@ -15,6 +15,10 @@ package com.exadel.aem.toolkit.test.component.viewpattern.component1.views;
 
 import javax.annotation.Nullable;
 
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.LABEL_TAB_1;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.LABEL_TAB_2;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.LABEL_TAB_3;
+
 import com.exadel.aem.toolkit.api.annotations.layouts.LayoutType;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
@@ -33,11 +37,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioButton;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
-import com.exadel.aem.toolkit.plugin.utils.TestConstants;
-
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_1;
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_2;
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_3;
+import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 @DesignDialog(
     title = TestConstants.DEFAULT_COMPONENT_TITLE,

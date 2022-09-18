@@ -13,6 +13,11 @@
  */
 package com.exadel.aem.toolkit.test.component;
 
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_TITLE;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.LABEL_TAB_0;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.LABEL_TAB_1;
+
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnTab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
@@ -21,11 +26,6 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
-
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_NAME;
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.DEFAULT_COMPONENT_TITLE;
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_0;
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_1;
 
 @SuppressWarnings("unused")
 public class LayoutExceptionTestCases {

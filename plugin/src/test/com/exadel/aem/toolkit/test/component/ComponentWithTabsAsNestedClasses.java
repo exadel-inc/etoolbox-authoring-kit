@@ -13,6 +13,14 @@
  */
 package com.exadel.aem.toolkit.test.component;
 
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.LABEL_TAB_0;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.LABEL_TAB_1;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.LABEL_TAB_2;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.LABEL_TAB_3;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.LABEL_TAB_4;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.LABEL_TAB_5;
+import static com.exadel.aem.toolkit.plugin.maven.TestConstants.LABEL_TAB_6;
+
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
@@ -24,15 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
-import com.exadel.aem.toolkit.plugin.utils.TestConstants;
-
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_0;
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_1;
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_2;
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_3;
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_4;
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_5;
-import static com.exadel.aem.toolkit.plugin.utils.TestConstants.LABEL_TAB_6;
+import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 @AemComponent(
     path = TestConstants.DEFAULT_COMPONENT_NAME,
