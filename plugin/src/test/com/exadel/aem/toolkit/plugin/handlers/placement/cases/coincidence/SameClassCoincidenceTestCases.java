@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.component.placement.coincidences;
+package com.exadel.aem.toolkit.plugin.handlers.placement.coincidence;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Place;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
@@ -23,17 +23,24 @@ import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 @SuppressWarnings("unused")
-public class ClassParentCoincidenceTestCases {
+public class SameClassCoincidenceTestCases {
 
-    private static class Parent {
+    @AemComponent(
+        path = TestConstants.DEFAULT_COMPONENT_NAME,
+        title = TestConstants.DEFAULT_COMPONENT_TITLE
+    )
+    @Dialog
+    public static class NoIssue {
+
         @DialogField(
-            label = "Title from parent field"
+            label = "Title from field"
         )
-        @TextArea
+        @TextField
         private String title;
 
+
         @DialogField(
-            label = "Title from parent method"
+            label = "Title from method"
         )
         @TextField
         @Place(before = @ClassMember("title"))
@@ -42,12 +49,13 @@ public class ClassParentCoincidenceTestCases {
         }
     }
 
+
     @AemComponent(
         path = TestConstants.DEFAULT_COMPONENT_NAME,
         title = TestConstants.DEFAULT_COMPONENT_TITLE
     )
     @Dialog
-    public static class CoincidenceResolved extends Parent {
+    public static class CoincidenceResolved {
 
         @DialogField(
             label = "Title from field"
@@ -55,12 +63,12 @@ public class ClassParentCoincidenceTestCases {
         @TextArea
         private String title;
 
+
         @DialogField(
             label = "Title from method"
         )
         @TextField
         @Place(before = @ClassMember("title"))
-        @Override
         public String getTitle() {
             return title;
         }

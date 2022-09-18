@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.plugin.handlers.common.EditConfigTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.IgnoreFreshnessTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.WriteModeTest;
 import com.exadel.aem.toolkit.plugin.handlers.dependson.DependsOnTest;
-import com.exadel.aem.toolkit.plugin.handlers.placement.CoincidingNamesTest;
+import com.exadel.aem.toolkit.plugin.handlers.placement.CoincidenceTest;
 import com.exadel.aem.toolkit.plugin.handlers.placement.IgnoreTest;
 import com.exadel.aem.toolkit.plugin.handlers.placement.InheritanceTest;
 import com.exadel.aem.toolkit.plugin.handlers.placement.OrderingTest;
@@ -58,7 +58,7 @@ import com.exadel.aem.toolkit.plugin.validators.ValidatorsTest;
     ReplacementTest.class,
     IgnoreTest.class,
     InheritanceTest.class,
-    CoincidingNamesTest.class,
+    CoincidenceTest.class,
     OrderingTest.class,
     TopologicalSorterTest.class,
 

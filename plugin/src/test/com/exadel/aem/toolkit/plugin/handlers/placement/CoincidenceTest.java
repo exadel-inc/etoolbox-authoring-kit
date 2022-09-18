@@ -18,15 +18,15 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
+import com.exadel.aem.toolkit.plugin.handlers.placement.coincidence.ClassInterfaceCoincidenceTestCases;
+import com.exadel.aem.toolkit.plugin.handlers.placement.coincidence.ClassParentCoincidenceTestCases;
+import com.exadel.aem.toolkit.plugin.handlers.placement.coincidence.ClassParentInterfaceCoincidenceTestCases;
+import com.exadel.aem.toolkit.plugin.handlers.placement.coincidence.SameClassCoincidenceTestCases;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.plugin.maven.ThrowsPluginException;
-import com.exadel.aem.toolkit.test.component.placement.coincidences.ClassInterfaceCoincidenceTestCases;
-import com.exadel.aem.toolkit.test.component.placement.coincidences.ClassParentCoincidenceTestCases;
-import com.exadel.aem.toolkit.test.component.placement.coincidences.ClassParentInterfaceCoincidenceTestCases;
-import com.exadel.aem.toolkit.test.component.placement.coincidences.SameClassCoincidenceTestCases;
 
-public class CoincidingNamesTest {
+public class CoincidenceTest {
     private static final String FOLDER_COINCIDING = "placement/coincidingNames";
 
     @ClassRule
