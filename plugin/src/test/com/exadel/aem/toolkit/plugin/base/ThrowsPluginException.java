@@ -11,8 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.accessories;
+package com.exadel.aem.toolkit.plugin.base;
 
-public enum ExceptionHandlerState {
-    CATCH, SKIP
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+
+@Retention(RetentionPolicy.RUNTIME)
+public @interface ThrowsPluginException {
 }

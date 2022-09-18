@@ -20,31 +20,44 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-import com.exadel.aem.toolkit.plugin.base.ModifiableExceptionHandler;
+import com.exadel.aem.toolkit.plugin.base.MuteableExceptionHandler;
 import com.exadel.aem.toolkit.plugin.base.TestConstants;
+import com.exadel.aem.toolkit.plugin.base.ThrowsPluginException;
 
 public class PluginContextRule implements TestRule {
 
-    static final List<String> CLASSPATH_ELEMENTS = Arrays.asList(
+    private static final List<String> CLASSPATH_ELEMENTS = Arrays.asList(
         TestConstants.PLUGIN_MODULE_TARGET,
         TestConstants.API_MODULE_TARGET,
         TestConstants.PLUGIN_MODULE_TEST_TARGET
     );
 
-    private static boolean initialized;
-
-    private final ModifiableExceptionHandler exceptionHandler;
-
-    public PluginContextRule() {
-        this.exceptionHandler = new ModifiableExceptionHandler();
-    }
+    private static MuteableExceptionHandler exceptionHandler;
 
     @Override
     public Statement apply(Statement statement, Description description) {
-        if (!initialized) {
+        if (!isInitialized()) {
             initialize();
         }
-        return statement;
+        if (description.getAnnotation(ThrowsPluginException.class) == null
+            && description.getTestClass().getAnnotation(ThrowsPluginException.class) == null) {
+            return statement;
+        }
+        exceptionHandler.unmute();
+        return new Statement() {
+            @Override
+            public void evaluate() throws Throwable {
+                try {
+                    statement.evaluate();
+                } finally {
+                    exceptionHandler.mute();
+                }
+            }
+        };
+    }
+
+    private static boolean isInitialized() {
+        return exceptionHandler != null;
     }
 
     private void initialize() {
@@ -52,11 +65,11 @@ public class PluginContextRule implements TestRule {
             .builder()
             .componentsPathBase(TestConstants.PACKAGE_ROOT_PATH)
             .build();
+        exceptionHandler = new MuteableExceptionHandler();
         PluginRuntime.contextBuilder()
             .classPathElements(CLASSPATH_ELEMENTS)
             .settings(settings)
             .exceptionHandler(exceptionHandler)
             .build();
-        initialized = true;
     }
 }
