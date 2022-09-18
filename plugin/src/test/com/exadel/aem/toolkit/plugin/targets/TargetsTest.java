@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.maven;
+package com.exadel.aem.toolkit.plugin.targets;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -28,7 +28,6 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
-import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 public class TargetsTest {
