@@ -17,7 +17,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.exadel.aem.toolkit.plugin.handlers.common.cases.policies.AllowedChildrenAnnotation;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.policies.AllowedChildrenTestCases;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 
@@ -31,26 +31,26 @@ public class AllowedChildrenTest {
 
     @Test
     public void testSimpleContainer() {
-        pluginContext.test(AllowedChildrenAnnotation.SimpleContainer.class, "handlers/common/policies/allowedChildren/simple");
+        pluginContext.test(AllowedChildrenTestCases.SimpleContainer.class, "handlers/common/policies/allowedChildren/simple");
     }
 
     @Test
     public void testClassBasedContainer() {
-        pluginContext.test(AllowedChildrenAnnotation.ClassBasedContainer.class, "handlers/common/policies/allowedChildren/classBased");
+        pluginContext.test(AllowedChildrenTestCases.ClassBasedContainer.class, "handlers/common/policies/allowedChildren/classBased");
     }
 
     @Test
     public void testMixedContainer() {
-        pluginContext.test(AllowedChildrenAnnotation.MixedContainer.class, "handlers/common/policies/allowedChildren/mixed");
+        pluginContext.test(AllowedChildrenTestCases.MixedContainer.class, "handlers/common/policies/allowedChildren/mixed");
     }
 
     @Test
     public void testContainerWithChildEditConfig() {
-        pluginContext.test(AllowedChildrenAnnotation.ContainerChildEditConfig.class, "handlers/common/policies/allowedChildren/childEditConfig");
+        pluginContext.test(AllowedChildrenTestCases.ContainerChildEditConfig.class, "handlers/common/policies/allowedChildren/childEditConfig");
     }
 
     @Test
     public void testContainerWithEditConfig() {
-        pluginContext.test(AllowedChildrenAnnotation.ContainerEditConfig.class, "handlers/common/policies/allowedChildren/editConfig");
+        pluginContext.test(AllowedChildrenTestCases.ContainerEditConfig.class, "handlers/common/policies/allowedChildren/editConfig");
     }
 }

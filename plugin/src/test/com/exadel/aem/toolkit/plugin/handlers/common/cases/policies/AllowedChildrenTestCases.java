@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComplexCom
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComplexComponent2;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
-public class AllowedChildrenAnnotation {
+public class AllowedChildrenTestCases {
 
     private static final String RESOURCE_TYPES_ARRAY = "res/Type1, " +
         "res/Type2, " +
