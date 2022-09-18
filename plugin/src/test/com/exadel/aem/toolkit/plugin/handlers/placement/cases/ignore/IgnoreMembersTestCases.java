@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.component;
+package com.exadel.aem.toolkit.plugin.handlers.placement.cases.ignore;
 
 import java.util.List;
 
@@ -30,9 +30,12 @@ import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentWithTabsAndInnerClass;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.SampleMultifieldBase;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.SampleMultifieldExtension;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.SelectWidget;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.TabsWidget;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
-import com.exadel.aem.toolkit.test.widget.SelectWidget;
-import com.exadel.aem.toolkit.test.widget.TabsWidget;
 
 @SuppressWarnings("unused")
 public class IgnoreMembersTestCases {

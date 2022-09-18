@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.test.component;
+package com.exadel.aem.toolkit.plugin.handlers.placement.cases.ignore;
 
 import com.exadel.aem.toolkit.api.annotations.layouts.Accordion;
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
@@ -24,8 +24,8 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.AccordionWidget;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
-import com.exadel.aem.toolkit.test.widget.AccordionWidget;
 
 @SuppressWarnings("unused")
 public class IgnoreSectionsTestCases {

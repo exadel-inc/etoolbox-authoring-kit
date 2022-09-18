@@ -18,11 +18,11 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import com.exadel.aem.toolkit.plugin.handlers.placement.cases.ignore.IgnoreMembersTestCases;
+import com.exadel.aem.toolkit.plugin.handlers.placement.cases.ignore.IgnoreSectionsTestCases;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
-import com.exadel.aem.toolkit.test.component.IgnoreMembersTestCases;
-import com.exadel.aem.toolkit.test.component.IgnoreSectionsTestCases;
 
 public class IgnoreTest {
 
