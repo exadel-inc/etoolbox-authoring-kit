@@ -9,17 +9,17 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 import com.exadel.aem.toolkit.api.annotations.injectors.Child;
 
 @Model(adaptables = SlingHttpServletRequest.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
-public class TestModelChildInner {
+public class TestModelChildSubResource {
     @Child
-    private Resource innerModelResource;
+    private Resource subResource;
 
     @ValueMapValue(name = "stringFieldResource/stringField")
-    private String innerModelStringField;
+    private String subResourceStringField;
 
-    public Resource getInnerModelResource() {
-        return innerModelResource;
+    public Resource getSubResource() {
+        return subResource;
     }
-    public String getInnerModelStringField() {
-        return innerModelStringField;
+    public String getSubResourceStringField() {
+        return subResourceStringField;
     }
 }

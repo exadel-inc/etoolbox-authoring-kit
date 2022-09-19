@@ -13,6 +13,8 @@
  */
 package com.exadel.aem.toolkit.core;
 
+import com.exadel.aem.toolkit.core.injectors.ChildInjectorSubResourceTest;
+
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -49,6 +51,7 @@ import com.exadel.aem.toolkit.core.policymanagement.filters.TopLevelPolicyFilter
     RequestSelectorsInjectorTest.class,
     RequestSuffixInjectorTest.class,
     ChildInjectorTest.class,
+    ChildInjectorSubResourceTest.class,
     ChildrenInjectorTest.class,
     I18nInjectorTest.class,
 
