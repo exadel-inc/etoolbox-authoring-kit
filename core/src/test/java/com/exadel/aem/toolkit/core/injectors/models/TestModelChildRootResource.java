@@ -10,7 +10,7 @@ import com.exadel.aem.toolkit.api.annotations.injectors.Child;
 @Model(adaptables = SlingHttpServletRequest.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class TestModelChildRootResource {
     @ValueMapValue
-    private String outerModelStringField;
+    private String rootModelStringField;
 
     @Child(prefix = "prefix-", postfix = "-postfix")
     private TestModelChildSubResource testModelChildSubResource;
@@ -19,7 +19,7 @@ public class TestModelChildRootResource {
     private TestModelChildSubResource testModelChildSubResourceWithDifferentName;
 
     public String getTestModelChildRootResourceStringField() {
-        return outerModelStringField;
+        return rootModelStringField;
     }
     public TestModelChildSubResource getTestModelChildSubResource() {
         return testModelChildSubResource;
