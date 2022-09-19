@@ -70,7 +70,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
             return;
         }
         Map<String, Object> valueMap = Maps.newHashMap();
-        String escapedQuery = StringUtils.replace(value.query(), ";", "\\\\;");
+        String escapedQuery = escapeValue(value.query());
         valueMap.put(DialogConstants.PN_DEPENDS_ON, escapedQuery);
         valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, value.action());
         valueMap.putAll(buildParamsMap(value, 0));
@@ -161,5 +161,20 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
             valueMap.put(DialogConstants.PN_DEPENDS_ON_REFLAZY, StringUtils.EMPTY);
         }
         target.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA).attributes(valueMap);
+    }
+
+    /**
+     * Escape characters given a string
+     * @param value The string to process
+     * @return The string with escaped values
+     * */
+    private static String escapeValue(String value) {
+        String result = StringUtils.replace(
+            value, DialogConstants.SEPARATOR_SEMICOLON,
+            "\\\\" + DialogConstants.SEPARATOR_SEMICOLON);
+        for (String bracket : new String[] {DialogConstants.ARRAY_OPENING, DialogConstants.ARRAY_CLOSING}) {
+            result = StringUtils.replace(result, bracket, "\\" + bracket);
+        }
+        return result;
     }
 }

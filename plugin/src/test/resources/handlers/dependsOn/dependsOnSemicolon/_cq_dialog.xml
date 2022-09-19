@@ -46,6 +46,16 @@
                                       dependsOn="'\\;' === '\\;';'\\;' === '\\;'"
                                       dependsOnAction="visibility;required"/>
                     </multipleActions>
+                    <literalEscapingSpecialCharactersTest jcr:primaryType="nt:unstructured"
+                          sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                          name="./literalEscapingSpecialCharactersTest"
+                          disabled="{Boolean}false"
+                          renderHidden="{Boolean}false"
+                          required="{Boolean}false">
+                        <granite:data jcr:primaryType="nt:unstructured"
+                            dependsOn="\['a', 'b', 'c', 'd', 'e','\[\]','t\\;rex'\].includes(@type(coral-multifield-item))\\;"
+                            dependsOnAction="visibility"/>
+                    </literalEscapingSpecialCharactersTest>
                 </items>
             </column>
         </items>
