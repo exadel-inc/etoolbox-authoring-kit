@@ -5,7 +5,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import com.exadel.aem.toolkit.core.injectors.models.TestModelChildOuter;
+import com.exadel.aem.toolkit.core.injectors.models.TestModelChildRootResource;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
@@ -14,24 +14,40 @@ public class ChildInjectorSubResourceTest {
     @Rule
     public final AemContext context = new AemContext();
 
+    public TestModelChildRootResource testModel;
+
     @Before
     public void beforeTest() {
-        context.addModelsForClasses(TestModelChildOuter.class, TestModelChildOuter.class);
+        context.addModelsForClasses(TestModelChildRootResource.class, TestModelChildRootResource.class);
         context.registerInjectActivateService(new ChildInjector());
         context.registerInjectActivateService(new MockAdapterManagerImpl());
         context.load().json("/com/exadel/aem/toolkit/core/injectors/childinjectorsubresource.json", "/content");
+        context.request().setResource(context.resourceResolver().getResource("/content/testModel"));
+        testModel = context.request().adaptTo(TestModelChildRootResource.class);
     }
 
     @Test
-    public void shouldInjectWithStandardFieldNames() {
-        context.request().setResource(context.resourceResolver().getResource("/content/testModel"));
+    public void checkTestModelChildRootStringField() {
+        assertEquals("Outer model string field", testModel.getTestModelChildRootResourceStringField());
+    }
 
-        TestModelChildOuter testModel = context.request().adaptTo(TestModelChildOuter.class);
+    @Test
+    public void checkTestModelChildSubResourceWithPrefixPostfixStringField() {
+        assertEquals("Inner model text field", testModel.getTestModelChildSubResource().getSubResourceStringField());
+    }
 
-        assertEquals("Outer model string field", testModel.getOuterModelStringField());
-        assertEquals("Inner model text field", testModel.getTestModelChildInner().getInnerModelStringField());
-        assertEquals("Inner model resource title", testModel.getTestModelChildInner().getInnerModelResource().getValueMap().get("title"));
-        assertEquals("Second inner model text field", testModel.getTestModelChildInnerWithDifferentName().getInnerModelStringField());
-        assertEquals("Second inner model resource title", testModel.getTestModelChildInnerWithDifferentName().getInnerModelResource().getValueMap().get("title"));
+    @Test
+    public void checkTestModelChildSubResourceWithPrefixPostfixResource() {
+        assertEquals("Inner model resource title", testModel.getTestModelChildSubResource().getSubResource().getValueMap().get("title"));
+    }
+
+    @Test
+    public void checkTestModelChildSubResourceWithRelativePathStringField() {
+        assertEquals("Second inner model text field", testModel.getTestModelChildSubResourceWithDifferentName().getSubResourceStringField());
+    }
+
+    @Test
+    public void checkTestModelChildSubResourceWithRelativePathResource() {
+        assertEquals("Second inner model resource title", testModel.getTestModelChildSubResourceWithDifferentName().getSubResource().getValueMap().get("title"));
     }
 }

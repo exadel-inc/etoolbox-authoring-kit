@@ -8,24 +8,24 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 import com.exadel.aem.toolkit.api.annotations.injectors.Child;
 
 @Model(adaptables = SlingHttpServletRequest.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
-public class TestModelChildOuter {
+public class TestModelChildRootResource {
     @ValueMapValue
     private String outerModelStringField;
 
     @Child(prefix = "prefix-", postfix = "-postfix")
-    private TestModelChildInner testModelChildInner;
+    private TestModelChildSubResource testModelChildSubResource;
 
     @Child(name = "testName")
-    private TestModelChildInner testModelChildInnerWithDifferentName;
+    private TestModelChildSubResource testModelChildSubResourceWithDifferentName;
 
-    public String getOuterModelStringField() {
+    public String getTestModelChildRootResourceStringField() {
         return outerModelStringField;
     }
-    public TestModelChildInner getTestModelChildInner() {
-        return testModelChildInner;
+    public TestModelChildSubResource getTestModelChildSubResource() {
+        return testModelChildSubResource;
     }
 
-    public TestModelChildInner getTestModelChildInnerWithDifferentName() {
-        return testModelChildInnerWithDifferentName;
+    public TestModelChildSubResource getTestModelChildSubResourceWithDifferentName() {
+        return testModelChildSubResourceWithDifferentName;
     }
 }
