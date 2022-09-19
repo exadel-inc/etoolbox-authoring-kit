@@ -43,9 +43,6 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
     static final String EMPTY_VALUES_EXCEPTION_MESSAGE = "Non-empty string values required for DependsOn params";
 
     private static final String TERM_SEPARATOR = "-";
-    private static final String SEMICOLON = ";";
-    private static final String ARRAY_OPENING = "[";
-    private static final String ARRAY_CLOSING = "]";
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
@@ -73,7 +70,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
             return;
         }
         Map<String, Object> valueMap = Maps.newHashMap();
-        String escapedQuery = DependsOnHandler.escapeValue(value.query());
+        String escapedQuery = escapeValue(value.query());
         valueMap.put(DialogConstants.PN_DEPENDS_ON, escapedQuery);
         valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, value.action());
         valueMap.putAll(buildParamsMap(value, 0));
@@ -167,13 +164,15 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Escape characters given a string.
+     * Escape characters given a string
      * @param value The string to process
-     * @return escapedValue. The string with escaped values
+     * @return The string with escaped values
      * */
-    public static String escapeValue(String value) {
-        String result = StringUtils.replace(value, SEMICOLON, "\\\\" + SEMICOLON);
-        for (String bracket : new String[] {ARRAY_OPENING, ARRAY_CLOSING}) {
+    private static String escapeValue(String value) {
+        String result = StringUtils.replace(
+            value, DialogConstants.SEPARATOR_SEMICOLON,
+            "\\\\" + DialogConstants.SEPARATOR_SEMICOLON);
+        for (String bracket : new String[] {DialogConstants.ARRAY_OPENING, DialogConstants.ARRAY_CLOSING}) {
             result = StringUtils.replace(result, bracket, "\\" + bracket);
         }
         return result;

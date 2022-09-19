@@ -43,8 +43,6 @@ public class StringUtil {
 
     private static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX";
 
-    private static final String ARRAY_OPENING = "[";
-    private static final String ARRAY_CLOSING = "]";
     private static final String ESCAPE_STRING = "\\";
     private static final String SPLITTING_PATTERN = "\\s*,\\s*";
 
@@ -130,12 +128,16 @@ public class StringUtil {
         String collectionPart = value.stream()
             .filter(Objects::nonNull)
             .map(conversion)
-            .map(s -> s.startsWith(ARRAY_OPENING) && s.endsWith(ARRAY_CLOSING) ? ESCAPE_STRING + s : s)
+            .map(s ->
+                s.startsWith(DialogConstants.ARRAY_OPENING) && s.endsWith(DialogConstants.ARRAY_CLOSING)
+                ? ESCAPE_STRING + s
+                : s)
             .collect(Collectors.joining(CoreConstants.SEPARATOR_COMMA));
         if (String.class.equals(valueType)) {
             return String.format(ARRAY_TEMPLATE, collectionPart);
         } else {
-            return String.format(TYPE_TOKEN_TEMPLATE, valueType.getSimpleName()) + String.format(ARRAY_TEMPLATE, collectionPart);
+            return String.format(TYPE_TOKEN_TEMPLATE, valueType.getSimpleName())
+                + String.format(ARRAY_TEMPLATE, collectionPart);
         }
     }
 
@@ -162,7 +164,7 @@ public class StringUtil {
             return new HashSet<>();
         }
         return new LinkedHashSet<>(Arrays.asList(StringUtils
-            .strip(value, ARRAY_OPENING + ARRAY_CLOSING)
+            .strip(value, DialogConstants.ARRAY_OPENING + DialogConstants.ARRAY_CLOSING)
             .split(SPLITTING_PATTERN)));
     }
 
@@ -176,7 +178,7 @@ public class StringUtil {
             return new ArrayList<>();
         }
         return Arrays.asList(StringUtils
-            .strip(value, ARRAY_OPENING + ARRAY_CLOSING)
+            .strip(value, DialogConstants.ARRAY_OPENING + DialogConstants.ARRAY_CLOSING)
             .split(SPLITTING_PATTERN));
     }
 
