@@ -179,4 +179,5 @@ public class StringUtil {
             .strip(value, ARRAY_OPENING + ARRAY_CLOSING)
             .split(SPLITTING_PATTERN));
     }
+
 }
