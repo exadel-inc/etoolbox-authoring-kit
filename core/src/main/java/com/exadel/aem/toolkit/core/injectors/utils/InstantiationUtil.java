@@ -25,7 +25,6 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.DeepReadValueMapDecorator;
 import org.apache.sling.api.wrappers.ModifiableValueMapDecorator;
-import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,8 +82,7 @@ public class InstantiationUtil {
             .stream()
             .filter(entry -> isMatchByPrefixOrPostfix(entry.getKey(), prefix, postfix))
             .collect(Collectors.toMap(
-                Map.Entry::getKey,
-                //entry -> clearPrefixOrPostfix(entry.getKey(), prefix, postfix),
+                entry -> clearPrefixOrPostfix(entry.getKey(), prefix, postfix),
                 Map.Entry::getValue));
         List<Resource> children = StreamSupport.stream(current.getChildren().spliterator(), false)
             .filter(child -> isMatchByPrefixOrPostfix(child.getName(), prefix, postfix))
