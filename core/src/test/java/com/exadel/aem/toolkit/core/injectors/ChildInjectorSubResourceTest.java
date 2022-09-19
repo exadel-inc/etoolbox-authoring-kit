@@ -23,35 +23,31 @@ public class ChildInjectorSubResourceTest {
         context.registerInjectActivateService(new MockAdapterManagerImpl());
         context.load().json("/com/exadel/aem/toolkit/core/injectors/childinjectorsubresource.json", "/content");
         context.request().setResource(context.resourceResolver().getResource("/content/testModel"));
+        testModel = context.request().adaptTo(TestModelChildRootResource.class);
     }
 
     @Test
     public void checkTestModelChildRootStringField() {
-        testModel = context.request().adaptTo(TestModelChildRootResource.class);
         assertEquals("Outer model string field", testModel.getTestModelChildRootResourceStringField());
     }
 
     @Test
     public void checkTestModelChildSubResourceWithPrefixPostfixStringField() {
-        testModel = context.request().adaptTo(TestModelChildRootResource.class);
         assertEquals("Inner model text field", testModel.getTestModelChildSubResource().getSubResourceStringField());
     }
 
     @Test
     public void checkTestModelChildSubResourceWithPrefixPostfixResource() {
-        testModel = context.request().adaptTo(TestModelChildRootResource.class);
         assertEquals("Inner model resource title", testModel.getTestModelChildSubResource().getSubResource().getValueMap().get("title"));
     }
 
     @Test
     public void checkTestModelChildSubResourceWithRelativePathStringField() {
-        testModel = context.request().adaptTo(TestModelChildRootResource.class);
         assertEquals("Second inner model text field", testModel.getTestModelChildSubResourceWithDifferentName().getSubResourceStringField());
     }
 
     @Test
     public void checkTestModelChildSubResourceWithRelativePathResource() {
-        testModel = context.request().adaptTo(TestModelChildRootResource.class);
         assertEquals("Second inner model resource title", testModel.getTestModelChildSubResourceWithDifferentName().getSubResource().getValueMap().get("title"));
     }
 }
