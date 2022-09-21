@@ -1,0 +1,23 @@
+{
+  "jcr:primaryType": "cq:Page",
+  "jcr:content": {
+    "jcr:primaryType": "cq:PageContent",
+    "jcr:title": "Sample"
+  },
+  "page": {
+    "jcr:primaryType": "cq:Page",
+    "jcr:content": {
+      "jcr:primaryType": "cq:PageContent",
+      "jcr:title": "Sample Page",
+      "resource": {
+        "jcr:primaryType": "nt:unstructured",
+        "plainOldEnumField": "VAL1",
+        "enumValueByFieldName": "value1",
+        "custom": "VAL2",
+        "custom2": "value2",
+        "enumValueWithIntegerField": 3,
+        "enumValueWithIntField": 3
+      }
+    }
+  }
+}
