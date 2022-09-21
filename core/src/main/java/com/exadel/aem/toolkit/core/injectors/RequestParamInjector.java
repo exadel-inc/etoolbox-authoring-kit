@@ -73,12 +73,11 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
         RequestParam annotation) {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
-
         if(request == null) {
             return null;
         }
 
-        String paramName = StringUtils.defaultIfBlank(annotation.name(), name);
+        String paramName = annotation.name().isEmpty() ? name : annotation.name();
 
         if (TypeUtil.isValidObjectType(type, String.class)) {
             return request.getParameter(paramName);

@@ -34,6 +34,7 @@ import com.exadel.aem.toolkit.api.annotations.injectors.EToolboxList;
 import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
+
 /**
  * Injects into a Sling model entries of an EToolbox List obtained via a {@code ResourceResolver} instance
  * @see ListHelper

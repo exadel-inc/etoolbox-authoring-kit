@@ -42,7 +42,6 @@ import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
-
 /**
  * Injects into a Sling model an {@link com.day.cq.i18n.I18n} object that corresponds to the current locale, or else an
  * internationalized string value
@@ -54,9 +53,9 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 )
 public class I18nInjector extends BaseInjector<I18N> {
 
-    private static final Pattern LOCALE_PARTS_SPLITTER = Pattern.compile("[/_-]");
-
     public static final String NAME = "eak-etoolbox-i18n-injector";
+
+    private static final Pattern LOCALE_PARTS_SPLITTER = Pattern.compile("[/_-]");
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE)
     private List<ResourceBundleProvider> resourceBundleProviders;

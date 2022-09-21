@@ -1,6 +1,11 @@
 package com.exadel.aem.toolkit.core.injectors;
 
-import com.exadel.aem.toolkit.api.annotations.injectors.Child;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Type;
+import java.util.Objects;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -9,12 +14,8 @@ import org.apache.sling.models.spi.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Type;
-import java.util.Objects;
+import static com.exadel.aem.toolkit.core.injectors.InjectorConstants.EXCEPTION;
+
 /**
  * The parent injector class, which is an implementation of the design pattern - template method. The class accumulates an abstract algorithm for injecting a value into an annotated field.
  * To add a new injector, you need to override the following methods in the child classes:
@@ -40,7 +41,7 @@ public abstract class BaseInjector<AnnotationType extends Annotation> implements
      */
     @CheckForNull
     @Override
-    public Object getValue(
+    public final Object getValue(
         @Nonnull Object adaptable,
         String name,
         @Nonnull Type type,
@@ -62,7 +63,7 @@ public abstract class BaseInjector<AnnotationType extends Annotation> implements
 
     /**
      * Get the annotation class based on elements declared annotation
-     * The necessary implementation is in the descendant classes
+     * The necessary implementation is needed to implement in the descendant classes
      * @param element        A {@link AnnotatedElement} element
      * @return {@code AnnotationType} implementation of the {@link Annotation} interface
      */
@@ -70,7 +71,7 @@ public abstract class BaseInjector<AnnotationType extends Annotation> implements
 
     /**
      * Extracts value from a {@link SlingHttpServletRequest} or a {@link Resource} instance.
-     * The necessary implementation is need to implemented in the descendant classes
+     * The necessary implementation is needed to implement in the descendant classes
      * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
      * @param name             Name of the Java class member to inject the value into
      * @param type             Type of receiving Java class member
@@ -84,11 +85,11 @@ public abstract class BaseInjector<AnnotationType extends Annotation> implements
     );
 
     /**
-     Generates and displays an error message if the annotated value cannot be injected.
-     * @param  annotation            annotation declared on the target field
+     Generates and displays an error message if the value cannot be injected.
+     * @param  annotation            Аннотация, объявленная в целевом поле
      */
      void logError(AnnotationType annotation) {
-        LOG.debug("Could not inject a value for annotation {} in class {}", annotation, getName());
+        LOG.debug(EXCEPTION, annotation, getName());
     }
 
 

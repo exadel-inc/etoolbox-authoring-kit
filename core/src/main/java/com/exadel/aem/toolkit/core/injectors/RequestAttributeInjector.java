@@ -6,13 +6,11 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
@@ -21,6 +19,7 @@ import org.osgi.service.component.annotations.Component;
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestAttribute;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
+
 /**
  * Injects into a Sling model the value of a HTTP request attribute
  * via a {@code SlingHttpServletRequest} object
@@ -34,7 +33,7 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
 
     public static final String NAME = "eak-request-attribute-injector";
 
-    public static final Class<?>[] ALLOWED_TYPES = new Class[] {
+    static final Class<?>[] ALLOWED_TYPES = new Class[]{
         Integer.class,
         Long.class,
         Boolean.class,
@@ -59,13 +58,13 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
         RequestAttribute annotation) {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
-        if (Objects.isNull(request)) {
+        if (request == null) {
             return null;
         }
 
-        String attributeName = StringUtils.defaultIfBlank(annotation.name(), name);
+        String attributeName = annotation.name().isEmpty() ? name : annotation.name();
         Object attribute = request.getAttribute(attributeName);
-        if (Objects.isNull(attribute)) {
+        if (attribute == null) {
             return null;
         }
 
@@ -86,15 +85,15 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
     }
 
     /**
-     * Attempts to cast object to one of supported type
-     * @param attribute        A {@link SlingHttpServletRequest} attribute value
-     * @param type             Type of receiving Java class member
-     * @param comparingType    The value to compare to determine the type of the variable from the request.
-     *                         Valid class types:
-     *                         Object
-     *                         Custom object
-     *                         Array of Object, Integer, Long, Boolean, Calendar + primitives
-     *                         List of Object, Integer, Long, Boolean, Calendar
+     * Attempts to cast an object to one of supported type
+     * @param attribute     A {@link SlingHttpServletRequest} attribute value
+     * @param type          Type of receiving Java class member
+     * @param comparingType The value to compare to determine the type of the variable from the request.
+     *                      Valid class types:
+     *                      Object
+     *                      Custom object
+     *                      Array of Object, Integer, Long, Boolean, Calendar + primitives
+     *                      List of Object, Integer, Long, Boolean, Calendar
      * @return {@code Optional} wrapped object
      */
     private <T> Optional<Object> getByType(Object attribute,
@@ -109,14 +108,7 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
         } else if (TypeUtil.isValidArray(type, comparingType)) {
             Class<?> componentType = ((Class<?>) type).getComponentType();
 
-            if (componentType.isPrimitive()) {
-                //unwrap array
-                return Optional.of(transformArray(attribute, componentType));
-            } else {
-                //wrap array
-                return Optional.of(transformArray(attribute, componentType));
-            }
-
+            return Optional.of(transformArray(attribute, componentType));
         } else if (TypeUtil.isValidCollection(type, comparingType)) {
             List<T> attributesList;
 
@@ -128,7 +120,6 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
             } else {
                 attributesList = (List<T>) attribute;
             }
-
             if (CollectionUtils.isNotEmpty(attributesList)) {
                 return Optional.of(attributesList);
             }

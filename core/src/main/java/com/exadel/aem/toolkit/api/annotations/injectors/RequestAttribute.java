@@ -1,12 +1,12 @@
 package com.exadel.aem.toolkit.api.annotations.injectors;
 
-import org.apache.sling.models.annotations.Source;
-import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+
+import org.apache.sling.models.annotations.Source;
+import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
 
 import com.exadel.aem.toolkit.core.injectors.RequestAttributeInjector;
 

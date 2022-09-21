@@ -17,6 +17,7 @@ import static org.junit.Assert.assertNotNull;
 
 
 public class RequestAttributeInjectorTest {
+
     private static final String EXPECTED_PARAM = "same old string value";
 
     private static final List<String> EXPECTED_STRINGS_LIST = Arrays.asList("s1", "s2", "s3");
@@ -57,7 +58,6 @@ public class RequestAttributeInjectorTest {
         assertEquals(EXPECTED_PARAM, testModel.getNamedParam());
     }
 
-
     @Test
     public void shouldInjectStringList() {
         context.request().setAttribute("stringsList", EXPECTED_STRINGS_LIST);
@@ -94,7 +94,6 @@ public class RequestAttributeInjectorTest {
         assertEquals(EXPECTED_BOOLEAN_LIST, testModel.getRequestAttributeBooleanList());
     }
 
-
     @Test
     public void shouldInjectStringArray() {
         final String[] expected = {"wake", "up", "Neo"};
@@ -116,6 +115,7 @@ public class RequestAttributeInjectorTest {
         assertNotNull(testModel);
         assertArrayEquals(expected, testModel.getRequestAttributeIntegerArrayWrapped());
     }
+
     @Test
     public void shouldInjectIntegerArrayNotWrapped() {
         final int[] expected = {1, 2, 3};
@@ -126,6 +126,7 @@ public class RequestAttributeInjectorTest {
         assertNotNull(testModel);
         assertArrayEquals(expected, testModel.getRequestAttributeIntegerArrayNotWrapped());
     }
+
     @Test
     public void shouldInjectLongArrayWrapped() {
         final Long[] expected = {1L, 2L, 3L};
@@ -136,6 +137,7 @@ public class RequestAttributeInjectorTest {
         assertNotNull(testModel);
         assertArrayEquals(expected, testModel.getRequestAttributeLongArrayWrapped());
     }
+
     @Test
     public void shouldInjectLongArrayNotWrapped() {
         final long[] expected = {1L, 2L, 3L};
@@ -157,6 +159,7 @@ public class RequestAttributeInjectorTest {
         assertNotNull(testModel);
         assertArrayEquals(expected, testModel.getRequestAttributeBooleanArrayWrapped());
     }
+
     @Test
     public void shouldInjectBooleanArrayNotWrapped() {
         final boolean[] expected = {true, true, false};
@@ -167,6 +170,4 @@ public class RequestAttributeInjectorTest {
         assertNotNull(testModel);
         assertArrayEquals(expected, testModel.getRequestAttributeBooleanArrayNotWrapped());
     }
-
-
 }
