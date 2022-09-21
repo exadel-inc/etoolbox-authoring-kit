@@ -147,7 +147,7 @@ public class AllowedChildrenHandler implements Handler {
                 serializerProvider);
             serializeNonEmptyArray(
                 "parentsResourceTypes",
-                ArrayUtil.flatten(allowedChildren.parents()),
+                allowedChildren.parents(),
                 jsonGenerator,
                 serializerProvider);
             serializeNonEmptyArray(
