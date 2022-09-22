@@ -73,7 +73,7 @@ public class ValidatorsTest {
         pluginContext.testThrows(
             ValidatorTestCases.InvalidTextAreaDialog.class,
             ValidationException.class,
-            "'0' provided");
+            "'-99' provided");
     }
 
     @Test
