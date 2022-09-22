@@ -24,7 +24,7 @@
 
     $(document).on('cq-editables-loaded', function (event) {
         if (window.eakApplyTopLevelPolicy) {
-            event.editables.forEach(e => window.eakApplyTopLevelPolicy(e));
+            event.editables.forEach((e) => window.eakApplyTopLevelPolicy(e));
         }
         patchFindAllowedComponentsFromPolicy();
     });
@@ -62,7 +62,7 @@
 
         const config = JSON.parse(configJson);
         const settings = getContainerProperties(editable, ns.author, !config.isEditConfig);
-        const applicableRule = config.rules.find(rule => isRuleApplicable(rule, settings, componentList));
+        const applicableRule = config.rules.find((rule) => isRuleApplicable(rule, settings, componentList));
 
         if (applicableRule) {
             applicableRule.mode = applicableRule.mode || 'OVERRIDE';
@@ -83,7 +83,7 @@
         return {
             template: document.querySelector('[name="cq:template"]').content,
             pageResType: graniteAuthor.pageInfo.pageResourceType,
-            parentsResTypes: editable.getAllParents().map(parent => parent.type).slice(skipFirstParent ? 1 : 0).reverse(),
+            parentsResTypes: editable.getAllParents().map((parent) => parent.type).slice(skipFirstParent ? 1 : 0).reverse(),
             pagePath: editable.path.substring(0, editable.path.indexOf('/jcr:content')),
             container: editable.path.substring(editable.path.lastIndexOf('/') + 1)
         };
@@ -113,7 +113,7 @@
         if (!templates || !templates.length || !value) {
             return true;
         }
-        return templates.some(template => isMatching(template, value));
+        return templates.some((template) => isMatching(template, value));
     }
 
     /**
@@ -122,7 +122,7 @@
      * @param value - current identifier
      */
     function arrayContains(array, value) {
-        return !array || !array.length || array.some(element => isMatching(element, value));
+        return !array || !array.length || array.some((element) => isMatching(element, value));
     }
 
     /**
@@ -133,7 +133,7 @@
      * @param componentList
      */
     function checkParent(parentsResTypes, values, componentList) {
-        return !parentsResTypes || !parentsResTypes.length || parentsResTypes.some(parents => parentMatch(parents, values, componentList));
+        return !parentsResTypes || !parentsResTypes.length || parentsResTypes.some((parents) => parentMatch(parents, values, componentList));
     }
 
     /**
@@ -188,7 +188,7 @@
                 }
             }
         }
-        return chunks.filter(chunk => chunk).map(chunk => chunk.replace(/(['"`]){2}/g, '$1'));
+        return chunks.filter((chunk) => chunk).map((chunk) => chunk.replace(/(['"`]){2}/g, '$1'));
     }
 
     /**
@@ -271,6 +271,6 @@
      * @param componentList - list of all components available in the instance
      */
     function getComponentsResTypesByGroup(group, componentList) {
-        return componentList.filter(comp => comp.componentConfig.group === group).map(comp => comp.componentConfig.resourceType);
+        return componentList.filter((comp) => comp.componentConfig.group === group).map((comp) => comp.componentConfig.resourceType);
     }
 }(Granite));
