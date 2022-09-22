@@ -16,17 +16,26 @@ package com.exadel.aem.toolkit.plugin.maven;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * Contains settings specified in the Maven's POM file(-s) that control the execution of the ToolKit's plugin
  */
 public class PluginSettings {
 
+    public static final PluginSettings EMPTY = new PluginSettings();
+
     private String componentsPathBase;
 
     private String componentsReferenceBase;
 
     private String terminateOn;
+
+    /**
+     * Default (instantiation-restricting) constructor
+     */
+    PluginSettings() {
+    }
 
     /**
      * Retrieves the root path within the components file structure. This is used to define a corresponding file system
@@ -43,7 +52,7 @@ public class PluginSettings {
      * @return Optional string value
      */
     public String getComponentsReferenceBase() {
-        return componentsReferenceBase;
+        return StringUtils.defaultString(componentsReferenceBase);
     }
 
     /**
@@ -52,7 +61,7 @@ public class PluginSettings {
      * @see ExceptionHandlers
      */
     public String getTerminateOnRule() {
-        return terminateOn;
+        return StringUtils.defaultIfEmpty(terminateOn, DialogConstants.VALUE_NONE);
     }
 
     /**
