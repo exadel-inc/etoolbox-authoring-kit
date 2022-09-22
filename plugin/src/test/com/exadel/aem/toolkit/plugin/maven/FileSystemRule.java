@@ -60,7 +60,7 @@ public class FileSystemRule implements TestRule {
         try {
             fileSystem.close();
         } catch (IOException e) {
-            LOG.error(EXCEPTION_INIT, e);
+            LOG.error(EXCEPTION_CLOSE, e);
         }
     }
 
@@ -70,7 +70,7 @@ public class FileSystemRule implements TestRule {
         try {
             Files.createDirectories(componentPath);
         } catch (IOException e) {
-            LOG.error(EXCEPTION_CLOSE, e);
+            LOG.error(EXCEPTION_INIT, e);
         }
         return fileSystem;
     }
