@@ -57,7 +57,7 @@ public class ValidatorTestCases {
     @AemComponent(path = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
     @Dialog
     public static class InvalidTextAreaDialog {
-        @TextArea(rows = 0, cols = -99)
+        @TextArea(rows = 0, cols = 100)
         String text;
     }
 
