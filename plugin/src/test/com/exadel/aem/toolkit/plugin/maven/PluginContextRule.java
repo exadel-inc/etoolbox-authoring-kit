@@ -37,9 +37,6 @@ public class PluginContextRule implements TestRule {
 
     @Override
     public Statement apply(Statement statement, Description description) {
-        if (!isInitialized()) {
-            initialize();
-        }
         if (description.getAnnotation(ThrowsPluginException.class) == null
             && description.getTestClass().getAnnotation(ThrowsPluginException.class) == null) {
             return statement;
@@ -57,11 +54,7 @@ public class PluginContextRule implements TestRule {
         };
     }
 
-    private static boolean isInitialized() {
-        return exceptionHandler != null;
-    }
-
-    private void initialize() {
+    public static void initializeContext() {
         PluginSettings settings = PluginSettings
             .builder()
             .componentsPathBase(TestConstants.PACKAGE_ROOT_PATH)
@@ -72,5 +65,9 @@ public class PluginContextRule implements TestRule {
             .settings(settings)
             .exceptionHandler(exceptionHandler)
             .build();
+    }
+
+    public static void closeContext() {
+        PluginRuntime.close();
     }
 }
