@@ -59,7 +59,6 @@ class PackageInstallerUtil {
     }
 
     public static void uninstall(Package contentPackage) throws HttpException {
-/*
         LOG.info("Uninstalling test package...");
         PackageManagerResponse response = executePackageRequest("?cmd=uninstall", contentPackage.getPath());
         if (!response.isSuccess()) {
@@ -72,7 +71,6 @@ class PackageInstallerUtil {
             throw new HttpException("Could not remove test package. " + response.getMessage());
         }
         LOG.info("Uninstall complete");
-*/
     }
 
     private static PackageManagerResponse executePackageRequest(String queryParams, String suffix) throws HttpException {
