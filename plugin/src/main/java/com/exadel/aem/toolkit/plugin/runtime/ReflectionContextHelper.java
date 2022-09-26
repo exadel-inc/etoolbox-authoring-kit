@@ -49,6 +49,7 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntimeContext;
 import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
+import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.ScopeUtil;
 import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 
@@ -56,10 +57,6 @@ import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
  * Introspects the classes available in Maven reactor to retrieve and manage Toolkit-related logic
  */
 public class ReflectionContextHelper {
-
-    private static final String PACKAGE_BASE_WILDCARD = ".*";
-
-    private String packageBase;
 
     private org.reflections.Reflections reflections;
 
@@ -81,21 +78,32 @@ public class ReflectionContextHelper {
 
     /**
      * Retrieves a collection of unique {@code ComponentSource} objects that encapsulate {@code AemComponent}-annotated
-     * and {@code @Dialog}-annotated classes. If the processing is restricted to certain package(-s) in the plugin's
-     * settings, the classes are made sure to conform
-     * @return A non-null {@code Set} of {@code ComponentSource} objects; can be empty
+     * and {@code @Dialog}-annotated classes
+     * @param packageBase Restricts the processing to certain package(-s) in the plugin's settings. Can help to e.g.
+     *                    separate between classes that are matched by component folders in the current content package
+     * @return A non-null list of {@code ComponentSource} objects; can be empty
      */
-    public List<ComponentSource> getComponents() {
+    public List<ComponentSource> getComponents(String packageBase) {
+        return getComponents()
+            .stream()
+            .filter(comp -> StringUtils.isEmpty(packageBase) || ClassUtil.matchesReference(comp.adaptTo(Class.class), packageBase))
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves a collection of unique {@code ComponentSource} objects that encapsulate {@code AemComponent}-annotated
+     * and {@code @Dialog}-annotated classes
+     * @return A non-null list of {@code ComponentSource} objects; can be empty
+     */
+    private List<ComponentSource> getComponents() {
         if (components != null) {
             return components;
         }
 
-        Set<Class<?>> classesAnnotatedWithComponent = reflections.getTypesAnnotatedWith(AemComponent.class, true).stream()
-            .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
-            .collect(Collectors.toSet());
-        Set<Class<?>> classesAnnotatedWithDialog = reflections.getTypesAnnotatedWith(Dialog.class, true).stream()
-            .filter(cls -> StringUtils.isEmpty(packageBase) || cls.getName().startsWith(packageBase))
-            .collect(Collectors.toSet());
+        Set<Class<?>> classesAnnotatedWithComponent = new HashSet<>(
+            reflections.getTypesAnnotatedWith(AemComponent.class, true));
+        Set<Class<?>> classesAnnotatedWithDialog = new HashSet<>(
+            reflections.getTypesAnnotatedWith(Dialog.class, true));
 
         Set<Class<?>> componentViews = new HashSet<>();
         classesAnnotatedWithComponent.forEach(cls -> componentViews.addAll(Arrays.asList(cls.getAnnotation(AemComponent.class).views())));
@@ -320,12 +328,10 @@ public class ReflectionContextHelper {
     /**
      * Used to initialize a {@code PluginReflectionUtility} instance based on the list of available classpath entries in
      * the scope of this Maven plugin
-     * @param elements    List of classpath elements to be used in reflection routines
-     * @param packageBase String representing package prefix of processable AEM backend components like {@code
-     *                    com.acme.aem.components.*}. If not specified, all available components will be processed
+     * @param elements List of classpath elements to be used in reflection routines
      * @return {@link ReflectionContextHelper} instance
      */
-    public static ReflectionContextHelper fromCodeScope(List<String> elements, String packageBase) {
+    public static ReflectionContextHelper fromCodeScope(List<String> elements) {
         URL[] urls = new URL[]{};
         if (elements != null) {
             urls = elements.stream()
@@ -334,14 +340,12 @@ public class ReflectionContextHelper {
                 .map(ReflectionContextHelper::toUrl)
                 .filter(Objects::nonNull).toArray(URL[]::new);
         }
-        Reflections reflections = new org.reflections.Reflections(new ConfigurationBuilder()
+        Reflections reflections = new Reflections(new ConfigurationBuilder()
             .addClassLoader(new URLClassLoader(urls, ReflectionContextHelper.class.getClassLoader()))
             .setUrls(urls)
             .setScanners(new TypeAnnotationsScanner(), new SubTypesScanner()));
         ReflectionContextHelper newInstance = new ReflectionContextHelper();
         newInstance.reflections = reflections;
-        newInstance.packageBase = StringUtils.strip(StringUtils.defaultString(packageBase, StringUtils.EMPTY),
-            PACKAGE_BASE_WILDCARD);
         return newInstance;
     }
 
