@@ -32,7 +32,7 @@ public abstract class ExceptionsTestBase {
         fileSystemHelper = new FileSystemHost();
         PluginSettings settings = PluginSettings
             .builder()
-            .componentsPathBase(TestConstants.PACKAGE_ROOT_PATH)
+            .defaultPathBase(TestConstants.PACKAGE_ROOT_PATH)
             .terminateOn(DialogConstants.VALUE_ALL)
             .build();
         PluginRuntime.contextBuilder()
