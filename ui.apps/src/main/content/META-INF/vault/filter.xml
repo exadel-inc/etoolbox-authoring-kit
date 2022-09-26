@@ -5,6 +5,7 @@
 
     <filter root="/apps/etoolbox-authoring-kit">
         <exclude pattern="/apps/etoolbox-authoring-kit/fixes(/.*)?"/>
+        <exclude pattern="/apps/etoolbox-authoring-kit/samples(/.*)?"/>
     </filter>
 
     <!-- The following filters clear old directories in JCR content. They can be removed after v.2 release -->
