@@ -27,6 +27,9 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
 import com.exadel.aem.toolkit.api.handlers.Source;
@@ -39,10 +42,28 @@ import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
  */
 public class ClassUtil {
 
+    private static final String WILDCARD = ".*";
+
     /**
      * Default (instantiation-restricting) constructor
      */
     private ClassUtil() {
+    }
+
+    /**
+     * Gets whether the given {@code Class} conforms to one of the provided reverences that represent package names
+     * @param targetClass The class to check
+     * @param references Zero or more string values; non-blank strings are expected
+     * @return True or false
+     */
+    public static boolean matchesReference(Class<?> targetClass, String... references) {
+        if (ArrayUtils.isEmpty(references)) {
+            return true;
+        }
+        return Arrays.stream(references)
+            .filter(StringUtils::isNotBlank)
+            .map(ref -> ref.endsWith(WILDCARD) ? ref.substring(0, ref.length() - WILDCARD.length()) : ref)
+            .anyMatch(ref -> targetClass.getName().startsWith(ref + DialogConstants.SEPARATOR_DOT));
     }
 
     /**
