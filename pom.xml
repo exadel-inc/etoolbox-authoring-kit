@@ -357,7 +357,7 @@
         </profile>
 
         <profile>
-            <id>install-assets</id>
+            <id>autoInstallPackage</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>

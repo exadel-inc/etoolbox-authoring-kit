@@ -108,7 +108,7 @@ You need to do two steps.
 
 Feel free to clone the project sources and run ```mvn clean install``` from the project's root folder. The plugin and the API artifacts will be installed in the local .m2 repository.
 
-You can run the build with the *install-assets* profile like `mvn clean install -Pinstall-assets`. Then the project will be deployed to an AEM instance. You might need to change the following values in the *properties* part of the project's main _POM_ file:
+You can run the build with the *autoInstallPackage* profile like `mvn clean install -PautoInstallPackage`. Then the project will be deployed to an AEM instance. You might need to change the following values in the *properties* part of the project's main _POM_ file:
 ```
 <aem.host>10.0.0.1</aem.host> <!-- Your AEM instance address or hostname -->
 <aem.port>4502</aem.port> <!-- Your AEM instance port -->

@@ -278,7 +278,7 @@ Just like *Source*, *Target* is an adaptable entity. By default, *Target* adapts
 You can debug the ToolKit's plugin while building your AEM app. In order to do so, run your build in debug mode:
 
 ```
-mvnDebug clean install -Pinstall-assets
+mvnDebug clean install -PautoInstallPackage
 ```
 
 Afterward, you can set breakpoints in your IDE, start a debugging session, and connect to the build process. The port is 8000.

@@ -126,7 +126,7 @@
 
     <profiles>
         <profile>
-            <id>install-assets</id>
+            <id>autoInstallPackage</id>
             <build>
                 <plugins>
                     <plugin>
