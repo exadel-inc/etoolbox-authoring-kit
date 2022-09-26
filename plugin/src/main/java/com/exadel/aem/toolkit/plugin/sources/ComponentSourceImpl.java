@@ -119,7 +119,7 @@ class ComponentSourceImpl extends ClassSourceImpl implements ComponentSource {
         }
 
         String result = StringUtils.stripEnd(
-            PluginRuntime.context().getSettings().getComponentsPathBase(),
+            PluginRuntime.context().getSettings().getPathBase(adaptTo(Class.class)),
             CoreConstants.SEPARATOR_SLASH)
             + CoreConstants.SEPARATOR_SLASH
             + effectivePath;
