@@ -64,7 +64,7 @@
 
     <profiles>
         <profile>
-            <id>install-samples</id>
+            <id>autoInstallPackage</id>
             <build>
                 <plugins>
                     <plugin>
