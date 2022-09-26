@@ -12,8 +12,8 @@ seoTitle: Installation - Exadel Authoring Kit
 <dependency>
    <groupId>com.exadel.etoolbox</groupId>
    <artifactId>etoolbox-authoring-kit-core</artifactId>
-   <version>2.2.1-SNAPSHOT</version> <!-- prefer the latest stable version whenever possible -->
-    <scope>provided</scope> <!-- do not use compile or runtime scope!-->
+   <version>2.2.1-SNAPSHOT</version> <!-- Prefer the latest stable version whenever possible -->
+    <scope>provided</scope> <!-- Do not use compile or runtime scope!-->
 </dependency>
 ```
 2) Insert plugin's config in the _\<plugins>_ section of the POM file of your **package** module:
@@ -31,10 +31,10 @@ seoTitle: Installation - Exadel Authoring Kit
         </execution>
     </executions>
     <configuration>
-        <!-- MANDATORY: Place here the path to the node under which your component nodes are stored -->
-        <componentsPathBase>jcr_root/apps/projectName/components</componentsPathBase>
-        <!-- OPTIONAL: specify root package for component classes -->
-        <componentsReferenceBase>com.acme.project.samples</componentsReferenceBase>
+        <!-- RECOMMENDED: Place here the path to the node under which your component nodes are stored -->
+        <componentsPathBase>jcr_root/apps/acme/components</componentsPathBase>
+        <!-- RECOMMENDED: Specify root package for component classes that match the current package -->
+        <componentsReferenceBase>com.acme.project.components.*</componentsReferenceBase>
         <!-- OPTIONAL: specify list of exceptions that would cause this plugin to terminate -->
         <terminateOn>ALL</terminateOn>
     </configuration>
@@ -44,11 +44,11 @@ seoTitle: Installation - Exadel Authoring Kit
 
 ##### componentsPathBase
 
-Specifies the path to a folder in the current package where the AEM components are situated. Whenever you specify the `path` property of `@AemComponent` as a relative path (without leading */*), its value is appended to the _componentsPathBase_. This setting is mandatory.
+Specifies the path to a folder in the current package where the AEM components are situated. Whenever you specify the `path` property of `@AemComponent` as a relative path (without leading */*), its value is appended to the _componentsPathBase_. It is recommended to always specify this setting.
 
 ##### componentsReferenceBase
 
-Specifies the root package to scan for AEM components' back end Java classes. This setting is optional. It can be used to limit the scope of classes scanned by the plugin. By default, the plugin would scan all the classes available in the classpath, spanning across bundles. This can be undesirable if, for example, there are several Java classes referring to the same AEM component.
+Specifies the root package to scan for AEM components' back end Java classes. It can be used to limit the classes scanned by the plugin (= to filter out classes that are not matched by a component folder within the current package), and also to recognize a component address  via the matching class name. It is recommended to always specify this setting.
 
 ##### terminateOn
 
