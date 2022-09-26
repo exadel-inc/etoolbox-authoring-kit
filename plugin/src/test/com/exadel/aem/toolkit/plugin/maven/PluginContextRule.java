@@ -57,7 +57,7 @@ public class PluginContextRule implements TestRule {
     public static void initializeContext() {
         PluginSettings settings = PluginSettings
             .builder()
-            .componentsPathBase(TestConstants.PACKAGE_ROOT_PATH)
+            .defaultPathBase(TestConstants.PACKAGE_ROOT_PATH)
             .build();
         exceptionHandler = new MuteableExceptionHandler();
         PluginRuntime.contextBuilder()
