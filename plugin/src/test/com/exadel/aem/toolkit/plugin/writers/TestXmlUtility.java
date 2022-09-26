@@ -24,10 +24,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
+import com.exadel.aem.toolkit.plugin.sources.Sources;
 import com.exadel.aem.toolkit.plugin.utils.TestConstants;
 
 public class TestXmlUtility {
@@ -44,12 +45,13 @@ public class TestXmlUtility {
 
     public static boolean doTest(FileSystem fileSystem, String className, Path createdFilesPath, Path sampleFilesPath) throws ClassNotFoundException, IOException {
 
-        Class<?> testable = Class.forName(className);
+        Class<?> testableClass = Class.forName(className);
+        ComponentSource testable =  Sources.fromComponentClass(testableClass);
         Path effectiveCreatedFilesPath = createdFilesPath == null
-            ? fileSystem.getPath(TestConstants.DEFAULT_COMPONENT_NAME)
+            ? fileSystem.getPath(TestConstants.PACKAGE_ROOT_PATH + TestConstants.DEFAULT_COMPONENT_NAME)
             : createdFilesPath;
 
-        PackageWriter.forFileSystem(fileSystem, PROJECT_NAME, StringUtils.EMPTY).write(testable);
+        PackageWriter.forFileSystem(fileSystem, PROJECT_NAME).write(testable);
 
         Map<String, String> actualFiles = getFiles(effectiveCreatedFilesPath);
         Map<String, String> expectedFiles = getFiles(sampleFilesPath);

@@ -30,11 +30,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.IgnorePropertyMapping;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
+import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
@@ -50,6 +52,24 @@ public class AnnotationUtil {
      */
     private AnnotationUtil() {
     }
+
+    /* ---------------------
+       Annotation management
+       --------------------- */
+
+    /**
+     * Gets whether any of the {@code Annotation}'s properties have a value that is not default
+     * @param annotation The annotation to analyze
+     * @return True or false
+     */
+    public static boolean isNotDefault(Annotation annotation) {
+        return Arrays.stream(annotation.annotationType().getDeclaredMethods())
+            .anyMatch(method -> propertyIsNotDefault(annotation, method));
+    }
+
+    /* ---------------------
+       Properties management
+       --------------------- */
 
     /**
      * Retrieves the property value of the specified annotation. This method wraps up exception handling, therefore, can
@@ -73,22 +93,12 @@ public class AnnotationUtil {
     public static Object getProperty(Annotation annotation, Method method, Object defaultValue) {
         try {
             return method.invoke(annotation);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
                 String.format(INVOCATION_EXCEPTION_MESSAGE_TEMPLATE, method.getName(), annotation.annotationType().getName()),
                 e));
         }
         return defaultValue;
-    }
-
-    /**
-     * Gets whether any of the {@code Annotation}'s properties have a value that is not default
-     * @param annotation The annotation to analyze
-     * @return True or false
-     */
-    public static boolean isNotDefault(Annotation annotation) {
-        return Arrays.stream(annotation.annotationType().getDeclaredMethods())
-            .anyMatch(method -> propertyIsNotDefault(annotation, method));
     }
 
     /**
@@ -149,11 +159,15 @@ public class AnnotationUtil {
         return result;
     }
 
+    /* -----------------
+       Instance creation
+       ----------------- */
+
     /**
      * Creates in runtime a {@code <T extends Annotation>}-typed annotation-like proxy object to mimic the behavior of
      * an actual annotation. Values to annotation methods are provided as a {@code Map<String, Object>} collection
      * @param type   Target annotation type
-     * @param values Values that map to the target annotation's fields
+     * @param values Values that map to the target annotation's fields (methods)
      * @param <T>    Particular type of the annotation facade
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
      */
@@ -171,25 +185,43 @@ public class AnnotationUtil {
     }
 
     /**
+     * Creates in runtime a {@code <T extends Annotation>}-typed annotation-like proxy object to mimic the behavior of
+     * an actual annotation. Values to annotation methods are fetched from the given {@code source} annotation and then
+     * modified or supplemented with the provided {@code Map<String, Object>} collection
+     * @param type   Target annotation type
+     * @param source Annotation object that provides values for the target annotation's fields (methods)
+     * @param values Values that map to the target annotation's fields
+     * @param <T>    Particular type of the annotation facade
+     * @return Facade annotation instance, a subtype of the {@code Annotation} class
+     */
+    public static <T extends Annotation> T createInstance(Class<T> type, T source, Map<String, Object> values) {
+        Map<String, Object> existingValues = getProperties(source, method -> true);
+        existingValues.putAll(values);
+        return createInstance(type, existingValues);
+    }
+
+    /**
      * Creates in runtime a {@code <T extends Annotation>}-typed facade for the specified annotation with only some
-     * fields set to a non-default value, others voided This method is used to render the same {@code Annotation} object
-     * differently (like two or more different sets of values) depending on the values specified
+     * fields set to a non-default value, others voided (= assigned "empty" or "zero" values). This method is used to
+     * render the same {@code Annotation} object differently (like two or more different sets of values) depending on
+     * the values specified
      * @param source       {@code Annotation} instance to produce a facade for
-     * @param type         Target {@code Class} of the facade (one of subtypes of the {@code Annotation} class)
      * @param voidedFields The fields to be voided, a list of non-blank Strings
      * @param <T>          Particular type of the annotation facade
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
      */
-    public static <T extends Annotation> T filterInstance(Annotation source, Class<T> type, List<String> voidedFields) {
+    @SuppressWarnings("unchecked")
+    public static <T extends Annotation> T filterInstance(Annotation source, List<String> voidedFields) {
         Map<String, BiFunction<Annotation, Object[], Object>> methods = new HashMap<>();
         if (voidedFields != null) {
             voidedFields.stream()
-                .map(methodName -> getMethodInstance(type, methodName))
+                .map(methodName -> getMethodInstance(source.annotationType(), methodName))
                 .filter(Objects::nonNull)
-                .forEach(method -> methods.put(method.getName(),
-                    (annotation, args) -> method.getReturnType().equals(String.class) ? StringUtils.EMPTY : 0L));
+                .forEach(method -> methods.put(
+                    method.getName(),
+                    (annotation, args) -> getDefaultReturnValue(method)));
         }
-        return genericModify(source, type, methods);
+        return (T) genericModify(source, source.annotationType(), methods);
     }
 
     /**
@@ -231,6 +263,10 @@ public class AnnotationUtil {
             .collect(Collectors.toList());
         return method -> isMatch(method, finalEffectiveMappings);
     }
+
+    /* ---------------------------------
+       Instance creation utility methods
+       --------------------------------- */
 
     /**
      * Extends an object in runtime by casting it to an extension interface and applying additional methods
@@ -300,6 +336,36 @@ public class AnnotationUtil {
             && mappings.contains(DialogConstants.WILDCARD);
 
     }
+
+    /**
+     * Called by {@link AnnotationUtil#filterInstance(Annotation, List)} to retrieve a default value fore a
+     * method based on the method return type. Note: currently this method is not comprehensive since it covers not all
+     * the possible annotation properties' types
+     * @param method {@code Method} instance
+     * @return A nullable value
+     */
+    private static Object getDefaultReturnValue(Method method) {
+        if (ClassUtils.primitiveToWrapper(method.getReturnType()).equals(Boolean.class)) {
+            return false;
+        }
+        if (ClassUtils.primitiveToWrapper(method.getReturnType()).equals(Integer.class)) {
+            return 0;
+        }
+        if (ClassUtils.primitiveToWrapper(method.getReturnType()).equals(Long.class)) {
+            return 0L;
+        }
+        if (method.getReturnType().equals(Class.class)) {
+            return _Default.class;
+        }
+        if (method.getReturnType().equals(String.class)) {
+            return StringUtils.EMPTY;
+        }
+        return null;
+    }
+
+    /* ---------------
+       Utility classes
+       --------------- */
 
     /**
      * Implements {@link InvocationHandler} mechanism for creating object extension per the {@link

@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.utils;
+package com.exadel.aem.toolkit.plugin.accessories;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -23,8 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.jimfs.Jimfs;
 
-public class FileSystemHelper implements Closeable {
-    private static final Logger LOG = LoggerFactory.getLogger(FileSystemHelper.class);
+import com.exadel.aem.toolkit.plugin.utils.TestConstants;
+
+public class FileSystemHost implements Closeable {
+    private static final Logger LOG = LoggerFactory.getLogger(FileSystemHost.class);
 
     private static final String EXCEPTION_MESSAGE = "Could not initialize testing file system";
 
@@ -46,9 +48,9 @@ public class FileSystemHelper implements Closeable {
 
     private static FileSystem createFileSystem() {
         FileSystem fileSystem = Jimfs.newFileSystem();
-        Path componentPath = fileSystem.getPath(TestConstants.DEFAULT_COMPONENT_NAME);
+        Path componentPath = fileSystem.getPath(TestConstants.PACKAGE_ROOT_PATH + TestConstants.DEFAULT_COMPONENT_NAME);
         try {
-            Files.createDirectory(componentPath);
+            Files.createDirectories(componentPath);
         } catch (IOException e) {
             LOG.error(EXCEPTION_MESSAGE, e);
         }

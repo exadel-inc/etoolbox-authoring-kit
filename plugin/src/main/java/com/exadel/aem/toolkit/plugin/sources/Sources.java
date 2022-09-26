@@ -57,7 +57,16 @@ public class Sources {
     }
 
     /**
-     * Creates a {@link Source} facade for a Java class
+     * Creates a {@link Source} facade for a Java class that represents an AEM component
+     * @param value {@code Class} object for which a source facade is created
+     * @return {@code ComponentSource} instance
+     */
+    public static ComponentSource fromComponentClass(Class<?> value) {
+        return new ComponentSourceImpl(value);
+    }
+
+    /**
+     * Creates a {@link Source} facade for an arbitrary Java class
      * @param value {@code Class} object for which a source facade is created
      * @return {@code Source} instance
      */

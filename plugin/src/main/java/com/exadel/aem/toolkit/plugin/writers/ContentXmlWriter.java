@@ -18,6 +18,7 @@ import javax.xml.transform.Transformer;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
+import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing component-wide attributes (writes data to the
@@ -44,12 +45,12 @@ class ContentXmlWriter extends PackageEntryWriter {
 
     /**
      * Gets whether current {@code Class} is eligible for populating a {@code .content.xml} structure
-     * @param componentClass The {@code Class} under consideration
+     * @param source The {@code Source} that refers to a class under consideration
      * @return True if the current {@code Class} is annotated with {@link Dialog} or {@link AemComponent}; otherwise, false
      */
     @Override
-    boolean canProcess(Class<?> componentClass) {
-        return componentClass.isAnnotationPresent(Dialog.class)
-            || componentClass.isAnnotationPresent(AemComponent.class);
+    boolean canProcess(Source source) {
+        return source.adaptTo(Dialog.class) != null
+            || source.adaptTo(AemComponent.class) != null;
     }
 }

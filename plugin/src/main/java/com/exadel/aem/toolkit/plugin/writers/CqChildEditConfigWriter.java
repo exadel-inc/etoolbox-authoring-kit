@@ -20,6 +20,7 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
 import com.exadel.aem.toolkit.api.annotations.policies.PolicyTarget;
+import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing author UI aspects for child components that do not define
@@ -46,11 +47,12 @@ class CqChildEditConfigWriter extends PackageEntryWriter {
 
     /**
      * Gets whether current {@code Class} is eligible for populating a {@code _cq_ChildEditConfig.xml} structure
-     * @param componentClass The {@code Class} under consideration
+     * @param source The {@code Source} that refers to a class under consideration
      * @return True if the current {@code Class} is annotated with {@link ChildEditConfig}; otherwise, false
      */
     @Override
-    boolean canProcess(Class<?> componentClass) {
+    boolean canProcess(Source source) {
+        Class<?> componentClass = (Class<?>) source.adaptTo(Class.class);
         return componentClass.isAnnotationPresent(ChildEditConfig.class)
                 || Arrays.stream(componentClass.getAnnotationsByType(AllowedChildren.class))
                 .anyMatch(ac -> PolicyTarget.CHILD.equals(ac.targetContainer()));

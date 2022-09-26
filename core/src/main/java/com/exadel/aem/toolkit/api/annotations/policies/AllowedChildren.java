@@ -20,7 +20,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Allows specifying the set of allowed child components for an AEM container component. Every {@code AllowedChildren}
+ * Used to specify the set of allowed child components for an AEM container component. Every {@code AllowedChildren}
  * annotation represents a single rule. One can specify any number of rules that are considered in the given order. If
  * an "empty" rule is specified, the current container doesn't allow any children
  * @see AllowedChildrenConfig
@@ -34,10 +34,20 @@ public @interface AllowedChildren {
      * Used to specify the allowed children for the container. This property accepts an array of strings. Every item can
      * represent either a resource type or a group. E.g.: <br> {@code "acme/components/content/button", "group:My
      * Components"}
-     * <p> If this property is not specified, no children components are allowed.
+     * <p> This setting is combined with the data specified in {@link AllowedChildren#classes()}. If neither
+     * {@code value} nor {@code classes} are specified, no child components are allowed
      * @return Zero or more {@code String} values, non-blank
      */
-    String[] value();
+    String[] value() default {};
+
+    /**
+     * Used to specify the allowed children for the container. The property accepts an array of classes that refer to
+     * child components
+     * <p> This setting is combined with the data specified in {@link AllowedChildren#value()}. If neither {@code value}
+     * nor {@code classes} are specified, no child components are allowed
+     * @return Zero or more {@code Class} references
+     */
+    Class<?>[] classes() default {};
 
     /**
      * Used to specify page templates to which the current rule is applied. If this setting is skipped, the rule applies
