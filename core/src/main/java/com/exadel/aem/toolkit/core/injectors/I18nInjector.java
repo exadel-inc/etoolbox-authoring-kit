@@ -83,7 +83,7 @@ public class I18nInjector extends BaseInjector<I18N> {
      * {@inheritDoc}
      */
     @Override
-    public Object getValue(Object adaptable, String name, Type type, I18N annotation) {
+    public Object getValue(Object adaptable, String name, Type type, I18N annotation, Object defaultValue) {
         String value = StringUtils.defaultIfEmpty(annotation.value(), name);
 
         Function<Object, Locale> localeDetector = InstantiationUtil.getObjectInstance(annotation.localeDetector());

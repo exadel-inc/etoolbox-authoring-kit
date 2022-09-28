@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.injectors.utils;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
@@ -120,6 +121,17 @@ public class TypeUtil {
         return isValidObjectType(componentType, allowedMemberTypes);
     }
 
+    public static Object transformArray(Object primitiveArray, Class<?> wrapperType) {
+        int length = Array.getLength(primitiveArray);
+        Object wrapperArray = Array.newInstance(wrapperType, length);
+
+        for (int i = 0; i < length; ++i) {
+            Array.set(wrapperArray, i, Array.get(primitiveArray, i));
+        }
+
+        return wrapperArray;
+    }
+
     /**
      * Gets whether the provided {@code Type} of Java class member is eligible for injection
      * @param value        {@code Type} object
@@ -146,7 +158,9 @@ public class TypeUtil {
         if (ArrayUtils.isEmpty(allowedTypes)) {
             return true;
         }
-        return Arrays.asList(allowedTypes).contains(ClassUtils.primitiveToWrapper(value)) || value.equals(Object.class);
+        return Arrays.asList(allowedTypes).contains(ClassUtils.primitiveToWrapper(value))
+            || value.equals(Object.class)
+            || value.isEnum();
     }
 
     /**

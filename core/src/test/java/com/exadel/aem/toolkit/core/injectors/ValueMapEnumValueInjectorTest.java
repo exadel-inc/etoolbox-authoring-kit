@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import com.exadel.aem.toolkit.core.injectors.models.TestModelValueMapEnumValueInjector;
@@ -27,19 +28,12 @@ public class ValueMapEnumValueInjectorTest {
 
         testModel = context.request().adaptTo(TestModelValueMapEnumValueInjector.class);
     }
+
     @Test
     public void shouldInjectEnumConstant(){
         String expected = "VAL1";
 
         String actual = String.valueOf(testModel.getPlainOldEnumField());
-        assertEquals(expected,actual);
-    }
-
-    @Test
-    public void shouldInjectEnumConstantByEnumFieldName(){
-        String expected = "VAL1";
-
-        String actual = String.valueOf(testModel.getEnumValueByFieldName());
         assertEquals(expected,actual);
     }
 
@@ -52,11 +46,47 @@ public class ValueMapEnumValueInjectorTest {
     }
 
     @Test
+    public void shouldInjectEnumConstantWithNameAttribute2(){
+        String expected = "VAL2";
+
+        String actual = String.valueOf(testModel.getEnumValueWithCustomName2());
+        assertEquals(expected,actual);
+    }
+
+    @Test
+    public void shouldInjectEnumConstantByEnumFieldName(){
+        String expected = "VAL1";
+
+        String actual = String.valueOf(testModel.getEnumValueByFieldName());
+        assertEquals(expected,actual);
+    }
+
+    @Test
     public void shouldInjectEnumConstantByEnumFieldNameWithNameAttribute(){
         String expected = "VAL2";
 
         String actual = String.valueOf(testModel.getEnumValueWithCustomNameAndValue());
         assertEquals(expected,actual);
+    }
+
+    @Test
+    public void shouldInjectEnumConstantWithDefaultValueString() {
+        String expected = "VAL1";
+
+        String actual = String.valueOf(testModel.getWithDefaultValueString());
+        assertEquals(expected,actual);
+    }
+
+    @Test
+    public void shouldInjectEnumConstantWithDefaultValuesArray(){
+        TestModelValueMapEnumValueInjector.TestingNeededEnum[] expected = {
+            TestModelValueMapEnumValueInjector.TestingNeededEnum.VAL1,
+            TestModelValueMapEnumValueInjector.TestingNeededEnum.VAL2
+        };
+
+
+        TestModelValueMapEnumValueInjector.TestingNeededEnum[] actual = testModel.getWithDefaultValuesStringArray();
+        assertArrayEquals(expected,actual);
     }
 
     @Test
@@ -73,5 +103,25 @@ public class ValueMapEnumValueInjectorTest {
 
         String actual = String.valueOf(testModel.getEnumValueWithIntField());
         assertEquals(expected,actual);
+    }
+
+    @Test
+    public void shouldInjectEnumConstantByEnumIntFieldNameDefaultValue(){
+        String expected = "VAL3";
+
+        String actual = String.valueOf(testModel.getEnumValueWithIntegerFieldAndDefaultValue());
+        assertEquals(expected,actual);
+    }
+
+    @Test
+    public void shouldInjectEnumConstantWithDefaultValuesIntArray(){
+        TestModelValueMapEnumValueInjector.TestingNeededEnumWithIntegerField[] expected = {
+            TestModelValueMapEnumValueInjector.TestingNeededEnumWithIntegerField.VAL2,
+            TestModelValueMapEnumValueInjector.TestingNeededEnumWithIntegerField.VAL3
+        };
+
+        TestModelValueMapEnumValueInjector.TestingNeededEnumWithIntegerField[] actual = testModel.getWithDefaultValuesIntArray();
+
+        assertArrayEquals(expected,actual);
     }
 }

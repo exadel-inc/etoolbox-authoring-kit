@@ -67,10 +67,11 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
      */
     @Override
     public Object getValue(
-        Object adaptable,
-        String name,
-        Type type,
-        RequestParam annotation) {
+            Object adaptable,
+            String name,
+            Type type,
+            RequestParam annotation,
+            Object defaultValue) {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if(request == null) {

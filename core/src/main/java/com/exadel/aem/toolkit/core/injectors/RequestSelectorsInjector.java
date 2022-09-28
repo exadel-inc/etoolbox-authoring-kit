@@ -64,10 +64,11 @@ public class RequestSelectorsInjector extends BaseInjector<RequestSelectors> {
      */
     @Override
     public Object getValue(
-        Object adaptable,
-        String name,
-        Type type,
-        RequestSelectors annotation) {
+            Object adaptable,
+            String name,
+            Type type,
+            RequestSelectors annotation,
+            Object defaultValue) {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
 

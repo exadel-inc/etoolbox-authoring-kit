@@ -86,7 +86,7 @@ public class ChildrenInjector extends BaseInjector<Children> {
      * {@inheritDoc}
      */
     @Override
-    public Object getValue(Object adaptable, String name, Type type, Children annotation) {
+    public Object getValue(Object adaptable, String name, Type type, Children annotation, Object defaultValue) {
 
         Resource adaptableResource = AdaptationUtil.getResource(adaptable);
         if (adaptableResource == null) {

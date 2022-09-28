@@ -1,7 +1,6 @@
 package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -55,7 +54,8 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
         Object adaptable,
         String name,
         Type type,
-        RequestAttribute annotation) {
+        RequestAttribute annotation,
+        Object defaultValue) {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
@@ -108,14 +108,14 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
         } else if (TypeUtil.isValidArray(type, comparingType)) {
             Class<?> componentType = ((Class<?>) type).getComponentType();
 
-            return Optional.of(transformArray(attribute, componentType));
+            return Optional.of(TypeUtil.transformArray(attribute, componentType));
         } else if (TypeUtil.isValidCollection(type, comparingType)) {
             List<T> attributesList;
 
             if (attribute.getClass().equals(Object[].class)) {
                 Object[] array = (Object[]) attribute;
                 //unwrap array
-                T[] parametrizedArray = (T[]) transformArray(array, comparingType);
+                T[] parametrizedArray = (T[]) TypeUtil.transformArray(array, comparingType);
                 attributesList = Arrays.asList(parametrizedArray);
             } else {
                 attributesList = (List<T>) attribute;
@@ -126,16 +126,5 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
         }
 
         return result;
-    }
-
-    private Object transformArray(Object primitiveArray, Class<?> wrapperType) {
-        int length = Array.getLength(primitiveArray);
-        Object wrapperArray = Array.newInstance(wrapperType, length);
-
-        for (int i = 0; i < length; ++i) {
-            Array.set(wrapperArray, i, Array.get(primitiveArray, i));
-        }
-
-        return wrapperArray;
     }
 }
