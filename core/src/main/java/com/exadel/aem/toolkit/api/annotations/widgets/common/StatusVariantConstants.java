@@ -28,6 +28,8 @@ public class StatusVariantConstants {
     public static final String HELP = "help";
     public static final String INFO = "info";
 
-    private StatusVariantConstants() {
-    }
+    /**
+     * Default (instantiation-preventing) constructor
+     */
+    private StatusVariantConstants() {}
 }

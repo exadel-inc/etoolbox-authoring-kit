@@ -50,15 +50,15 @@ class PlacementCollisionSolver {
     private static final String TYPE_FIELD = "Field";
     private static final String TYPE_METHOD = "Method";
 
-    private static final String NAMING_COLLISION_MESSAGE_TEMPLATE = "%s named \"%s\" in class \"%s\" " +
-        "collides with the %s named \"%s\" in class \"%s\" (%s). This may cause unexpected behavior";
+    private static final String NAMING_COLLISION_MESSAGE_TEMPLATE = "%s named \"%s\" in class \"%s\" "
+        + "collides with the %s named \"%s\" in class \"%s\" (%s). This may cause unexpected behavior";
 
     private static final String REASON_AMBIGUOUS_ORDER = "attributes of the parent class member will have precedence";
     private static final String REASON_DIFFERENT_RESTYPE = "different resource types provided";
 
-    private static final String CIRCULAR_PLACEMENT_MESSAGE_TEMPLATE = "%s named \"%s\" in class \"%s\" " +
-        "requests to be placed in container declared by %s named \"%s\" in class \"%s\" while the latter is already " +
-        "a child container of the first";
+    private static final String CIRCULAR_PLACEMENT_MESSAGE_TEMPLATE = "%s named \"%s\" in class \"%s\" "
+        + "requests to be placed in container declared by %s named \"%s\" in class \"%s\" while the latter is already "
+        + "a child container of the first";
 
     /**
      * Default (instantiation-preventing) constructor

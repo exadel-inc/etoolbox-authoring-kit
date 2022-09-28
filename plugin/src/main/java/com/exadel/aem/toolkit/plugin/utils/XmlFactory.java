@@ -30,16 +30,8 @@ import com.google.common.collect.ImmutableMap;
  * Contains utility methods for creating and transforming XML entities
  */
 public class XmlFactory {
-    /**
-     * Security features as per XML External entity protection cheat sheet
-     * @see <a href="https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html">here</a>
-     */
-    private static final Map<String, Boolean> DOCUMENT_BUILDER_FACTORY_SECURITY_FEATURES = ImmutableMap.of(
-        XMLConstants.FEATURE_SECURE_PROCESSING, true,
-        "http://apache.org/xml/features/disallow-doctype-decl", true,
-        "http://xml.org/sax/features/external-general-entities", false,
-        "http://xml.org/sax/features/external-parameter-entities", false,
-        "http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+
+    public static final String XML_NAMESPACE_PREFIX = "xmlns:";
 
     /**
      * XML namespaces typically present in an AEM component markup
@@ -51,8 +43,17 @@ public class XmlFactory {
         "cq", "http://www.day.com/jcr/cq/1.0",
         "granite", "http://www.adobe.com/jcr/granite/1.0"
     );
-    public static final String XML_NAMESPACE_PREFIX = "xmlns:";
 
+    /**
+     * Security features as per XML External entity protection cheat sheet
+     * @see <a href="https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html">here</a>
+     */
+    private static final Map<String, Boolean> DOCUMENT_BUILDER_FACTORY_SECURITY_FEATURES = ImmutableMap.of(
+        XMLConstants.FEATURE_SECURE_PROCESSING, true,
+        "http://apache.org/xml/features/disallow-doctype-decl", true,
+        "http://xml.org/sax/features/external-general-entities", false,
+        "http://xml.org/sax/features/external-parameter-entities", false,
+        "http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 
     /**
      * Default (instantiation-restricting) constructor
@@ -70,6 +71,24 @@ public class XmlFactory {
     }
 
     /**
+     * Called by {@link XmlFactory#newDocument()} to create an instance of XML {@code DocumentBuilder}
+     * with specific XML security features set
+     * @return {@link DocumentBuilder} instance
+     * @throws ParserConfigurationException if one or more security features cannot be assigned to the newly created document
+     */
+    private static DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, StringUtils.EMPTY);
+        documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, StringUtils.EMPTY);
+        for (Map.Entry<String, Boolean> feature : DOCUMENT_BUILDER_FACTORY_SECURITY_FEATURES.entrySet()) {
+            documentBuilderFactory.setFeature(feature.getKey(), feature.getValue());
+        }
+        documentBuilderFactory.setXIncludeAware(false);
+        documentBuilderFactory.setExpandEntityReferences(false);
+        return documentBuilderFactory.newDocumentBuilder();
+    }
+
+    /**
      * Creates a {@link Transformer} instance compliant with XML security attributes
      * @return {@code Transformer} object
      * @throws TransformerConfigurationException in case security attributes cannot be set
@@ -80,23 +99,5 @@ public class XmlFactory {
         transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, StringUtils.EMPTY);
         transformerFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_STYLESHEET, StringUtils.EMPTY);
         return transformerFactory.newTransformer();
-    }
-
-    /**
-     * Called by {@link XmlFactory#newDocument()} to create an instance of XML {@code DocumentBuilder}
-     * with specific XML security features set
-     * @return {@link DocumentBuilder} instance
-     * @throws ParserConfigurationException if one or more security features cannot be assigned to the newly created document
-     */
-    private static DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
-        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
-        documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, StringUtils.EMPTY);
-        documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, StringUtils.EMPTY);
-        for(Map.Entry<String, Boolean> feature : DOCUMENT_BUILDER_FACTORY_SECURITY_FEATURES.entrySet()) {
-            documentBuilderFactory.setFeature(feature.getKey(), feature.getValue());
-        }
-        documentBuilderFactory.setXIncludeAware(false);
-        documentBuilderFactory.setExpandEntityReferences(false);
-        return documentBuilderFactory.newDocumentBuilder();
     }
 }

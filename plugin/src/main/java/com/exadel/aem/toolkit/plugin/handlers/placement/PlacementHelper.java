@@ -182,6 +182,9 @@ public class PlacementHelper {
         private SectionsRegistry sections;
         private MembersRegistry members;
 
+        /**
+         * Default (instantiation-preventing) constructor
+         */
         private Builder() {
         }
 

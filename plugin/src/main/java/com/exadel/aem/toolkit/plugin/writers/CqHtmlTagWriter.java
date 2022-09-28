@@ -17,6 +17,7 @@ import javax.xml.transform.Transformer;
 
 import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
+import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing decoration tag properties,
@@ -44,11 +45,11 @@ class CqHtmlTagWriter extends PackageEntryWriter {
 
     /**
      * Gets whether the current {@code Class} is eligible for populating a {@code _cq_htmlTag.xml} structure
-     * @param componentClass The {@code Class} under consideration
+     * @param source The {@code Source} that refers to a class under consideration
      * @return True if the current {@code Class} is annotated with {@link HtmlTag}; otherwise, false
      */
     @Override
-    boolean canProcess(Class<?> componentClass) {
-        return componentClass.isAnnotationPresent(HtmlTag.class);
+    boolean canProcess(Source source) {
+        return source.adaptTo(HtmlTag.class) != null;
     }
 }

@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.exadel.etoolbox</groupId>
         <artifactId>etoolbox-authoring-kit</artifactId>
-        <version>2.2.1</version>
+        <version>2.2.2</version>
     </parent>
 
     <artifactId>etoolbox-authoring-kit-plugin</artifactId>
@@ -28,6 +28,10 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
             <plugin>
@@ -39,6 +43,15 @@
                 <artifactId>maven-plugin-plugin</artifactId>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <includes>
+                        <include>**/AllTests.class</include>
+                    </includes>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.sonatype.plugins</groupId>
                 <artifactId>nexus-staging-maven-plugin</artifactId>
             </plugin>
@@ -46,26 +59,6 @@
     </build>
 
     <profiles>
-
-        <profile><id>test</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>report-aggregate</id>
-                                <phase>test</phase>
-                                <goals>
-                                    <goal>report-aggregate</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
 
         <profile>
             <id>deploy</id>
@@ -82,6 +75,27 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>report-aggregate</id>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>report-aggregate</goal>
+                                </goals>
+                            </execution>
+                        </executions>
                     </plugin>
                 </plugins>
             </build>

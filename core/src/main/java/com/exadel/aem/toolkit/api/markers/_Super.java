@@ -17,6 +17,6 @@ package com.exadel.aem.toolkit.api.markers;
  * Used to mark reference to a superclass of the current class,
  * e.g. in a {@link com.exadel.aem.toolkit.api.annotations.main.ClassMember}
  */
-@SuppressWarnings("squid:S114") // "_" symbol prepended to signify this is a "reserved" class name
+@SuppressWarnings({"squid:S114", "TypeName"}) // "_" symbol prepended to signify this is a "reserved" class name
 public interface _Super {
 }

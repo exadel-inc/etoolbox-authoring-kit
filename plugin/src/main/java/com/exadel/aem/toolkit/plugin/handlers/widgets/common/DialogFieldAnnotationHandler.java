@@ -51,7 +51,8 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
         String prefix = target.getNamePrefix();
         // In case there are multiple sources in multifield container, their "name" values must not be preceded
         // with "./" which is by default
-        // see https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html#examples
+        // see https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/
+        // jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html#examples
         // That is why we must alter the default name prefix for the ongoing set of sources
         Target multifieldAncestor = target.findParent(t -> ResourceTypes.MULTIFIELD.equals(t.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE)));
         if (multifieldAncestor == null || multifieldAncestor.equals(target.getParent())) {
@@ -66,7 +67,7 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
 
     /**
      * Retrieves the {@code name} value from the provided {@link DialogField} annotation. If the name contains a Sling
-     * suffix, on;y the part before suffix is returned
+     * suffix, on;y the part before a suffix is returned
      * @param dialogField {@code DialogField} instance
      * @return String value
      */
@@ -87,7 +88,7 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
     /**
      * Retrieves the Sling suffix as stored in the {@code name} property of the provided {@link DialogField} annotation.
      * @param dialogField {@code DialogField} instance
-     * @return String value (empty string is returned if no Sling suffix found)
+     * @return String value (empty string is returned if no Sling suffix is found)
      */
     private static String getSlingSuffixByDialogFieldProperty(DialogField dialogField) {
         if (!StringUtils.contains(dialogField.name(), CoreConstants.SEPARATOR_AT)) {

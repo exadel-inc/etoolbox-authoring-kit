@@ -28,7 +28,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.ANNOTATION_TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Deprecated
-@SuppressWarnings("squid:S1133")
+@SuppressWarnings({"squid:S1133", "MissingJavadocMethod"})
 public @interface DialogWidgetAnnotation {
     String source() default "";
 }

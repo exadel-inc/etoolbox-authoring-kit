@@ -26,7 +26,7 @@ public class MissingResourceException extends RuntimeException {
      * @param value Non-null {@code Path} object
      */
    public MissingResourceException(Path value) {
-        super(String.format("Path %s is not present in the package or cannot be written to. " +
-            "If you need this path created, use WriteMode.CREATE", value));
+        super(String.format("Path %s is not present in the package or cannot be written to. "
+            + "If you need this path created, use WriteMode.CREATE", value));
     }
 }

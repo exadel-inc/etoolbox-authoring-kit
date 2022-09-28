@@ -18,6 +18,7 @@ import javax.xml.transform.Transformer;
 import com.exadel.aem.toolkit.api.annotations.main.DesignDialog;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
+import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**
  * The {@link PackageEntryWriter} implementation for storing Granite UI dialog definition (writes data to the
@@ -48,13 +49,13 @@ class CqDialogWriter extends PackageEntryWriter {
 
     /**
      * Gets whether the current {@code Class} is eligible for populating a {@code _cq_dialog.xml} structure
-     * @param componentClass The {@code Class} under consideration
+     * @param source The {@code Source} that refers to a class under consideration
      * @return True if the current {@code Class} is annotated with {@link Dialog} or {@link DesignDialog}; otherwise, false
      */
     @Override
-    boolean canProcess(Class<?> componentClass) {
+    boolean canProcess(Source source) {
         return Scopes.CQ_DIALOG.equals(scope)
-            ? componentClass.isAnnotationPresent(Dialog.class)
-            : componentClass.isAnnotationPresent(DesignDialog.class);
+            ? source.adaptTo(Dialog.class) != null
+            : source.adaptTo(DesignDialog.class) != null;
     }
 }

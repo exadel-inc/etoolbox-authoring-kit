@@ -65,6 +65,9 @@ public class OptionSourceParameters {
     private String selectedValue;
     private boolean sorted;
 
+    /**
+     * Default constructor
+     */
     private OptionSourceParameters() {
         pathParameters = new ArrayList<>();
     }

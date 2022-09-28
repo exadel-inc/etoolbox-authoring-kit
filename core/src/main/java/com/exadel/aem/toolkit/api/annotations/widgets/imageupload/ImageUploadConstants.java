@@ -25,5 +25,8 @@ public class ImageUploadConstants {
     public static final String MIME_TYPE_PNG = ".png";
     public static final String MIME_TYPE_SVG = ".svg";
 
+    /**
+     * Default (instantiation-preventing) constructor
+     */
     private ImageUploadConstants() {}
 }

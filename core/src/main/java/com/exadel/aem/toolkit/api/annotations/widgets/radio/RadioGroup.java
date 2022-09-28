@@ -59,5 +59,5 @@ public @interface RadioGroup {
      * and populated with values of the provided {@link DataSource} annotation
      * @return {@code @DataSource} instance
      */
-    DataSource datasource() default @DataSource;
+    DataSource datasource() default @DataSource(resourceType = "");
 }

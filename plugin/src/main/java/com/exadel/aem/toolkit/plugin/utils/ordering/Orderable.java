@@ -34,7 +34,7 @@ class Orderable<T> {
      * @param id    Name of the instance
      * @param value The wrapped object (payload)
      */
-    public Orderable(T value, String id) {
+    Orderable(T value, String id) {
         this(value, id, 0);
     }
 
@@ -45,7 +45,7 @@ class Orderable<T> {
      * @param rank  Optional number representing a pre-defined item rank (such as the {@link
      *              com.exadel.aem.toolkit.api.annotations.widgets.DialogField}'s {@code ranking} property
      */
-    public Orderable(T value, String id, int rank) {
+    Orderable(T value, String id, int rank) {
         this.id = id;
         this.value = value;
         this.rank = rank;
@@ -59,6 +59,10 @@ class Orderable<T> {
         return id;
     }
 
+    /**
+     * Retrieves the rank value
+     * @return Integer value
+     */
     public int getRank() {
         return rank;
     }
@@ -73,6 +77,7 @@ class Orderable<T> {
 
     /**
      * Assigns to the current instance an {@code Orderable} object that would represent its {@code before} hint
+     * @param before {@code Orderable} instance
      */
     void setBefore(Orderable<T> before) { // package-friendly setter for test cases
         this.before = before;
@@ -88,6 +93,7 @@ class Orderable<T> {
 
     /**
      * Assigns to the current instance an {@code Orderable} object that would represent its {@code after} hint
+     * @param after {@code Orderable} instance
      */
     public void setAfter(Orderable<T> after) { // package-friendly setter for test cases
         this.after = after;
@@ -111,9 +117,10 @@ class Orderable<T> {
 
     /**
      * Sets the position of the current object in an ordered collection
+     * @param position Integer value signifying the position
      */
-    public void setPosition(int positionInAllNodes) {
-        this.positionInAllNodes = positionInAllNodes;
+    public void setPosition(int position) {
+        this.positionInAllNodes = position;
     }
 
     /**
@@ -121,8 +128,12 @@ class Orderable<T> {
      */
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
         @SuppressWarnings("unchecked")
         Orderable<T> orderable = (Orderable<T>) o;

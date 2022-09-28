@@ -41,7 +41,7 @@ public class ListenersHandler implements BiConsumer<Source, Target> {
     public void accept(Source source, Target target) {
         EditConfig editConfig = source.adaptTo(EditConfig.class);
         List<Listener> listeners = Arrays.asList(editConfig.listeners());
-        if(listeners.isEmpty()) {
+        if (listeners.isEmpty()) {
             return;
         }
         Map<String, Object> properties = listeners.stream()
