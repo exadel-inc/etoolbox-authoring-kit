@@ -33,7 +33,7 @@ public class PluginSettings {
     private String terminateOn;
 
     /**
-     * Retrieves the root path within the components file structure. In a multi-package project the routine attempts
+     * Retrieves the root path within the components file structure. In a multi-package project, the routine attempts to
      * pick up the most appropriate path judging by the component's class and falls back to the path specified in the
      * current ToolKit plugin instance. The result is used to define a corresponding file system entry for every AEM
      * component-backing Java class
@@ -74,16 +74,15 @@ public class PluginSettings {
     }
 
     /**
-     * Used to create a {@link PluginSettings} object and populate in with values
+     * Used to create a {@link PluginSettings} object and populate it with values
      */
     static class Builder {
         private String pathBase;
-        private String referenceBase;
         private List<ReferenceEntry> referenceEntries;
         private String terminateOn;
 
         /**
-         * Assigns the value that corresponds to the current path base ({@code componentsPathBase} in plugin's
+         * Assigns the value that corresponds to the current path base ({@code componentsPathBase} in the plugin's
          * settings)
          * @param value String value; a non-blank string is expected
          * @return This instance
@@ -131,9 +130,6 @@ public class PluginSettings {
         public PluginSettings build() {
             PluginSettings result = new PluginSettings();
             result.defaultPathBase = this.pathBase;
-            if (StringUtils.isNoneBlank(this.pathBase, this.referenceBase)) {
-                referenceEntry(this.pathBase, this.referenceBase);
-            }
             result.referenceEntries = this.referenceEntries;
             result.terminateOn = this.terminateOn;
             return result;
