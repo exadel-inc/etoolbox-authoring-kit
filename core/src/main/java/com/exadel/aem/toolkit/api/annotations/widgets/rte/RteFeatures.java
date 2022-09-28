@@ -149,6 +149,9 @@ public class RteFeatures {
             + SUBSUPERSCRIPT_SUBSCRIPT + FEATURE_SEPARATOR
             + SUBSUPERSCRIPT_SUPERSCRIPT
             + END_POPOVER;
+        public static final String WRITESONIC = BEGIN_POPOVER
+            + "writesonic#writesonic"
+            + END_POPOVER;
 
         /**
          * Default (instantiation-preventing) constructor
