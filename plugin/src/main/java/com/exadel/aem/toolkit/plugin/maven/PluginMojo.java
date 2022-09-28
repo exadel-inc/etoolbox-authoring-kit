@@ -129,7 +129,7 @@ public class PluginMojo extends AbstractMojo {
 
     /**
      * Scans the module structure of the current Maven installation to retrieve the ToolKit's plugin configurations and
-     * store the matches between AEM component Java packages and repository paths. The references are passed to the
+     * stores the matches between AEM component Java packages and repository paths. The references are passed to the
      * {@link PluginSettings} builder
      * @param builder {@link PluginSettings.Builder} instance
      */
