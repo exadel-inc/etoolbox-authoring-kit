@@ -6,14 +6,10 @@ import {CSSClassUtils} from '@exadel/esl/modules/esl-utils/dom/class';
 import {EventUtils} from '@exadel/esl/modules/esl-utils/dom/events/utils';
 import {AnchorScroller} from './eak-anchor-scroller';
 
-import type {ESLToggleable} from '@exadel/esl/modules/esl-toggleable/core/esl-toggleable';
-
 export class EAKAnchorNav extends ESLBaseElement {
   static is = 'eak-anchor-nav';
 
   public static BGCOLOR = '3, 226, 179';
-
-  public static breakpoints = ESLMediaQuery.for('@MD').matches || ESLMediaQuery.for('@LG').matches || ESLMediaQuery.for('@XL').matches;
 
   protected $wrapper: HTMLElement;
   protected $anchorsContainer: HTMLElement;
@@ -36,7 +32,7 @@ export class EAKAnchorNav extends ESLBaseElement {
   get offset(): number {
     const headerHeight = (document.querySelector('.header') as HTMLElement)?.offsetHeight;
     const anchorNavigationHeight = (document.querySelector('main .eak-anchor-nav') as HTMLElement)?.offsetHeight;
-    return headerHeight + (ESLMediaQuery.for('@MD').matches ? anchorNavigationHeight : 0);
+    return headerHeight + (ESLMediaQuery.for('+@MD').matches ? anchorNavigationHeight : 0);
   }
 
   @memoize()
@@ -68,23 +64,22 @@ export class EAKAnchorNav extends ESLBaseElement {
   }
 
   protected onResize(): void {
-    console.log('start', ESLMediaQuery.for('@MD').matches);
-    EAKAnchorNav.breakpoints ? this.checkMainAnchorNavView() : this.checkHeaderAnchorNavView();
+    ESLMediaQuery.for('@+MD').matches ? this.checkMainAnchorNavView() : this.checkHeaderAnchorNavView();
     this.checkNavigationMode();
     this.highlightAnchors();
   }
 
-  protected checkMainAnchorNavView() {
+  protected checkMainAnchorNavView(): void {
     if (this.$scrollableContent && !this.$scrollableContent.contains(this)) {
       document.querySelector('main.esl-scrollable-content h2')?.after(this);
     }
   }
 
   protected checkNavigationMode(): void {
-    this.isDropdownMode = !EAKAnchorNav.breakpoints || this.anchorsWidth > this.containerWidth;
+    this.isDropdownMode = !ESLMediaQuery.for('@+MD').matches || this.anchorsWidth > this.containerWidth;
     CSSClassUtils.toggle(this.$wrapper, 'dropdown-mode', this.isDropdownMode);
-    CSSClassUtils.toggle(this.$wrapper, 'header-dropdown-mode', !EAKAnchorNav.breakpoints);
-    this.anchorsWidth > this.containerWidth && this.setDropdownTitle();
+    CSSClassUtils.toggle(this.$wrapper, 'header-dropdown-mode', !ESLMediaQuery.for('@+MD').matches);
+    this.setDropdownTitle();
   }
 
   protected checkHeaderAnchorNavView(): void  {
@@ -131,38 +126,30 @@ export class EAKAnchorNav extends ESLBaseElement {
 
       this.isDropdownMode ? anchor.style.backgroundColor = `rgba(${EAKAnchorNav.BGCOLOR}, ${normalisedPercentage})` : indicator.style.opacity = `${normalisedPercentage}`;
     })
-    this.anchorsWidth > this.containerWidth && this.setDropdownTitle();
    }
-
 
    protected onClick(e: Event): void {
     if (e.target instanceof HTMLAnchorElement) {
       e.preventDefault();
-      this.isDropdownMode && (this.$anchorsContainer as ESLToggleable).hide();
+  //    this.isDropdownMode && (this.$anchorsContainer as ESLToggleable).hide();
       EventUtils.dispatch(window, 'hashchange:request', {
         bubbles: false,
         detail: {
           hash: e.target.getAttribute('href')
         }
       });
-      this.isDropdownMode && this.setDropdownTitle();
+      this.setDropdownTitle();
     }
   }
 
-
   protected setDropdownTitle(): void {
-  //  const id = new URL(location.href).hash.slice(1);
-  //  console.log(document.getElementById(id)?.innerHTML);
-    // if (id && this.$dropdownTrigger) {
-    //   this.$dropdownTrigger.innerHTML = document.getElementById(id)?.innerHTML;
-    // }
-    // const $dropdownTitle = this.$dropdownTrigger.find(this.options.dropdownTitle);
-    // const newTitle = item.find(this.options.itemTitle).text();
-    // const currentTitle = $dropdownTitle.text();
+    if (!ESLMediaQuery.for('@+MD').matches || this.anchorsWidth <= this.containerWidth) return;
 
-    // if (newTitle === currentTitle) return;
-
-    // $dropdownTitle.text(newTitle);
+    if (AnchorScroller.hasHash) {
+      const id = new URL(location.href).hash.slice(1);
+      const targetName = document.getElementById(id)?.innerHTML;
+      if (targetName) this.$dropdownTrigger.innerHTML = targetName;
+    }
   }
 
   protected disconnectedCallback(): void {
@@ -171,5 +158,4 @@ export class EAKAnchorNav extends ESLBaseElement {
     this.removeEventListener('click', this.onClick);
     window.removeEventListener('scroll',  throttle(this.highlightAnchors.bind(this), 500), true);
   }
-
 }

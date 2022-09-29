@@ -21,7 +21,7 @@
     document.querySelector('.content h2').insertAdjacentHTML('afterend', `<eak-anchor-nav>
                                                                             <div class="anchor-nav-wrapper">
                                                                               <esl-trigger class="dropdown-trigger" target="::next">Trigger</esl-trigger>
-                                                                              <esl-toggleable class="anchors-container open">
+                                                                              <esl-toggleable class="anchors-container open" close-on=".anchor-item">
                                                                                 <ul></ul>
                                                                               </esl-toggleable>
                                                                             </div>
@@ -31,18 +31,20 @@
 
     Array.from(anchors)
       .forEach(function(item) {
-        const li = document.createElement('li');
-        li.classList.add('anchor-wrap');
-        const anchor = document.createElement('a');
-        anchor.classList.add('anchor-item');
-        anchor.innerHTML = item.innerHTML;
-        anchor.href = '#' + item.id;
-        const indicator = document.createElement('span');
-        indicator.classList.add('anchor-indicator');
+        if (item.id) {
+          const li = document.createElement('li');
+          li.classList.add('anchor-wrap');
+          const anchor = document.createElement('a');
+          anchor.classList.add('anchor-item');
+          anchor.innerHTML = item.innerHTML;
+          anchor.href = '#' + item.id;
+          const indicator = document.createElement('span');
+          indicator.classList.add('anchor-indicator');
 
-        anchor.append(indicator);
-        li.append(anchor);
-        container.append(li);
+          anchor.append(indicator);
+          li.append(anchor);
+          container.append(li);
+        }
       })
   }
 
