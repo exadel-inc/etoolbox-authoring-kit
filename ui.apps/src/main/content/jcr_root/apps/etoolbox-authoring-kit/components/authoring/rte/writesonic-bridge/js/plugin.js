@@ -57,13 +57,15 @@
         },
 
         execute: function (id, value, params) {
+            $('[data-id="writesonic"]').hide();
             if (value === 'settings') {
                 return this.editorKernel.execCmd('wbsettings');
             } else {
                 return this.editorKernel.execCmd('wbrequest', {
                     command: value,
                     params: params,
-                    key: sessionStorage.getItem(PROPERTY_KEY)
+                    key: sessionStorage.getItem(PROPERTY_KEY),
+                    editorKernel: this.editorKernel
                 });
             }
         },

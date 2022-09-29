@@ -14,7 +14,7 @@
 
         execute: function (execDef) {
             const self = this;
-            const { command, params, key } = execDef.value;
+            const { command, params, key, editorKernel } = execDef.value;
             const selectedText = window.getSelection().toString() || execDef.editContext.root.innerText || '';
             if (!selectedText.length) {
                 return;
@@ -57,9 +57,9 @@
                     return;
                 }
                 if (!window.getSelection().toString().length) {
-                    execDef.component.relayCmd('clear');
+                    editorKernel.relayCmd('clear');
                 }
-                execDef.component.relayCmd('inserthtml', result);
+                editorKernel.relayCmd('inserthtml', result);
             };
 
             this.produceDialog({
