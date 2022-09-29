@@ -12,7 +12,20 @@
     ];
 
     const KEY_ENDPONT = '/conf/etoolbox-authoring-kit/components/authoring/rte/writesonic-bridge.json';
-    const PROPERTY_KEY = 'writesonicKey';
+    const PROPERTY_KEY = 'eak.writesonic.key';
+
+    const PROPERTY_ENGINE = 'eak.writesonic.engine';
+    const DEFAULT_ENGINE = 'economy';
+    const ENGINE_OPTIONS = ['business', DEFAULT_ENGINE];
+
+    const PROPERTY_LANGUAGE = 'eak.writesonic.language';
+    const DEFAULT_LANGUAGE = 'en';
+    const LANGUAGE_OPTIONS = [DEFAULT_LANGUAGE, 'nl', 'fr', 'de', 'it', 'pl', 'es', 'pt-pt', 'pt-br', 'ru', 'ja', 'zh', 'bg', 'cs', 'da', 'el', 'hu', 'lt', 'lv', 'ro', 'sk', 'sl', 'sv', 'fi', 'et'];
+
+    const PROPERTY_TONE = 'eak.writesonic.tone';
+    const DEFAULT_TONE = 'professional';
+    const TONE_OPTIONS = ['excited', DEFAULT_TONE, 'funny', 'encouraging', 'dramatic', 'witty', 'sarcastic', 'engaging', 'creative'];
+
 
     const WritesonicBridge = new Class({
         toString: 'WritesonicBridge',
@@ -59,10 +72,29 @@
         execute: function (id, value, params) {
             $('[data-id="writesonic"]').hide();
             if (value === 'settings') {
-                return this.editorKernel.execCmd('wbsettings');
+                return this.editorKernel.execCmd('wbsettings', {
+                    engine: {
+                        propId: PROPERTY_ENGINE,
+                        options: ENGINE_OPTIONS,
+                        defaultValue: DEFAULT_ENGINE
+                    },
+                    language: {
+                        propId: PROPERTY_LANGUAGE,
+                        options: LANGUAGE_OPTIONS,
+                        defaultValue: DEFAULT_LANGUAGE
+                    },
+                    tone: {
+                        propId: PROPERTY_TONE,
+                        options: TONE_OPTIONS,
+                        defaultValue: DEFAULT_TONE
+                    }
+                });
             } else {
                 return this.editorKernel.execCmd('wbrequest', {
                     command: value,
+                    engine: localStorage.getItem(PROPERTY_ENGINE) || DEFAULT_ENGINE,
+                    language: localStorage.getItem(PROPERTY_LANGUAGE) || DEFAULT_LANGUAGE,
+                    tone: localStorage.getItem(PROPERTY_TONE) || DEFAULT_TONE,
                     params: params,
                     key: sessionStorage.getItem(PROPERTY_KEY),
                     editorKernel: this.editorKernel

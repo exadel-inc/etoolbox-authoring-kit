@@ -1,6 +1,6 @@
 'use strict';
 (function (RTE, Class) {
-    const SERVICE_ENDPOINT = 'https://api.writesonic.com/v1/business/content/{command}?engine=economy&language=en';
+    const SERVICE_ENDPOINT = 'https://api.writesonic.com/v1/business/content/{command}?engine={engine}&language={language}';
 
     RTE.commands.WbRequestDialogCommand = new Class({
 
@@ -14,7 +14,8 @@
 
         execute: function (execDef) {
             const self = this;
-            const { command, params, key, editorKernel } = execDef.value;
+
+            const { command, engine, language, tone, params, key, editorKernel } = execDef.value;
             const selectedText = window.getSelection().toString() || execDef.editContext.root.innerText || '';
             if (!selectedText.length) {
                 return;
@@ -32,11 +33,16 @@
                 const truncatedText = selectedText.length <= 30 ? selectedText : selectedText.substring(0, 27) + '...';
                 $dialog.find('coral-dialog-header').text(`${title} "${truncatedText}"`);
 
+                const effectiveEndpoint = SERVICE_ENDPOINT
+                    .replace('{command}', command)
+                    .replace('{language}', language)
+                    .replace('{engine}', engine);
+
                 const payloadName = params && params.payloadName ? params.payloadName : 'content_to_rephrase';
-                const body = { tone_of_voice: 'excited' };
+                const body = { tone_of_voice: tone };
                 body[payloadName] = selectedText;
 
-                fetch(SERVICE_ENDPOINT.replace('{command}', command), {
+                fetch(effectiveEndpoint, {
                     headers: {
                         'content-type': 'application/json',
                         accept: 'application/json',
