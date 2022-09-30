@@ -25,7 +25,6 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
         title = "TextField Widget Dialog"
 )
 @Dialog
-@SuppressWarnings("unused")
 public class TextFieldWidget {
     @DialogField(label = "Enter text")
     @TextField(
@@ -33,7 +32,8 @@ public class TextFieldWidget {
         emptyText = "empty text",
         autofocus = true,
         autocomplete = "on",
-        maxLength = 150
+        maxLength = 150,
+        plugins = "mincer"
     )
     String text;
 }
