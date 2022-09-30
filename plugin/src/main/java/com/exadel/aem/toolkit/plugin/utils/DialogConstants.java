@@ -116,6 +116,7 @@ public class DialogConstants {
     public static final String PN_EDIT_ELEMENT_QUERY = "editElementQuery";
     public static final String PN_EDITOR_TYPE = "editorType";
     public static final String PN_EXTERNAL_STYLESHEETS = "externalStyleSheets";
+    public static final String PN_EXTRA_CLIENTLIBS = "extraClientlibs";
     public static final String PN_FALLBACK_BLOCK_TAG = "fallbackBlockTag";
     public static final String PN_FALLBACK_PATH = "fallbackPath";
     public static final String PN_FEATURES = "features";
@@ -130,6 +131,7 @@ public class DialogConstants {
     public static final String PN_MODE = "mode";
     public static final String PN_NAME = "name";
     public static final String PN_PADDING = "padding";
+    public static final String PN_PLUGINS = "eak-plugins";
     public static final String PN_PRIMARY_TYPE = "jcr:primaryType";
     public static final String PN_PROPERTY_NAME = "propertyName";
     public static final String PN_PROTOCOLS = "protocols";

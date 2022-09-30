@@ -33,7 +33,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.TEXTFIELD)
-@AnnotationRendering(properties = "all")
+@AnnotationRendering(properties = "!plugins")
 public @interface TextField {
 
     /**
@@ -74,4 +74,10 @@ public @interface TextField {
     @PropertyRendering(ignoreValues = "0")
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
     long maxLength() default 0;
+
+    /**
+     * When set, defines the custom plugins used with this widget, such as {@code writesonic}
+     * @return Zero or more string values representing plugin IDs
+     */
+    String[] plugins() default {};
 }
