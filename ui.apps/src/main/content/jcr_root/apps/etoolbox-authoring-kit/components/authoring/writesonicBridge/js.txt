@@ -1,0 +1,5 @@
+#base=js
+common.js
+requestDialog.js
+settingsDialog.js
+text/textPlugin.js

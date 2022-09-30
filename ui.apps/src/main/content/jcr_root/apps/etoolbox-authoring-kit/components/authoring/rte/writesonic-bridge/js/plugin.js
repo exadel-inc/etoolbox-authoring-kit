@@ -26,7 +26,6 @@
     const DEFAULT_TONE = 'professional';
     const TONE_OPTIONS = ['excited', DEFAULT_TONE, 'funny', 'encouraging', 'dramatic', 'witty', 'sarcastic', 'engaging', 'creative'];
 
-
     const WritesonicBridge = new Class({
         toString: 'WritesonicBridge',
 
