@@ -2,4 +2,8 @@
 common.js
 requestDialog.js
 settingsDialog.js
+text/popupButton.js
 text/textPlugin.js
+rte/clearCommand.js
+rte/popupButton.js
+rte/rtePlugin.js

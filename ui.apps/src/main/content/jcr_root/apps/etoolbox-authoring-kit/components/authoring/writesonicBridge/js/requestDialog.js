@@ -29,7 +29,7 @@
             $dialog = $(newDialog);
             $dialog.find('options').on('click', 'button', function () {
                 const text = $(this).find('coral-list-item-content').text();
-                text && acceptDelegate && acceptDelegate(text);
+                text && $dialog[0].acceptDelegate && $dialog[0].acceptDelegate(text);
                 $dialog[0].hide();
             });
         }
@@ -37,6 +37,7 @@
         $dialog.removeClass('is-error').addClass('is-loading');
         $dialog.find('notifications').empty();
         $dialog.find('options').empty();
+        $dialog[0].acceptDelegate = acceptDelegate;
 
         $dialog[0].show();
         return $dialog;
@@ -56,7 +57,7 @@
 
         const effectiveEndpoint = eak.Writesonic.getEndpoint(options);
 
-        const payloadName = params && params.payloadName ? params.payloadName : 'content_to_rephrase';
+        const payloadName = params && params.payloadName ? params.payloadName : ns.Writesonic.defaultPayloadName;
         const body = { tone_of_voice: tone };
         body[payloadName] = payload;
 

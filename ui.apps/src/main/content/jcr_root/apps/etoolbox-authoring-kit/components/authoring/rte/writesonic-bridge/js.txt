@@ -1,7 +1,0 @@
-#base=js
-plugin.js
-cmd-clear.js
-cmd-wbsettings.js
-cmd-wbrequest.js
-popup-button.js
-
