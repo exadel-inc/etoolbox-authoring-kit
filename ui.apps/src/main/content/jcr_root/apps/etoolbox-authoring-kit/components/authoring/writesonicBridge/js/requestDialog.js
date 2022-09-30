@@ -1,3 +1,16 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 (function (ns) {
     'use strict';
     ns.Writesonic = ns.Writesonic || {};
@@ -21,7 +34,7 @@
         runRequest($dialog, options);
     };
 
-    function produceDialog (content, acceptDelegate) {
+    function produceDialog(content, acceptDelegate) {
         let $dialog = $(document).find('#' + content.id);
         if (!$dialog.length) {
             const newDialog = new Coral.Dialog().set(content);
@@ -43,7 +56,7 @@
         return $dialog;
     }
 
-    function runRequest ($dialog, options) {
+    function runRequest($dialog, options) {
         const { key, command, params, tone, payload } = options;
         if (!key) {
             return displayError($dialog, 'API key is missing');
@@ -55,7 +68,7 @@
         const truncatedText = payload.length <= 30 ? payload : payload.substring(0, 27) + '...';
         $dialog.find('coral-dialog-header').text(`${title} "${truncatedText}"`);
 
-        const effectiveEndpoint = eak.Writesonic.getEndpoint(options);
+        const effectiveEndpoint = ns.Writesonic.getEndpoint(options);
 
         const payloadName = params && params.payloadName ? params.payloadName : ns.Writesonic.defaultPayloadName;
         const body = { tone_of_voice: tone };
@@ -76,7 +89,7 @@
             .finally(() => $dialog.removeClass('is-loading'));
     }
 
-    function populateOptionList ($dialog, options) {
+    function populateOptionList($dialog, options) {
         if (!options) {
             throw new Error('Empty result received');
         } else if (Array.isArray(options.detail) && options.detail[0]) {
@@ -91,9 +104,8 @@
         $content.append($list);
     }
 
-    function displayError ($dialog, err) {
+    function displayError($dialog, err) {
         $dialog.addClass('is-error').removeClass('is-loading');
         $dialog.find('notifications').append(`<coral-alert variant="warning"><coral-alert-content></coral-alert-content>${err}</coral-alert>`);
     }
-
 })(window.eak = window.eak || {});

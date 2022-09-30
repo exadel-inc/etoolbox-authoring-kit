@@ -22,15 +22,15 @@
         const $dialog = $(e.target);
         $dialog.find(INPUT_SELECTOR).each(function () {
             const $input = $(this);
-            const buttonId = 'input-'+ $input.attr('name').replace(/^[^\w]+|[^\w]+$/, '');
+            const buttonId = 'input-' + $input.attr('name').replace(/^[^\w]+|[^\w]+$/, '');
             const menuContent = '<coral-buttonlist>' +
                 ns.Writesonic.menuOptions
-                .map(option => {
-                    const params = option.params ? JSON.stringify(option.params).replace(/"/g, '&quot;') : '';
-                    return `<button is="coral-buttonlist-item" icon="${option.icon}" data-params="${params}" value="${option.id}">${option.title}</button>`
-                })
-                .join('') +
-            '</coral-buttonlist>';
+                    .map(option => {
+                        const params = option.params ? JSON.stringify(option.params).replace(/"/g, '&quot;') : '';
+                        return `<button is="coral-buttonlist-item" icon="${option.icon}" data-params="${params}" value="${option.id}">${option.title}</button>`;
+                    })
+                    .join('') +
+                '</coral-buttonlist>';
 
             const $wrapper = $input.wrap(`<div class="${WRAPPER_SELECTOR}"></div>`).parent();
             const $button = $(`<a is="coral-anchorbutton" id="${buttonId}" icon="writesonic" iconsize="S"></a>`);
@@ -45,7 +45,7 @@
         $dialog.on('keydown', INPUT_SELECTOR, $.debounce(500, onTextChange));
     });
 
-    async function onMenuItemClick (e) {
+    async function onMenuItemClick(e) {
         e.preventDefault();
         const $this = $(this);
         $this.closest('coral-popover').hide();
@@ -57,15 +57,15 @@
         const $input = $this.closest('.' + WRAPPER_SELECTOR).find('input');
         const options = await ns.Writesonic.getBasicOptions();
         options.command = command;
-        options.params = $this.data('params')
+        options.params = $this.data('params');
         options.payload = getText($input);
         options.acceptDelegate = function (text) {
             setText($input.attr('name'), text);
-        }
+        };
         ns.Writesonic.openRequestDialog(options);
     }
 
-    function getText ($input) {
+    function getText($input) {
         const start = $input[0].selectionStart;
         const end = $input[0].selectionEnd;
         if (end > start) {
@@ -74,7 +74,7 @@
         return $input.val();
     }
 
-    function setText (name, text) {
+    function setText(name, text) {
         const $input = $(document).find(`[name="${name}"]`);
         const start = $input[0].selectionStart;
         const end = $input[0].selectionEnd;
@@ -86,13 +86,13 @@
         }
     }
 
-    function onTextChange (e) {
+    function onTextChange(e) {
         const $this = $(e.target);
         const $button = $this.closest('.' + WRAPPER_SELECTOR).find(BUTTON_SELECTOR);
         if ($this.val()) {
             $button.removeAttr('disabled');
         } else {
             $button.attr('disabled', true);
-       }
+        }
     }
 })(Granite.$, window.eak = window.eak || {});
