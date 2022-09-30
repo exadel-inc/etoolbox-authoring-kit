@@ -94,6 +94,8 @@
             throw new Error('Empty result received');
         } else if (Array.isArray(options.detail) && options.detail[0]) {
             throw new Error(options.detail[0].msg || options.detail);
+        } else if (options.detail) {
+            throw new Error(options.detail);
         }
         const $content = $dialog.find('options');
         const $list = $('<coral-buttonlist></coral-buttonlist>');
