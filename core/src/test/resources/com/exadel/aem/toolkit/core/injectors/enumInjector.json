@@ -17,7 +17,9 @@
         "custom": "VAL2",
         "custom2": "value2",
         "enumValueWithIntegerField": 3,
-        "enumValueWithIntField": 3
+        "enumValueWithIntField": 3,
+        "enumFromConstructor": "VAL1",
+        "enumFromMethod": "VAL2"
       }
     }
   }

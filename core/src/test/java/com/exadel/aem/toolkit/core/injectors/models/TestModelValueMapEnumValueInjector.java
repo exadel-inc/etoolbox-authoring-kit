@@ -7,6 +7,7 @@ import org.apache.sling.models.annotations.Model;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.EnumValue;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 @SuppressWarnings("unused")
@@ -45,6 +46,24 @@ public class TestModelValueMapEnumValueInjector {
     @Default(values = {"VAL2","VAL3"})
     private TestingNeededEnumWithIntegerField[] withDefaultValuesIntArray;
 
+    private final ITestModelValueMapEnumValue.TestingNeededEnumFromInterface enumFromConstructor;
+
+    private ITestModelValueMapEnumValue.TestingNeededEnumFromInterface enumFromMethod;
+
+    @Inject
+    public TestModelValueMapEnumValueInjector(@EnumValue ITestModelValueMapEnumValue.TestingNeededEnumFromInterface enumFromConstructor) {
+        this.enumFromConstructor = enumFromConstructor;
+    }
+
+    @Inject
+    public void setEnumFromMethod(@EnumValue ITestModelValueMapEnumValue.TestingNeededEnumFromInterface enumFromMethod) {
+        this.enumFromMethod = enumFromMethod;
+    }
+
+    public ITestModelValueMapEnumValue.TestingNeededEnumFromInterface getEnumFromMethod() {
+        return enumFromMethod;
+    }
+
     public TestingNeededEnum getPlainOldEnumField() {
         return plainOldEnumField;
     }
@@ -78,6 +97,11 @@ public class TestModelValueMapEnumValueInjector {
     public TestingNeededEnumWithIntegerField[] getWithDefaultValuesIntArray() {
         return withDefaultValuesIntArray;
     }
+
+    public Object getEnumFromConstructor() {
+        return enumFromConstructor;
+    }
+
     public enum TestingNeededEnum {
         VAL1("value1"), VAL2("value2"), VAL3("value3");
         private final String value;

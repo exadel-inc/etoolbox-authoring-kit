@@ -1,5 +1,7 @@
 package com.exadel.aem.toolkit.core.injectors;
 
+import com.exadel.aem.toolkit.core.injectors.models.ITestModelValueMapEnumValue;
+
 import io.wcm.testing.mock.aem.junit.AemContext;
 
 import org.junit.Before;
@@ -8,6 +10,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import com.exadel.aem.toolkit.core.injectors.models.TestModelValueMapEnumValueInjector;
 
@@ -123,5 +126,27 @@ public class ValueMapEnumValueInjectorTest {
         TestModelValueMapEnumValueInjector.TestingNeededEnumWithIntegerField[] actual = testModel.getWithDefaultValuesIntArray();
 
         assertArrayEquals(expected,actual);
+    }
+
+    @Test
+    public void shouldInjectToMethod() {
+        ITestModelValueMapEnumValue.TestingNeededEnumFromInterface expected = ITestModelValueMapEnumValue.TestingNeededEnumFromInterface.VAL1;
+        String expectedStringValue = "VAL1";
+
+        ITestModelValueMapEnumValue testInterface = context.request().adaptTo(ITestModelValueMapEnumValue.class);
+        assertNotNull(testInterface);
+        assertEquals(expected, testInterface.getEnumFromConstructor());
+        assertEquals(expectedStringValue, testInterface.getEnumFromConstructor().toString());
+    }
+
+    @Test
+    public void shouldInjectToConstructor() {
+        ITestModelValueMapEnumValue.TestingNeededEnumFromInterface expected = ITestModelValueMapEnumValue.TestingNeededEnumFromInterface.VAL2;
+        String expectedStringValue = "VAL2";
+
+        ITestModelValueMapEnumValue testInterface = context.request().adaptTo(ITestModelValueMapEnumValue.class);
+        assertNotNull(testInterface);
+        assertEquals(expected, testInterface.getEnumFromMethod());
+        assertEquals(expectedStringValue, testInterface.getEnumFromMethod().toString());
     }
 }
