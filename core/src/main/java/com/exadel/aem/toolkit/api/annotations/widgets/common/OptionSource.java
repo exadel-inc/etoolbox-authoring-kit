@@ -19,6 +19,7 @@ import java.lang.annotation.RetentionPolicy;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
+import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
  * Represents a single option source that can be defined for an {@link OptionProvider}. An option source points to
@@ -81,4 +82,7 @@ public @interface OptionSource {
      * @see com.exadel.aem.toolkit.api.annotations.meta.StringTransformation
      */
     StringTransformation valueTransform() default StringTransformation.NONE;
+
+    Class<?> enumClass() default _Default.class;
+    Class<?> fallbackEnumClass() default _Default.class;
 }

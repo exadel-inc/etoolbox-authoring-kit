@@ -20,8 +20,11 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.tagging.TagConstants;
 
@@ -34,6 +37,10 @@ import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService
 interface OptionSourceResolver {
     OptionSourceResolver HTTP_RESOLVER = new HttpOptionSourceResolver();
     OptionSourceResolver JCR_RESOLVER = new JcrOptionSourceResolver();
+    OptionSourceResolver ENUM_RESOLVER = new EnumOptionSourceResolver();
+
+    Logger LOG = LoggerFactory.getLogger(HttpOptionSourceResolver.class);
+
 
     /**
      * Called by {@link OptionSourceResolver#resolve(SlingHttpServletRequest, String, String)} to retrieve a {@link
@@ -45,6 +52,10 @@ interface OptionSourceResolver {
      * @return {@code Resource} instance, or null
      */
     Resource resolve(SlingHttpServletRequest request, String uri);
+
+    default Resource fallbackResolve(SlingHttpServletRequest request, String uri) {
+        return this.resolve(request, uri);
+    }
 
     /**
      * Tries to retrieve a {@code Resource} instance based on user-provided URI: either a JCR path or an HTTP endpoint.
@@ -61,7 +72,7 @@ interface OptionSourceResolver {
         OptionSourceResolver predefinedResolver = (OptionSourceResolver) request.getAttribute(OptionSourceResolver.class.getName());
         OptionSourceResolver effectiveResolver = ObjectUtils.firstNonNull(
             predefinedResolver,
-            isUrl(uri) ? HTTP_RESOLVER : JCR_RESOLVER);
+            isUrl(uri) ? HTTP_RESOLVER : isClassNameParams(uri) ? ENUM_RESOLVER : JCR_RESOLVER);
 
         Resource result = effectiveResolver.resolve(request, uri);
         if (result != null) {
@@ -70,8 +81,9 @@ interface OptionSourceResolver {
 
         effectiveResolver = ObjectUtils.firstNonNull(
             predefinedResolver,
-            isUrl(fallbackUri) ? HTTP_RESOLVER : JCR_RESOLVER);
-        return effectiveResolver.resolve(request, fallbackUri);
+            isUrl(fallbackUri) ? HTTP_RESOLVER : isClassNameParams(fallbackUri)
+                ? ENUM_RESOLVER : JCR_RESOLVER);
+        return effectiveResolver.fallbackResolve(request, fallbackUri);
     }
 
     /**
@@ -104,5 +116,9 @@ interface OptionSourceResolver {
         } catch (MalformedURLException e) {
             return false;
         }
+    }
+
+    static boolean isClassNameParams(String value) {
+        return StringUtils.isNotBlank(value) && value.split("[#@]").length == 3;
     }
 }
