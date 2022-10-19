@@ -4,11 +4,11 @@
   "version": "2.4.1",
   "private": true,
   "devDependencies": {
-    "eslint": "^8.18.0",
+    "eslint": "^8.25.0",
     "eslint-config-standard": "^17.0.0",
     "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-n": "^15.2.3",
-    "eslint-plugin-promise": "^6.0.0"
+    "eslint-plugin-n": "^15.3.0",
+    "eslint-plugin-promise": "^6.1.0"
   },
   "directories": {
     "doc": "src/main/content/jcr_root/apps/etoolbox-authoring-kit/depends-on/docs"
