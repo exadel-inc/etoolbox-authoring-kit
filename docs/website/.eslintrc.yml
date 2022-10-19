@@ -29,12 +29,9 @@ plugins:
   - 'sonarjs'
   - 'editorconfig'
   - '@typescript-eslint'
-  - 'eslint-plugin-tsdoc'
 
 # Overall rules
 rules:
-  # Enable TS Doc syntax check
-  'tsdoc/syntax': warn
 
   # Enforce charset check
   'editorconfig/charset': warn
