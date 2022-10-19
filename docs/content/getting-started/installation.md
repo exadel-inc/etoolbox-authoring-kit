@@ -12,7 +12,7 @@ seoTitle: Installation - Exadel Authoring Kit
    <groupId>com.exadel.etoolbox</groupId>
    <artifactId>etoolbox-authoring-kit-core</artifactId>
    <version>2.2.1</version> <!-- prefer the latest stable version whenever possible -->
-    <scope>provided</scope> <!-- do not use compile or runtime scope!-->
+   <scope>provided</scope> <!-- do not use compile or runtime scope!-->
 </dependency>
 ```
 2) Insert plugin's config in the _\<plugins>_ section of the POM file of your **package** module:

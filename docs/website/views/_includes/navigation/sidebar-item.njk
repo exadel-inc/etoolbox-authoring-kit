@@ -6,7 +6,7 @@
     <esl-trigger class="sidebar-nav-item-trigger sidebar-nav-item-arrow "
                  target="::parent::next"
                  {% if isPrimaryActive %}active{% endif %}>
-      {{ item.data.title }}
+      {{ item.data.navTitle or item.data.title }}
     </esl-trigger>
   </div>
 
@@ -26,7 +26,7 @@
           <a class="sidebar-nav-secondary-link"
             {% if isActive %}aria-current="page"{% endif %}
             href="{{ itm.url | url }}">
-            {{ itm.data.title }}
+            {{ itm.data.navTitle or itm.data.title }}
           </a>
         </li>
         {% endif %}

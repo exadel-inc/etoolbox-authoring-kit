@@ -1,12 +1,12 @@
 <!--
 layout: content
-title: Examples
-seoTitle: Examples - Exadel Authoring Kit
+title: DependsOn Examples
+navTitle: Examples
+seoTitle: DependsOn Examples - Exadel Authoring Kit
 order: 4
 -->
-## Examples
 
-### 1. Simple bindings
+## Simple bindings
 
 Field text is shown when the `checkbox` is checked
 
@@ -42,7 +42,7 @@ public class Component {
 }
 ```
 
-### 2. Select value binding
+## Select value binding
 
 Field text is shown when the `selectbox` value is "Show Text"
 
@@ -90,7 +90,7 @@ public class Component {
 }
 ```
 
-### 3. Multiple field binding
+## Multiple field binding
 
 Field `text3` is shown when `text1` is equal to `text2`
 
@@ -115,7 +115,7 @@ public class Component {
 }
 ```
 
-### 4. Tab binding
+## Tab binding
 
 `tab2` should be shown when `checkbox1` is checked
 
@@ -143,7 +143,7 @@ public class Component {
 }
 ```
 
-### 5. Scoped binding
+## Scoped binding
 
 List of items (reused fragments or a MultiField). Each item should show `field1` if the `conditionGlobal` (globally) and `conditionItem` in the current item are checked.
 
@@ -174,7 +174,7 @@ public class Component {
 }
 ```
 
-### 6. Temporary result
+## Temporary result
 
 An unnamed hidden field can be used to save the temporary result of an expression.
 
@@ -213,7 +213,7 @@ public class Component {
 }
 ```
 
-### 7. Query function usage
+## Query function usage
 
 Global functions are available in the Queries (note: it is recommended to use 'pure' functions because the query is recalculated on each reference change and side effects may produce unexpected results).
 
@@ -231,7 +231,7 @@ Global functions are available in the Queries (note: it is recommended to use 'p
 }
 ```
 
-### 8. Async conditions
+## Async conditions
 
 If you use a custom action that provides the result asynchronously, it should be stored in a separate hidden field and then used in other Queries.
 
@@ -257,7 +257,7 @@ public class Component {
 })(Granite, Granite.$, Granite.DependsOnPlugin);
 ```
 
-### 9. Multiple actions
+## Multiple actions
 
 `text` should be shown when `checkbox1` is checked and should be required when `checkbox2` is checked.
 
@@ -281,7 +281,7 @@ public class Component {
 }
 ```
 
-### 10. Custom validation
+## Custom validation
 DependsOn allows you to simply validate field values.
 Here is an example of character count validation:
 ```java
@@ -295,7 +295,7 @@ public class Component {
 }
 ```
 
-### 11. Group references
+## Group references
 
 This example allows you to select `active` for only one item in multifield.
 ```java
@@ -335,7 +335,7 @@ public class Component {
 }
 ```
 
-### 12. Multifield reference
+## Multifield reference
 
 Multifield reference has two properties:
 - length - count of multifield items
@@ -383,7 +383,7 @@ public class Component {
 }
 ```
 
-### 13. Fetch action
+## Fetch action
 The `fetch` action provides easy access to parent nodes' properties.
 
 The example below shows how to set an 'opaque' option only if the 'bg' option of the parent component is not blank.
@@ -433,7 +433,7 @@ The example below retrieves the parent component's title and type in a special f
  }
  ```
 
-### 14. Alert accessors
+## Alert accessors
 
 DependsOn provides the ability to conditionally change any property of the Alert widget:
 - text;
@@ -475,6 +475,7 @@ public class Component {
 }
 ```
 
-### See also
+<hr/>
+<h2 id="see-also" class="h3">See also</h2>
 
-[Feeding data to selection widgets with OptionProvider](../option-provider.md)
+- [Feeding data to selection widgets with OptionProvider](../option-provider.md)

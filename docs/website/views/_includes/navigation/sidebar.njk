@@ -30,7 +30,7 @@
                       <a class="sidebar-nav-secondary-link"
                         {% if isActive %}aria-current="page"{% endif %}
                         href="{{ itm.url | url }}">
-                        {{ itm.data.title }}
+                        {{ itm.data.navTitle or itm.data.title }}
                       </a>
                     </li>
                     {% endif %}

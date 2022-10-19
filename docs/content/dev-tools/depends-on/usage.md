@@ -1,12 +1,12 @@
 <!--
 layout: content
-title: Usage
-seoTitle: Usage - Exadel Authoring Kit
+title: Using DependsOn
+navTitle: Usage
+seoTitle: Using DependsOn - Exadel Authoring Kit
 order: 2
 -->
-## Using Depends On
 
-### Data Attributes
+## Data Attributes
 
 The DependsOn plug-in is based on the following data attributes:
 
@@ -22,14 +22,14 @@ For referenced fields:
 * `data-dependsonreftype` - (optional) to define the expected type of reference value.
 * `data-dependsonreflazy` - (marker) an attribute to mark a reference as lazy. In this case, DependsOn will not observe rapid events like `input`.
 
-### EToolbox Authoring Kit Annotations
+## EToolbox Authoring Kit Annotations
 
 * `@DependsOn` - to define a single DependsOn Action with the Query. Multiple annotations per element can be used.
 * `@DependsOnRef` - to define a referenced element name and type. Only a single annotation is allowed.
 * `@DependsOnTab` - to define a DependsOn Query with tab-visibility Action for a tab.
 
 
-### Debug Info
+## Debug Info
 
 DependsOn produces three types of debug notifications:
 

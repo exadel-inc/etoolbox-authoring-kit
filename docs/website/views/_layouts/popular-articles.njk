@@ -8,7 +8,7 @@ layout: content
   {# Check if article is manually added #}
     {% if article.title and article.content and article.url %}
       <li class="popular-articles-item">
-        <h3 class="mb-2 h4">{{ article.title }}</h4>
+        <h3 class="mb-2 h4">{{ article.title }}</h3>
         <p class="popular-articles-content">{{ article.content }}</p>
         <a href="{{ article.url | url }}">Learn More</a>
       </li>
@@ -17,7 +17,7 @@ layout: content
       {% for item in collections.all | equalByUrl(article) %}
         <li class="popular-articles-item">
           {% set text = item.data.content %}
-          <h4 class="mb-2">{{ text | extractArticleHeader | striptags }}</h4>
+          <h3 class="mb-2 h4">{{ text | extractArticleHeader | striptags }}</h3>
           <p class="popular-articles-content">{{ text | extractArticleContent | striptags }}</p>
           <a href="{{ item.data.page.filePathStem | url }}">Learn More</a>
         </li>

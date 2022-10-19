@@ -1,10 +1,10 @@
 <!--
 layout: content
-title: Option Provider
+title: Feeding data to selection widgets with OptionProvider
+navTitle: Option Provider
 seoTitle: Option Provider - Exadel Authoring Kit
 order: 3
 -->
-## Feeding data to selection widgets with OptionProvider
 
 Several Granite/Touch UI components, such as _RadioGroup_ or _Select_, facilitate selecting from a set of options. Traditionally, the options are either inlined (the ToolKit offers its `@RadioButton` and `@Option` annotations for that) or supplied via a datasource. Both ways have their limitations; the in-line options are not dynamic and potentially lead to a lot of copy-pasting across components, while the _datasource_ pattern requires creating a datasource servlet for every occasion.
 
@@ -20,7 +20,7 @@ The options managed by _OptionProvider_ can originate from:
 -   a static list of values (in a string array that can be made constant and shared across the project).
     Moreover, a single _OptionProvider_ can join several data sources, merge and sort their options in a common sequence, enjoy having a "primary" and "fallback" option source, etc.
 
-#### Static OptionProvider setup
+## Static OptionProvider setup
 
 For a static Granite UI component, OptionProvider is set up via a property of `@RadioGroup` or `@Select` (see the samples below):
 
@@ -110,13 +110,13 @@ _textTransform_ - if specified, defines the way the <u>label</u> will be transfo
 
 _valueTransform_ - if specified, defines the way the <u>value</u> will be transformed before rendering.
 
-#### JCR paths and HTTP endpoints
+## JCR paths and HTTP endpoints
 
 `@OptionSource` allows specifying not only a JCR path but also a standard URL for either _path_ or _fallback_ (note: must be a complete URL string parseable with `new URL("...")`. The content downloaded this the URL is expected to be a JSON entity. A JSON array becomes the list of options much the same way as JCR resource with children. A singular JSON object will be converted into a singleton list (containing one option).
 
 If the JSON structure is such that the required array is nested deeper than the "root" node, you can add a "path" to the url like `http://acme.com/apis/sample.json/internal/path` The "path" is defined similar to a Sling suffix: it is the trailing part of the URL after the ".json/" extension.
 
-#### Dynamic option change
+## Dynamic option change
 
 Because an `@OptionProvider` supports _path references_ apart from regular paths, the setting that says "where to look for the path" can be stored in a dialog field other than the one that actually deals with paths.
 
@@ -154,6 +154,7 @@ public class MyComponent {
 
 The facility that makes it possible to dynamically update selectable options is the _DependsOn_ action _"update-options"_ (see more on DependsOn actions [here](./depends-on/api.md)). It accepts any of the conventional _OptionProvider_ params described above in its `params` collection.
 
-### See also
+<hr/>
+<h2 id="see-also" class="h3">See also</h2>
 
-[Programming dynamic dialog behavior: DependsOn plugin client library](./depends-on/introduction.md)
+- [Programming dynamic dialog behavior: DependsOn plugin client library](./depends-on/introduction.md)

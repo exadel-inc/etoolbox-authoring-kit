@@ -5,7 +5,7 @@ seoTitle: Common Use Cases - Exadel Authoring Kit
 order: 2
 -->
 
-### 1. Auto-generated Touch UI dialog, edit config and component detail for an AEM component
+## Auto-generated Touch UI dialog, edit config and component detail for an AEM component
 
 - <u>In the package module</u>: you only need the _component.html_ file in your _/apps/.../path/to/my/component_ folder
 - <u>In the bundle module</u>:
@@ -36,7 +36,7 @@ public class MyComponentModel {
 }
 ```
 
-### 2. Auto-generated Touch UI dialog, design dialog, edit config and component detail for an AEM component (unites multiple Java files)
+## Auto-generated Touch UI dialog, design dialog, edit config and component detail for an AEM component (unites multiple Java files)
 
 - <u>In the package module</u>: you only need the _component.html_ file in your _/apps/.../path/to/my/component_ folder
 - <u>In the bundle module</u>:
@@ -93,7 +93,7 @@ public class DesignDialogHolder { // Can be reused across many components
 }
 ```
 
-### 3. Touch UI dialog for an AEM component with its content organized in tabs; contains a FieldSet
+## Touch UI dialog for an AEM component with its content organized in tabs; contains a FieldSet
 - <u>In the package module</u>: you only need the _component.html_ file in your _/apps/.../path/to/my/component_ folder
 - <u>In the bundle module</u>:
 
@@ -143,7 +143,7 @@ public class MyFieldSet { // Could as well be a private nested class in Composit
 }
 ```
 
-### 4. Touch UI dialog for an AEM component with a MultiField
+## Touch UI dialog for an AEM component with a MultiField
 - <u>In the package module</u>: you only need the _component.html_ file in your _/apps/.../path/to/my/component_ folder
 - <u>In the bundle module</u>:
 
@@ -179,7 +179,7 @@ public class MultifieldsSample {
 }
 ```
 
-### 5. Touch UI dialog for an AEM component with dynamically displayed content (this is also a custom item for an Exadel Toolbox List)
+## Touch UI dialog for an AEM component with dynamically displayed content (this is also a custom item for an Exadel Toolbox List)
 
 - <u>In the package module</u>: you only need the _component.html_ file in your _/apps/.../path/to/list/item_ folder
 - <u>In the bundle module</u>:
@@ -221,7 +221,7 @@ public class ListConsumer {
 }
 ```
 
-### 6. Touch UI dialog for an AEM page (page properties dialog)
+## Touch UI dialog for an AEM page (page properties dialog)
 
 - <u>In the package module</u>: you need the page folder containing page rendering logic
 - <u>In the bundle module</u>:

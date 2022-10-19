@@ -1,14 +1,14 @@
 <!--
 layout: content
-title: Allowed Components
+title: Managing allowed components with AllowedChildren
+navTitle: Allowed Components
+seoTitle: Injectors - Exadel Authoring Kit
 order: 5
 -->
 
-## Managing allowed components on editable and static templates with AllowedChildren
-
 Defining allowed components has always been a tiring task for developers. The XML configurations are hard to scale and manage. If you store the designs/policies in the codebase, you can use the capabilities of Exadel Toolbox Authoring Kit to define the allowed components in a uniform and flexible way.
 
-### Defining allowed children
+## Defining allowed children
 
 In order to specify a list of allowed children for a container component, use `@AllowedChildren` annotation.  There can be one or more `@AlowedChildren` annotations per component. Every `@AllowedChildren` entry describes a set of allowed components/groups and, optionally, the conditions under which it should be applied.
 
@@ -29,7 +29,7 @@ The default behavior is "override". It helps to keep the policies and the `@Allo
 
 Use the _merge_ mode with caution. It allows using the policies of editable templates and the code-defined rules at the same time, and this can be a quick way to alter things. But it complicates debugging policy issues: it will be harder to guess for what exact reason a component is in or out of the "allowed" list.
 
-### Allowed children for a top-level container
+## Allowed children for a top-level container
 
 In almost every AEM page, there are containers that a developer hasn't created with one's own hands. Such are built-in `parsys`-es, `responsivegrid`-s, etc. Usually, they are situated above the user-defined components' nodes in the page's node tree. Therefore we name them "top-level containers".
 
@@ -41,7 +41,7 @@ Just `@AemComponent` and then `@AllowedChildren` would be enough.
 In `@AllowedChildren` you specify the node name of the appropriate top-level container. To restrict the rule to s specific page or set of pages, you can use _templates_ and _pagePaths_. Note that either _parents_ or _pageResourceTypes_ are not welcome in this case.
 
 
-### Examples
+## Examples
 Here are some examples that showcase the typical use cases.
 
 1. Allow Text component under Columns component anywhere the Columns component is supported:
