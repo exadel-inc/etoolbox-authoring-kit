@@ -42,7 +42,7 @@ const updateTimestamp = async () => {
 (async () => {
   await del(OUTPUT_DIR);
 
-  glob(INPUT_GLOB, { cwd: INPUT_DIR }, async (_err, files) => {
+  glob(INPUT_GLOB, {cwd: INPUT_DIR}, async (_err, files) => {
     await Promise.all(
       files.map(async (fileName) => {
         const { inputPath, outputPath } = getPaths(fileName);
