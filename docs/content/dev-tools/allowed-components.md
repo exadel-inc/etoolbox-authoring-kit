@@ -2,7 +2,7 @@
 layout: content
 title: Managing allowed components with AllowedChildren
 navTitle: Allowed Components
-seoTitle: Injectors - Exadel Authoring Kit
+seoTitle: Managing allowed components with AllowedChildren - Exadel Authoring Kit
 order: 5
 -->
 
