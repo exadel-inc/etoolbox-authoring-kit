@@ -154,7 +154,6 @@ public interface Target {
      */
     Target createTarget(String path);
 
-
     /**
      * Appends an existing {@code Target} object as a child of the current instance. If the other {@code Target} has been
      * attached to another parent, its parent is swapped for the current instance

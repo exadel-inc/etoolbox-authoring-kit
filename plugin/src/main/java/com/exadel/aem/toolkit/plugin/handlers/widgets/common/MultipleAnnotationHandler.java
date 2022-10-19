@@ -335,7 +335,9 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      */
     private static boolean isChildNodePolicyMatch(Target child, Map.Entry<String, PropertyTransferPolicy> policyEntry) {
         boolean isAbsolutePath = policyEntry.getKey().startsWith(CoreConstants.SEPARATOR_SLASH);
-        String key = isAbsolutePath ? policyEntry.getKey() : StringUtils.substring(policyEntry.getKey(), DialogConstants.RELATIVE_PATH_PREFIX.length());
+        String key = isAbsolutePath
+            ? policyEntry.getKey()
+            : StringUtils.substring(policyEntry.getKey(), DialogConstants.RELATIVE_PATH_PREFIX.length());
         String checkedValue = isAbsolutePath ? child.getPath() : child.getName();
         return key.endsWith(DialogConstants.WILDCARD)
             ? StringUtils.startsWith(checkedValue, StringUtils.stripEnd(key, DialogConstants.WILDCARD))

@@ -27,6 +27,8 @@ public class DialogConstants {
     public static final String DOUBLE_QUOTE = "\"";
     public static final String NEGATION = "!";
     public static final String WILDCARD = "*";
+    public static final String ARRAY_OPENING = "[";
+    public static final String ARRAY_CLOSING = "]";
 
     public static final String SEPARATOR_DOT = ".";
     public static final String SEPARATOR_SEMICOLON = ";";
@@ -155,5 +157,8 @@ public class DialogConstants {
     public static final String VALUE_ALL = "all";
     public static final String VALUE_NONE = "none";
 
+    /**
+     * Default (instantiation-preventing) constructor
+     */
     private DialogConstants() {}
 }

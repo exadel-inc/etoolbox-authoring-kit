@@ -70,5 +70,8 @@ public class DependsOnActions {
      */
     public static final String UPDATE_OPTIONS = "update-options";
 
+    /**
+     * Default (instantiation-preventing) constructor
+     */
     private DependsOnActions() {}
 }

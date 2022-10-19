@@ -32,7 +32,7 @@ class ColumnSection extends Section {
      * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      * @param column {@code Column} object
      */
-    public ColumnSection(Column column, boolean isLayout) {
+    ColumnSection(Column column, boolean isLayout) {
         super(false);
         this.column = column;
     }

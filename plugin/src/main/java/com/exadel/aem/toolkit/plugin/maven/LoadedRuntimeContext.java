@@ -25,15 +25,24 @@ import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
 import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 /**
- * The implementation of {@link PluginRuntimeContext} for the ToolKit Maven plugin instance that
- * has been properly initialized
+ * The implementation of {@link PluginRuntimeContext} for the ToolKit Maven plugin instance that has been properly
+ * initialized
  */
 class LoadedRuntimeContext implements PluginRuntimeContext {
     private static final String XML_EXCEPTION_MESSAGE = "Could not initialize XML runtime";
 
+    private PluginSettings settings;
     private ReflectionContextHelper pluginReflections;
     private ExceptionHandler exceptionHandler;
     private XmlContextHelper xmlRuntime;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public PluginSettings getSettings() {
+        return settings;
+    }
 
     /**
      * {@inheritDoc}
@@ -67,21 +76,21 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
         try {
             xmlRuntime = new XmlContextHelper(XmlFactory.newDocument());
         } catch (ParserConfigurationException e) {
-            // Cannot proceed with the plugin flow if XML subsystem fails this early
+            // Cannot proceed with the plugin flow if the XML subsystem fails this early
             throw new PluginException(XML_EXCEPTION_MESSAGE, e);
         }
         return xmlRuntime;
     }
 
-
     /**
-     * Accumulates data and performs necessary routines for creating the functional ("loaded") {@link PluginRuntimeContext}
+     * Accumulates data and performs necessary routines for creating the functional ("loaded") {@link
+     * PluginRuntimeContext}
      */
     static class Builder {
 
         private List<String> classPathElements;
-        private String packageBase;
-        private String terminateOn;
+        private PluginSettings settings = new PluginSettings();
+        private ExceptionHandler exceptionHandler;
         private final Consumer<LoadedRuntimeContext> onComplete;
 
         /**
@@ -94,8 +103,9 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
         }
 
         /**
-         * Assigns the classpath elements to this instance. This is used to initialize the {@code PluginReflections} registry
-         * @param value List of strings representing classpath elements
+         * Assigns the collection of classpath elements to this instance. This property is used to initialize the {@code
+         * PluginReflections} registry
+         * @param value List of strings representing classpath elements. A non-empty list is expected
          * @return This Builder instance
          */
         Builder classPathElements(List<String> value) {
@@ -104,38 +114,41 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
         }
 
         /**
-         * Assigns the package base to this instance. Accepts a string representing package prefix of processable
-         * AEM backend components like {@code com.acme.aem.components.*}. If not specified, all available components
-         * will be processed
-         * @param value String representing package base as described above
-         * @return This Builder instance
+         * Assigns the {@link PluginSettings} object to this instance. Settings are defined within the Maven subsystem
+         * to control the plugin execution
+         * @param value {@code PluginSettings} object. A non-null value is expected
+         * @return This instance
          */
-        Builder packageBase(String value) {
-            this.packageBase = value;
+        Builder settings(PluginSettings value) {
+            this.settings = value;
             return this;
         }
 
         /**
-         * Assigns the {@code terminateOn} setting to this instance
-         * @param value String containing a list of terminating and non-terminating exceptions
-         * @return This Builder instance
+         * Assigns a particular {@link ExceptionHandler}. The handler is used to override the exception handler derived
+         * from the plugin's settings (usually in test cases)
+         * @param value {@code ExceptionHandler} object. A non-null value is expected
+         * @return This instance
          */
-        Builder terminateOn(String value) {
-            this.terminateOn = value;
+        Builder exceptionHandler(ExceptionHandler value) {
+            this.exceptionHandler = value;
             return this;
         }
 
         /**
-         * Creates a functional ("loaded") {@code PluginRuntimeContext}
-         * and feeds it to the provided {@code onComplete} routine
+         * Creates a functional ("loaded") {@code PluginRuntimeContext} and feeds it to the provided {@code onComplete}
+         * routine
          */
         void build() {
             if (!isValid()) {
                 return;
             }
             LoadedRuntimeContext result = new LoadedRuntimeContext();
-            result.pluginReflections = ReflectionContextHelper.fromCodeScope(classPathElements, packageBase);
-            result.exceptionHandler = ExceptionHandlers.forSetting(terminateOn);
+            result.settings = settings;
+            result.pluginReflections = ReflectionContextHelper.fromCodeScope(classPathElements);
+            result.exceptionHandler = exceptionHandler != null
+                ? exceptionHandler
+                : ExceptionHandlers.forSetting(settings.getTerminateOnRule());
             result.newXmlUtility();
             this.onComplete.accept(result);
         }

@@ -114,10 +114,10 @@ class PathParameters {
         return new Builder();
     }
 
-
     /**
      * Implements the builder pattern for the {@link PathParameters}
      */
+    @SuppressWarnings("MissingJavadocMethod")
     static class Builder {
         private final PathParameters optionSourcePathParameters = new PathParameters();
 

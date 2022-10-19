@@ -204,7 +204,7 @@ public class ChildrenInjector implements Injector {
      */
     private static Predicate<Resource> getResourceFilter(Children settingsHolder) {
         if (ArrayUtils.isEmpty(settingsHolder.filters())) {
-            return resource -> true;
+            return DEFAULT_FILTER;
         }
         return Arrays.stream(settingsHolder.filters())
             .filter(cls -> ClassUtils.isAssignable(cls, Predicate.class))

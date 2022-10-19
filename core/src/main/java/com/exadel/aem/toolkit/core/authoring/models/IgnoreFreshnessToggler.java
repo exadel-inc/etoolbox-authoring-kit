@@ -68,7 +68,7 @@ public class IgnoreFreshnessToggler {
          * Initializes a new decorator instance
          * @param base {@code Map} containing data for the {@code ValueMap} presentation
          */
-        public RelativePathValueMapDecorator(Map<String, Object> base) {
+        RelativePathValueMapDecorator(Map<String, Object> base) {
             super(base);
         }
 

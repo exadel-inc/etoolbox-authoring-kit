@@ -36,7 +36,7 @@ class FieldSourceImpl extends MemberSourceImpl {
      * Initializes a class instance with a references to the managed field
      * @param field          {@code Field} object
      */
-    public FieldSourceImpl(Field field) {
+    FieldSourceImpl(Field field) {
         this.field = field;
     }
 

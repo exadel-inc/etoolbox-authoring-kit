@@ -24,6 +24,10 @@ public enum Size {
 
     private final String value;
 
+    /**
+     * Initializes a new enum value
+     * @param value Character representation of the value
+     */
     Size(String value) {
         this.value = value;
     }

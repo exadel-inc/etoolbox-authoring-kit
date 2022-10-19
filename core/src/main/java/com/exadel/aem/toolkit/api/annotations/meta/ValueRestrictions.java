@@ -28,5 +28,8 @@ public class ValueRestrictions {
     public static final String ALL_NOT_BLANK = BUILTIN_VALIDATORS_PACKAGE + "AllNotBlankValidator";
     public static final String JCR_PATH = BUILTIN_VALIDATORS_PACKAGE + "JcrPathValidator";
 
+    /**
+     * Default (instantiation-preventing) constructor
+     */
     private ValueRestrictions() {}
 }

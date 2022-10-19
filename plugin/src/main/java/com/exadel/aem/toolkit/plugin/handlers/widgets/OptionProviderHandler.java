@@ -34,7 +34,8 @@ import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 
 /**
  * Represents a common ancestor for handlers that render rendering the option-providing widgets
- * such as {@link com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup} or {@link com.exadel.aem.toolkit.api.annotations.widgets.select.Select}
+ * such as {@link com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup}
+ * or {@link com.exadel.aem.toolkit.api.annotations.widgets.select.Select}
  */
 abstract class OptionProviderHandler {
 
@@ -59,7 +60,7 @@ abstract class OptionProviderHandler {
      * Adds a particular option represented by an annotation in a {@code Select}'s or {@code RadioGroup}'s option set
      * to the given {@code Target}
      * @param option        {@code Annotation} object representing a selection option
-     * @param optionValue   String that exposes value of the option
+     * @param optionValue   A string that exposes the value of the option
      * @param parentElement {@code Target} instance to store the option in
      */
     void appendOption(Annotation option, String optionValue, Target parentElement) {
@@ -120,7 +121,7 @@ abstract class OptionProviderHandler {
      * to the particular option path into the given datasource {@code Target}
      * @param optionSource      Values provided by an {@code OptionSource} member of an {@code OptionProvider} annotation
      * @param datasourceElement {@code Target} instance to store data in
-     * @param postfix           Special key added to every attribute name to distinguish it from the others
+     * @param postfix           A special key that is added to every attribute name to distinguish it from the others
      */
     private static void populateSourceAttributes(OptionSource optionSource, Target datasourceElement, String postfix) {
         datasourceElement.attribute(CoreConstants.PN_PATH + postfix, optionSource.value());

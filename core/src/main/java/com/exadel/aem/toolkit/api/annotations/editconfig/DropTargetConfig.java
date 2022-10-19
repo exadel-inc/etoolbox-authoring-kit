@@ -19,9 +19,10 @@ import java.lang.annotation.RetentionPolicy;
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 
 /**
- * Defines a target for a drag-and-drop operation in Granite UI. Upon processing this annotation,
- * a {@code cq:editConfig/cq:dropTargets/[targetName]} node within a component's buildup is created
- * See <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/components-basics.html#main-pars_title_2_tckaux_refd_">AEM Components documentation</a>
+ * Defines a target for a drag-and-drop operation in Granite UI. Upon processing this annotation, a {@code
+ * cq:editConfig/cq:dropTargets/[targetName]} node within a component's buildup is created See <a
+ * href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/components-basics.html#main-pars_title_2_tckaux_refd_">AEM
+ * Components documentation</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
 @AnnotationRendering(properties = "propertyName")
