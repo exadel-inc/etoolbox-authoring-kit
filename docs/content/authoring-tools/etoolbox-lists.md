@@ -99,7 +99,7 @@ Apart from creating lists, [ListHelper](https://javadoc.io/doc/com.exadel.etoolb
 ```
 You can find more examples in [ListHelperTest](../../../core/src/test/java/com/exadel/aem/toolkit/core/lists/utils/ListHelperTest.java)
 
-### Populating dropdown widgets from a datasource.
+### Populating dropdown widgets from a datasource
 Exadel Toolbox Lists can be used as a data source for any widget consuming Granite datasources like in the following example:
 
 ```java
