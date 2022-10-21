@@ -20,7 +20,7 @@ export class EAKZoomImage extends ESLBaseElement {
   protected startPosition: Point;
 
   @memoize()
-  get $image(): HTMLElement {
+  public get $image(): HTMLElement {
     const originalImage = document.createElement('esl-image');
     originalImage.setAttribute('data-src', this.src);
     originalImage.setAttribute('lazy', '');
@@ -29,13 +29,13 @@ export class EAKZoomImage extends ESLBaseElement {
   }
 
   @memoize()
-  get $closeButton(): HTMLElement {
+  public get $closeButton(): HTMLElement {
     const button = document.createElement('button');
     button.setAttribute('class', 'close-button');
     return button;
   }
 
-  connectedCallback(): void {
+  protected connectedCallback(): void {
     super.connectedCallback();
     this.appendChild(this.$image);
     this.appendChild(this.$closeButton);

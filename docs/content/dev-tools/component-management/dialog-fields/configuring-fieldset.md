@@ -1,10 +1,10 @@
 <!--
 layout: content
-title: Configuring Fieldset
+title: Grouping fields with FieldSet
+navTitle: Configuring Fieldset
 seoTitle: Configuring Fieldset - Exadel Authoring Kit
 order: 4
 -->
-## Grouping fields with FieldSet
 
 * [@FieldSet](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/FieldSet.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/fieldset

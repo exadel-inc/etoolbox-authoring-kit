@@ -1,10 +1,9 @@
 <!--
 layout: content
-title: Etoolbox Lists
+title: Managing structured data with Exadel Toolbox Lists
+navTitle: Etoolbox Lists
 seoTitle: Etoolbox Lists - Exadel Authoring Kit
 -->
-
-## Managing structured data with Exadel Toolbox Lists
 
 Exadel Toolbox Lists, or simply *Lists*, is an accessory of the ToolKit that represents a contribution to the Exadel Toolbox package
 
@@ -22,7 +21,7 @@ The Lists provide a flexible way to create, store and retrieve lists of structur
 A List consists of a number of items. The structure and authoring dialog of every item is defined by an arbitrary AEM component (a.k.a. *Item Component*).
 Each list is an AEM page, which means that it can be placed anywhere in the content structure. Lists can be created, edited, localized and published via Touch UI interface.
 
-### Creating a new List
+## Creating a new List
 
 Lists can be created and managed either from the common Sites Console, or from the dedicated Lists Console (Tools -> EToolbox -> Lists). Click Create -> List and specify the list's *Title*, *Name* and *Item Component*.
 
@@ -60,11 +59,11 @@ The List Items have a default view which enumerates all non-system properties. H
 
 Note: if you create your List Item anew, and do not have special requirements regarding how it is rendered (i.e. your List Item is not a reusable component for ordinary pages), you don't need to manually create the component folder. Just add `writeMode = WriteMode.CREATE` to the `@AemComponent`. Ignore this if you are actually reusing a pre-existing component.
 
-### Editing a List
+## Editing a List
 
 The Lists can be edited similarly to any other page. You can change the type of *Item Component* used in a list (even after the list has been populated with data) via the page properties.
 
-### Creating Lists in code
+## Creating Lists in code
 [ListHelper](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/core/lists/utils/ListHelper.html) is a helper class that provides the ability to create a new EToolbox List from Java code. You can create a List out of a collection of *SimpleListItem*-s, or a collection of arbitrary Sling models, or a list of `Map` instances, or else a list of Sling *Resource*-s:
 ```
 
@@ -91,7 +90,7 @@ Additionally, you can skip the getters or fields you don't want to be persisted 
 Find more examples on creating EToolbox Lists code in [ListHelperTest](../../../core/src/test/java/com/exadel/aem/toolkit/core/lists/utils/ListHelperTest.java)
 
 
-### Retrieving Lists' content programmatically
+## Retrieving Lists' content programmatically
 
 Apart from creating lists, [ListHelper](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/core/lists/utils/ListHelper.html) provides the ability to retrieve contents of any list by its path. See examples below:
 ```
@@ -100,7 +99,7 @@ Apart from creating lists, [ListHelper](https://javadoc.io/doc/com.exadel.etoolb
 ```
 You can find more examples in [ListHelperTest](../../../core/src/test/java/com/exadel/aem/toolkit/core/lists/utils/ListHelperTest.java)
 
-#### Populating dropdown widgets from a datasource.
+### Populating dropdown widgets from a datasource
 Exadel Toolbox Lists can be used as a data source for any widget consuming Granite datasources like in the following example:
 
 ```java

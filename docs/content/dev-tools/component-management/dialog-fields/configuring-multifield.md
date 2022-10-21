@@ -1,12 +1,12 @@
 <!--
 layout: content
-title: Configuring Multifield
+title: Multiplying fields
+navTitle: Configuring Multifield
 seoTitle: Configuring Multifield - Exadel Authoring Kit
 order: 5
 -->
-## Multiplying fields
 
-### MultiField
+## MultiField
 
 * [@MultiField](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/widgets/MultiField.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/form/multifield
@@ -22,7 +22,7 @@ AEM multifields exist in two flavors. *Simple* multifields usually contain only 
 
 By default the ToolKit renders a simple multifield when there is only one authorable field to manage in the reflected class, and creates a composite multifield if there are more. However, you can create a composite multifield for a class with only one authorable field by specifying `forceComposite = true`.
 
-#### Simple multifield
+### Simple multifield
 
 ```java
 public class SimpleMultiFieldDialog {
@@ -41,7 +41,7 @@ public class SimpleMultiFieldDialog {
 }
 ```
 
-#### Composite multifields
+### Composite multifields
 
 ```java
 public class CompositeMultiFieldDialog {
@@ -77,7 +77,7 @@ public class CompositeMultiFieldDialog2 {
 
 Note that the inheritance of class(-es) encapsulating multifield items works here the same way as for the `@FieldSet`.
 
-### @Multiple
+## @Multiple
 
 The easiest way to create a *MultiField* is with the `@Multiple` annotation. Just add it to the Java class field where a widget annotation is already present. A *simple* multifield containing this particular widget will be created on the fly.
 
@@ -85,6 +85,7 @@ On the other hand, if you add `@Multiple` to a field marked with `@FieldSet`, a 
 
 Please note, however, that `@Multiple` is primarily designed for easy, "quick give me a multifield out of my single widget" cases. For more complicated cases it lacks tweaking capabilities that `@MultiField` itself has.
 
-### See also
+<hr/>
+<h2 id="see-also" class="h3">See also</h2>
 
-[Grouping fields with FieldSet](./configuring-fieldset.md)
+- [Grouping fields with FieldSet](./configuring-fieldset.md)

@@ -157,7 +157,8 @@ The resulting widget sequence will be: the text field for *namePrefix*, the text
 <u>Important notice</u>: it is recommended that you always use `@Place(before/after)` or *ranking* with
 <u>method-based widgets</u> because it is not guaranteed that the JVM reports methods in the same order (unlike class fields).
 
-### See also
+<hr/>
+<h2 id="see-also" class="h3">See also</h2>
 
 - [Configuring RichTextEditor](./configuring-rte.md)
 - [Laying out your dialogs](../dialog-layout.md)

@@ -21,6 +21,20 @@
     padding: 1rem 0;
   }
 
+  .content-page-title {
+    color: @nav-accent;
+    font-size: 1rem;
+
+    > .current-page {
+      font-size: 3rem;
+      margin-top: 10px;
+    }
+
+    > .parent-page {
+      opacity: .6;
+    }
+  }
+
   main {
     display: flex;
     flex-direction: column;
@@ -44,9 +58,5 @@
     @media @md-xl {
       top: 0;
     }
-  }
-
-  .aside {
-    margin-bottom: 1.25rem;
   }
 }

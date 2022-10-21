@@ -2,14 +2,15 @@ const path = require('path');
 const {blue} = require('kleur');
 const {JSDOM} = require('jsdom');
 const {Minimatch} = require('minimatch');
-
 const {rewriteRules} = require('./site.config');
+const {url} = require('./site.config');
 
 const ROOT_PATH = path.resolve('../../..');
 const DOCS_PATH = path.join(ROOT_PATH, 'docs');
 
 class PathResolver {
   static rules = rewriteRules.map(PathResolver.createRule);
+
   static createRule({glob, regexp, value}) {
     if (typeof regexp === 'string') regexp = new RegExp(regexp, 'i');
     if (typeof glob === 'string') regexp = (new Minimatch(glob)).makeRe();
@@ -26,11 +27,29 @@ class PathResolver {
     return window.document.documentElement.innerHTML;
   }
 
+  static isExternal(urlString) {
+    const domain = new URL(url).hostname;
+
+    try {
+      const link = new URL(urlString);
+      const isHttp = link.protocol === 'http:' || link.protocol === 'https:';
+
+      return isHttp && domain !== link.hostname;
+    } catch (e) {
+      return false;
+    }
+  }
+
   static resolveLinks(dom, filePath) {
-    dom.querySelectorAll('a[href^="."]').forEach((link) => {
+    dom.querySelectorAll('a[href]').forEach((link) => {
       const resolved = PathResolver.resolveLink(link.href, filePath);
       if (resolved !== link.href) console.info(blue(`Rewrite link "${link.href}" to "${resolved}"`));
       link.href = resolved;
+
+      if (PathResolver.isExternal(link.href)) {
+        link.target = '_blank';
+        link.rel = 'noopener norefferer';
+      }
     });
   }
 
@@ -50,6 +69,8 @@ class PathResolver {
     if (link.startsWith('http:') || link.startsWith('https:')) return link;
     // link.match(/.+\.md/)
     if (link.startsWith('.')) return PathResolver.processRewriteRules(link, filePath);
+
+    return link;
   }
 
   static processRewriteRules(link, filePath) {

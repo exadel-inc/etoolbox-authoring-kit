@@ -4,10 +4,10 @@ import {listen} from '@exadel/esl/modules/esl-utils/decorators/listen';
 import {ESLMediaQuery} from '@exadel/esl/modules/esl-media-query/core';
 import {ESLToggleable} from '@exadel/esl/modules/esl-toggleable/core';
 
-import type {ToggleableActionParams} from '@exadel/esl/modules/esl-toggleable/core';
-import type {ESLMediaChangeEvent} from '@exadel/esl/modules/esl-media-query/core/conditions/media-query-base';
+import type {ESLMediaChangeEvent} from '@exadel/esl/modules/esl-media-query/core';
+import type {ESLToggleableActionParams} from '@exadel/esl/modules/esl-toggleable/core';
 
-interface SidebarActionParams extends ToggleableActionParams {
+interface SidebarActionParams extends ESLToggleableActionParams {
   /** Change state without animation */
   immediate: boolean;
 }
@@ -48,7 +48,7 @@ export class EAKSidebar extends ESLToggleable {
     targetEl.setAttribute('aria-expanded', String(this.open));
   }
 
-  hide(params?: ToggleableActionParams): ESLToggleable {
+  public hide(params?: ESLToggleableActionParams): ESLToggleable {
     if (ESLMediaQuery.for('@+MD').matches) return this;
     return super.hide(params);
   }
