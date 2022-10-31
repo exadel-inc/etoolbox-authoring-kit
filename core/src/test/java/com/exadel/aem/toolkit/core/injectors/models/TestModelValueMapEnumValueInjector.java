@@ -104,7 +104,7 @@ public class TestModelValueMapEnumValueInjector {
 
     public enum TestingNeededEnum {
         VAL1("value1"), VAL2("value2"), VAL3("value3");
-        private final String value;
+        public final String value;
         TestingNeededEnum(String value) {
             this.value = value;
         }
@@ -112,7 +112,7 @@ public class TestModelValueMapEnumValueInjector {
 
     public enum TestingNeededEnumWithIntField {
         VAL1(1), VAL2(2), VAL3(3);
-        private final int i;
+        public final int i;
         TestingNeededEnumWithIntField(int i) {
             this.i = i;
         }
@@ -120,7 +120,7 @@ public class TestModelValueMapEnumValueInjector {
 
     public enum TestingNeededEnumWithIntegerField {
         VAL1(1), VAL2(2), VAL3(3);
-        private final Integer integer;
+        public final Integer integer;
         TestingNeededEnumWithIntegerField(Integer integer) {
             this.integer = integer;
         }

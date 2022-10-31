@@ -18,6 +18,7 @@ import java.lang.annotation.Target;
 public @interface EnumValue {
     String name() default StringUtils.EMPTY;
     String fieldName() default StringUtils.EMPTY;
+    String methodName() default StringUtils.EMPTY;
 
     String defaultValue() default StringUtils.EMPTY;
 }

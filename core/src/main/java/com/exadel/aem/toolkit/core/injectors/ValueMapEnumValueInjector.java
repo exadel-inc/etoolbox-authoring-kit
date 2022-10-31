@@ -2,11 +2,10 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Field;
 import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.List;
 
+import com.exadel.aem.toolkit.core.EnumDecorator;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 import org.apache.commons.lang3.StringUtils;
@@ -77,27 +76,48 @@ public class ValueMapEnumValueInjector extends BaseInjector<EnumValue> {
             AdaptationUtil.getResource(adaptable),
             AdaptationUtil.getValueMap(adaptable));
 
-        String fieldName = annotation.name().isEmpty() ? name : annotation.name();
-        Object object = valueMap.get(fieldName);
-        String[] stringValue = object != null ? String.valueOf(object).split(",") : null;
+        name = annotation.name().isEmpty() ? name : annotation.name();
+        Object object = valueMap.get(name);
+        String[] stringValues = object != null ? String.valueOf(object).split(",") : new String[]{};
 
         Class<?> componentType = TypeUtil.extractComponentType(type);
         if (componentType == null) {
             return null;
         }
 
-        Object anEnum = getEnum((Class<?>) type, stringValue);
-        if (anEnum == null && !annotation.fieldName().isEmpty()) {
-            String paramName = annotation.fieldName();
-            anEnum = getEnumByParam(componentType, paramName, stringValue);
+        EnumDecorator decorator = new EnumDecorator((Class<? extends Enum<?>>) componentType);
+
+        Object[] constants;
+        if (!annotation.fieldName().isEmpty()) {
+            constants = Arrays.stream(componentType.getEnumConstants())
+                .filter(e -> String.valueOf(decorator.getEnumFieldValue(annotation.fieldName(), String.valueOf(e))).equals(stringValues[0]))
+                .toArray();
+        } else if (!annotation.methodName().isEmpty()) {
+            constants = Arrays.stream(componentType.getEnumConstants())
+                .filter(e -> String.valueOf(decorator.returnValueByMethodInvoke(annotation.fieldName(), String.valueOf(e))).equals(stringValues[0]))
+                .toArray();
+        } else {
+            constants = Arrays.stream(stringValues)
+                .map(decorator::getEnumConstantByName)
+                .toArray();
         }
 
-        if (anEnum == null && defaultValue != null) {
-            anEnum = getEnum((Class<?>) type, (String[]) defaultValue);
+        if (constants.length == 0 && defaultValue != null) {
+            constants = Arrays.stream((String[]) defaultValue)
+                .map(decorator::getEnumConstantByName)
+                .toArray();
         }
+        Object[] targetTypeArray = (Object[]) TypeUtil.transformArray(constants, componentType);
 
-        return anEnum;
+        if (TypeUtil.isValidArray(type)) {
+            return targetTypeArray;
+        } else if (TypeUtil.isValidCollection(type)) {
+            return Arrays.asList(targetTypeArray);
+        } else {
+            return targetTypeArray[0];
+        }
     }
+
 
     /**
      * Checks the {@code type} is an enumeration. If the {@code type} is a collection, the elements of the array/collection are checked.
@@ -106,93 +126,5 @@ public class ValueMapEnumValueInjector extends BaseInjector<EnumValue> {
      */
     private boolean isValid(Type type) {
         return (type instanceof Class && ((Class<?>) type).isEnum()) || TypeUtil.isValidArray(type) || TypeUtil.isValidCollection(type);
-    }
-
-    /**
-     * Attempts to get value of an enum java class member {@code type}
-     * and a string representation of a constant or a list of constants @{code stringValue}
-     * @param type        Type of receiving Java class member
-     * @param stringValue String value(s) of enum constant(s)
-     * @return enum constant or Array/List of enum constants
-     */
-    private Object getEnum(Class<?> type, String[] stringValue) {
-        if (stringValue == null) {
-            return null;
-        }
-
-        Class<?> componentType = TypeUtil.extractComponentType(type);
-        if (componentType == null) {
-            return null;
-        }
-
-        if (stringValue.length == 1) {
-            return getSingle(componentType, String.valueOf(stringValue[0]));
-        } else {
-            List<Object> objects = Arrays.asList(stringValue);
-            Object[] array = Arrays.stream(componentType.getEnumConstants())
-                .filter(e -> objects.contains(String.valueOf(e)))
-                .toArray();
-            Object[] enumTypeArray = (Object[]) TypeUtil.transformArray(array, componentType);
-
-            if (type.isArray()) {
-                return enumTypeArray;
-            } else {
-                return Arrays.asList(enumTypeArray);
-            }
-        }
-    }
-
-    /**
-     * Attempts to get the value of an enum java class member based on the enum value field
-     * and a string representation of a constant or a list of constants @{code stringValue}
-     * @param type        Type of receiving Java class member
-     * @param paramName   name of the field that represents the enum value
-     * @param stringValue String value of enum constant
-     * @return enum constant
-     */
-    private Object getEnumByParam(Class<?> type, String paramName, String[] stringValue) {
-        if (stringValue == null) {
-            return null;
-        }
-
-        Field param = Arrays.stream(type.getDeclaredFields())
-            .filter(x -> !x.isEnumConstant() && !x.isSynthetic())
-            .filter(x -> StringUtils.equals(paramName, x.getName()))
-            .findFirst()
-            .orElse(null);
-
-        if (param == null) {
-            return null;
-        }
-
-        if (!param.isAccessible()) {
-            param.setAccessible(true);
-        }
-
-        for (Object enumConstant : type.getEnumConstants()) {
-            try {
-                Object constant = param.get(enumConstant);
-                if (StringUtils.equals(stringValue[0], String.valueOf(constant))) {
-                    param.setAccessible(false);
-                    return enumConstant;
-                }
-            } catch (IllegalAccessException e) {
-                LOG.error(e.getMessage());
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Retrieve the first matching enum value of a constant with a string representation of the value
-     * @param type        Type of receiving Java class member
-     * @param stringValue String value of enum constant
-     * @return enum constant
-     */
-    private Object getSingle(Class<?> type, String stringValue) {
-        return Arrays.stream(type.getEnumConstants())
-            .filter(e -> StringUtils.equals(stringValue, String.valueOf(e)))
-            .findFirst()
-            .orElse(null);
     }
 }

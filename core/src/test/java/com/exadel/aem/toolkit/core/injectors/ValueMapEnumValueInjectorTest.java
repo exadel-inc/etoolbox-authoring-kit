@@ -83,8 +83,8 @@ public class ValueMapEnumValueInjectorTest {
     @Test
     public void shouldInjectEnumConstantWithDefaultValuesArray(){
         TestModelValueMapEnumValueInjector.TestingNeededEnum[] expected = {
-            TestModelValueMapEnumValueInjector.TestingNeededEnum.VAL1,
-            TestModelValueMapEnumValueInjector.TestingNeededEnum.VAL2
+            TestModelValueMapEnumValueInjector.TestingNeededEnum.VAL2,
+            TestModelValueMapEnumValueInjector.TestingNeededEnum.VAL1
         };
 
 
