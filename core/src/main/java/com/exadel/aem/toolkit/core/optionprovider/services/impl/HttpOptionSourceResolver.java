@@ -92,7 +92,8 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
 
     /**
      * Resolves
-     * @param request {@link SlingHttpServletRequest} to get a Resource by a particular
+     * @param request {@link SlingHttpServletRequest} to
+     * @return a {@link Resource} resolved by a particular
      * @param path {@link String} http address to json
      */
     private Resource resolve(SlingHttpServletRequest request, String path) {

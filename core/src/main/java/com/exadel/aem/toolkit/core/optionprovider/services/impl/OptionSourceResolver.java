@@ -58,7 +58,8 @@ interface OptionSourceResolver {
 
     /**
      * Static method compatible either with business logic or with testing logic. Resolves
-     * @param request {@link SlingHttpServletRequest} to get a {@link Resource} by particular
+     * @param request {@link SlingHttpServletRequest} to
+     * @return {@link Resource} resolved by particular
      * @param pathParameters {@link PathParameters}. Depending on path from {@link PathParameters}
      * uses either {@link HttpOptionSourceResolver}, {@link  JcrOptionSourceResolver} or {@link EnumOptionSourceResolver}
      */

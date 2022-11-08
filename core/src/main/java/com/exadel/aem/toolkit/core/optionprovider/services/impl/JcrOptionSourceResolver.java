@@ -47,6 +47,9 @@ class JcrOptionSourceResolver implements OptionSourceResolver {
      * <p>Both direct and <i>referenced</i> paths are supported. For instance, if a user-provided setting
      * contains the {@code @} symbol, this is considered to be a <u>reference</u> to a <i>foreign</i> node and its
      * attribute in which the actual path to datasource is authored (say, via a dialog path picker)
+     * @param request represents {@link SlingHttpServletRequest}
+     * @param uri is {@link String} jcr address
+     * @return {@link Resource}
      */
     private Resource resolve(SlingHttpServletRequest request, String uri) {
         if (StringUtils.isBlank(uri)) {
