@@ -1,3 +1,16 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.exadel.aem.toolkit.core.optionprovider.services.impl;
 
 import java.lang.reflect.InvocationTargetException;
@@ -35,6 +48,7 @@ public class EnumOptionSourceResolver implements OptionSourceResolver {
 
     /**
      * Constructor for testing
+     * @param clazz to be used instead of looking for it in {@link Bundle} array from {@link BundleContext}
      */
     public EnumOptionSourceResolver(Class<? extends Enum<?>> clazz) {
         this.clazz = clazz;
@@ -58,10 +72,11 @@ public class EnumOptionSourceResolver implements OptionSourceResolver {
 
     /**
      * Method, called by either {@link EnumOptionSourceResolver#resolve(SlingHttpServletRequest, PathParameters)} or
-     * {@link EnumOptionSourceResolver#fallbackResolve(SlingHttpServletRequest, PathParameters)} public methods.
+     * {@link EnumOptionSourceResolver#fallbackResolve(SlingHttpServletRequest, PathParameters)} public methods.\
+     * @param request {@link SlingHttpServletRequest} object
      * @param path           should be a valid String enum class name. It is used to scan for a {@link Bundle} with the
      *                       corresponding class.
-     * @param pathParameters as keys and methods return values from enum {@link Class} as values.
+     * @param pathParameters as keys and methods return values from enum {@link Class} as values
      * @return {@link Resource} populated with attributes from
      */
     private Resource resolve(SlingHttpServletRequest request, String path, PathParameters pathParameters) {
@@ -141,14 +156,14 @@ public class EnumOptionSourceResolver implements OptionSourceResolver {
         try {
             return (String) clazz.getMethod(methodName).invoke(enm);
         } catch (NoSuchMethodException ignore) {
-            LOG.error("EnumOptionSourceResolver::resolve - there is no method " + methodName +
-                " at enum class " + clazz.getName());
+            LOG.error("EnumOptionSourceResolver::resolve - there is no method " + methodName + " at enum class "
+                + clazz.getName());
         } catch (InvocationTargetException e) {
-            LOG.error("EnumOptionSourceResolver::resolve - can't invoke method " + methodName +
-                " on Enum " + enm.name());
+            LOG.error("EnumOptionSourceResolver::resolve - can't invoke method " + methodName + " on Enum "
+                + enm.name());
         } catch (IllegalAccessException ignore) {
-            LOG.error("EnumOptionSourceResolver::resolve - method " + methodName + " of class " +
-                clazz.getName() + " should be public");
+            LOG.error("EnumOptionSourceResolver::resolve - method " + methodName + " of class " + clazz.getName()
+                + " should be public");
         }
 
         return "";

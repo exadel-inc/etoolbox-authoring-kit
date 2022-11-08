@@ -90,6 +90,11 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
         return resolve(request, pathParameters.getFallbackPath());
     }
 
+    /**
+     * Resolves
+     * @param request {@link SlingHttpServletRequest} to get a Resource by a particular
+     * @param path {@link String} http address to json
+     */
     private Resource resolve(SlingHttpServletRequest request, String path) {
         String internalPath = getInternalPath(path);
         String url = StringUtils.removeEnd(path, internalPath);

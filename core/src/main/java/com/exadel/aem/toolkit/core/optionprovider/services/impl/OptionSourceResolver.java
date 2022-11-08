@@ -36,6 +36,7 @@ interface OptionSourceResolver {
     OptionSourceResolver HTTP_RESOLVER = new HttpOptionSourceResolver();
     OptionSourceResolver JCR_RESOLVER = new JcrOptionSourceResolver();
     OptionSourceResolver ENUM_RESOLVER = new EnumOptionSourceResolver();
+    String ID_PATTERN = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
     /**
      * Method
@@ -55,6 +56,12 @@ interface OptionSourceResolver {
      */
     Resource fallbackResolve(SlingHttpServletRequest request, PathParameters pathParameters);
 
+    /**
+     * Static method compatible either with business logic or with testing logic. Resolves
+     * @param request {@link SlingHttpServletRequest} to get a {@link Resource} by particular
+     * @param pathParameters {@link PathParameters}. Depending on path from {@link PathParameters}
+     * uses either {@link HttpOptionSourceResolver}, {@link  JcrOptionSourceResolver} or {@link EnumOptionSourceResolver}
+     */
     static Resource resolve(SlingHttpServletRequest request, PathParameters pathParameters) {
         OptionSourceResolver predefinedResolver =
             (OptionSourceResolver) request.getAttribute(OptionSourceResolver.class.getName());
@@ -115,9 +122,6 @@ interface OptionSourceResolver {
      * @return True or false
      */
     static boolean isClassName(String value) {
-        String ID_PATTERN = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
-        Pattern FQCN = Pattern.compile(ID_PATTERN + "(\\." + ID_PATTERN + ")*");
-
-        return FQCN.matcher(value).matches();
+        return Pattern.compile(ID_PATTERN + "(\\." + ID_PATTERN + ")*").matcher(value).matches();
     }
 }
