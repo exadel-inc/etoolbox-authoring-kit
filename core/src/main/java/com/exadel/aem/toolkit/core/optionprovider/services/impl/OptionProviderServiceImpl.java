@@ -35,8 +35,6 @@ import org.apache.sling.api.resource.NonExistingResource;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.osgi.service.component.annotations.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
@@ -48,8 +46,6 @@ import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService
  */
 @Component(service = OptionProviderService.class)
 public class OptionProviderServiceImpl implements OptionProviderService {
-
-    private static final Logger LOG = LoggerFactory.getLogger(OptionProviderServiceImpl.class);
 
     private static final String FULL_STRING_MATCH_TEMPLATE = "^%s$";
     private static final String USER_WILDCARD_PATTERN = "(?<![\\\\'])\\*";
@@ -69,7 +65,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
 
         // For each of the paths try retrieve a list of options
         for (PathParameters pathParameters : parameters.getPathParameters()) {
-            Resource datasourceResource = OptionSourceResolver.resolve(request, pathParameters.getPath(), pathParameters.getFallbackPath());
+            Resource datasourceResource = OptionSourceResolver.resolve(request, pathParameters);
             if (datasourceResource == null || datasourceResource instanceof NonExistingResource) {
                 continue;
             }

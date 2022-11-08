@@ -26,6 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionSource;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.utils.ArrayUtil;
@@ -48,7 +49,8 @@ abstract class OptionProviderHandler {
      */
     boolean hasProvidedOptions(OptionProvider optionProvider) {
         boolean hasExternalOptions = ArrayUtils.isNotEmpty(optionProvider.value())
-            && Arrays.stream(optionProvider.value()).anyMatch(source -> StringUtils.isNotBlank(source.value()));
+            && Arrays.stream(optionProvider.value())
+            .anyMatch(source -> (StringUtils.isNotBlank(source.value()) || source.enumClass() != _Default.class));
         boolean hasPrependedOptions = ArrayUtils.isNotEmpty(optionProvider.prepend())
             && Arrays.stream(optionProvider.prepend()).anyMatch(StringUtils::isNotEmpty);
         boolean hasAppendedOptions = ArrayUtils.isNotEmpty(optionProvider.append())
@@ -124,9 +126,13 @@ abstract class OptionProviderHandler {
      * @param postfix           A special key that is added to every attribute name to distinguish it from the others
      */
     private static void populateSourceAttributes(OptionSource optionSource, Target datasourceElement, String postfix) {
-        datasourceElement.attribute(CoreConstants.PN_PATH + postfix, optionSource.value());
+        datasourceElement.attribute(CoreConstants.PN_PATH + postfix,
+            optionSource.enumClass() != _Default.class ? optionSource.enumClass().getName() : optionSource.value());
         if (StringUtils.isNotBlank(optionSource.fallback())) {
             datasourceElement.attribute(DialogConstants.PN_FALLBACK_PATH + postfix, optionSource.fallback());
+        } else if (optionSource.fallbackEnumClass() != _Default.class) {
+            datasourceElement.attribute(DialogConstants.PN_FALLBACK_PATH + postfix,
+                optionSource.fallbackEnumClass().getName());
         }
         if (StringUtils.isNotBlank(optionSource.textMember())) {
             datasourceElement.attribute(DialogConstants.PN_TEXT_MEMBER + postfix, optionSource.textMember());

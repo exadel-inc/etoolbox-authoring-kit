@@ -29,12 +29,27 @@ class JcrOptionSourceResolver implements OptionSourceResolver {
 
     /**
      * {@inheritDoc}
+     */
+    @Override
+    public Resource pathResolve(SlingHttpServletRequest request, PathParameters pathParameters) {
+        return resolve(request, pathParameters.getPath());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Resource fallbackResolve(SlingHttpServletRequest request, PathParameters pathParameters) {
+        return resolve(request, pathParameters.getFallbackPath());
+    }
+
+    /**
+     * {@inheritDoc}
      * <p>Both direct and <i>referenced</i> paths are supported. For instance, if a user-provided setting
      * contains the {@code @} symbol, this is considered to be a <u>reference</u> to a <i>foreign</i> node and its
      * attribute in which the actual path to datasource is authored (say, via a dialog path picker)
      */
-    @Override
-    public Resource resolve(SlingHttpServletRequest request, String uri) {
+    private Resource resolve(SlingHttpServletRequest request, String uri) {
         if (StringUtils.isBlank(uri)) {
             return null;
         }

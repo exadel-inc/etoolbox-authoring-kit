@@ -78,9 +78,21 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
      * {@inheritDoc}
      */
     @Override
-    public Resource resolve(SlingHttpServletRequest request, String uri) {
-        String internalPath = getInternalPath(uri);
-        String url = StringUtils.removeEnd(uri, internalPath);
+    public Resource pathResolve(SlingHttpServletRequest request, PathParameters pathParameters) {
+        return resolve(request, pathParameters.getPath());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Resource fallbackResolve(SlingHttpServletRequest request, PathParameters pathParameters) {
+        return resolve(request, pathParameters.getFallbackPath());
+    }
+
+    private Resource resolve(SlingHttpServletRequest request, String path) {
+        String internalPath = getInternalPath(path);
+        String url = StringUtils.removeEnd(path, internalPath);
         String content = getResponseContent(url);
         JsonNode jsonNode = parseJson(content, internalPath);
         return jsonNode != null ? createResource(request, jsonNode) : null;

@@ -17,8 +17,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
-import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
-import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
@@ -30,10 +28,9 @@ public @interface OptionSource {
 
     /**
      * Used to specify the precise address the options can be retrieved from, such as a JCR path
-     * @return String value, non-blank
+     * @return String value
      */
-    @ValueRestriction(ValueRestrictions.NOT_BLANK)
-    String value();
+    String value() default "";
 
     /**
      * Used to specify the fallback address the options can be retrieved from when the main source ({@link OptionSource#value()})
@@ -83,6 +80,15 @@ public @interface OptionSource {
      */
     StringTransformation valueTransform() default StringTransformation.NONE;
 
+    /**
+     * If set, specifies an enum class the option can be transformed from.
+     * @return {@link Class} value
+     */
     Class<?> enumClass() default _Default.class;
+
+    /**
+     * If set, specifies a fallback enum class the option can be transformed from.
+     * @return {@link Class} value
+     */
     Class<?> fallbackEnumClass() default _Default.class;
 }

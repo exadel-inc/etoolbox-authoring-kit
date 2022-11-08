@@ -16,22 +16,20 @@ package com.exadel.aem.toolkit.core.optionprovider.services.impl;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.tagging.TagConstants;
 
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
 
 /**
- * Contains methods for resolving provided URIs (representing either JCR paths or HTTP endpoints) to option data sources
+ * Contains methods for resolving provided URIs (representing either JCR paths, HTTP endpoints or class name) to option data sources
  * @see OptionProviderService
  */
 interface OptionSourceResolver {
@@ -39,51 +37,44 @@ interface OptionSourceResolver {
     OptionSourceResolver JCR_RESOLVER = new JcrOptionSourceResolver();
     OptionSourceResolver ENUM_RESOLVER = new EnumOptionSourceResolver();
 
-    Logger LOG = LoggerFactory.getLogger(HttpOptionSourceResolver.class);
-
+    /**
+     * Method
+     * @param request        and
+     * @param pathParameters attributes
+     *                       by retrieved by basic path.
+     * @return {@link Resource} populated from
+     */
+    Resource pathResolve(SlingHttpServletRequest request, PathParameters pathParameters);
 
     /**
-     * Called by {@link OptionSourceResolver#resolve(SlingHttpServletRequest, String, String)} to retrieve a {@link
-     * Resource} object representing the option datasource. Depending on the implementation, this method either
-     * retrieves a JCR entry or gets an HTTP response and converts it into a virtual resource
-     * @param request Current {@code SlingHttpServletRequest}
-     * @param uri     Either a JCR path to the {@code Resource} that represents a datasource or contains a link to the
-     *                actual datasource, or else an HTTP endpoint containing the datasource data in JSON format
-     * @return {@code Resource} instance, or null
+     * Method
+     * @param request        and
+     * @param pathParameters attributes
+     *                       by retrieved by fallback path.
+     * @return {@link Resource} populated from
      */
-    Resource resolve(SlingHttpServletRequest request, String uri);
+    Resource fallbackResolve(SlingHttpServletRequest request, PathParameters pathParameters);
 
-    default Resource fallbackResolve(SlingHttpServletRequest request, String uri) {
-        return this.resolve(request, uri);
-    }
-
-    /**
-     * Tries to retrieve a {@code Resource} instance based on user-provided URI: either a JCR path or an HTTP endpoint.
-     * First, the {@code path} value is considered. If there's not a valid option source, the value of {@code
-     * fallbackPath} is considered in turn
-     * @param request     Current {@code SlingHttpServletRequest}
-     * @param uri         Either a JCR path to the {@code Resource} that represents a datasource or contains a link to
-     *                    the actual datasource, or else an HTTP endpoint containing the datasource data in JSON format
-     * @param fallbackUri Either a JCR path to the {@code Resource} that represents a datasource or contains a link to
-     *                    the actual datasource, or else an HTTP endpoint containing the datasource data in JSON format
-     * @return {@code Resource} instance, or null
-     */
-    static Resource resolve(SlingHttpServletRequest request, String uri, String fallbackUri) {
-        OptionSourceResolver predefinedResolver = (OptionSourceResolver) request.getAttribute(OptionSourceResolver.class.getName());
+    static Resource resolve(SlingHttpServletRequest request, PathParameters pathParameters) {
+        OptionSourceResolver predefinedResolver =
+            (OptionSourceResolver) request.getAttribute(OptionSourceResolver.class.getName());
         OptionSourceResolver effectiveResolver = ObjectUtils.firstNonNull(
             predefinedResolver,
-            isUrl(uri) ? HTTP_RESOLVER : isClassNameParams(uri) ? ENUM_RESOLVER : JCR_RESOLVER);
+            isUrl(pathParameters.getPath()) ? HTTP_RESOLVER : isClassName(pathParameters.getPath())
+                ? ENUM_RESOLVER : JCR_RESOLVER);
 
-        Resource result = effectiveResolver.resolve(request, uri);
+        Resource result = effectiveResolver.pathResolve(request, pathParameters);
+
         if (result != null) {
             return result;
         }
 
         effectiveResolver = ObjectUtils.firstNonNull(
             predefinedResolver,
-            isUrl(fallbackUri) ? HTTP_RESOLVER : isClassNameParams(fallbackUri)
+            isUrl(pathParameters.getFallbackPath()) ? HTTP_RESOLVER : isClassName(pathParameters.getFallbackPath())
                 ? ENUM_RESOLVER : JCR_RESOLVER);
-        return effectiveResolver.fallbackResolve(request, fallbackUri);
+
+        return effectiveResolver.fallbackResolve(request, pathParameters);
     }
 
     /**
@@ -118,7 +109,15 @@ interface OptionSourceResolver {
         }
     }
 
-    static boolean isClassNameParams(String value) {
-        return StringUtils.isNotBlank(value) && value.split("[#@]").length == 3;
+    /**
+     * Checks if the provided string is a class name. Supports nested classes as well.
+     * @param value a class name string
+     * @return True or false
+     */
+    static boolean isClassName(String value) {
+        String ID_PATTERN = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
+        Pattern FQCN = Pattern.compile(ID_PATTERN + "(\\." + ID_PATTERN + ")*");
+
+        return FQCN.matcher(value).matches();
     }
 }
