@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.exadel.etoolbox</groupId>
         <artifactId>etoolbox-authoring-kit</artifactId>
-        <version>2.2.1-SNAPSHOT</version>
+        <version>2.2.1</version>
     </parent>
 
     <artifactId>etoolbox-authoring-kit-plugin</artifactId>
@@ -144,6 +144,11 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>osgi.core</artifactId>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

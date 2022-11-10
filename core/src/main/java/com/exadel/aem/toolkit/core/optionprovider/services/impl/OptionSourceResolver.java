@@ -39,29 +39,27 @@ interface OptionSourceResolver {
     String ID_PATTERN = "\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*";
 
     /**
-     * Method
-     * @param request        and
-     * @param pathParameters attributes
-     *                       by retrieved by basic path.
-     * @return {@link Resource} populated from
+     * Method uses
+     * @param request        {@link SlingHttpServletRequest} and
+     * @param pathParameters {@link PathParameters} to
+     * @return {@link Resource} built using first basic {@link String} path
      */
     Resource pathResolve(SlingHttpServletRequest request, PathParameters pathParameters);
 
     /**
-     * Method
-     * @param request        and
-     * @param pathParameters attributes
-     *                       by retrieved by fallback path.
-     * @return {@link Resource} populated from
+     * Method uses
+     * @param request        {@link SlingHttpServletRequest} and
+     * @param pathParameters {@link PathParameters} to
+     * @return {@link Resource} built using secondary {@link String} fallback path
      */
     Resource fallbackResolve(SlingHttpServletRequest request, PathParameters pathParameters);
 
     /**
-     * Static method compatible either with business logic or with testing logic. Resolves
-     * @param request {@link SlingHttpServletRequest} to
-     * @return {@link Resource} resolved by particular
-     * @param pathParameters {@link PathParameters}. Depending on path from {@link PathParameters}
-     * uses either {@link HttpOptionSourceResolver}, {@link  JcrOptionSourceResolver} or {@link EnumOptionSourceResolver}
+     * Static method compatible with business logic and testing logic. Depending on
+     * @param pathParameters {@link PathParameters} it constructs the needed {@link OptionSourceResolver} realization
+     *                       and uses
+     * @param request        {@link SlingHttpServletRequest} to build and to
+     * @return {@link Resource}
      */
     static Resource resolve(SlingHttpServletRequest request, PathParameters pathParameters) {
         OptionSourceResolver predefinedResolver =

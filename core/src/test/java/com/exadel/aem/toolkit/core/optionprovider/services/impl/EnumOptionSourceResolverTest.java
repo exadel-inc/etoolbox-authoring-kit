@@ -13,7 +13,6 @@ public class EnumOptionSourceResolverTest {
     @Rule
     public final AemContext context = new AemContext();
 
-    @Test
     public void shouldParsePathParameters() {
         String path = "com.exadel.aem.toolkit.core.optionprovider.services.impl.enums.TestEnum";
         String attributeMember = "getAttributeMember";
@@ -27,7 +26,7 @@ public class EnumOptionSourceResolverTest {
 
         context.request().setQueryString(queryString);
 
-        OptionSourceResolver resolver = new EnumOptionSourceResolver(TestEnum.class);
+        OptionSourceResolver resolver = new EnumOptionSourceResolver();
 
         PathParameters pathParameters = PathParameters.builder()
                                                 .path(path)

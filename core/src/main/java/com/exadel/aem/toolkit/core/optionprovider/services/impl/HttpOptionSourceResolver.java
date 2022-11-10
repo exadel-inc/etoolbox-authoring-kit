@@ -91,10 +91,10 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
     }
 
     /**
-     * Resolves
-     * @param request {@link SlingHttpServletRequest} to
-     * @return a {@link Resource} resolved by a particular
-     * @param path {@link String} http address to json
+     * This method retrieves the needed data by making an HTTP request to
+     * @param path    {@link String} http address and with the help of
+     * @param request {@link SlingHttpServletRequest}
+     * @return {@link Resource} build with the json info received from HTTP request
      */
     private Resource resolve(SlingHttpServletRequest request, String path) {
         String internalPath = getInternalPath(path);
