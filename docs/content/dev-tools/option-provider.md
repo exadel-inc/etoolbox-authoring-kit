@@ -91,17 +91,21 @@ Every `@OptionSource` object can be specified with the following properties:
 
 _value_ - defines the path to a List-like structure, a node tree, or a tag folder. Plain paths and _path references_ are supported. I.e. if a value is presented like `/typical/jcr/path`, this exact path will be looked for. However, if given in the `/some/node@attr` format, the _attr_ attribute will be retrieved from _/some/node_, and its value will be then assumed to be the "true" path.
 
-_fallback_ defines a reserve path value for situations in which the address specified in _value_ is not reachable. This may be the case when _value_ comes from an authored parameter of a component and the component has just been created. Then _fallback_ may present a constant alternative;
+_classValue_ - defines an Enum class that will be used as datasource for `@OptionSource`. This property is less prioritized than _value_, therefore, if both are mentioned, then only _value_ property will be taken into account.
 
-_textMember_ - if specified, defines the attribute of a JCR node to be rendered as RadioButton's or Select's _label_.
-<br>Default is the _"jcr:title"_ attribute;
+_fallback_ - defines a reserve path value for situations in which the address specified in _value_ is not reachable. This may be the case when _value_ comes from an authored parameter of a component and the component has just been created. Then _fallback_ may present a constant alternative;
 
-_valueMember_ - if specified, defines the attribute of a JCR node to be rendered as RadioButton's or Select's _value_.
+_fallbackClass_ - works in the same way as _fallback_ but defines an Enum class as a reserve. This property is less prioritized than _fallback_, therefore, if both are mentioned, then only _fallback_ property will be taken into account.
+
+_textMember_ - if specified, defines the attribute of a JCR node or a public method name of an Enum class to be rendered as RadioButton's or Select's _label_.
+<br>Default is the _"jcr:title"_ attribute for a JCR node or .name() method of an Enum class;
+
+_valueMember_ - if specified, defines the attribute of a JCR node or a public method name of an Enum class to be rendered as RadioButton's or Select's _value_.
 <br>If the reserved token `@name` is specified, the node name will be used for value.
 <br>If `@id` is specified, the _tag node name with tag namespace_ (for a cq:Tag node) or a node name (otherwise) will be used as the value. This is particularly useful for tag listings.
-<br>Default is the _"value"_ attribute for ordinary JCR nodes and _"@name"_ for tags;
+<br>Default is the _"value"_ attribute for ordinary JCR nodes, .toString() public method of an Enum class and _"@name"_ for tags;
 
-_attributeMembers_ - if specified, define one or more attributes of a node to be rendered as HTML attributes of the corresponding Granite UI entities. For example, `attributeMembers = "some-jcr-attribute"` will be rendered as `<coral-select-item data-some-jcr-attribute="literal_value_of_this_attribute">` in HTML;
+_attributeMembers_ - if specified, define one or more attributes of a node or public method names of an Enum class to be rendered as HTML attributes of the corresponding Granite UI entities. For example, `attributeMembers = "some-jcr-attribute"` will be rendered as `<coral-select-item data-some-jcr-attribute="literal_value_of_this_attribute">` in HTML;
 
 _attributes_ - if specified, define one or more static values to be rendered as HTML attributes of the corresponding Granite UI entities. For example, `attributes = "some-attribute:some-value"` argument will be rendered as `<coral-select-item data-some-attribute="some-value">` in HTML.
 <br>Each attribute must consist of a key and a value separated with colon (`:`). If a key or a value itself must contain a colon, it can be escaped with `\`.
@@ -115,6 +119,65 @@ _valueTransform_ - if specified, defines the way the <u>value</u> will be transf
 `@OptionSource` allows specifying not only a JCR path but also a standard URL for either _path_ or _fallback_ (note: must be a complete URL string parseable with `new URL("...")`. The content downloaded this the URL is expected to be a JSON entity. A JSON array becomes the list of options much the same way as JCR resource with children. A singular JSON object will be converted into a singleton list (containing one option).
 
 If the JSON structure is such that the required array is nested deeper than the "root" node, you can add a "path" to the url like `http://acme.com/apis/sample.json/internal/path` The "path" is defined similar to a Sling suffix: it is the trailing part of the URL after the ".json/" extension.
+
+#### Enum class as datasource
+
+`@OptionSource` supports usage of Enum classes as data sources. Please take a look at the example below:
+
+```java
+
+@AemComponent(
+    path = "path/to/my/component",
+    title = "My AEM Component"
+)
+@Dialog
+public class MyComponent {
+    @DialogField
+    @RadioGroup(
+        buttonProvider = @OptionProvider(@OptionSource(
+            valueClass = MyEnum.class,
+            textMember = "getField",
+            valueMember = "methodName",
+            attributeMembers = {"defaultName", "anotherMethod"})
+        ))
+    String tag;
+}
+
+public enum MyEnum {
+    FIRST_OPTION("text1", "vale1", "first_attribute1", "second_attribute1"),
+    SECOND_OPTION("text2", "vale2", "first_attribute2", "second_attribute2"),
+    THIRD_OPTION("text3", "vale3", "first_attribute3", "second_attribute3");
+
+    private final String someField;
+    private final String someOtherField;
+    private final String anotherField;
+    private final String anotherSecondField;
+
+    MyEnum(String someField, String someOtherField, String anotherField, String anotherSecondField) {
+        this.someField = someField;
+        this.someOtherField = someOtherField;
+        this.anotherField = anotherField;
+        this.anotherSecondField = anotherSecondField;
+    }
+
+    public String getField() {
+        return this.someField;
+    }
+
+    public String methodName() {
+        return this.someOtherField;
+    }
+
+    public String defaultName() {
+        return this.anotherField;
+    }
+
+    public String anotherMethod() {
+        return this.anotherSecondField;
+    }
+}
+```
+As you can see from above, now we can populate `@OptionProvider` with `@OptionSource` build based on Enum class that is passed to _classValue_ (same works if we need a fallback option and use an Enum class as _fallbackClass_ property value). Working with Enums as `@OptionSource`'s, the main difference now is that _textMember_, _valueMember_, and _attributeMembers_ should accept Enum class public methods names. Such methods should return String or, otherwise the return Object value will be converted with corresponding toString() method. Other properties work the same way as with JCR node path or HTTP endpoints.
 
 #### Dynamic option change
 

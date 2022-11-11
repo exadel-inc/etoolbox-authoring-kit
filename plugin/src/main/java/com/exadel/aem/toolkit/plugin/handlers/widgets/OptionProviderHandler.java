@@ -50,7 +50,7 @@ abstract class OptionProviderHandler {
     boolean hasProvidedOptions(OptionProvider optionProvider) {
         boolean hasExternalOptions = ArrayUtils.isNotEmpty(optionProvider.value())
             && Arrays.stream(optionProvider.value())
-            .anyMatch(source -> (StringUtils.isNotBlank(source.value()) || source.enumClass() != _Default.class));
+            .anyMatch(source -> (StringUtils.isNotBlank(source.value()) || source.classValue() != _Default.class));
         boolean hasPrependedOptions = ArrayUtils.isNotEmpty(optionProvider.prepend())
             && Arrays.stream(optionProvider.prepend()).anyMatch(StringUtils::isNotEmpty);
         boolean hasAppendedOptions = ArrayUtils.isNotEmpty(optionProvider.append())
@@ -127,13 +127,11 @@ abstract class OptionProviderHandler {
      */
     private static void populateSourceAttributes(OptionSource optionSource, Target datasourceElement, String postfix) {
         datasourceElement.attribute(CoreConstants.PN_PATH + postfix,
-            optionSource.enumClass() != _Default.class ? optionSource.enumClass().getName() : optionSource.value());
-        if (StringUtils.isNotBlank(optionSource.fallback())) {
-            datasourceElement.attribute(DialogConstants.PN_FALLBACK_PATH + postfix, optionSource.fallback());
-        } else if (optionSource.fallbackEnumClass() != _Default.class) {
-            datasourceElement.attribute(DialogConstants.PN_FALLBACK_PATH + postfix,
-                optionSource.fallbackEnumClass().getName());
-        }
+            StringUtils.isNotBlank(optionSource.value()) ? optionSource.value() :
+                optionSource.classValue() != _Default.class ? optionSource.classValue().getName() : null);
+        datasourceElement.attribute(DialogConstants.PN_FALLBACK_PATH + postfix,
+            StringUtils.isNotBlank(optionSource.fallback()) ? optionSource.fallback() :
+                optionSource.fallbackClass() != _Default.class ? optionSource.fallbackClass().getName() : null);
         if (StringUtils.isNotBlank(optionSource.textMember())) {
             datasourceElement.attribute(DialogConstants.PN_TEXT_MEMBER + postfix, optionSource.textMember());
         }

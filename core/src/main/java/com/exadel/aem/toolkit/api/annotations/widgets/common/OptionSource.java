@@ -84,11 +84,11 @@ public @interface OptionSource {
      * If set, specifies an enum class the option can be transformed from.
      * @return {@link Class} value
      */
-    Class<?> enumClass() default _Default.class;
+    Class<?> classValue() default _Default.class;
 
     /**
      * If set, specifies a fallback enum class the option can be transformed from.
      * @return {@link Class} value
      */
-    Class<?> fallbackEnumClass() default _Default.class;
+    Class<?> fallbackClass() default _Default.class;
 }

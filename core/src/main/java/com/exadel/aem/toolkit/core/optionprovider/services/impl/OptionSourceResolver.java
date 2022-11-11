@@ -21,6 +21,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import com.day.cq.commons.jcr.JcrConstants;
@@ -121,6 +122,6 @@ interface OptionSourceResolver {
      * @return True or false
      */
     static boolean isClassName(String value) {
-        return Pattern.compile(ID_PATTERN + "(\\." + ID_PATTERN + ")*").matcher(value).matches();
+        return StringUtils.isNotBlank(value) && Pattern.compile(ID_PATTERN + "(\\." + ID_PATTERN + ")*").matcher(value).matches();
     }
 }
