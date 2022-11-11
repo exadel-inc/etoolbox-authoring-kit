@@ -178,7 +178,7 @@ public class EnumOptionSourceResolver implements OptionSourceResolver {
      */
     private String getEnumMethodInvokeResult(String methodName, Enum<?> enm) {
         try {
-            return clazz.getMethod(methodName).invoke(enm).toString();
+            return String.valueOf(clazz.getMethod(methodName).invoke(enm).toString());
         } catch (NoSuchMethodException ignore) {
             LOG.error("EnumOptionSourceResolver::resolve - there is no method {} at enum class {}",
                 methodName, clazz.getName());
