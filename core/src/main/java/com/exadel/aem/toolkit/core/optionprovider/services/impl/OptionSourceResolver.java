@@ -118,7 +118,7 @@ interface OptionSourceResolver {
 
     /**
      * Checks if the provided string is a class name. Supports nested classes as well.
-     * @param value a class name string
+     * @param value A class name string
      * @return True or false
      */
     static boolean isClassName(String value) {

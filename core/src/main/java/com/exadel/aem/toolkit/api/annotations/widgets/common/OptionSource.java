@@ -81,13 +81,13 @@ public @interface OptionSource {
     StringTransformation valueTransform() default StringTransformation.NONE;
 
     /**
-     * If set, specifies an enum class the option can be transformed from.
+     * If set, specifies an enum class the options can be transformed from.
      * @return {@link Class} value
      */
     Class<?> classValue() default _Default.class;
 
     /**
-     * If set, specifies a fallback enum class the option can be transformed from.
+     * If set, specifies a fallback enum class the options can be transformed from.
      * @return {@link Class} value
      */
     Class<?> fallbackClass() default _Default.class;
