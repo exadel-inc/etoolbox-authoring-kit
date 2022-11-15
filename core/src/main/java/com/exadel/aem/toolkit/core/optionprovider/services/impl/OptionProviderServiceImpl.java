@@ -14,13 +14,11 @@
 package com.exadel.aem.toolkit.core.optionprovider.services.impl;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -39,6 +37,8 @@ import com.day.cq.commons.jcr.JcrConstants;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
+import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.OptionSourceResolver;
+import com.exadel.aem.toolkit.core.optionprovider.utils.PatternUtil;
 
 /**
  * Implements {@link OptionProviderService} to prepare option sets for Granite-compliant custom data sources used in
@@ -46,10 +46,6 @@ import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService
  */
 @Component(service = OptionProviderService.class)
 public class OptionProviderServiceImpl implements OptionProviderService {
-
-    private static final String FULL_STRING_MATCH_TEMPLATE = "^%s$";
-    private static final String USER_WILDCARD_PATTERN = "(?<![\\\\'])\\*";
-    private static final String REGEXP_WILDCARD_PATTERN = ".*";
 
     /**
      * {@inheritDoc}
@@ -65,11 +61,11 @@ public class OptionProviderServiceImpl implements OptionProviderService {
 
         // For each of the paths try retrieve a list of options
         for (PathParameters pathParameters : parameters.getPathParameters()) {
-            Resource datasourceResource = OptionSourceResolver.resolve(request, pathParameters);
-            if (datasourceResource == null || datasourceResource instanceof NonExistingResource) {
+            OptionSourceResolutionResult resolutionResult = OptionSourceResolver.resolve(request, pathParameters);
+            if (resolutionResult == null || resolutionResult.getDataResource() instanceof NonExistingResource) {
                 continue;
             }
-            options.addAll(getOptions(datasourceResource, pathParameters));
+            options.addAll(getOptions(resolutionResult.getDataResource(), resolutionResult.getPathParameters()));
         }
 
         // Transform the resulting collection to sortable list and sort it as optioned by user
@@ -140,6 +136,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
             .attributes(parameters.getAttributes())
             .textTransform(parameters.getTextTransform())
             .valueTransform(parameters.getValueTransform())
+            .uniqueByName(resource.getValueMap().containsKey(CoreConstants.PARAMETER_NAME))
             .build();
     }
 
@@ -181,16 +178,11 @@ public class OptionProviderServiceImpl implements OptionProviderService {
         if (CollectionUtils.isEmpty(options) || ArrayUtils.isEmpty(excludeStrings)) {
             return;
         }
-        List<Pattern> patterns = Arrays.stream(excludeStrings)
-            .filter(StringUtils::isNotBlank)
-            .map(str -> String.format(FULL_STRING_MATCH_TEMPLATE, str.replaceAll(USER_WILDCARD_PATTERN, REGEXP_WILDCARD_PATTERN)))
-            .map(str -> Pattern.compile(str, Pattern.CASE_INSENSITIVE))
-            .collect(Collectors.toList());
-
         List<Option> excludedOptions = options
             .stream()
-            .filter(option -> patterns.stream().anyMatch(pattern -> pattern.matcher(option.getValue()).matches()
-                || pattern.matcher(option.getText()).matches()))
+            .filter(option -> PatternUtil.isMatch(option.getName(), excludeStrings)
+                || PatternUtil.isMatch(option.getValue(), excludeStrings)
+                || PatternUtil.isMatch(option.getText(), excludeStrings))
             .collect(Collectors.toList());
         options.removeAll(excludedOptions);
     }

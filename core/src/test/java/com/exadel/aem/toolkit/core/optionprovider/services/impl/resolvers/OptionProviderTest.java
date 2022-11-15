@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.optionprovider.services.impl;
+package com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -33,16 +33,17 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
+import io.wcm.testing.mock.aem.junit.AemContext;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
-
-import io.wcm.testing.mock.aem.junit.AemContext;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionProviderServiceImpl;
+import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionSourceParameters;
 
 public class OptionProviderTest {
 

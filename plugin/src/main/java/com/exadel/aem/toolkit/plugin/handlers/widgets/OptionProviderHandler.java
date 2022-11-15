@@ -17,6 +17,8 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 
+import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -41,6 +43,8 @@ import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 abstract class OptionProviderHandler {
 
     private static final String RESOURCE_TYPE_PREFIX = "/apps/";
+    private static final String ERROR_MESSAGE = "value and classValue OptionSource attributes both can't be empty, " +
+        "please provide either one attribute";
 
     /**
      * Gets whether the given {@link OptionProvider} contains one or more path settings to be rendered

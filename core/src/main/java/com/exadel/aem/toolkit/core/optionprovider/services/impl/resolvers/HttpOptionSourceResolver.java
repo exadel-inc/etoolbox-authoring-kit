@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.optionprovider.services.impl;
+package com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -39,11 +39,14 @@ import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.day.cq.commons.jcr.JcrConstants;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionSourceResolutionResult;
+import com.exadel.aem.toolkit.core.optionprovider.services.impl.PathParameters;
 
 /**
  * Implements {@link OptionSourceResolver} to facilitate extracting option datasources from HTTP endpoints
@@ -78,30 +81,14 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
      * {@inheritDoc}
      */
     @Override
-    public Resource pathResolve(SlingHttpServletRequest request, PathParameters pathParameters) {
-        return resolve(request, pathParameters.getPath());
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Resource fallbackResolve(SlingHttpServletRequest request, PathParameters pathParameters) {
-        return resolve(request, pathParameters.getFallbackPath());
-    }
-
-    /**
-     * This method retrieves the needed data by making an HTTP request to
-     * @param path    {@link String} http address and with the help of
-     * @param request {@link SlingHttpServletRequest}
-     * @return {@link Resource} build with the json info received from HTTP request
-     */
-    private Resource resolve(SlingHttpServletRequest request, String path) {
+    public OptionSourceResolutionResult resolve(SlingHttpServletRequest request, PathParameters pathParameters, String path) {
         String internalPath = getInternalPath(path);
         String url = StringUtils.removeEnd(path, internalPath);
         String content = getResponseContent(url);
         JsonNode jsonNode = parseJson(content, internalPath);
-        return jsonNode != null ? createResource(request, jsonNode) : null;
+        return jsonNode != null
+            ? new OptionSourceResolutionResult(createResource(request, jsonNode), pathParameters)
+            : null;
     }
 
     /**
@@ -204,14 +191,14 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
             ValueMapResource valueMapResource = new ValueMapResource(
                 request.getResourceResolver(),
                 StringUtils.EMPTY,
-                StringUtils.EMPTY,
+                JcrConstants.NT_UNSTRUCTURED,
                 valueMap);
             children = Collections.singletonList(valueMapResource);
         }
         return new ValueMapResource(
             request.getResourceResolver(),
             StringUtils.EMPTY,
-            StringUtils.EMPTY,
+            JcrConstants.NT_UNSTRUCTURED,
             new ValueMapDecorator(Collections.emptyMap()),
             children);
     }

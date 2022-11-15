@@ -44,6 +44,8 @@ public class CoreConstants {
 
     public static final String RELATIVE_PATH_PREFIX = "./";
 
+    public static final String WILDCARD = "*";
+
     /**
      * Default (instantiation-restricting) constructor
      */
