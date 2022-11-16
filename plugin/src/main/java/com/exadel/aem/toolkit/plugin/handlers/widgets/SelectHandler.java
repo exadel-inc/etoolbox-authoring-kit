@@ -38,8 +38,8 @@ public class SelectHandler extends OptionProviderHandler implements Handler {
     @Override
     public void accept(Source source, Target target) {
         Select select = source.adaptTo(Select.class);
-        if (hasProvidedOptions(select.optionProvider())) {
-            appendOptionProvider(select.optionProvider(), target);
+        if (hasProvidedOptions(select.optionProvider(), source)) {
+            appendOptionProvider(select.optionProvider(), target, source);
             return;
         }
         if (ArrayUtils.isNotEmpty(select.options())) {

@@ -17,9 +17,15 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.buttongroup.ButtonGroup;
+import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
+import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
+import com.exadel.aem.toolkit.api.handlers.Source;
+
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
@@ -43,18 +49,20 @@ import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 abstract class OptionProviderHandler {
 
     private static final String RESOURCE_TYPE_PREFIX = "/apps/";
-    private static final String ERROR_MESSAGE = "value and classValue OptionSource attributes both can't be empty, " +
-        "please provide either one attribute";
+    private static final String ERROR_MESSAGE = "Field \"%s\" annotated with %s has an OptionSource with both " +
+                                                "empty value and classValue attributes, " +
+                                                "please provide either one attribute.";
 
     /**
      * Gets whether the given {@link OptionProvider} contains one or more path settings to be rendered
      * @param optionProvider Values provided by a {@code OptionProvider} annotation
      * @return True or false
      */
-    boolean hasProvidedOptions(OptionProvider optionProvider) {
+    boolean hasProvidedOptions(OptionProvider optionProvider,Source source) {
+        validateOptionProviderValue(optionProvider, source);
         boolean hasExternalOptions = ArrayUtils.isNotEmpty(optionProvider.value())
             && Arrays.stream(optionProvider.value())
-            .anyMatch(source -> (StringUtils.isNotBlank(source.value()) || source.classValue() != _Default.class));
+            .anyMatch(s -> (StringUtils.isNotBlank(s.value()) || s.classValue() != _Default.class));
         boolean hasPrependedOptions = ArrayUtils.isNotEmpty(optionProvider.prepend())
             && Arrays.stream(optionProvider.prepend()).anyMatch(StringUtils::isNotEmpty);
         boolean hasAppendedOptions = ArrayUtils.isNotEmpty(optionProvider.append())
@@ -82,8 +90,8 @@ abstract class OptionProviderHandler {
      * @param optionProvider Values provided by a {@code OptionProvider} annotation
      * @param target         {@code Target} instance to store data in
      */
-    void appendOptionProvider(OptionProvider optionProvider, Target target) {
-        if (!hasProvidedOptions(optionProvider)) {
+    void appendOptionProvider(OptionProvider optionProvider, Target target, Source source) {
+        if (!hasProvidedOptions(optionProvider, source)) {
             return;
         }
         Target datasourceElement = target
@@ -106,6 +114,17 @@ abstract class OptionProviderHandler {
         }
     }
 
+    void validateOptionProviderValue(OptionProvider provider, Source source) {
+        boolean invalid = Arrays.stream(provider.value())
+            .anyMatch(s -> (StringUtils.isBlank(s.value()) && s.classValue() == _Default.class));
+        if (invalid) {
+            String className = source.adaptTo(Select.class) != null ? Select.class.getSimpleName() :
+                source.adaptTo(RadioGroup.class) != null ? RadioGroup.class.getSimpleName() :
+                    ButtonGroup.class.getSimpleName();
+            throw new ValidationException(ERROR_MESSAGE, source.getName(), className);
+        }
+    }
+
     /**
      * Appends data structure related to {@link DataSource} value to the provided {@link Target}
      * @param dataSource Values provided by a {@code DataSource} annotation
@@ -123,7 +142,7 @@ abstract class OptionProviderHandler {
     }
 
     /**
-     * Called by {@link OptionProviderHandler#appendOptionProvider(OptionProvider, Target)} to store options related
+     * Called by {@link OptionProviderHandler#appendOptionProvider(OptionProvider, Target, Source)} to store options related
      * to the particular option path into the given datasource {@code Target}
      * @param optionSource      Values provided by an {@code OptionSource} member of an {@code OptionProvider} annotation
      * @param datasourceElement {@code Target} instance to store data in
