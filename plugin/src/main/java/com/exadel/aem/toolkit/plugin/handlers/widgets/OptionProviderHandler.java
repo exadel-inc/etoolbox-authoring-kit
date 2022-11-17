@@ -16,26 +16,23 @@ package com.exadel.aem.toolkit.plugin.handlers.widgets;
 import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.List;
-
-import com.exadel.aem.toolkit.api.annotations.widgets.buttongroup.ButtonGroup;
-import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
-import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
-import com.exadel.aem.toolkit.api.handlers.Source;
-
-import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
+import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.reflections.Reflections;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.widgets.DataSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionSource;
+import com.exadel.aem.toolkit.api.handlers.Handles;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.utils.ArrayUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
@@ -52,6 +49,7 @@ abstract class OptionProviderHandler {
     private static final String ERROR_MESSAGE = "Field \"%s\" annotated with %s has an OptionSource with both " +
                                                 "empty value and classValue attributes, " +
                                                 "please provide either one attribute.";
+    private static final String HANDLERS_WIDGETS_PATH = "com.exadel.aem.toolkit.plugin.handlers.widgets";
 
     /**
      * Gets whether the given {@link OptionProvider} contains one or more path settings to be rendered
@@ -117,11 +115,31 @@ abstract class OptionProviderHandler {
     void validateOptionProviderValue(OptionProvider provider, Source source) {
         boolean invalid = Arrays.stream(provider.value())
             .anyMatch(s -> (StringUtils.isBlank(s.value()) && s.classValue() == _Default.class));
+
         if (invalid) {
-            String className = source.adaptTo(Select.class) != null ? Select.class.getSimpleName() :
-                source.adaptTo(RadioGroup.class) != null ? RadioGroup.class.getSimpleName() :
-                    ButtonGroup.class.getSimpleName();
-            throw new ValidationException(ERROR_MESSAGE, source.getName(), className);
+            Reflections reflections = new Reflections(HANDLERS_WIDGETS_PATH);
+            Set<Class<? extends OptionProviderHandler>> optionProviderHandlersSubtypes
+                = reflections.getSubTypesOf(OptionProviderHandler.class);
+            String fieldAnnotationName = null;
+
+            for (Class<? extends OptionProviderHandler> subtype : optionProviderHandlersSubtypes) {
+                Annotation handlerAnnotation = Arrays.stream(subtype.getAnnotations())
+                    .filter(annotation -> annotation.annotationType().equals(Handles.class))
+                    .findFirst().orElse(null);
+
+                if (handlerAnnotation == null) {
+                    break;
+                }
+
+                Class<? extends Annotation> handlerAnnotationValue = ((Handles) handlerAnnotation).value()[0];
+
+                if (source.adaptTo(handlerAnnotationValue) != null) {
+                    fieldAnnotationName = handlerAnnotationValue.getSimpleName();
+                    break;
+                }
+            }
+
+            throw new ValidationException(ERROR_MESSAGE, source.getName(), fieldAnnotationName);
         }
     }
 
