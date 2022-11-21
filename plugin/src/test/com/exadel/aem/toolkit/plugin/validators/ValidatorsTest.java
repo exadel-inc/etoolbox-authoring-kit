@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.plugin.validators;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
@@ -32,9 +31,6 @@ public class ValidatorsTest {
 
     @Rule
     public PluginContextRenderingRule pluginContext = new PluginContextRenderingRule(fileSystemHost.getFileSystem());
-
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
 
     @Test
     public void testNonBlankValidation() {
