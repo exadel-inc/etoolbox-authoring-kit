@@ -39,7 +39,6 @@ public class PackageInfoTest {
 
     @Test
     public void testCreatePackageInfo() {
-        // Throws a wrapped FileAlreadyExistsException unless a check for an existing "version.info" file is implemented
         Map<String, String> versionInfo1 = pluginContext.getPackageVersionInfo();
         String timestampString1 = versionInfo1.getOrDefault(TestConstants.PROPERTY_TIMESTAMP, StringUtils.EMPTY);
 
