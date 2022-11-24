@@ -23,30 +23,23 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.request.RequestParameterMap;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestParam;
-import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
-
+import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 /**
  * Injects into a Sling model the value of a HTTP request parameter (multiple parameters) obtained
  * via a {@code SlingHttpServletRequest} object
  * @see RequestParam
- * @see Injector
+ * @see BaseInjector
  */
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
-public class RequestParamInjector implements Injector {
-
-    private static final Logger LOG = LoggerFactory.getLogger(RequestParamInjector.class);
+public class RequestParamInjector extends BaseInjector<RequestParam> {
 
     public static final String NAME = "eak-request-parameter-injector";
 
@@ -62,31 +55,25 @@ public class RequestParamInjector implements Injector {
     }
 
     /**
-     * Attempts to inject a value into the given adaptable
-     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param name             Name of the Java class member to inject the value into
-     * @param type             Type of receiving Java class member
-     * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
-     *                         annotation objects
-     * @param callbackRegistry {@link DisposalCallbackRegistry} object
-     * @return The value to inject, or null in case injection is not possible
-     * @see Injector
+     * {@inheritDoc}
+     */
+    @Override
+    public RequestParam getAnnotation(AnnotatedElement element) {
+        return element.getDeclaredAnnotation(RequestParam.class);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public Object getValue(
-        @Nonnull Object adaptable,
+        Object adaptable,
         String name,
-        @Nonnull Type type,
-        @Nonnull AnnotatedElement element,
-        @Nonnull DisposalCallbackRegistry callbackRegistry) {
-
-        RequestParam annotation = element.getDeclaredAnnotation(RequestParam.class);
-        if (annotation == null) {
-            return null;
-        }
+        Type type,
+        RequestParam annotation) {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
-        if (request == null) {
+        if(request == null) {
             return null;
         }
 
@@ -118,7 +105,6 @@ public class RequestParamInjector implements Injector {
             return request.getRequestParameterMap();
         }
 
-        LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
         return null;
     }
 
@@ -135,4 +121,5 @@ public class RequestParamInjector implements Injector {
             .stream()
             .filter(requestParameter -> StringUtils.equals(name, requestParameter.getName()));
     }
+
 }

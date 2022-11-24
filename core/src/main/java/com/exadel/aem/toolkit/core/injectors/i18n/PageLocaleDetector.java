@@ -17,10 +17,10 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 
@@ -51,3 +51,4 @@ public class PageLocaleDetector implements Function<Object, Locale> {
         return page.getLanguage();
     }
 }
+

@@ -20,7 +20,7 @@ class InjectorConstants {
 
     public static final int SERVICE_RANKING = 10000;
 
-    public static final String EXCEPTION_UNSUPPORTED_TYPE = "Injector doesn't support type {}";
+    public static final String EXCEPTION = "Could not inject a value for annotation {} in class {}";
 
     /**
      * Default (instantiation-restricting) constructor.

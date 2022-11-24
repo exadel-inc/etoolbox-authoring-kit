@@ -23,34 +23,28 @@ import java.util.Map;
 import java.util.stream.IntStream;
 import javax.annotation.Nonnull;
 
-import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.EToolboxList;
+import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
-import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 
 /**
  * Injects into a Sling model entries of an EToolbox List obtained via a {@code ResourceResolver} instance
  * @see ListHelper
  * @see EToolboxList
- * @see Injector
+ * @see BaseInjector
  */
 @Component(service = Injector.class,
     property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
 )
-public class EToolboxListInjector implements Injector {
-
-    private static final Logger LOG = LoggerFactory.getLogger(EToolboxListInjector.class);
+public class EToolboxListInjector extends BaseInjector<EToolboxList> {
 
     public static final String NAME = "eak-etoolbox-list-injector";
 
@@ -66,29 +60,18 @@ public class EToolboxListInjector implements Injector {
     }
 
     /**
-     * Attempts to inject list entries into the given adaptable
-     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param name             Name of the Java class member to inject the value into
-     * @param type             Type of receiving Java class member
-     * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
-     *                         annotation objects
-     * @param callbackRegistry {@link DisposalCallbackRegistry} object
-     * @return The value to inject, or null in case injection is not possible
-     * @see Injector
-     * @see ListHelper
+     * {@inheritDoc}
      */
     @Override
-    public Object getValue(
-        @Nonnull Object adaptable,
-        String name,
-        @Nonnull Type type,
-        @Nonnull AnnotatedElement element,
-        @Nonnull DisposalCallbackRegistry callbackRegistry) {
+    public EToolboxList getAnnotation(AnnotatedElement element) {
+        return element.getDeclaredAnnotation(EToolboxList.class);
+    }
 
-        EToolboxList annotation = element.getDeclaredAnnotation(EToolboxList.class);
-        if (annotation == null) {
-            return null;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object getValue(Object adaptable, String name, Type type, EToolboxList annotation) {
 
         ResourceResolver resourceResolver = AdaptationUtil.getResourceResolver(adaptable);
         if (resourceResolver == null) {
@@ -105,7 +88,6 @@ public class EToolboxListInjector implements Injector {
             return getArray(resourceResolver, annotation.value(), (Class<?>) type);
         }
 
-        LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
         return null;
     }
 
