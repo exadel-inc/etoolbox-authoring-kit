@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -111,5 +112,9 @@ public class PluginContextRenderingRule extends PluginContextRule {
                     e.getMessage().contains(message));
             }
         }
+    }
+
+    public Map<String, String> getPackageVersionInfo() {
+        return VersionInfoRenderingUtil.getVersionInfo(fileSystem);
     }
 }
