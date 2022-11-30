@@ -87,7 +87,8 @@
 
     async function getApiKey() {
         return new Promise((resolve) => {
-            if (sessionStorage.getItem(PROPERTY_KEY)) {
+            const storedKey = sessionStorage.getItem(PROPERTY_KEY);
+            if (storedKey && storedKey !== 'undefined') {
                 resolve(sessionStorage.getItem(PROPERTY_KEY));
             } else {
                 fetch(KEY_ENDPONT)

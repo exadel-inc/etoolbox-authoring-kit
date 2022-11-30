@@ -22,7 +22,7 @@
         const $dialog = $(e.target);
         $dialog.find(INPUT_SELECTOR).each(function () {
             const $input = $(this);
-            const buttonId = 'input-' + $input.attr('name').replace(/^[^\w]+|[^\w]+$/, '');
+            const buttonId = 'input-' + $input.attr('name').replace(/^[^\w]+|[^\w]+$/, '').replace(':', '-');
             const menuContent = '<coral-buttonlist>' +
                 ns.Writesonic.menuOptions
                     .map(option => {
