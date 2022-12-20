@@ -6,7 +6,7 @@ seoTitle: Installation - Exadel Authoring Kit
 
 ## Using precompiled artifacts
 
-1) Insert dependency to the core module in the _\<dependencies>_ section of the POM file of your **bundle** module:
+1) Insert dependency to the core module in the _\<dependencies>_ section of the POM file of your **bundle** (**_core_**) module:
 ```xml
 <dependency>
    <groupId>com.exadel.etoolbox</groupId>
@@ -15,7 +15,7 @@ seoTitle: Installation - Exadel Authoring Kit
    <scope>provided</scope> <!-- Do not use compile or runtime scope!-->
 </dependency>
 ```
-2) Insert plugin's config in the _\<plugins>_ section of the POM file of your **package** module:
+2) Insert plugin's config in the _\<plugins>_ section of the POM file of your **package** (**_ui.apps_**) module:
 ```xml
 
 <plugin>
