@@ -8,7 +8,7 @@ on:
     workflow_dispatch:
 
 env:
-    node-version: 16.x
+    node-version: 18.x
 
 jobs:
     ui-lint-main:
