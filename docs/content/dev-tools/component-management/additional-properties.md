@@ -56,13 +56,13 @@ For these goals the `@CommonProperties` annotation is designed. It accepts simil
     @CommonProperty(scope = Scopes.CQ_DIALOG, name = "numericAttribute", value = "{Long}-1000"),
     @CommonProperty(scope = Scopes.CQ_EDIT_CONFIG, name = "arrayAttribute", value = "[any,many,minny,moe]"),
     @CommonProperty(
-        scope = XmlScope.CQ_EDIT_CONFIG,
+        scope = Scopes.CQ_EDIT_CONFIG,
         path = "/root/inplaceEditing/config/rtePlugins/edit/htmlPasteRules/table",
         name = "allow",
         value = "{Boolean}true"
     ),
     @CommonProperty(
-        scope = XmlScope.CQ_DIALOG,
+        scope = Scopes.CQ_DIALOG,
         path = "//*[@size='L']",
         name = "size",
         value = "S"
