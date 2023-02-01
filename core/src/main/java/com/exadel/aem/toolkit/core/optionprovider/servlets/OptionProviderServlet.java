@@ -28,6 +28,7 @@ import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.HttpConstants;
+import org.apache.sling.api.servlets.ServletResolverConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.json.JSONException;
 import org.json.JSONWriter;
@@ -39,6 +40,7 @@ import com.adobe.granite.ui.components.ds.SimpleDataSource;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
 
 /**
@@ -51,9 +53,9 @@ import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService
 @Component(
     service = Servlet.class,
     property = {
-        "sling.servlet.paths=/apps/" + ResourceTypes.OPTION_PROVIDER,
-        "sling.servlet.resourceTypes=/apps/" + ResourceTypes.OPTION_PROVIDER,
-        "sling.servlet.methods=" + HttpConstants.METHOD_GET
+        ServletResolverConstants.SLING_SERVLET_PATHS + CoreConstants.OPERATOR_EQUALS + "/apps/" + ResourceTypes.OPTION_PROVIDER,
+        ServletResolverConstants.SLING_SERVLET_RESOURCE_TYPES + CoreConstants.OPERATOR_EQUALS + "/apps/" + ResourceTypes.OPTION_PROVIDER,
+        ServletResolverConstants.SLING_SERVLET_METHODS + CoreConstants.OPERATOR_EQUALS + HttpConstants.METHOD_GET
     })
 public class OptionProviderServlet extends SlingSafeMethodsServlet {
     private static final String CONTENT_TYPE_JSON = "application/json;charset=utf-8";

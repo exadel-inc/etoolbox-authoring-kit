@@ -30,6 +30,7 @@ import org.apache.sling.api.resource.ResourceMetadata;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.servlets.HttpConstants;
+import org.apache.sling.api.servlets.ServletResolverConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.osgi.service.component.annotations.Component;
@@ -49,8 +50,8 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 @Component(
     service = Servlet.class,
     property = {
-        "sling.servlet.resourceTypes=/apps/etoolbox-authoring-kit/datasources/list-items",
-        "sling.servlet.methods=" + HttpConstants.METHOD_GET
+        ServletResolverConstants.SLING_SERVLET_RESOURCE_TYPES + CoreConstants.OPERATOR_EQUALS + "/apps/etoolbox-authoring-kit/datasources/list-items",
+        ServletResolverConstants.SLING_SERVLET_METHODS + CoreConstants.OPERATOR_EQUALS + HttpConstants.METHOD_GET
     }
 )
 public class ItemComponentsServlet extends SlingSafeMethodsServlet {

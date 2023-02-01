@@ -49,9 +49,9 @@ import com.exadel.aem.toolkit.core.policymanagement.models.PageInfo;
 @org.osgi.service.component.annotations.Component(
     property = {
         Constants.SERVICE_RANKING + ":Integer=" + Integer.MIN_VALUE,
-        EngineConstants.SLING_FILTER_SCOPE + "=" + EngineConstants.FILTER_SCOPE_COMPONENT,
+        EngineConstants.SLING_FILTER_SCOPE + CoreConstants.OPERATOR_EQUALS + EngineConstants.FILTER_SCOPE_COMPONENT,
         "sling.filter.resourceTypes=cq/gui/components/siteadmin/admin/page/winmode",
-        EngineConstants.SLING_FILTER_PATTERN + "=/mnt/overlay/wcm/core/content/editor/jcr:content"
+        EngineConstants.SLING_FILTER_PATTERN + CoreConstants.OPERATOR_EQUALS + "/mnt/overlay/wcm/core/content/editor/jcr:content"
     }
 )
 public class TopLevelPolicyFilter implements Filter {

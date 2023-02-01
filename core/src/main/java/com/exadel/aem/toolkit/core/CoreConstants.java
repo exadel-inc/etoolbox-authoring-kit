@@ -20,6 +20,11 @@ public class CoreConstants {
     public static final String NN_ITEM = "item";
     public static final String NN_LIST = "list";
 
+    public static final String OPERATOR_EQUALS = "=";
+
+    public static final String PARAMETER_ID = "@id";
+    public static final String PARAMETER_NAME = "@name";
+
     public static final String PN_APPEND = "append";
     public static final String PN_ITEM_RESOURCE_TYPE = "itemResourceType";
     public static final String PN_LIMIT = "limit";
@@ -32,12 +37,10 @@ public class CoreConstants {
     public static final String PN_UPDATE_COMPONENT_LIST = "updatecomponentlist";
     public static final String PN_VALUE = "value";
 
-    public static final String PARAMETER_ID = "@id";
-    public static final String PARAMETER_NAME = "@name";
-
     public static final String SEPARATOR_AT = "@";
     public static final String SEPARATOR_COLON = ":";
     public static final String SEPARATOR_COMMA = ",";
+    public static final String SEPARATOR_DOT = ".";
     public static final String SEPARATOR_HYPHEN = "-";
     public static final String SEPARATOR_SLASH = "/";
     public static final String SEPARATOR_UNDERSCORE = "_";
