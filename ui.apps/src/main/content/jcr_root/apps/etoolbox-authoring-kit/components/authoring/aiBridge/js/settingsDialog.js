@@ -13,32 +13,32 @@
  */
 (function (ns) {
     'use strict';
-    ns.Writesonic = ns.Writesonic || {};
+    ns.Ai = ns.Ai || {};
 
-    ns.Writesonic.openSettingsDialog = function () {
-        const engineOptions = ns.Writesonic.settings.engine.options.map(item => `<coral-select-item>${item}</coral-select-item>`).join('');
-        const languageOptions = ns.Writesonic.settings.language.options.map(item => `<coral-select-item>${item}</coral-select-item>`).join('');
-        const toneOptions = ns.Writesonic.settings.tone.options.map(item => `<coral-select-item>${item}</coral-select-item>`).join('');
+    ns.Ai.openSettingsDialog = function () {
+        const engineOptions = ns.Ai.settings.engine.options.map(item => `<coral-select-item>${item}</coral-select-item>`).join('');
+        const languageOptions = ns.Ai.settings.language.options.map(item => `<coral-select-item>${item}</coral-select-item>`).join('');
+        const toneOptions = ns.Ai.settings.tone.options.map(item => `<coral-select-item>${item}</coral-select-item>`).join('');
 
         produceSettingsDialog({
-            id: 'writesonic-settings',
+            id: 'ai-settings',
             header: {
-                innerHTML: 'Writesonic Settings'
+                innerHTML: 'AI Bridge Settings'
             },
             content: {
                 innerHTML: `
                             <label id="label-engine" class="coral-Form-fieldlabel">Engine</label>
-                            <coral-select data-prop="eak.writesonic.engine" class="coral-Form-field" labelledby="label-engine">${engineOptions}</coral-select>
+                            <coral-select data-prop="eak.ai.engine" class="coral-Form-field" labelledby="label-engine">${engineOptions}</coral-select>
                             <label id="label-language" class="coral-Form-fieldlabel">Language</label>
-                            <coral-select data-prop="eak.writesonic.language" class="coral-Form-field" labelledby="label-language">${languageOptions}</coral-select>
+                            <coral-select data-prop="eak.ai.language" class="coral-Form-field" labelledby="label-language">${languageOptions}</coral-select>
                             <label id="label-tone" class="coral-Form-fieldlabel">Tone of voice</label>
-                            <coral-select data-prop="eak.writesonic.tone" class="coral-Form-field" labelledby="label-tone">${toneOptions}</coral-select>
+                            <coral-select data-prop="eak.ai.tone" class="coral-Form-field" labelledby="label-tone">${toneOptions}</coral-select>
                     `
             },
             footer: {
                 innerHTML: '<button is="coral-button" variant="primary">Ok</button><button is="coral-button" variant="secondary" coral-close>Cancel</button>'
             }
-        }, ns.Writesonic.settings);
+        }, ns.Ai.settings);
     };
 
     function produceSettingsDialog(content, settings) {

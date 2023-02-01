@@ -10,10 +10,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */(function (RTE, Class) {
+ */
+(function (RTE, Class) {
     'use strict';
 
-    const FEATURE = 'writesonic';
+    const FEATURE = 'ai';
     RTE.ui.cui.PopupButton = new Class({
         toString: 'PopupButton',
 
@@ -22,8 +23,8 @@
         notifyToolbar: function (toolbar, skipHandlers) {
             this.superClass.notifyToolbar.call(this, toolbar, skipHandlers);
 
-            const $tbCont = RTE.UIUtils.getToolbarContainer(toolbar.getToolbarContainer(), toolbar.tbType);
-            this.$ui = $tbCont.find(`button[data-action^="#${FEATURE}"]`);
+            const $tbContainer = RTE.UIUtils.getToolbarContainer(toolbar.getToolbarContainer(), toolbar.tbType);
+            this.$ui = $tbContainer.find(`button[data-action^="#${FEATURE}"]`);
             this.superClass.$ui = this.$ui;
             this.superClass.toolbar = toolbar;
             this.setDisabled(true);
@@ -33,8 +34,7 @@
             }
 
             const self = this;
-            const $childUi = $tbCont.find(`button[data-action^="${FEATURE}#"]`);
-            $childUi.on('click.rte-handler', function () {
+            $tbContainer.on('click.rte-handler', `button[data-action^="${FEATURE}#"]`, function () {
                 const $this = $(this);
                 const action = $this.data('action').split('#')[1];
                 const editContext = self.plugin.editorKernel.getEditContext();

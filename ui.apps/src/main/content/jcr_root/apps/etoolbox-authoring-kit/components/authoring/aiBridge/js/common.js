@@ -14,32 +14,35 @@
 (function (ns) {
     'use strict';
 
-    const SERVICE_ENDPOINT = 'https://api.writesonic.com/v1/business/content/{command}?engine={engine}&language={language}';
-    const KEY_ENDPONT = '/conf/etoolbox-authoring-kit/components/authoring/rte/writesonic-bridge.json';
+    const SERVICE_ENDPOINT = '/apps/etoolbox-authoring-kit/ai/exec?cmd={command}&text={payload}{params}';
+    const FACILITIES_ENDPOINT = '/apps/etoolbox-authoring-kit/ai/facilities';
 
-    const DEFAULT_COMMAND_ID = 'content-rephrase';
-    const DEFAULT_PAYLOAD_NAME = 'content_to_rephrase';
+    // const SERVICE_ENDPOINT = 'https://api.writesonic.com/v1/business/content/{command}?engine={engine}&language={language}';
+    // const KEY_ENDPOINT = '/conf/etoolbox-authoring-kit/components/authoring/ai-bridge.json';
 
-    const MENU_OPTIONS = [
-        { id: 'sentence-expand', title: 'Expand', icon: 'textEdit', params: { payloadName: 'content_to_expand' } },
-        { id: 'content-shorten', title: 'Shorten', icon: 'textEdit', params: { payloadName: 'content_to_shorten' } },
-        { id: DEFAULT_COMMAND_ID, title: 'Rephrase', icon: 'textEdit', params: { payloadName: DEFAULT_PAYLOAD_NAME } },
-        { id: 'settings', title: 'Settings', icon: 'gears' }
-    ];
+    // const DEFAULT_COMMAND_ID = 'content-rephrase';
+    // const DEFAULT_PAYLOAD_NAME = 'content_to_rephrase';
 
-    const PROPERTY_ENGINE = 'eak.writesonic.engine';
+    // const MENU_OPTIONS = [
+    //     { id: 'sentence-expand', title: 'Expand', icon: 'textEdit', params: { payloadName: 'content_to_expand' } },
+    //     { id: 'content-shorten', title: 'Shorten', icon: 'textEdit', params: { payloadName: 'content_to_shorten' } },
+    //     { id: DEFAULT_COMMAND_ID, title: 'Rephrase', icon: 'textEdit', params: { payloadName: DEFAULT_PAYLOAD_NAME } },
+    //     { id: 'settings', title: 'Settings', icon: 'gears' }
+    // ];
+
+    const PROPERTY_ENGINE = 'eak.ai.engine';
     const DEFAULT_ENGINE = 'economy';
     const ENGINE_OPTIONS = ['business', DEFAULT_ENGINE];
 
-    const PROPERTY_LANGUAGE = 'eak.writesonic.language';
+    const PROPERTY_LANGUAGE = 'eak.ai.language';
     const DEFAULT_LANGUAGE = 'en';
     const LANGUAGE_OPTIONS = [DEFAULT_LANGUAGE, 'nl', 'fr', 'de', 'it', 'pl', 'es', 'pt-pt', 'pt-br', 'ru', 'ja', 'zh', 'bg', 'cs', 'da', 'el', 'hu', 'lt', 'lv', 'ro', 'sk', 'sl', 'sv', 'fi', 'et'];
 
-    const PROPERTY_TONE = 'eak.writesonic.tone';
+    const PROPERTY_TONE = 'eak.ai.tone';
     const DEFAULT_TONE = 'professional';
     const TONE_OPTIONS = ['excited', DEFAULT_TONE, 'funny', 'encouraging', 'dramatic', 'witty', 'sarcastic', 'engaging', 'creative'];
 
-    const PROPERTY_KEY = 'eak.writesonic.key';
+    // const PROPERTY_KEY = 'eak.ai.writesonic-key';
 
     const SETTINGS = {
         engine: {
@@ -59,12 +62,18 @@
         }
     };
 
-    ns.Writesonic = ns.Writesonic || {};
-    Object.assign(ns.Writesonic, {
-        menuOptions: MENU_OPTIONS,
+    ns.Ai = ns.Ai || {};
+    Object.assign(ns.Ai, {
+        getMenuOptions: async function() {
+            if (!this.menuOptions) {
+                this.menuOptions = await getFacilities();
+            }
+            return this.menuOptions;
+        },
 
         settings: SETTINGS,
 
+/*
         defaultPayloadName: DEFAULT_PAYLOAD_NAME,
 
         getBasicOptions: async function () {
@@ -76,32 +85,50 @@
                 key: key
             };
         },
+*/
 
-        getEndpoint: function (options = {}) {
+        getServiceUrl: function (options = {}) {
+            const paramsPart = options.params
+                ? Object.keys(options.params).map(k=> '&' + k + '=' + encodeURIComponent(options.params[k]))
+                : '';
             return SERVICE_ENDPOINT
-                .replace('{command}', options.command || DEFAULT_COMMAND_ID)
-                .replace('{engine}', options.engine || DEFAULT_ENGINE)
-                .replace('{language}', options.language || DEFAULT_LANGUAGE);
+                .replace('{command}', options.command)
+                .replace('{payload}', encodeURIComponent(options.payload))
+                .replace('{params}', paramsPart);
         }
     });
 
+    async function getFacilities() {
+        return new Promise((resolve) => {
+            fetch(FACILITIES_ENDPOINT)
+                .then((res) => res.json())
+                .then((facilities) => resolve(facilities))
+                .catch(() => {
+                    console.error('[AI Bridge] Could not retrieve menu options');
+                    resolve([]);
+                });
+        })
+    }
+
+/*
     async function getApiKey() {
         return new Promise((resolve) => {
             const storedKey = sessionStorage.getItem(PROPERTY_KEY);
             if (storedKey && storedKey !== 'undefined') {
                 resolve(sessionStorage.getItem(PROPERTY_KEY));
             } else {
-                fetch(KEY_ENDPONT)
+                fetch(KEY_ENDPOINT)
                     .then((res) => res.json())
                     .then((json) => {
-                        sessionStorage.setItem(PROPERTY_KEY, json.key);
-                        resolve(json.key);
+                        sessionStorage.setItem(PROPERTY_KEY, json['writesonic-key']);
+                        resolve(json.json['writesonic-key']);
                     })
                     .catch(() => {
-                        console.error('[Writesonic Bridge] Could not retrieve an API key');
+                        console.error('[AI Bridge] Could not retrieve an API key');
                         resolve(null);
                     });
             }
         });
     }
+*/
 })(window.eak = window.eak || {});

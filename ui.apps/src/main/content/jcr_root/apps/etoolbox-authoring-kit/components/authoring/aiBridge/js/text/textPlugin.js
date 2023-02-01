@@ -15,25 +15,32 @@
     'use strict';
 
     const WRAPPER_SELECTOR = 'eak-Form-field-wrapper';
-    const INPUT_SELECTOR = '[data-eak-plugins*="writesonic"]';
+    const INPUT_SELECTOR = '[data-eak-plugins*="ai"]';
     const BUTTON_SELECTOR = '[is="coral-anchorbutton"]';
 
     $(document).on('coral-overlay:open', function (e) {
         const $dialog = $(e.target);
-        $dialog.find(INPUT_SELECTOR).each(function () {
+        $dialog.find(INPUT_SELECTOR).each(async function () {
             const $input = $(this);
             const buttonId = 'input-' + $input.attr('name').replace(/^[^\w]+|[^\w]+$/, '').replace(':', '-');
+            const menuOptions = await ns.Ai.getMenuOptions();
             const menuContent = '<coral-buttonlist>' +
-                ns.Writesonic.menuOptions
+                menuOptions
                     .map(option => {
-                        const params = option.params ? JSON.stringify(option.params).replace(/"/g, '&quot;') : '';
-                        return `<button is="coral-buttonlist-item" icon="${option.icon}" data-params="${params}" value="${option.id}">${option.title}</button>`;
+                        const variants = option.variants
+                            ? option.variants.map(v => { return { title: v.vendor, id: v.id }; })
+                            : [{ title: option.vendor, id: option.id }];
+                        const variantsString = JSON.stringify(variants);
+                        const paramsString = option.params
+                            ? JSON.stringify(option.params).replace(/"/g, '&quot;')
+                            : '';
+                        return `<button is="coral-buttonlist-item" icon="${option.icon}" data-variants=${variantsString} data-params="${paramsString}" value="${option.id}">${option.title}</button>`;
                     })
                     .join('') +
                 '</coral-buttonlist>';
 
             const $wrapper = $input.wrap(`<div class="${WRAPPER_SELECTOR}"></div>`).parent();
-            const $button = $(`<a is="coral-anchorbutton" id="${buttonId}" icon="writesonic" iconsize="S"></a>`);
+            const $button = $(`<a is="coral-anchorbutton" id="${buttonId}" icon="ai" iconsize="S"></a>`);
             if (!$input.val()) {
                 $button.attr('disabled', true);
             }
@@ -51,18 +58,19 @@
         $this.closest('coral-popover').hide();
         const command = $this.attr('value');
         if (command === 'settings') {
-            return ns.Writesonic.openSettingsDialog();
+            return ns.Ai.openSettingsDialog();
         }
 
         const $input = $this.closest('.' + WRAPPER_SELECTOR).find('input');
-        const options = await ns.Writesonic.getBasicOptions();
-        options.command = command;
-        options.params = $this.data('params');
-        options.payload = getText($input);
-        options.acceptDelegate = function (text) {
-            setText($input.attr('name'), text);
+        const dialogSetup = {
+            payload: getText($input),
+            variants: $this.data('variants'),
+            params: $this.data('params'),
+            acceptDelegate: function (text) {
+                setText($input.attr('name'), text);
+            }
         };
-        ns.Writesonic.openRequestDialog(options);
+        ns.Ai.openRequestDialog(dialogSetup);
     }
 
     function getText($input) {
