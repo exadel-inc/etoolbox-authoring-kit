@@ -76,7 +76,7 @@ public @interface TextField {
     long maxLength() default 0;
 
     /**
-     * When set, defines the custom plugins used with this widget, such as {@code writesonic}
+     * When set, defines the custom plugins used with this widget, such as {@code ai}
      * @return Zero or more string values representing plugin IDs
      */
     String[] plugins() default {};

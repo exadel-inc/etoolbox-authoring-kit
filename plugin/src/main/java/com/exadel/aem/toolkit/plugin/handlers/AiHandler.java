@@ -15,6 +15,7 @@ package com.exadel.aem.toolkit.plugin.handlers;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
@@ -22,17 +23,19 @@ import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.TargetUtil;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties that provide the implementation
- * of {@code Writesonic Bridge}
+ * of {@code AI Bridge}
  */
 @Handles({TextField.class, RichTextEditor.class})
-public class WritesonicHandler implements Handler {
+public class AiHandler implements Handler {
 
-    private static final String TOKEN_WRITESOMIC = "writesonic";
-    private static final String CLIENTLIB_CATEGORY_WRITESONIC = "eak.authoring.writesonic-bridge";
+    private static final String TOKEN_AI = "ai";
+    private static final String CLIENTLIB_CATEGORY_AI = "eak.authoring.ai-bridge";
+    private static final String SUFFIX_AI = "__aiSettings";
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code
@@ -46,12 +49,17 @@ public class WritesonicHandler implements Handler {
         TextField textField = source.adaptTo(TextField.class);
         boolean pluginPresent = false;
         if (richTextEditor != null) {
-            pluginPresent = ArrayUtils.contains(richTextEditor.features(), RteFeatures.Popovers.WRITESONIC);
+            pluginPresent = ArrayUtils.contains(richTextEditor.features(), RteFeatures.Popovers.AI);
         } else if (textField != null) {
-            pluginPresent = ArrayUtils.contains(textField.plugins(), TOKEN_WRITESOMIC);
+            pluginPresent = ArrayUtils.contains(textField.plugins(), TOKEN_AI);
         }
         if (pluginPresent) {
-            TargetUtil.populateClientLibrary(target, CLIENTLIB_CATEGORY_WRITESONIC);
+            target
+                .getParent()
+                .getOrCreateTarget(target.getName() + SUFFIX_AI)
+                .attribute(DialogConstants.PN_NAME, target.getAttribute(DialogConstants.PN_NAME) + SUFFIX_AI)
+                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.HIDDEN);
+            TargetUtil.populateClientLibrary(target, CLIENTLIB_CATEGORY_AI);
         }
     }
 }
