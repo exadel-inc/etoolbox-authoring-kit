@@ -38,11 +38,6 @@ class CombinedFacility implements Facility {
     }
 
     @Override
-    public String getVendor() {
-        return StringUtils.EMPTY;
-    }
-
-    @Override
     public String getTitle() {
         return variants
             .stream()

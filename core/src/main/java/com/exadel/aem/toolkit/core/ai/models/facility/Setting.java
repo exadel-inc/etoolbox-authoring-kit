@@ -11,26 +11,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.exadel.aem.toolkit.core.ai.models.facility;
 
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.lang3.StringUtils;
+public class Setting {
 
-import com.exadel.aem.toolkit.core.ai.models.solution.Solution;
+    private final String id;
+    private final String title;
+    private final List<Option> options;
 
-public interface Facility {
-
-    String getId();
-
-    String getTitle();
-
-    default String getIcon() {
-        return StringUtils.EMPTY;
+    public Setting(String id, String title) {
+        this(id, title, null);
     }
 
-    List<Facility> getVariants();
+    public Setting(String id, String title, List<Option> options) {
+        this.id = id;
+        this.title = title;
+        this.options = options;
+    }
 
-    Solution execute(Map<String, Object> arguments);
+    public String getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public List<Option> getOptions() {
+        return options;
+    }
 }

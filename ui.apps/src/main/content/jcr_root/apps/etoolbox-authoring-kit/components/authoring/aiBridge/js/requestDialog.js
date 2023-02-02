@@ -50,7 +50,7 @@
         runRequest($dialog, Object.assign(setup, { command: setup.variants[0].id }));
     };
 
-    function produceDialog(content,  changeCommandDelegate, acceptDelegate) {
+    function produceDialog(content, changeCommandDelegate, acceptDelegate) {
         let $dialog = $(document).find('#' + content.id);
         if (!$dialog.length) {
             const newDialog = new Coral.Dialog().set(content);

@@ -23,9 +23,15 @@ public abstract class SimpleFacility implements Facility {
     protected SimpleFacility() {
     }
 
+    public abstract String getVendor();
+
     @JsonIgnore
     @Override
     public List<Facility> getVariants() {
         return Collections.singletonList(this);
+    }
+
+    public List<Setting> getSettings() {
+        return null;
     }
 }

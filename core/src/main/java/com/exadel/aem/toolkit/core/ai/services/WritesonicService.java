@@ -45,6 +45,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.ai.models.facility.Facility;
+import com.exadel.aem.toolkit.core.ai.models.facility.Option;
+import com.exadel.aem.toolkit.core.ai.models.facility.Setting;
 import com.exadel.aem.toolkit.core.ai.models.facility.SimpleFacility;
 import com.exadel.aem.toolkit.core.ai.models.solution.Solution;
 
@@ -183,6 +185,57 @@ public class WritesonicService implements AiService {
 
     private static abstract class WritesonicFacility extends SimpleFacility {
 
+        private static final List<Setting> SETTINGS = Arrays.asList(
+            new Setting(
+                "engine",
+                "Engine",
+                Arrays.asList(
+                    new Option("economy", true),
+                    new Option("business")
+                )),
+            new Setting(
+                "language",
+                "Language",
+                Arrays.asList(
+                    new Option("en", "English", true),
+                    new Option("en", "Dutch"),
+                    new Option("fr", "French"),
+                    new Option("de", "German"),
+                    new Option("it", "Italian"),
+                    new Option("pl", "Polish"),
+                    new Option("es", "Spanish"),
+                    new Option("pt-pt", "Portuguese"),
+                    new Option("pt-br", "Portuguese (Brazil)"),
+                    new Option("ru", "Russian"),
+                    new Option("ja", "Japanese"),
+                    new Option("zh", "Chinese"),
+                    new Option("bg", "Bulgarian"),
+                    new Option("zh", "Chinese"),
+                    new Option("cs", "Chech"),
+                    new Option("da", "Danish"),
+                    new Option("el", "Greek"),
+                    new Option("hu", "Hungarian"),
+                    new Option("lt", "Lithuanian"),
+                    new Option("lv", "Latvian"),
+                    new Option("ro", "Romanian"),
+                    new Option("sk", "Slovak"),
+                    new Option("sv", "Slovenian"),
+                    new Option("fi", "Finnish"),
+                    new Option("et", "Estonian"))),
+            new Setting(
+                "tone",
+                "Expression Tone",
+                Arrays.asList(
+                    new Option("excited"),
+                    new Option("professional", true),
+                    new Option("funny"),
+                    new Option("encouraging"),
+                    new Option("dramatic"),
+                    new Option("witty"),
+                    new Option("sarcastic"),
+                    new Option("engaging"),
+                    new Option("creative"))));
+
         @Override
         public String getVendor() {
             return "Writesonic";
@@ -191,6 +244,11 @@ public class WritesonicService implements AiService {
         @Override
         public String getIcon() {
             return "textEdit";
+        }
+
+        @Override
+        public List<Setting> getSettings() {
+            return SETTINGS;
         }
     }
 
