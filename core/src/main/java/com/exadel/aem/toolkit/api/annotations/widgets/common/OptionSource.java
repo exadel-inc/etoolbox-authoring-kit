@@ -15,6 +15,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
@@ -24,6 +25,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
  * Represents a single option source that can be defined for an {@link OptionProvider}. An option source points to
  * an option storage, such as a JCR path, and specifies the way to render the data from this particular storage
  */
+@Target({})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface OptionSource {
 

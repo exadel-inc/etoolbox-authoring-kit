@@ -13,12 +13,15 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.radio;
 
+import java.lang.annotation.Target;
+
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 
 /**
  * Used to define an option within the {@link RadioGroup#buttons()} set
  */
+@Target({})
 @AnnotationRendering(properties = "all")
 public @interface RadioButton {
 

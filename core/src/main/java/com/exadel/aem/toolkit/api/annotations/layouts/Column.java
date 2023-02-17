@@ -13,7 +13,6 @@
  */
 package com.exadel.aem.toolkit.api.annotations.layouts;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -28,7 +27,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
  *     Fixed Columns</a> widget or else a nested container withing a Granite UI dialog or a console page
  * @see FixedColumns
  */
-@Target(ElementType.TYPE)
+@Target({})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.CONTAINER)
 public @interface Column {
