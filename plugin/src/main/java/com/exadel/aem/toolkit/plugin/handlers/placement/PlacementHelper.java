@@ -117,7 +117,7 @@ public class PlacementHelper {
                 PlacementCollisionSolver.checkForCircularPlacement(source, container, candidate, existingElement);
                 itemsElement.addTarget(existingElement);
             } else {
-                Target newElement = itemsElement.getOrCreateTarget(NamingUtil.stripGetterPrefix(candidate.getName()));
+                Target newElement = itemsElement.getOrCreateTarget(NamingUtil.stripGetterPrefix(candidate));
                 PlacementCollisionSolver.checkForCircularPlacement(source, container, candidate, newElement);
                 HandlerChains.forMember().accept(candidate, newElement);
             }
@@ -135,7 +135,7 @@ public class PlacementHelper {
 
         while (!members.getAvailable().isEmpty()) {
             Source candidate = members.getAvailable().get(0);
-            Target newElement = itemsElement.getOrCreateTarget(NamingUtil.stripGetterPrefix(candidate.getName()));
+            Target newElement = itemsElement.getOrCreateTarget(NamingUtil.stripGetterPrefix(candidate));
 
             // For historic reasons, we allow members annotated with @Place("...") in a single-column buildup without
             // throwing a "section not found" exception. But we should not be done with any of these members before we make
