@@ -33,7 +33,7 @@ class SampleFieldsetBase1 {
     )
     @TextField
     @Place("Main tab")
-    private String title;
+    private String getawayTitle;
 
     @DialogField(
             name = "Description",
@@ -80,12 +80,16 @@ class SampleFieldsetBase1 {
     @Place("URL's tab")
     private String url;
 
+    private String imageText;
+
     @DialogField(
-            name = "ImageText",
-            label = "Text on image",
-            description = "Description for text on image"
+        name = "ImageText",
+        label = "Text on image",
+        description = "Description for text on image"
     )
     @TextField
     @Place("Main tab")
-    private String imageText;
+    public String getImageText() {
+        return imageText;
+    }
 }

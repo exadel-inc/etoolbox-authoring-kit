@@ -13,13 +13,14 @@
  */
 package com.exadel.aem.toolkit.plugin.utils;
 
+import java.lang.reflect.Method;
+
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.plugin.sources.MethodSourceImpl;
 
 /**
  * Contains utility methods for creating valid entity names
@@ -122,15 +123,16 @@ public class NamingUtil {
     }
 
     /**
-     * Retrieves the member name value with the Java getter prefix stripped for method, otherwise returns a full source
-     * name
+     * Retrieves the member name that matches the given {@code Source}. If the source reflects a Java method,
+     * the {@code get...} prefix is stripped. Otherwise, the name is returned as is @param source {@code Source}
+     * object reporting the name.
      * @param source Source used to get source name and check source type
      * @return String value
      */
     public static String stripGetterPrefix(Source source) {
         String value = source.getName();
 
-        if (source instanceof MethodSourceImpl && StringUtils.startsWith(value, PREFIX_GET)) {
+        if (source.adaptTo(Method.class) != null && StringUtils.startsWith(value, PREFIX_GET)) {
             return Character.toLowerCase(value.charAt(PREFIX_GET.length())) + value.substring(PREFIX_GET.length() + 1);
         }
 
