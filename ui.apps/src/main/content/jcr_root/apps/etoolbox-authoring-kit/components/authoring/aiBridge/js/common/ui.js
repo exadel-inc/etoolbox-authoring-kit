@@ -22,6 +22,8 @@
     const CLS_FIELD_WRAPPER = 'eak-Form-field-wrapper';
     const CLS_ACTION_BUTTON = 'eak-assistant-button';
 
+    const FIELD_SETTING_DELIMITER = '@';
+
     const DEBOUNCE_DELAY = 300;
 
     ns.Assistant = ns.Assistant || {};
@@ -179,11 +181,11 @@
     function handleSettingChange(e) {
         const $this = $(e.target);
         const settingReference = $this.attr(ns.Assistant.ATTR_SOURCE_SETTING_REF);
-        if (!settingReference || !settingReference.includes('@')) {
+        if (!settingReference || !settingReference.includes(FIELD_SETTING_DELIMITER)) {
             return;
         }
-        const sourceFieldName = settingReference.split('@')[0];
-        const settingName = settingReference.split('@')[1];
+        const sourceFieldName = settingReference.split(FIELD_SETTING_DELIMITER)[0];
+        const settingName = settingReference.split(FIELD_SETTING_DELIMITER)[1];
         ns.Assistant.storeSettings(sourceFieldName, settingName, $this.val());
     }
 
@@ -200,7 +202,7 @@
     function getSettingsSourceFieldName($container) {
         const sourceFieldValue = $container.find(`[${ns.Assistant.ATTR_SOURCE_SETTING_REF}]`).attr(ns.Assistant.ATTR_SOURCE_SETTING_REF);
         if (sourceFieldValue) {
-            return sourceFieldValue.split(':')[0]
+            return sourceFieldValue.split(FIELD_SETTING_DELIMITER)[0]
         }
         return $container.find('[name]').attr('name');
     }

@@ -157,7 +157,7 @@ public class ImportService implements AssistantService {
                     asset,
                     THUMBNAIL_DIMENSION,
                     THUMBNAIL_DIMENSION,
-                    false);
+                    true);
                 renditionMaker.generateRenditions(asset, thumbnailTemplate);
 
             } catch (Exception e) {
