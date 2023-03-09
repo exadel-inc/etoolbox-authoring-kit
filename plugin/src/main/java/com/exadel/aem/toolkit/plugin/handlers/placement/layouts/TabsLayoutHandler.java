@@ -23,6 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tabs;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
@@ -33,7 +34,7 @@ class TabsLayoutHandler implements ComplexLayoutHandler {
     private static final Predicate<Method> LAYOUT_PROPERTIES_FILTER = method ->
         StringUtils.equalsAny(
             method.getName(),
-            DialogConstants.PN_TYPE,
+            CoreConstants.PN_TYPE,
             DialogConstants.PN_PADDING);
 
     /**

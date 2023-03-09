@@ -17,6 +17,9 @@ package com.exadel.aem.toolkit.core;
  * Contains constant values used across the core module
  */
 public class CoreConstants {
+
+    public static final String CONTENT_TYPE_JSON = "application/json;charset=utf-8";
+
     public static final String NN_ITEM = "item";
     public static final String NN_LIST = "list";
 
@@ -30,12 +33,18 @@ public class CoreConstants {
     public static final String PN_LIMIT = "limit";
     public static final String PN_LIST_ITEM = "listItem";
     public static final String PN_OFFSET = "offset";
+    public static final String PN_OPTIONS = "options";
     public static final String PN_PATH = "path";
     public static final String PN_PREPEND = "prepend";
     public static final String PN_SELECTED = "selected";
     public static final String PN_TEXT = "text";
+    public static final String PN_TYPE = "type";
     public static final String PN_UPDATE_COMPONENT_LIST = "updatecomponentlist";
     public static final String PN_VALUE = "value";
+
+    public static final String RELATIVE_PATH_PREFIX = "./";
+
+    public static final String ELLIPSIS = "...";
 
     public static final String SEPARATOR_AT = "@";
     public static final String SEPARATOR_COLON = ":";
@@ -44,8 +53,6 @@ public class CoreConstants {
     public static final String SEPARATOR_HYPHEN = "-";
     public static final String SEPARATOR_SLASH = "/";
     public static final String SEPARATOR_UNDERSCORE = "_";
-
-    public static final String RELATIVE_PATH_PREFIX = "./";
 
     /**
      * Default (instantiation-restricting) constructor

@@ -26,6 +26,7 @@ import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
@@ -37,7 +38,7 @@ public class TabsHandler extends ContainerHandler implements Handler {
     private static final Predicate<Method> WIDGET_PROPERTIES_FILTER = method ->
         !StringUtils.equalsAny(
             method.getName(),
-            DialogConstants.PN_TYPE,
+            CoreConstants.PN_TYPE,
             DialogConstants.PN_PADDING);
 
     /**

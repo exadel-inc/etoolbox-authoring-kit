@@ -149,7 +149,6 @@ public class DialogConstants {
     public static final String PN_TITLE = "title";
     public static final String PN_TOOLBAR = "toolbar";
     public static final String PN_TRACKING_ELEMENT = "trackingElement";
-    public static final String PN_TYPE = "type";
     public static final String PN_TYPE_HINT = "typeHint";
     public static final String PN_USE_FIXED_INLINE_TOOLBAR = "useFixedInlineToolbar";
     public static final String PN_VALUE_MEMBER = "valueMember";
