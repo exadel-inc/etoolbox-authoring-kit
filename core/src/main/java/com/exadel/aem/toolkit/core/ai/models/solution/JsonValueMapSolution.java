@@ -13,22 +13,19 @@
  */
 package com.exadel.aem.toolkit.core.ai.models.solution;
 
-import java.util.List;
 import java.util.Map;
 
-import com.exadel.aem.toolkit.core.CoreConstants;
+class JsonValueMapSolution extends Solution {
 
-class OptionSolution extends Solution {
+    private final Map<String, Object> values;
 
-    private final List<String> options;
-
-    OptionSolution(Map<String, Object> args, List<String> options) {
+    JsonValueMapSolution(Map<String, Object> args, Map<String, Object> values) {
         super(args);
-        this.options = options;
+        this.values = values;
     }
 
     @Override
     public String asJson() {
-        return asJson(CoreConstants.PN_OPTIONS, options);
+        return asJson(values);
     }
 }

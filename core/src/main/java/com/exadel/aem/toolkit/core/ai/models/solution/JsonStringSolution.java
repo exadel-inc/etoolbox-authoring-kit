@@ -13,16 +13,25 @@
  */
 package com.exadel.aem.toolkit.core.ai.models.solution;
 
-class RawJsonSolution extends Solution {
+import java.util.Map;
 
+class JsonStringSolution extends Solution {
+
+    private final String key;
     private final String content;
 
-    RawJsonSolution(String content) {
+    JsonStringSolution(Map<String, Object> args) {
+        this(args, null, null);
+    }
+
+    JsonStringSolution(Map<String, Object> args, String key, String content) {
+        super(args);
+        this.key = key;
         this.content = content;
     }
 
     @Override
     public String asJson() {
-        return content;
+        return asJson(key, content);
     }
 }

@@ -15,16 +15,27 @@ package com.exadel.aem.toolkit.core.ai.models.solution;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 class NotificationSolution extends Solution {
+    private static final String PN_MESSAGES = "messages";
+
+    private final int statusCode;
     private final List<String> messages;
 
-    NotificationSolution(String message) {
+    NotificationSolution(Map<String, Object> args, int statusCode, String message) {
+        super(args);
+        this.statusCode = statusCode;
         this.messages = Collections.singletonList(message);
     }
 
     @Override
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    @Override
     public String asJson() {
-        return asJson("messages", messages);
+        return asJson(PN_MESSAGES, messages);
     }
 }
