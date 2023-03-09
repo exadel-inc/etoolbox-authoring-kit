@@ -39,7 +39,7 @@ import com.exadel.aem.toolkit.plugin.utils.TargetUtil;
 public class AssistantPluginHandler implements Handler {
 
     private static final String PLUGIN_TOKEN = "assistant";
-    private static final String CLIENTLIB_CATEGORY_AI = "eak.authoring.assistant";
+    private static final String CLIENTLIB_CATEGORY_ASSISTANT = "eak.authoring.assistant";
     private static final String SUFFIX_ASSISTANT_SETTINGS = "_eakAssistantSettings";
 
     /**
@@ -68,7 +68,7 @@ public class AssistantPluginHandler implements Handler {
             .getOrCreateTarget(target.getName() + SUFFIX_ASSISTANT_SETTINGS)
             .attribute(DialogConstants.PN_NAME, getSettingFieldName(target.getAttribute(DialogConstants.PN_NAME)))
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.HIDDEN);
-        TargetUtil.populateClientLibrary(target, CLIENTLIB_CATEGORY_AI);
+        TargetUtil.populateClientLibrary(target, CLIENTLIB_CATEGORY_ASSISTANT);
     }
 
     /**
