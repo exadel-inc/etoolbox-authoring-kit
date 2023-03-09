@@ -1,9 +1,10 @@
 #base=js
-common.js
-requestDialog.js
-settingsDialog.js
-text/popupButton.js
-text/textPlugin.js
+common/service.js
+common/ui.js
+dialog/requestDialog.js
+dialog/settingsDialog.js
 rte/clearCommand.js
 rte/popupButton.js
 rte/rtePlugin.js
+text/textPlugin.js
+image/imageUploadPlugin.js
