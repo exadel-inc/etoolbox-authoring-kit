@@ -14,14 +14,17 @@
 (function (RTE, Class, ns) {
     'use strict';
 
-    const GROUP = 'ai';
+    const GROUP = 'assistant';
     const FEATURE = GROUP;
     const ICON = FEATURE;
 
-    const AiRtePlugin = new Class({
-        toString: 'AiRtePlugin',
+    // noinspection JSUnusedGlobalSymbols
+    const AssistantRtePlugin = new Class({
+        toString: 'AssistantRtePlugin',
 
         extend: RTE.plugins.Plugin,
+
+        sourceField: null,
 
         buttonUi: null,
 
@@ -34,26 +37,26 @@
                 return;
             }
 
-            this.aiSettings = this.getAiSettings(context);
+            this.sourceField = context.$editable.parent().find('.coral-RichText-editable').attr('name') || '';
 
-            this.buttonUi = new RTE.ui.cui.PopupButton(FEATURE, this, false, { title: 'AI Bridge' });
+            this.buttonUi = new RTE.ui.cui.PopupButton(FEATURE, this, false, { title: 'Assistant' });
             tbGenerator.addElement(GROUP, 999, this.buttonUi, 10);
             tbGenerator.registerIcon('#' + FEATURE, ICON);
 
             const popoverContent = {
                 ref: FEATURE,
-                items: 'ai:getOptions:ai-dropdown'
+                items: 'assistant:getOptions:assistant-dropdown'
             };
-            context.uiSettings.cui.inline.popovers.ai = popoverContent;
-            context.uiSettings.cui.fullscreen.popovers.ai = popoverContent;
-            context.uiSettings.cui.dialogFullScreen.popovers.ai = popoverContent;
+            context.uiSettings.cui.inline.popovers.assistant = popoverContent;
+            context.uiSettings.cui.fullscreen.popovers.assistant = popoverContent;
+            context.uiSettings.cui.dialogFullScreen.popovers.assistant = popoverContent;
 
             const rteTemplates = window.Coral.templates.RichTextEditor;
-            rteTemplates.ai_dropdown = rteTemplates.ai_dropdown || this.populateDropdown;
+            rteTemplates.assistant_dropdown = rteTemplates.assistant_dropdown || this.populateDropdown;
         },
 
         getOptions: function () {
-            return ns.Ai.getMenuOptions();
+            return ns.Assistant.getFacilities();
         },
 
         updateState: function (selfDef) {
@@ -62,14 +65,13 @@
         },
 
         execute: async function (id, value, params) {
-            $('[data-id="ai"]').hide();
-            if (value === 'settings') {
-                return ns.Ai.openSettingsDialog();
-            }
-            const setup = {
-                payload: this.getSelectedText(),
+            const dialogSetup = {
+                sourceField: this.sourceField,
+                settings: {
+                  text:   this.getSelectedText()
+                },
                 variants: params.variants,
-                params: Object.assign({}, params, { variants: undefined}),
+                selectedVariantId: value,
                 acceptDelegate: (text) => {
                     if (!this.hasSelection()) {
                         this.editorKernel.relayCmd('clear');
@@ -77,48 +79,51 @@
                     this.editorKernel.relayCmd('inserthtml', text);
                 }
             };
-            ns.Ai.openRequestDialog(setup);
-        },
-
-        getAiSettings: function (context) {
-            if (!context.$editable) {
-                return {};
+            const dialogSize = ns.Assistant.getDialogSize(this.buttonUi.$ui);
+            if (dialogSize) {
+                dialogSetup.size = dialogSize;
             }
-            const fieldName = context.$editable.parent().find('.coral-RichText-editable').attr('name') || '';
-            const settingsFieldName = fieldName && fieldName + '__aiSettings';
-            const settings = context.$editable.closest('form').find(`[name="${settingsFieldName}"]`).val();
-            return settings ? JSON.parse(settings) : {};
+            ns.Assistant.openRequestDialog(dialogSetup);
         },
 
         populateDropdown: function (optionsOrPromise) {
             const fragment = document.createDocumentFragment();
-            const $buttonList = $('<coral-buttonlist></coral-buttonlist>').addClass('rte-toolbar-list');
-            Promise.resolve(optionsOrPromise).then((options) => {
-                for (const option of options) {
-                    const title = option.title || option.id.substring(0, 1).toUpperCase() + option.id.substring(1).toLowerCase();
-                    const $button = $(`<button is="coral-buttonlist-item" type="button" data-action="${FEATURE}#${option.id}"></button>`);
-                    if (option.icon) {
-                        $button.attr('icon', option.icon);
+            const facilityList = new Coral.ButtonList();
+            facilityList.classList.add('rte-toolbar-list', ns.Assistant.CLS_FACILITY_LIST);
+            Promise.resolve(optionsOrPromise).then((facilities) => {
+                for (const facility of facilities) {
+                    if (!facility.id.startsWith('text.')) {
+                        continue;
                     }
-                    const params = option.params || {};
-                    params.variants = option.variants
-                        ? option.variants.map(v => { return { title: v.vendor, id: v.id }; })
-                        : [{ title: option.vendor, id: option.id }];
-                    if (this.aiSettings) {
-                        params.settings = this.aiSettings;
-                    }
-                    $button.attr('data-action-params', JSON.stringify(params));
-                    $button.text(title);
-                    $button.appendTo($buttonList);
+
+                    const flatVariants = facility.variants || [facility];
+                    const actionParams = {};
+                    actionParams.variants = flatVariants
+                        .map((variant) => {
+                            return {
+                                title: variant.vendorName,
+                                id: variant.id,
+                                hasSettings: variant.settings && variant.settings.length > 0
+                            };
+                        });
+                    const actionParamsString = JSON.stringify(actionParams);
+
+                    const newButton = ns.Assistant.initAssistantFacilityUi(facility, {
+                        variantIdAttribute: ns.Assistant.ATTR_ACTION,
+                        variantIdTransform: (id) => FEATURE + '#' + id
+                    });
+                    newButton.setAttribute(ns.Assistant.ATTR_ACTION, `${FEATURE}#${flatVariants[0].id}`);
+                    newButton.setAttribute(ns.Assistant.ATTR_ACTION_PARAMS, actionParamsString);
+                    facilityList.items.add(newButton);
                 }
             });
-            fragment.appendChild($buttonList[0]);
+            fragment.appendChild(facilityList);
             return fragment;
         },
 
         hasSelection: function () {
             const range = RTE.Selection.createProcessingSelection(this.editorKernel.editContext);
-            return range.endOffset > range.startOffset;
+            return range && range.endOffset > range.startOffset;
         },
 
         getSelectedText: function () {
@@ -128,5 +133,5 @@
             return this.editorKernel.editContext.root.innerText;
         }
     });
-    RTE.plugins.PluginRegistry.register(GROUP, AiRtePlugin);
+    RTE.plugins.PluginRegistry.register(GROUP, AssistantRtePlugin);
 })(window.CUI.rte, window.Class, window.eak = window.eak || {});

@@ -11,10 +11,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function (RTE, Class) {
+(function (RTE, Class, ns) {
     'use strict';
 
-    const FEATURE = 'ai';
+    const FEATURE = 'assistant';
     RTE.ui.cui.PopupButton = new Class({
         toString: 'PopupButton',
 
@@ -24,7 +24,7 @@
             this.superClass.notifyToolbar.call(this, toolbar, skipHandlers);
 
             const $tbContainer = RTE.UIUtils.getToolbarContainer(toolbar.getToolbarContainer(), toolbar.tbType);
-            this.$ui = $tbContainer.find(`button[data-action^="#${FEATURE}"]`);
+            this.$ui = $tbContainer.find(`button[data-action="#${FEATURE}"]`);
             this.superClass.$ui = this.$ui;
             this.superClass.toolbar = toolbar;
             this.setDisabled(true);
@@ -34,12 +34,17 @@
             }
 
             const self = this;
-            $tbContainer.on('click.rte-handler', `button[data-action^="${FEATURE}#"]`, function () {
+            $tbContainer.on('click.rte-handler', `[${ns.Assistant.ATTR_ACTION}^="${FEATURE}#"]`, function (e) {
+                e.preventDefault();
+                e.stopPropagation();
                 const $this = $(this);
-                const action = $this.data('action').split('#')[1];
+                const action = $this.attr(ns.Assistant.ATTR_ACTION).split('#')[1];
                 const editContext = self.plugin.editorKernel.getEditContext();
                 editContext.setState('CUI.SelectionLock', 1);
-                self.plugin.execute('run', action, $this.data('action-params'));
+                self.plugin.execute(
+                    'run',
+                    action,
+                    $this.closest(`[${ns.Assistant.ATTR_ACTION_PARAMS}]`).data(ns.Assistant.DATA_KEY_ACTION_PARAMS));
                 self.plugin.editorKernel.enableFocusHandling();
                 self.plugin.editorKernel.focus(editContext);
             });
@@ -55,4 +60,4 @@
             }
         }
     });
-})(window.CUI.rte, window.Class);
+})(window.CUI.rte, window.Class, window.eak = window.eak || {});
