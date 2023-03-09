@@ -19,7 +19,17 @@ import com.exadel.aem.toolkit.core.ai.models.facility.Facility;
 
 public interface AiService {
 
-    boolean isEnabled();
+    default String getVendorName() {
+        return null;
+    }
+
+    default String getLogo() {
+        return null;
+    }
+
+    default boolean isEnabled() {
+        return true;
+    }
 
     List<Facility> getFacilities();
 }
