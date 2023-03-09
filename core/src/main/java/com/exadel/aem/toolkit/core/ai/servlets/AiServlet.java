@@ -148,20 +148,11 @@ public class AiServlet extends SlingSafeMethodsServlet {
             .collect(FACILITY_COLLECTOR);
     }
 
-    private Map<String, Object> getArguments(SlingHttpServletRequest request) {
-        RequestParameterMap parameters = request.getRequestParameterMap();
-        Map<String, Object> result = new HashMap<>();
-        for (String key : parameters.keySet()) {
-            RequestParameter[] values = parameters.get(key);
-            if (QUERY_PARAMETER_COMMAND.equals(key) || values == null) {
-                continue;
-            }
-            if (values.length == 1) {
-                result.put(key, values[0].getString());
-            } else {
-                result.put(key, Arrays.stream(values).map(RequestParameter::getString).toArray(String[]::new));
-            }
+    private static int compareFacilities(Facility first, Facility second) {
+        int sortByRanking = first.getRanking() - second.getRanking();
+        if (sortByRanking != 0) {
+            return sortByRanking;
         }
-        return result;
+        return StringUtils.compare(first.getTitle(), second.getTitle());
     }
 }

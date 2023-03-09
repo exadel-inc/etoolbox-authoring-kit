@@ -13,25 +13,58 @@
  */
 package com.exadel.aem.toolkit.core.ai.models.facility;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.request.RequestParameter;
+import org.apache.sling.api.request.RequestParameterMap;
+import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.api.wrappers.ValueMapDecorator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 public abstract class SimpleFacility implements Facility {
 
+    protected static final String ICON_IMAGE_ADD = "imageAdd";
+    protected static final String ICON_TEXT_ADD = "textAdd";
+    protected static final String ICON_TEXT_EDIT = "textEdit";
+    protected static final String ICON_TEXT_REMOVE = "textExclude";
+
     protected SimpleFacility() {
     }
 
-    public abstract String getVendor();
+    @SuppressWarnings("unused") // Used to render JSON output
+    public String getVendorName() {
+        return null;
+    }
 
     @JsonIgnore
     @Override
     public List<Facility> getVariants() {
-        return Collections.singletonList(this);
+        return Collections.emptyList();
     }
 
     public List<Setting> getSettings() {
-        return null;
+        return Collections.emptyList();
+    }
+
+    protected static ValueMap getArguments(SlingHttpServletRequest request) {
+        RequestParameterMap parameters = request.getRequestParameterMap();
+        Map<String, Object> result = new HashMap<>();
+        for (Map.Entry<String, RequestParameter[]> entry : parameters.entrySet()) {
+            RequestParameter[] values = entry.getValue();
+            if (values == null) {
+                continue;
+            }
+            if (values.length == 1) {
+                result.put(entry.getKey(), values[0].getString());
+            } else {
+                result.put(entry.getKey(), Arrays.stream(values).map(RequestParameter::getString).toArray(String[]::new));
+            }
+        }
+        return new ValueMapDecorator(result);
     }
 }
