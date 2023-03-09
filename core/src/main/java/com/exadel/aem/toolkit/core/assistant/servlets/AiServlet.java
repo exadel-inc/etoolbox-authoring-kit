@@ -43,9 +43,9 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.assistant.AssistantConstants;
-import com.exadel.aem.toolkit.core.assistant.models.facility.Facility;
-import com.exadel.aem.toolkit.core.assistant.models.facility.FacilityCollector;
-import com.exadel.aem.toolkit.core.assistant.models.solution.Solution;
+import com.exadel.aem.toolkit.core.assistant.models.facilities.Facility;
+import com.exadel.aem.toolkit.core.assistant.models.facilities.FacilityCollector;
+import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 import com.exadel.aem.toolkit.core.assistant.services.AiService;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 import com.exadel.aem.toolkit.core.utils.ThrowingBiConsumer;

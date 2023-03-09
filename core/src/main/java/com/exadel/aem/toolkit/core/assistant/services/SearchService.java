@@ -38,9 +38,9 @@ import com.day.cq.search.result.SearchResult;
 import com.adobe.granite.omnisearch.api.core.OmniSearchService;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.assistant.models.facility.Facility;
-import com.exadel.aem.toolkit.core.assistant.models.facility.SimpleFacility;
-import com.exadel.aem.toolkit.core.assistant.models.solution.Solution;
+import com.exadel.aem.toolkit.core.assistant.models.facilities.Facility;
+import com.exadel.aem.toolkit.core.assistant.models.facilities.SimpleFacility;
+import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 
 @Component(service = AiService.class, immediate = true, property = "service.ranking:Integer=102")
 @Designate(ocd = SearchService.Config.class)

@@ -15,7 +15,7 @@ package com.exadel.aem.toolkit.core.assistant.servlets;
 
 import java.util.List;
 
-import com.exadel.aem.toolkit.core.assistant.models.facility.Facility;
+import com.exadel.aem.toolkit.core.assistant.models.facilities.Facility;
 
 class FacilitiesDto {
 

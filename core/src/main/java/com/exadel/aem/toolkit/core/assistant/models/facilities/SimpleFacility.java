@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.assistant.models.facility;
+package com.exadel.aem.toolkit.core.assistant.models.facilities;
 
 import java.util.Arrays;
 import java.util.Collections;

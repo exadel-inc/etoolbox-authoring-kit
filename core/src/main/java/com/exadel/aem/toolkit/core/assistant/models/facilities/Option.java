@@ -11,8 +11,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.assistant.models.facility;
 
-public enum SettingType {
-    STRING, INTEGER, DOUBLE
+package com.exadel.aem.toolkit.core.assistant.models.facilities;
+
+public class Option {
+
+    private final String id;
+    private final String title;
+
+    Option(String id, String title) {
+        this.id = id;
+        this.title = title;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
 }

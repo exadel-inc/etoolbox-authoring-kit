@@ -45,9 +45,9 @@ import com.day.cq.dam.api.renditions.RenditionTemplate;
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUploadConstants;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.assistant.AssistantConstants;
-import com.exadel.aem.toolkit.core.assistant.models.facility.Facility;
-import com.exadel.aem.toolkit.core.assistant.models.facility.SimpleFacility;
-import com.exadel.aem.toolkit.core.assistant.models.solution.Solution;
+import com.exadel.aem.toolkit.core.assistant.models.facilities.Facility;
+import com.exadel.aem.toolkit.core.assistant.models.facilities.SimpleFacility;
+import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 import com.exadel.aem.toolkit.core.utils.HttpClientFactory;
 import com.exadel.aem.toolkit.core.utils.ThrowingConsumer;
 

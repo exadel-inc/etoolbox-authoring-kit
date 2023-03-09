@@ -50,10 +50,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.assistant.AssistantConstants;
-import com.exadel.aem.toolkit.core.assistant.models.facility.Facility;
-import com.exadel.aem.toolkit.core.assistant.models.facility.Setting;
-import com.exadel.aem.toolkit.core.assistant.models.facility.SimpleFacility;
-import com.exadel.aem.toolkit.core.assistant.models.solution.Solution;
+import com.exadel.aem.toolkit.core.assistant.models.facilities.Facility;
+import com.exadel.aem.toolkit.core.assistant.models.facilities.Setting;
+import com.exadel.aem.toolkit.core.assistant.models.facilities.SimpleFacility;
+import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
 @Component(service = AiService.class, immediate = true, property = "service.ranking:Integer=101")

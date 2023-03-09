@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.assistant.models.facility;
+package com.exadel.aem.toolkit.core.assistant.models.facilities;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.assistant.models.solution.Solution;
+import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 
 class CombinedFacility implements Facility {
 
