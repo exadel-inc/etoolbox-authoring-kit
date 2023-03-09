@@ -24,7 +24,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 
@@ -74,8 +74,14 @@ public class FacilityCollector implements Collector<Facility, List<Facility>, Li
     }
 
     private static boolean isAdjacentById(Facility first, Facility second) {
-        return StringUtils.equals(
-            StringUtils.substringBefore(first.getId(), CoreConstants.SEPARATOR_DOT),
-            StringUtils.substringBefore(second.getId(), CoreConstants.SEPARATOR_DOT));
+        boolean isSimilarStructure = StringUtils.countMatches(first.getId(), CoreConstants.SEPARATOR_DOT) ==
+            StringUtils.countMatches(second.getId(), CoreConstants.SEPARATOR_DOT);
+        if (isSimilarStructure) {
+            return StringUtils.equals(
+                StringUtils.substringBeforeLast(first.getId(), CoreConstants.SEPARATOR_DOT),
+                StringUtils.substringBeforeLast(second.getId(), CoreConstants.SEPARATOR_DOT));
+        }
+        return StringUtils.startsWith(first.getId(), second.getId() + CoreConstants.SEPARATOR_DOT)
+            || StringUtils.startsWith(second.getId(), first.getId() + CoreConstants.SEPARATOR_DOT);
     }
 }
