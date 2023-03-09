@@ -11,24 +11,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.ai.models.solution;
+package com.exadel.aem.toolkit.core.assistant.services;
 
 import java.util.List;
-import java.util.Map;
 
-import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.assistant.models.facility.Facility;
 
-class OptionSolution extends Solution {
+public interface AiService {
 
-    private final List<String> options;
-
-    OptionSolution(Map<String, Object> args, List<String> options) {
-        super(args);
-        this.options = options;
+    default String getVendorName() {
+        return null;
     }
 
-    @Override
-    public String asJson() {
-        return asJson(CoreConstants.PN_OPTIONS, options);
+    default String getLogo() {
+        return null;
     }
+
+    default boolean isEnabled() {
+        return true;
+    }
+
+    List<Facility> getFacilities();
 }

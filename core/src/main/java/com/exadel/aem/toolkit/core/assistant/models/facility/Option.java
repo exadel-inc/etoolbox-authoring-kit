@@ -11,27 +11,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.ai.models.solution;
 
-import java.util.Map;
+package com.exadel.aem.toolkit.core.assistant.models.facility;
 
-class JsonStringSolution extends Solution {
+public class Option {
 
-    private final String key;
-    private final String content;
+    private final String id;
+    private final String title;
 
-    JsonStringSolution(Map<String, Object> args) {
-        this(args, null, null);
+    Option(String id, String title) {
+        this.id = id;
+        this.title = title;
     }
 
-    JsonStringSolution(Map<String, Object> args, String key, String content) {
-        super(args);
-        this.key = key;
-        this.content = content;
+    public String getId() {
+        return id;
     }
 
-    @Override
-    public String asJson() {
-        return asJson(key, content);
+    public String getTitle() {
+        return title;
     }
 }

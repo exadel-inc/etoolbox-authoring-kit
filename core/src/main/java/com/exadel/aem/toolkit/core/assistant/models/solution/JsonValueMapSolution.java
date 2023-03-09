@@ -11,24 +11,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.exadel.aem.toolkit.core.assistant.models.solution;
 
-package com.exadel.aem.toolkit.core.ai.models.facility;
+import java.util.Map;
 
-public class Option {
+class JsonValueMapSolution extends Solution {
 
-    private final String id;
-    private final String title;
+    private final Map<String, Object> values;
 
-    Option(String id, String title) {
-        this.id = id;
-        this.title = title;
+    JsonValueMapSolution(Map<String, Object> args, Map<String, Object> values) {
+        super(args);
+        this.values = values;
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public String getTitle() {
-        return title;
+    @Override
+    public String asJson() {
+        return asJson(values);
     }
 }

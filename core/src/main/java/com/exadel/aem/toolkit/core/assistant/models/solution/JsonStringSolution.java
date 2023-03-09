@@ -11,15 +11,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.ai;
+package com.exadel.aem.toolkit.core.assistant.models.solution;
 
-public class AssistantConstants {
+import java.util.Map;
 
-    public static final String HTTP_METHOD_GET = "GET";
-    public static final String HTTP_METHOD_POST = "POST";
+class JsonStringSolution extends Solution {
 
-    public static final int HTTP_TIMEOUT = 20000;
+    private final String key;
+    private final String content;
 
-    private AssistantConstants() {
+    JsonStringSolution(Map<String, Object> args) {
+        this(args, null, null);
+    }
+
+    JsonStringSolution(Map<String, Object> args, String key, String content) {
+        super(args);
+        this.key = key;
+        this.content = content;
+    }
+
+    @Override
+    public String asJson() {
+        return asJson(key, content);
     }
 }

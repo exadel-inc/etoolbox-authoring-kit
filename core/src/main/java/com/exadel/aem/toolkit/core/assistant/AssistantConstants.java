@@ -11,27 +11,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.ai.servlets;
+package com.exadel.aem.toolkit.core.assistant;
 
-import java.util.List;
+public class AssistantConstants {
 
-import com.exadel.aem.toolkit.core.ai.models.facility.Facility;
+    public static final String HTTP_METHOD_GET = "GET";
+    public static final String HTTP_METHOD_POST = "POST";
 
-class FacilitiesDto {
+    public static final int HTTP_TIMEOUT = 20000;
 
-    private final List<Facility> facilities;
-    private final List<VendorDto> vendors;
-
-    public FacilitiesDto(List<Facility> facilities, List<VendorDto> vendors) {
-        this.facilities = facilities;
-        this.vendors = vendors;
-    }
-
-    public List<Facility> getFacilities() {
-        return facilities;
-    }
-
-    public List<VendorDto> getVendors() {
-        return vendors;
+    private AssistantConstants() {
     }
 }

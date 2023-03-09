@@ -11,25 +11,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.ai.services;
+package com.exadel.aem.toolkit.core.assistant.servlets;
 
-import java.util.List;
+class VendorDto {
 
-import com.exadel.aem.toolkit.core.ai.models.facility.Facility;
+    private final String name;
+    private final String logo;
 
-public interface AiService {
-
-    default String getVendorName() {
-        return null;
+    public VendorDto(String name, String logo) {
+        this.name = name;
+        this.logo = logo;
     }
 
-    default String getLogo() {
-        return null;
+    public String getName() {
+        return name;
     }
 
-    default boolean isEnabled() {
-        return true;
+    public String getLogo() {
+        return logo;
     }
-
-    List<Facility> getFacilities();
 }

@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.ai.servlets;
+package com.exadel.aem.toolkit.core.assistant.servlets;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -42,11 +42,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.ai.AssistantConstants;
-import com.exadel.aem.toolkit.core.ai.models.facility.Facility;
-import com.exadel.aem.toolkit.core.ai.models.facility.FacilityCollector;
-import com.exadel.aem.toolkit.core.ai.models.solution.Solution;
-import com.exadel.aem.toolkit.core.ai.services.AiService;
+import com.exadel.aem.toolkit.core.assistant.AssistantConstants;
+import com.exadel.aem.toolkit.core.assistant.models.facility.Facility;
+import com.exadel.aem.toolkit.core.assistant.models.facility.FacilityCollector;
+import com.exadel.aem.toolkit.core.assistant.models.solution.Solution;
+import com.exadel.aem.toolkit.core.assistant.services.AiService;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 import com.exadel.aem.toolkit.core.utils.ThrowingBiConsumer;
 

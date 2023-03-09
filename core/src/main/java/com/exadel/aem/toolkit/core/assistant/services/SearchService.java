@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.ai.services;
+package com.exadel.aem.toolkit.core.assistant.services;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,9 +38,9 @@ import com.day.cq.search.result.SearchResult;
 import com.adobe.granite.omnisearch.api.core.OmniSearchService;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.ai.models.facility.Facility;
-import com.exadel.aem.toolkit.core.ai.models.facility.SimpleFacility;
-import com.exadel.aem.toolkit.core.ai.models.solution.Solution;
+import com.exadel.aem.toolkit.core.assistant.models.facility.Facility;
+import com.exadel.aem.toolkit.core.assistant.models.facility.SimpleFacility;
+import com.exadel.aem.toolkit.core.assistant.models.solution.Solution;
 
 @Component(service = AiService.class, immediate = true, property = "service.ranking:Integer=102")
 @Designate(ocd = SearchService.Config.class)

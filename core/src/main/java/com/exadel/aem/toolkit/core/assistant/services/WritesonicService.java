@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.ai.services;
+package com.exadel.aem.toolkit.core.assistant.services;
 
 import java.io.IOException;
 import java.net.URL;
@@ -49,11 +49,11 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.ai.AssistantConstants;
-import com.exadel.aem.toolkit.core.ai.models.facility.Facility;
-import com.exadel.aem.toolkit.core.ai.models.facility.Setting;
-import com.exadel.aem.toolkit.core.ai.models.facility.SimpleFacility;
-import com.exadel.aem.toolkit.core.ai.models.solution.Solution;
+import com.exadel.aem.toolkit.core.assistant.AssistantConstants;
+import com.exadel.aem.toolkit.core.assistant.models.facility.Facility;
+import com.exadel.aem.toolkit.core.assistant.models.facility.Setting;
+import com.exadel.aem.toolkit.core.assistant.models.facility.SimpleFacility;
+import com.exadel.aem.toolkit.core.assistant.models.solution.Solution;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
 @Component(service = AiService.class, immediate = true, property = "service.ranking:Integer=101")
