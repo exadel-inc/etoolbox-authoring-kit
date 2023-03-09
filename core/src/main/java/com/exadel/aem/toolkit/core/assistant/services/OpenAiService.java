@@ -59,9 +59,9 @@ import com.exadel.aem.toolkit.core.assistant.models.facilities.SimpleFacility;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
-@Component(service = AiService.class, immediate = true, property = "service.ranking:Integer=100")
+@Component(service = AssistantService.class, immediate = true, property = "service.ranking:Integer=100")
 @Designate(ocd = OpenAiService.Config.class)
-public class OpenAiService implements AiService {
+public class OpenAiService implements AssistantService {
 
     private static final Logger LOG = LoggerFactory.getLogger(OpenAiService.class);
 

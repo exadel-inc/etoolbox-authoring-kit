@@ -42,9 +42,9 @@ import com.exadel.aem.toolkit.core.assistant.models.facilities.Facility;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.SimpleFacility;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 
-@Component(service = AiService.class, immediate = true, property = "service.ranking:Integer=102")
+@Component(service = AssistantService.class, immediate = true, property = "service.ranking:Integer=102")
 @Designate(ocd = SearchService.Config.class)
-public class SearchService implements AiService {
+public class SearchService implements AssistantService {
     private static final Logger LOG = LoggerFactory.getLogger(SearchService.class);
 
     private static final String VENDOR_NAME = "Smart Search";

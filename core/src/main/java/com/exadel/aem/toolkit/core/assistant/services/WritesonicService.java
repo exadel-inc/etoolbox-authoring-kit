@@ -56,9 +56,9 @@ import com.exadel.aem.toolkit.core.assistant.models.facilities.SimpleFacility;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
-@Component(service = AiService.class, immediate = true, property = "service.ranking:Integer=101")
+@Component(service = AssistantService.class, immediate = true, property = "service.ranking:Integer=101")
 @Designate(ocd = WritesonicService.Config.class)
-public class WritesonicService implements AiService {
+public class WritesonicService implements AssistantService {
     private static final Logger LOG = LoggerFactory.getLogger(WritesonicService.class);
 
     private static final String HEADER_API_KEY = "X-API-KEY";

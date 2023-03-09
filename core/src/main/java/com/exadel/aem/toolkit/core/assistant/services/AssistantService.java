@@ -17,7 +17,7 @@ import java.util.List;
 
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Facility;
 
-public interface AiService {
+public interface AssistantService {
 
     default String getVendorName() {
         return null;

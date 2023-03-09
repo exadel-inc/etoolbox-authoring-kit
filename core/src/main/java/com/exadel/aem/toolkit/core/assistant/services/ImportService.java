@@ -51,8 +51,8 @@ import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 import com.exadel.aem.toolkit.core.utils.HttpClientFactory;
 import com.exadel.aem.toolkit.core.utils.ThrowingConsumer;
 
-@Component(service = AiService.class, immediate = true)
-public class ImportService implements AiService {
+@Component(service = AssistantService.class, immediate = true)
+public class ImportService implements AssistantService {
     private static final Logger LOG = LoggerFactory.getLogger(ImportService.class);
 
     private static final String QUERY_PARAMETER_FROM = "from";

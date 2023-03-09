@@ -46,7 +46,7 @@ import com.exadel.aem.toolkit.core.assistant.AssistantConstants;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Facility;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.FacilityCollector;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
-import com.exadel.aem.toolkit.core.assistant.services.AiService;
+import com.exadel.aem.toolkit.core.assistant.services.AssistantService;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 import com.exadel.aem.toolkit.core.utils.ThrowingBiConsumer;
 
@@ -58,8 +58,8 @@ import com.exadel.aem.toolkit.core.utils.ThrowingBiConsumer;
         ServletResolverConstants.SLING_SERVLET_METHODS + CoreConstants.OPERATOR_EQUALS + HttpConstants.METHOD_GET,
         ServletResolverConstants.SLING_SERVLET_METHODS + CoreConstants.OPERATOR_EQUALS + HttpConstants.METHOD_POST
     })
-public class AiServlet extends SlingAllMethodsServlet {
-    private static final Logger LOG = LoggerFactory.getLogger(AiServlet.class);
+public class AssistantServlet extends SlingAllMethodsServlet {
+    private static final Logger LOG = LoggerFactory.getLogger(AssistantServlet.class);
 
     private static final String QUERY_PARAMETER_COMMAND = "cmd";
     private static final String QUERY_PARAMETER_FILTER = "filter";
@@ -73,7 +73,7 @@ public class AiServlet extends SlingAllMethodsServlet {
 
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     @SuppressWarnings("java:S3077")
-    private transient volatile List<AiService> services;
+    private transient volatile List<AssistantService> services;
 
     private transient Map<String, ThrowingBiConsumer<SlingHttpServletRequest, SlingHttpServletResponse, IOException>> operations;
 
@@ -102,7 +102,7 @@ public class AiServlet extends SlingAllMethodsServlet {
             response.getWriter().println(responseContent);
             return;
         }
-        if (services == null || services.stream().noneMatch(AiService::isEnabled)) {
+        if (services == null || services.stream().noneMatch(AssistantService::isEnabled)) {
             String exceptionMessage = "No enabled Assistant services";
             LOG.error(exceptionMessage);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
@@ -175,17 +175,17 @@ public class AiServlet extends SlingAllMethodsServlet {
     private List<VendorDto> collectVendors() {
         return services
             .stream()
-            .filter(AiService::isEnabled)
+            .filter(AssistantService::isEnabled)
             .map(service -> new VendorDto(service.getVendorName(), service.getLogo()))
             .collect(Collectors.toList());
     }
     private List<Facility> collectFacilities(Predicate<Facility> filter) {
         return services
             .stream()
-            .filter(AiService::isEnabled)
+            .filter(AssistantService::isEnabled)
             .flatMap(service -> service.getFacilities().stream())
             .filter(filter)
-            .sorted(AiServlet::compareFacilities)
+            .sorted(AssistantServlet::compareFacilities)
             .collect(FACILITY_COLLECTOR);
     }
 
