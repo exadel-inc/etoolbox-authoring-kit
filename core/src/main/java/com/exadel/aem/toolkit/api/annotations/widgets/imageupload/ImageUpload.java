@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.FILEUPLOAD)
-@AnnotationRendering(properties = "all")
+@AnnotationRendering(properties = "!plugins")
 public @interface ImageUpload {
 
     /**
@@ -86,4 +86,10 @@ public @interface ImageUpload {
      *
      */
     String viewInAdminURI() default "";
+
+    /**
+     * When set, defines the custom plugins used with this widget, such as {@code assistant}
+     * @return Zero or more string values representing plugin IDs
+     */
+    String[] plugins() default {};
 }

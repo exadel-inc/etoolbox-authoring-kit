@@ -149,8 +149,8 @@ public class RteFeatures {
             + SUBSUPERSCRIPT_SUBSCRIPT + FEATURE_SEPARATOR
             + SUBSUPERSCRIPT_SUPERSCRIPT
             + END_POPOVER;
-        public static final String AI = BEGIN_POPOVER
-            + "ai#ai"
+        public static final String ASSISTANT = BEGIN_POPOVER
+            + "assistant#assistant"
             + END_POPOVER;
 
         /**

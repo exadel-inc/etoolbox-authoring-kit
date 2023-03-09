@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
- * object that define the image uploader widget look and behavior
+ * object that defines the image uploader widget look and behavior
  */
 @Handles(ImageUpload.class)
 public class ImageUploadHandler implements Handler {
@@ -38,7 +38,9 @@ public class ImageUploadHandler implements Handler {
     public void accept(Source source, Target target) {
         String fileRef = target.getAttribute(DialogConstants.PN_FILE_REFERENCE_PARAMETER);
         if (StringUtils.isNotBlank(fileRef) && !StringUtils.startsWith(fileRef, DialogConstants.RELATIVE_PATH_PREFIX)) {
-            target.attribute(DialogConstants.PN_FILE_REFERENCE_PARAMETER, DialogConstants.RELATIVE_PATH_PREFIX + fileRef);
+            target.attribute(
+                DialogConstants.PN_FILE_REFERENCE_PARAMETER,
+                DialogConstants.RELATIVE_PATH_PREFIX + fileRef);
         }
     }
 }

@@ -38,6 +38,7 @@ import com.exadel.aem.toolkit.plugin.handlers.widgets.common.AttributeAnnotation
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.DialogFieldAnnotationHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.InheritanceHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.MultipleAnnotationHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.common.PluginsHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.PropertyAnnotationHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.ResourceTypeHandler;
 
@@ -74,19 +75,21 @@ public class HandlerChains {
     private static final BiConsumer<Source, Target> DEPENDS_ON_HANDLER = new DependsOnHandler();
     private static final BiConsumer<Source, Target> DIALOG_FIELD_HANDLER = new DialogFieldAnnotationHandler();
     private static final BiConsumer<Source, Target> MULTIPLE_HANDLER = new MultipleAnnotationHandler();
+    private static final BiConsumer<Source, Target> PLUGINS_HANDLER = new PluginsHandler();
     private static final BiConsumer<Source, Target> PROPERTY_ANNOTATION_HANDLER = new PropertyAnnotationHandler();
     private static final BiConsumer<Source, Target> RESOURCE_TYPE_HANDLER = new ResourceTypeHandler();
 
     // Complete widget chain
     private static final BiConsumer<Source, Target> MEMBER_HANDLER_CHAIN =
         RESOURCE_TYPE_HANDLER
-        .andThen(PROPERTY_MAPPING_HANDLER)
-        .andThen(ATTRIBUTE_ANNOTATION_HANDLER)
-        .andThen(DIALOG_FIELD_HANDLER)
-        .andThen(CASUAL_ANNOTATIONS_HANDLER)
-        .andThen(DEPENDS_ON_HANDLER)
-        .andThen(PROPERTY_ANNOTATION_HANDLER)
-        .andThen(MULTIPLE_HANDLER);
+            .andThen(PROPERTY_MAPPING_HANDLER)
+            .andThen(ATTRIBUTE_ANNOTATION_HANDLER)
+            .andThen(DIALOG_FIELD_HANDLER)
+            .andThen(CASUAL_ANNOTATIONS_HANDLER)
+            .andThen(DEPENDS_ON_HANDLER)
+            .andThen(PROPERTY_ANNOTATION_HANDLER)
+            .andThen(PLUGINS_HANDLER)
+            .andThen(MULTIPLE_HANDLER);
     private static final BiConsumer<Source, Target> MEMBER_INHERITANCE_HANDLER_CHAIN =
         new InheritanceHandler(MEMBER_HANDLER_CHAIN)
             .andThen(MEMBER_HANDLER_CHAIN);
@@ -100,11 +103,12 @@ public class HandlerChains {
     // Complete editConfig chains
     private static final BiConsumer<Source, Target> EDIT_CONFIG_HANDLER_CHAIN =
         EDIT_CONFIG_DROP_TARGETS_HANDLER
-        .andThen(EDIT_CONFIG_FORM_PARAMS_HANDLER)
-        .andThen(EDIT_CONFIG_INPLACE_HANDLER)
-        .andThen(EDIT_CONFIG_LISTENERS_HANDLER);
+            .andThen(EDIT_CONFIG_FORM_PARAMS_HANDLER)
+            .andThen(EDIT_CONFIG_INPLACE_HANDLER)
+            .andThen(EDIT_CONFIG_LISTENERS_HANDLER);
 
-    private static final BiConsumer<Source, Target> NOOP_HANDLER = (source, target) -> {};
+    private static final BiConsumer<Source, Target> NOOP_HANDLER = (source, target) -> {
+    };
 
     /**
      * Default (instantiation-restricting) constructor
@@ -113,8 +117,8 @@ public class HandlerChains {
     }
 
     /**
-     * Retrieves a handler conveyor for rendering a scope-specific UI, such as a dialog, a design dialog, or an
-     * in-place editing config
+     * Retrieves a handler conveyor for rendering a scope-specific UI, such as a dialog, a design dialog, or an in-place
+     * editing config
      * @param scope Non-blank string representing the scope
      * @return {@code BiConsumer<Source, Target>} instance representing the conveyor
      */
