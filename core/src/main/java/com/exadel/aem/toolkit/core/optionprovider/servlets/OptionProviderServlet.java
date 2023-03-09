@@ -58,8 +58,6 @@ import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService
         ServletResolverConstants.SLING_SERVLET_METHODS + CoreConstants.OPERATOR_EQUALS + HttpConstants.METHOD_GET
     })
 public class OptionProviderServlet extends SlingSafeMethodsServlet {
-    private static final String CONTENT_TYPE_JSON = "application/json;charset=utf-8";
-
     private static final String QUERY_KEY_OUTPUT = "output";
     private static final String QUERY_VALUE_JSON = "json";
 
@@ -88,7 +86,7 @@ public class OptionProviderServlet extends SlingSafeMethodsServlet {
         }
 
         if (isJsonOutput(request)) {
-            response.setContentType(CONTENT_TYPE_JSON);
+            response.setContentType(CoreConstants.CONTENT_TYPE_JSON);
             response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
             try {
                 response.getWriter().print(getJsonOutput(options));
