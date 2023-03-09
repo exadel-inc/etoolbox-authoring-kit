@@ -14,9 +14,9 @@
 package com.exadel.aem.toolkit.core.ai.models.facility;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.SlingHttpServletRequest;
 
 import com.exadel.aem.toolkit.core.ai.models.solution.Solution;
 
@@ -24,13 +24,21 @@ public interface Facility {
 
     String getId();
 
-    String getTitle();
+    default String getTitle() {
+        return getId();
+    }
 
     default String getIcon() {
         return StringUtils.EMPTY;
     }
 
+    default int getRanking() { return 0; }
+
+    default boolean isAllowed(SlingHttpServletRequest request) {
+        return true;
+    }
+
     List<Facility> getVariants();
 
-    Solution execute(Map<String, Object> arguments);
+    Solution execute(SlingHttpServletRequest request);
 }

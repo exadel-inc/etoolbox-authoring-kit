@@ -14,10 +14,11 @@
 package com.exadel.aem.toolkit.core.ai.models.facility;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.SlingHttpServletRequest;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.ai.models.solution.Solution;
@@ -28,8 +29,8 @@ class CombinedFacility implements Facility {
     private final List<Facility> variants;
 
     CombinedFacility(Facility other) {
-        this.id = StringUtils.substringBefore(other.getId(), CoreConstants.SEPARATOR_DOT);
-        this.variants = new ArrayList<>(other.getVariants());
+        this.id = StringUtils.substringBeforeLast(other.getId(), CoreConstants.SEPARATOR_DOT);
+        this.variants = new ArrayList<>(other instanceof SimpleFacility ? Collections.singletonList(other) : other.getVariants());
     }
 
     @Override
@@ -58,12 +59,21 @@ class CombinedFacility implements Facility {
     }
 
     @Override
+    public int getRanking() {
+        return variants
+            .stream()
+            .mapToInt(Facility::getRanking)
+            .max()
+            .orElse(0);
+    }
+
+    @Override
     public List<Facility> getVariants() {
         return variants;
     }
 
     @Override
-    public Solution execute(Map<String, Object> arguments) {
-        return Solution.EMPTY;
+    public Solution execute(SlingHttpServletRequest request) {
+        return Solution.empty();
     }
 }
