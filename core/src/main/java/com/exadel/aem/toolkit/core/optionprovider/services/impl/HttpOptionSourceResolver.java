@@ -30,6 +30,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
@@ -41,9 +42,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
 /**
  * Implements {@link OptionSourceResolver} to facilitate extracting option datasources from HTTP endpoints
@@ -102,9 +103,9 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
         HttpClient effectiveHttpClient = httpClient != null
             ? httpClient
             : HttpClientBuilder
-                .create()
-                .setDefaultRequestConfig(requestConfig)
-                .build();
+            .create()
+            .setDefaultRequestConfig(requestConfig)
+            .build();
 
         HttpGet httpGet = new HttpGet(url);
         httpGet.setHeader(HttpHeaders.USER_AGENT, HTTP_USER_AGENT);
@@ -121,6 +122,7 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
                 EntityUtils.consumeQuietly(httpResponse.getEntity());
             }
             httpGet.releaseConnection();
+            HttpClientUtils.closeQuietly(httpClient);
         }
         return StringUtils.EMPTY;
     }
@@ -147,9 +149,8 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
      * @return {@code JsonNode} object or null
      */
     private static JsonNode parseJson(String source, String suffix) {
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            JsonNode jsonNode = objectMapper.readTree(source);
+            JsonNode jsonNode = ObjectConversionUtil.toNodeTree(source);
             if (StringUtils.isBlank(suffix)) {
                 return jsonNode;
             }
@@ -199,8 +200,8 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
     }
 
     /**
-     * Called by {@link HttpOptionSourceResolver#createResource(SlingHttpServletRequest, JsonNode)} to convert a particular
-     * {@link JsonNode} into a {@code ValueMap} containing all the keys and values contained in the node
+     * Called by {@link HttpOptionSourceResolver#createResource(SlingHttpServletRequest, JsonNode)} to convert a
+     * particular {@link JsonNode} into a {@code ValueMap} containing all the keys and values contained in the node
      * @param jsonNode {@link JsonNode} object containing values for the value map
      * @return {@link ValueMap} object
      */
