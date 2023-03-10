@@ -25,6 +25,7 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -44,7 +45,7 @@ public class HttpClientFactory {
         return new Builder();
     }
 
-    public static CloseableHttpClient newInstance(int timeout) {
+    public static HttpClient newInstance(int timeout) {
         return newInstance().timeout(timeout).get();
     }
 
