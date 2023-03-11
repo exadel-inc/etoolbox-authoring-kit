@@ -38,7 +38,7 @@ public class SmartSearchService implements AssistantService {
     private void init(SmartSearchServiceConfig config) {
         this.config = config;
         if (facilities == null) {
-            facilities = Arrays.asList(new SearchTextFacility(this), new SearchImagesFacility(this));
+            facilities = Arrays.asList(new SmartSearchTextFacility(this), new SmartSearchImagesFacility(this));
         }
     }
 

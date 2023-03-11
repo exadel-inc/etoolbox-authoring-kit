@@ -13,22 +13,34 @@
  */
 package com.exadel.aem.toolkit.core.assistant.models.solutions;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 
-class OptionSolution extends Solution {
+class OptionsSolution extends Solution {
+
+    private static final String PN_HAS_MORE = "hasMore";
 
     private final List<String> options;
+    private final boolean continuous;
 
-    OptionSolution(Map<String, Object> args, List<String> options) {
+    OptionsSolution(Map<String, Object> args, List<String> options) {
+        this(args, options, true);
+    }
+
+    OptionsSolution(Map<String, Object> args, List<String> options, boolean continuous) {
         super(args);
         this.options = options;
+        this.continuous = continuous;
     }
 
     @Override
     public String asJson() {
-        return asJson(CoreConstants.PN_OPTIONS, options);
+        Map<String, Object> details = new HashMap<>();
+        details.put(CoreConstants.PN_OPTIONS, options);
+        details.put(PN_HAS_MORE, continuous);
+        return asJson(details);
     }
 }

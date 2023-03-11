@@ -24,14 +24,14 @@ import org.apache.sling.api.resource.ValueMap;
 
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 
-class SearchImagesFacility extends SmartSearchFacility {
+class SmartSearchImagesFacility extends SmartSearchFacility {
 
     private static final String QUERY_EXPRESSION = "SELECT [jcr:path] FROM [dam:Asset] AS a "
         + "WHERE ISDESCENDANTNODE(a, '$path') AND [jcr:content/metadata/dc:format] LIKE '%image%' "
         + "AND CONTAINS(*, $text) "
         + "ORDER BY [jcr:score] DESC";
 
-    SearchImagesFacility(SmartSearchService service) {
+    SmartSearchImagesFacility(SmartSearchService service) {
         super(service);
     }
 
@@ -76,6 +76,8 @@ class SearchImagesFacility extends SmartSearchFacility {
         while (rowIterator.hasNext()) {
             assetPaths.add(rowIterator.nextRow().getPath());
         }
-        return Solution.from(args).withOptions(assetPaths);
+        return Solution.from(args).withOptions(
+            assetPaths,
+            assetPaths.size() >= getService().getConfig().maxOptions());
     }
 }

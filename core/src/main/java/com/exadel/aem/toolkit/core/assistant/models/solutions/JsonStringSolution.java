@@ -13,7 +13,16 @@
  */
 package com.exadel.aem.toolkit.core.assistant.models.solutions;
 
+import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.JsonNodeFactory;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
 class JsonStringSolution extends Solution {
 
@@ -32,6 +41,24 @@ class JsonStringSolution extends Solution {
 
     @Override
     public String asJson() {
-        return asJson(key, content);
+        if (StringUtils.isBlank(content)) {
+            return super.asJson(Collections.emptyMap());
+        }
+        JsonNode parsedNestedJson;
+        try {
+            parsedNestedJson = ObjectConversionUtil.toNodeTree(content);
+        } catch (IOException e) {
+            LOG.error(ERROR_MESSAGE, e);
+            return String.format(ERROR_MESSAGE_JSON, e);
+        }
+        ObjectNode result = new ObjectNode(JsonNodeFactory.instance);
+        ObjectNode args = (ObjectNode) ObjectConversionUtil.toNodeTree(getArgs());
+        result.set(PN_ARGS, args);
+        if (StringUtils.isNotEmpty(key)) {
+            result.set(key, parsedNestedJson);
+        } else if (parsedNestedJson instanceof ObjectNode) {
+            result.setAll((ObjectNode) parsedNestedJson);
+        }
+        return result.toString();
     }
 }

@@ -13,28 +13,22 @@
  */
 package com.exadel.aem.toolkit.core.assistant.models.solutions;
 
-import java.io.IOException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
 public abstract class Solution {
-    private static final Logger LOG = LoggerFactory.getLogger(Solution.class);
+    static final Logger LOG = LoggerFactory.getLogger(Solution.class);
 
-    private static final String PN_ARGS = "args";
-    private static final String ERROR_MESSAGE = "Could not serialize the solution";
-    private static final String ERROR_MESSAGE_JSON = "{\"messages\": \"Serialization exception: %s\"}";
+    static final String PN_ARGS = "args";
+    static final String ERROR_MESSAGE = "Could not serialize the solution";
+    static final String ERROR_MESSAGE_JSON = "{\"messages\": \"Serialization exception: %s\"}";
 
     private final Map<String, Object> args;
 
@@ -46,44 +40,30 @@ public abstract class Solution {
         return HttpStatus.SC_OK;
     }
 
-    public abstract String asJson();
-
-    String asJson(String key, List<String> entries) {
-        Map<String, Object> values = new HashMap<>();
-        values.put(PN_ARGS, args);
-        if (CollectionUtils.isNotEmpty(entries)) {
-            values.put(key, entries);
-        }
-        return asJson(values);
+    Map<String, Object> getArgs() {
+        return args;
     }
 
+    /* -------------
+       Serialization
+       ------------- */
+
+    public abstract String asJson();
+
     String asJson(Map<String, Object> values) {
+        Map<String, Object> effectiveValues = new HashMap<>(values);
+        effectiveValues.putIfAbsent(PN_ARGS, args);
         return ObjectConversionUtil.toJson(
-            values,
+            effectiveValues,
             e -> {
                 LOG.error(ERROR_MESSAGE, e);
                 return String.format(ERROR_MESSAGE_JSON, e.getMessage());
             });
     }
 
-    String asJson(String key, String nestedJson) {
-        ObjectNode tree = (ObjectNode) ObjectConversionUtil.toNodeTree(Collections.singletonMap("args", args));
-        if (StringUtils.isBlank(nestedJson)) {
-            return tree.toString();
-        }
-        try {
-            JsonNode parsedNestedJson = ObjectConversionUtil.toNodeTree(nestedJson);
-            if (StringUtils.isEmpty(key) && parsedNestedJson instanceof ObjectNode) {
-                tree.setAll((ObjectNode) parsedNestedJson);
-            } else if (StringUtils.isNotEmpty(key)) {
-                tree.set(key, parsedNestedJson);
-            }
-            return tree.toString();
-        } catch (IOException e) {
-            LOG.error(ERROR_MESSAGE, e);
-            return String.format(ERROR_MESSAGE_JSON, e.getMessage());
-        }
-    }
+    /* ---------------
+       Factory methods
+       --------------- */
 
     public static Solution empty() {
         return new Builder(null).empty();
@@ -118,7 +98,11 @@ public abstract class Solution {
         }
 
         public Solution withOptions(List<String> options) {
-            return new OptionSolution(args, options);
+            return new OptionsSolution(args, options);
+        }
+
+        public Solution withOptions(List<String> options, boolean continuous) {
+            return new OptionsSolution(args, options, continuous);
         }
 
         public Solution withValueMap(Map<String, Object> values) {

@@ -36,6 +36,6 @@ class NotificationSolution extends Solution {
 
     @Override
     public String asJson() {
-        return asJson(PN_MESSAGES, messages);
+        return asJson(Collections.singletonMap(PN_MESSAGES, messages));
     }
 }
