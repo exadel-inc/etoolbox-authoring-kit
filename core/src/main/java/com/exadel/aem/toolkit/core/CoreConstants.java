@@ -20,6 +20,9 @@ public class CoreConstants {
 
     public static final String CONTENT_TYPE_JSON = "application/json;charset=utf-8";
 
+    public static final String METHOD_GET = "GET";
+    public static final String METHOD_POST = "POST";
+
     public static final String NN_ITEM = "item";
     public static final String NN_LIST = "list";
 
@@ -37,6 +40,8 @@ public class CoreConstants {
     public static final String PN_PATH = "path";
     public static final String PN_PREPEND = "prepend";
     public static final String PN_SELECTED = "selected";
+    public static final String PN_SIZE = "size";
+
     public static final String PN_TEXT = "text";
     public static final String PN_TYPE = "type";
     public static final String PN_UPDATE_COMPONENT_LIST = "updatecomponentlist";

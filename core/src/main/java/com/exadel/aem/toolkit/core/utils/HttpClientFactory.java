@@ -25,7 +25,6 @@ import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpHost;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -35,18 +34,20 @@ import org.slf4j.LoggerFactory;
 public class HttpClientFactory {
     private static final Logger LOG = LoggerFactory.getLogger(HttpClientFactory.class);
 
+    public static final int DEFAULT_TIMEOUT = 20000;
+
     private static final String PROTOCOL_TLS = "TLS";
     private static final X509TrustManager PERMISSIVE_TRUST_MANAGER = new PermissiveTrustManager();
 
     private HttpClientFactory() {
     }
 
-    public static Builder newInstance() {
+    public static Builder newClient() {
         return new Builder();
     }
 
-    public static HttpClient newInstance(int timeout) {
-        return newInstance().timeout(timeout).get();
+    public static CloseableHttpClient newClient(int timeout) {
+        return newClient().timeout(timeout).get();
     }
 
     public static class Builder {

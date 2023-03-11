@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpStatus;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.request.RequestParameter;
@@ -42,7 +43,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.assistant.AssistantConstants;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Facility;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.FacilityCollector;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
@@ -69,8 +69,12 @@ public class AssistantServlet extends SlingAllMethodsServlet {
 
     private static final String FACILITY_ROLE_UTIL = "util.";
 
-    private static final FacilityCollector FACILITY_COLLECTOR = new FacilityCollector();
+    private static final String EXCEPTION_EMPTY_RESPONSE = "Empty response";
+    private static final String EXCEPTION_INVALID_COMMAND = "Invalid command: ";
+    private static final String EXCEPTION_INVALID_OPERATION = "Invalid operation: ";
+    private static final String EXCEPTION_NO_SERVICES = "No enabled Assistant services";
 
+    private static final FacilityCollector FACILITY_COLLECTOR = new FacilityCollector();
     @Reference(cardinality = ReferenceCardinality.MULTIPLE, policy = ReferencePolicy.DYNAMIC)
     @SuppressWarnings("java:S3077")
     private transient volatile List<AssistantService> services;
@@ -86,7 +90,7 @@ public class AssistantServlet extends SlingAllMethodsServlet {
 
     @Override
     protected void service(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
-        if (!StringUtils.equalsAnyIgnoreCase(request.getMethod(), AssistantConstants.HTTP_METHOD_GET, AssistantConstants.HTTP_METHOD_POST)) {
+        if (!StringUtils.equalsAnyIgnoreCase(request.getMethod(), CoreConstants.METHOD_GET, CoreConstants.METHOD_POST)) {
             this.doGeneric(request, response);
         }
         response.setContentType(CoreConstants.CONTENT_TYPE_JSON);
@@ -95,7 +99,7 @@ public class AssistantServlet extends SlingAllMethodsServlet {
             CoreConstants.SEPARATOR_SLASH);
 
         if (!operations.containsKey(operation)) {
-            String exceptionMessage = "Invalid operation: " + operation;
+            String exceptionMessage = EXCEPTION_INVALID_OPERATION + operation;
             LOG.warn(exceptionMessage);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             String responseContent = Solution.from(exceptionMessage).asJson();
@@ -103,7 +107,7 @@ public class AssistantServlet extends SlingAllMethodsServlet {
             return;
         }
         if (services == null || services.stream().noneMatch(AssistantService::isEnabled)) {
-            String exceptionMessage = "No enabled Assistant services";
+            String exceptionMessage = EXCEPTION_NO_SERVICES;
             LOG.error(exceptionMessage);
             response.setStatus(HttpServletResponse.SC_NOT_FOUND);
             String responseContent = Solution.from(exceptionMessage).asJson();
@@ -154,7 +158,7 @@ public class AssistantServlet extends SlingAllMethodsServlet {
             .orElse(null);
 
         if (matchingFacility == null) {
-            String exceptionMessage = "Invalid command to execute: " + command;
+            String exceptionMessage = EXCEPTION_INVALID_COMMAND + command;
             LOG.warn(exceptionMessage);
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             String responseContent = Solution.from(exceptionMessage).asJson();
@@ -163,9 +167,14 @@ public class AssistantServlet extends SlingAllMethodsServlet {
         }
 
         Solution result = matchingFacility.execute(request);
-        response.setStatus(result.getStatusCode());
-        response.setContentType(CoreConstants.CONTENT_TYPE_JSON);
-        response.getWriter().println(result.asJson());
+        if (result == null) {
+            response.setStatus(HttpStatus.SC_NOT_FOUND);
+            response.getWriter().println(Solution.from(EXCEPTION_EMPTY_RESPONSE));
+        } else {
+            response.setStatus(result.getStatusCode());
+            response.setContentType(CoreConstants.CONTENT_TYPE_JSON);
+            response.getWriter().println(result.asJson());
+        }
     }
 
     /* ---------------
