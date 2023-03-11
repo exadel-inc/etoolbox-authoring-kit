@@ -28,11 +28,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.HttpClientUtils;
 import org.apache.http.entity.ContentType;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -44,6 +42,7 @@ import com.adobe.granite.ui.components.ds.ValueMapResource;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.utils.HttpClientFactory;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
 /**
@@ -57,8 +56,6 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
 
     private static final String HTTP_USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
         + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36";
-    private static final int HTTP_TIMEOUT = 10_000;
-
     private HttpClient httpClient;
 
     /**
@@ -93,24 +90,15 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
      * @return String value; can be an empty string
      */
     private String getResponseContent(String url) {
-        RequestConfig requestConfig = RequestConfig
-            .custom()
-            .setConnectTimeout(HTTP_TIMEOUT)
-            .setConnectionRequestTimeout(HTTP_TIMEOUT)
-            .setSocketTimeout(HTTP_TIMEOUT)
-            .build();
-
-        HttpClient effectiveHttpClient = httpClient != null
-            ? httpClient
-            : HttpClientBuilder
-            .create()
-            .setDefaultRequestConfig(requestConfig)
-            .build();
 
         HttpGet httpGet = new HttpGet(url);
         httpGet.setHeader(HttpHeaders.USER_AGENT, HTTP_USER_AGENT);
         httpGet.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
         HttpResponse httpResponse = null;
+
+        HttpClient effectiveHttpClient = httpClient != null
+            ? httpClient
+            : HttpClientFactory.newClient(HttpClientFactory.DEFAULT_TIMEOUT);
 
         try {
             httpResponse = effectiveHttpClient.execute(httpGet);
@@ -122,7 +110,7 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
                 EntityUtils.consumeQuietly(httpResponse.getEntity());
             }
             httpGet.releaseConnection();
-            HttpClientUtils.closeQuietly(httpClient);
+            HttpClientUtils.closeQuietly(effectiveHttpClient);
         }
         return StringUtils.EMPTY;
     }
