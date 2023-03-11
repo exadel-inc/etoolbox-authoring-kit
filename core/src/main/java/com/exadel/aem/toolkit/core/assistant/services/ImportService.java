@@ -44,7 +44,6 @@ import com.day.cq.dam.api.renditions.RenditionTemplate;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUploadConstants;
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.assistant.AssistantConstants;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Facility;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.SimpleFacility;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
@@ -91,13 +90,8 @@ public class ImportService implements AssistantService {
         }
 
         @Override
-        public String getIcon() {
-            return ICON_TEXT_ADD;
-        }
-
-        @Override
         public boolean isAllowed(SlingHttpServletRequest request) {
-            return request != null && AssistantConstants.HTTP_METHOD_POST.equals(request.getMethod());
+            return request != null && CoreConstants.METHOD_POST.equals(request.getMethod());
         }
 
         @Override
@@ -125,8 +119,8 @@ public class ImportService implements AssistantService {
             HttpGet request = new HttpGet(url);
             try (
                 CloseableHttpClient client = HttpClientFactory
-                    .newInstance()
-                    .timeout(AssistantConstants.HTTP_TIMEOUT)
+                    .newClient()
+                    .timeout(HttpClientFactory.DEFAULT_TIMEOUT)
                     .skipSsl(LOCALHOST_PATTERN.matcher(url).find())
                     .get();
                 CloseableHttpResponse response = client.execute(request)
@@ -157,7 +151,7 @@ public class ImportService implements AssistantService {
                     asset,
                     THUMBNAIL_DIMENSION,
                     THUMBNAIL_DIMENSION,
-                    true);
+                    false);
                 renditionMaker.generateRenditions(asset, thumbnailTemplate);
 
             } catch (Exception e) {
