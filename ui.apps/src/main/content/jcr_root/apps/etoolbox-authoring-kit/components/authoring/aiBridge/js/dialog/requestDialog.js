@@ -16,6 +16,7 @@
 
     const CLS_LOADING = 'is-loading';
     const CLS_ERROR = 'is-error';
+    const CLS_DISABLED_ON_LOADING = 'disabled-on-loading';
 
     ns.Assistant = ns.Assistant || {};
 
@@ -30,7 +31,8 @@
                     innerHTML: `
                         <vendors class="flex-block">
                             <coral-select class="coral-Form-field grow"></coral-select>
-                            <button id="settings" is="coral-button" variant="secondary" icon="gears"></button>
+                            <button is="coral-button" class="refresh-button ${CLS_DISABLED_ON_LOADING}" variant="secondary" icon="refresh"></button>
+                            <button is="coral-button" class="settings-button" variant="secondary" icon="gears"></button>
                         </vendors>
                         <notifications></notifications>
                         <coral-wait size="M"></coral-wait>
@@ -60,7 +62,11 @@
             dialog.abortController && dialog.abortController.abort();
         });
 
-        $dialog.find('vendors button').on('click', function () {
+        $dialog.find('.refresh-button').on('click', function () {
+            $dialog.find('vendors coral-select').trigger('change');
+        });
+
+        $dialog.find('.settings-button').on('click', function () {
             ns.Assistant.openSettingsDialog($dialog, function () {
                 $dialog.get(0).abortController && $dialog.get(0).abortController.abort();
                 runRequest($dialog);
@@ -108,6 +114,7 @@
         });
 
         $vendors.on('change', function (e) {
+            e.preventDefault();
             $dialog.get(0).abortController && $dialog.get(0).abortController.abort();
             updateSettingsButton($dialog, e.target);
             Object.assign($dialog.data(ns.Assistant.DATA_KEY_SETUP), {command: $(e.target).val()});
@@ -116,7 +123,7 @@
     }
 
     function updateSettingsButton($dialog, vendorsList) {
-        $dialog.find('#settings').attr('disabled', function () {
+        $dialog.find('.settings-button').attr('disabled', function () {
             const targetItem = vendorsList.selectedItem || vendorsList.items.first();
             return !targetItem || !$(targetItem).is('.has-settings');
         });
@@ -127,7 +134,7 @@
         const command = setup.command || $dialog.find('vendors coral-select').val();
         const text = (setup.settings && setup.settings.text) || '';
 
-        $dialog.removeClass(CLS_ERROR).addClass(CLS_LOADING);
+        setLoading($dialog);
         $dialog.find('notifications').empty();
         $dialog.find('options').empty();
         $dialog.find('coral-dialog-header').text(getHeaderText(command, text));
@@ -145,7 +152,7 @@
         fetch(serviceLink, {signal: abortController.signal})
             .then((res) => res.json())
             .then((json) => populateOptionList($dialog, json))
-            .then(() => $dialog.removeClass(CLS_LOADING))
+            .then(() => unsetLoading($dialog))
             .catch((err) => displayError($dialog, err));
     }
 
@@ -234,11 +241,21 @@
         return Promise.all(promises);
     }
 
+    function setLoading($dialog) {
+        $dialog.removeClass(CLS_ERROR).addClass(CLS_LOADING).find(`.${CLS_DISABLED_ON_LOADING}`).attr('disabled', true);
+        return $dialog;
+    }
+
+    function unsetLoading($dialog) {
+        $dialog.removeClass(CLS_LOADING).find(`.${CLS_DISABLED_ON_LOADING}`).removeAttr('disabled');
+        return $dialog;
+    }
+
     function displayError($dialog, err) {
         if (err.toString().includes('AbortError')) {
             return;
         }
-        $dialog.addClass(CLS_ERROR).removeClass(CLS_LOADING);
+        unsetLoading($dialog).addClass(CLS_ERROR);
         $dialog.find('notifications').append(`<coral-alert variant="warning"><coral-alert-content>${err}</coral-alert-content></coral-alert>`);
     }
 
@@ -248,10 +265,10 @@
         const value = $this.attr('value') || $(this).find('coral-list-item-content').text();
         const acceptDelegate = $dialog.data(ns.Assistant.DATA_KEY_SETUP).acceptDelegate;
         if (value && acceptDelegate) {
-            $dialog.addClass(CLS_LOADING);
+            setLoading($dialog);
             try {
                 await acceptDelegate(value);
-                $dialog.removeClass(CLS_LOADING);
+                unsetLoading($dialog);
                 $dialog.get(0).hide();
             } catch (e) {
                 displayError($dialog, e);

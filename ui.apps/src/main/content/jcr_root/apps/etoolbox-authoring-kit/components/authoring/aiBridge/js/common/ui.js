@@ -101,7 +101,7 @@
                     } else if (variant.vendorLogo) {
                         iconAttrString = `icon="${variant.vendorLogo}"`;
                     }
-                    const vendorString = variant.vendorName.substring(0, 1);
+                    const vendorString = (variant.vendorName || 'E').substring(0, 1);
                     const dataString = `${options.variantIdAttribute}="${options.variantIdTransform ? options.variantIdTransform(variant.id) : variant.id}"`;
                     return `<a is="coral-anchorbutton" variant="minimal" ${iconAttrString} iconsize="S" ${dataString}>${iconContentString}${vendorString}</a>`;
                 })
