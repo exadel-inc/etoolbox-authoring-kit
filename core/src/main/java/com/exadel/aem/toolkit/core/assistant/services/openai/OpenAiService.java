@@ -127,12 +127,12 @@ public class OpenAiService implements AssistantService {
         return config;
     }
 
-    Solution executeCompletion(String prompt, ValueMap args) {
-        return execute(config.completionsEndpoint(), getCompletionRequestPayload(prompt, args), args);
+    Solution executeCompletion(ValueMap args, String defaultPrompt) {
+        return execute(config.completionsEndpoint(), getCompletionRequestPayload(args, defaultPrompt), args);
     }
 
-    Solution executeEdit(String prompt, ValueMap args) {
-        return execute(config.editsEndpoint(), getEditRequestPayload(prompt, args), args);
+    Solution executeEdit(ValueMap args, String defautlInstruction) {
+        return execute(config.editsEndpoint(), getEditRequestPayload(args, defautlInstruction), args);
     }
 
     Solution executeImageGeneration(ValueMap args) {
@@ -158,9 +158,10 @@ public class OpenAiService implements AssistantService {
         }
     }
 
-    String getCompletionRequestPayload(String prompt, ValueMap args) {
+    String getCompletionRequestPayload(ValueMap args, String defaultPrompt) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(PN_PROMPT, prompt + args.get(CoreConstants.PN_TEXT));
+        String prompt = extractPrompt(args, PN_PROMPT, defaultPrompt);
+        properties.put(PN_PROMPT, prompt + StringUtils.SPACE + args.get(CoreConstants.PN_TEXT));
         properties.put(OpenAiConstants.PN_MODEL, args.get(OpenAiConstants.PN_MODEL, config.completionModel()));
         properties.put(OpenAiConstants.PN_MAX_TOKENS, args.get(OpenAiConstants.PN_MAX_TOKENS, config.textLength()));
         properties.put(OpenAiConstants.PN_TEMPERATURE, args.get(OpenAiConstants.PN_TEMPERATURE, config.temperature()));
@@ -168,12 +169,14 @@ public class OpenAiService implements AssistantService {
         return ObjectConversionUtil.toJson(properties);
     }
 
-    String getEditRequestPayload(String prompt, ValueMap args) {
+    String getEditRequestPayload(ValueMap args, String defaultInstruction) {
         Map<String, Object> properties = new HashMap<>();
+        String instruction = extractPrompt(args, PN_INSTRUCTION, defaultInstruction);
+        properties.put(PN_INSTRUCTION, instruction);
         properties.put(OpenAiConstants.PN_MODEL, args.get(OpenAiConstants.PN_MODEL, config.editModel()));
-        properties.put(PN_INSTRUCTION, prompt);
         properties.put(PN_INPUT, args.get(CoreConstants.PN_TEXT));
         properties.put(OpenAiConstants.PN_TEMPERATURE, args.get(OpenAiConstants.PN_TEMPERATURE, config.temperature()));
+        properties.put(PN_CHOICES_COUNT, config.choices());
         return ObjectConversionUtil.toJson(properties);
     }
 
@@ -183,6 +186,15 @@ public class OpenAiService implements AssistantService {
         properties.put(CoreConstants.PN_SIZE, args.getOrDefault(CoreConstants.PN_SIZE, config.imageSize()));
         properties.put(OpenAiService.PN_CHOICES_COUNT, config.choices());
         return ObjectConversionUtil.toJson(properties);
+    }
+
+    private static String extractPrompt(ValueMap args, String key, String defaultValue) {
+        String result = args.get(key, StringUtils.EMPTY);
+        result = StringUtils.defaultIfBlank(result, defaultValue).trim();
+        if (!result.endsWith(CoreConstants.SEPARATOR_COLON)) {
+            result += CoreConstants.SEPARATOR_COLON;
+        }
+        return result;
     }
 
     private static Solution parseOpenAiResponse(Map<String, Object> args, CloseableHttpResponse response) throws IOException {

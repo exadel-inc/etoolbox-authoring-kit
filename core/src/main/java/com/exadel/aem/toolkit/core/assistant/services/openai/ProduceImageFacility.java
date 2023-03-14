@@ -13,14 +13,31 @@
  */
 package com.exadel.aem.toolkit.core.assistant.services.openai;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.sling.api.resource.ValueMap;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Setting;
+import com.exadel.aem.toolkit.core.assistant.models.facilities.SettingPersistence;
+import com.exadel.aem.toolkit.core.assistant.models.facilities.SettingType;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 
 class ProduceImageFacility extends OpenAiFacility {
+
+    private static final List<Setting> IMAGE_SETTINGS = Collections.singletonList(
+        Setting
+            .builder()
+            .id(CoreConstants.PN_SIZE)
+            .title("Image Size")
+            .type(SettingType.STRING)
+            .persistence(SettingPersistence.REQUIRED)
+            .option("256x256")
+            .option(OpenAiServiceConfig.DEFAULT_IMAGE_SIZE)
+            .option("1024x1024")
+            .defaultValue(OpenAiServiceConfig.DEFAULT_IMAGE_SIZE)
+            .build());
 
     public ProduceImageFacility(OpenAiService service) {
         super(service);

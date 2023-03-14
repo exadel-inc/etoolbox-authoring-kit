@@ -14,7 +14,6 @@
 package com.exadel.aem.toolkit.core.assistant.services.openai;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -63,19 +62,8 @@ abstract class OpenAiFacility extends SimpleFacility {
         .minValue(0)
         .defaultValue(OpenAiServiceConfig.DEFAULT_TEXT_LENGTH)
         .build();
-    private static final Setting IMAGE_SIZE_SETTING = Setting
-        .builder()
-        .id(CoreConstants.PN_SIZE)
-        .title("Image Size")
-        .type(SettingType.STRING)
-        .option("256x256")
-        .option(OpenAiServiceConfig.DEFAULT_IMAGE_SIZE)
-        .option("1024x1024")
-        .defaultValue(OpenAiServiceConfig.DEFAULT_IMAGE_SIZE)
-        .build();
     static final List<Setting> COMPLETION_SETTINGS = Arrays.asList(COMPLETION_MODEL_SETTING, TEMPERATURE_SETTING, MAX_TOKENS_SETTING);
     static final List<Setting> EDIT_SETTINGS = Arrays.asList(EDIT_MODEL_SETTING, TEMPERATURE_SETTING);
-    static final List<Setting> IMAGE_SETTINGS = Collections.singletonList(IMAGE_SIZE_SETTING);
     private static final String EXCEPTION_TOKEN_MISSING = "Authentication token is missing";
 
     private final OpenAiService service;

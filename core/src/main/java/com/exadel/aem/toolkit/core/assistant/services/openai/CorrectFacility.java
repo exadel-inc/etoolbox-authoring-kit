@@ -22,6 +22,8 @@ import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 
 class CorrectFacility extends OpenAiFacility {
 
+    private static final String INSTRUCTION = "Correct spelling and grammar";
+
     public CorrectFacility(OpenAiService service) {
         super(service);
     }
@@ -48,6 +50,6 @@ class CorrectFacility extends OpenAiFacility {
 
     @Override
     public Solution execute(ValueMap args) {
-        return getService().executeEdit("Correct spelling and grammar", args);
+        return getService().executeEdit(args, INSTRUCTION);
     }
 }

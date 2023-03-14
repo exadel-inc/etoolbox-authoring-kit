@@ -22,6 +22,8 @@ import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 
 class ExpandFacility extends OpenAiFacility {
 
+    private static final String PROMPT = "Expand the following text";
+
     ExpandFacility(OpenAiService service) {
         super(service);
     }
@@ -48,6 +50,6 @@ class ExpandFacility extends OpenAiFacility {
 
     @Override
     public Solution execute(ValueMap args) {
-        return getService().executeCompletion("Expand the following text: ", args);
+        return getService().executeCompletion(args, PROMPT);
     }
 }

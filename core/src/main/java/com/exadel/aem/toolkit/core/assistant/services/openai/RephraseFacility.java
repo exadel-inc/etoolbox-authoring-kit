@@ -13,14 +13,33 @@
  */
 package com.exadel.aem.toolkit.core.assistant.services.openai;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.sling.api.resource.ValueMap;
 
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Setting;
+import com.exadel.aem.toolkit.core.assistant.models.facilities.SettingPersistence;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 
 class RephraseFacility extends OpenAiFacility {
+
+    private static final String DEFAULT_INSTRUCTION = "Make this text sound friendly";
+    private static final Setting INSTRUCTION_SETTING = Setting
+            .builder()
+            .id("instruction")
+            .title("Tell how to rephrase content")
+            .persistence(SettingPersistence.TRANSIENT)
+            .defaultValue(DEFAULT_INSTRUCTION)
+            .build();
+    private static final List<Setting> REPHRASE_SETTINGS;
+
+    static {
+        REPHRASE_SETTINGS = new ArrayList<>();
+        REPHRASE_SETTINGS.add(INSTRUCTION_SETTING);
+        REPHRASE_SETTINGS.addAll(EDIT_SETTINGS);
+
+    }
 
     public RephraseFacility(OpenAiService service) {
         super(service);
@@ -38,11 +57,11 @@ class RephraseFacility extends OpenAiFacility {
 
     @Override
     public List<Setting> getSettings() {
-        return COMPLETION_SETTINGS;
+        return REPHRASE_SETTINGS;
     }
 
     @Override
     public Solution execute(ValueMap args) {
-        return getService().executeCompletion("Rephrase the following text: ", args);
+        return getService().executeEdit(args, DEFAULT_INSTRUCTION);
     }
 }

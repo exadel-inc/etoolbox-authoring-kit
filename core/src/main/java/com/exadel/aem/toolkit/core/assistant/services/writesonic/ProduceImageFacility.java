@@ -20,21 +20,22 @@ import org.apache.sling.api.resource.ValueMap;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Setting;
+import com.exadel.aem.toolkit.core.assistant.models.facilities.SettingPersistence;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 
 class ProduceImageFacility extends WritesonicFacility {
 
-    private static final Setting IMAGE_SIZE = Setting
-        .builder()
-        .id(CoreConstants.PN_SIZE)
-        .title("Image size")
-        .option(WritesonicServiceConfig.DEFAULT_IMAGE_SIZE, "Square (512x512)")
-        .option("768x512", "Horizontal (768x512)")
-        .option("512x768", "Vertical (512x768)")
-        .defaultValue(WritesonicServiceConfig.DEFAULT_IMAGE_SIZE)
-        .build();
-
-    private static final List<Setting> IMAGE_SETTINGS = Collections.singletonList(IMAGE_SIZE);
+    private static final List<Setting> IMAGE_SETTINGS = Collections.singletonList(
+        Setting
+            .builder()
+            .id(CoreConstants.PN_SIZE)
+            .title("Image size")
+            .persistence(SettingPersistence.REQUIRED)
+            .option(WritesonicServiceConfig.DEFAULT_IMAGE_SIZE, "Square (512x512)")
+            .option("768x512", "Horizontal (768x512)")
+            .option("512x768", "Vertical (512x768)")
+            .defaultValue(WritesonicServiceConfig.DEFAULT_IMAGE_SIZE)
+            .build());
 
     ProduceImageFacility(WritesonicService service) {
         super(service);

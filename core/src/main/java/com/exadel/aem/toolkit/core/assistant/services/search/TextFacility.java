@@ -29,7 +29,7 @@ import org.apache.sling.api.resource.ValueMap;
 
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 
-class SmartSearchTextFacility extends SmartSearchFacility {
+class TextFacility extends SmartSearchFacility {
 
     private static final String QUERY_TEMPLATE = "SELECT * FROM [nt:unstructured] AS a "
         + "WHERE ISDESCENDANTNODE(a, '$path') "
@@ -41,7 +41,7 @@ class SmartSearchTextFacility extends SmartSearchFacility {
 
     private final String queryExpression;
 
-    public SmartSearchTextFacility(SmartSearchService service) {
+    public TextFacility(SmartSearchService service) {
         super(service);
         String containsConstraint = ArrayUtils.isNotEmpty(service.getConfig().textSearchFields())
             ? Arrays.stream(service.getConfig().textSearchFields())

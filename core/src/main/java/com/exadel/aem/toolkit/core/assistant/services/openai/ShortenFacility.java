@@ -22,6 +22,8 @@ import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 
 class ShortenFacility extends OpenAiFacility {
 
+    private static final String INSTRUCTION = "Make the text shorter and more focused";
+
     ShortenFacility(OpenAiService service) {
         super(service);
     }
@@ -48,6 +50,6 @@ class ShortenFacility extends OpenAiFacility {
 
     @Override
     public Solution execute(ValueMap args) {
-        return getService().executeEdit("Make the text shorter and more focused", args);
+        return getService().executeEdit(args, INSTRUCTION);
     }
 }
