@@ -15,8 +15,9 @@ package com.exadel.aem.toolkit.core.assistant.models.facilities;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum SettingType {
-    STRING, INTEGER, DOUBLE;
+public enum SettingPersistence {
+
+    DEFAULT, REQUIRED, TRANSIENT;
 
     @JsonValue
     @Override

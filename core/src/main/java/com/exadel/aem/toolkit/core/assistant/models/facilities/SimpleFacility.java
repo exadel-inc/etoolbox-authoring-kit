@@ -45,7 +45,7 @@ public abstract class SimpleFacility implements Facility {
 
     @JsonIgnore
     @Override
-    public List<Facility> getVariants() {
+    public final List<Facility> getVariants() {
         return Collections.emptyList();
     }
 

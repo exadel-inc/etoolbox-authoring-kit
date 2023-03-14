@@ -17,15 +17,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 /**
  * Represents a {@link Facility} setting
  */
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class Setting {
 
     private String id;
     private String title;
     private SettingType type;
+    private SettingPersistence persistence;
     private List<Option> options;
     private String minValue;
     private String maxValue;
@@ -62,6 +65,18 @@ public class Setting {
     }
 
     /**
+     * Gets the persistence flag specified for the current setting. Apart from {@code default} (persistent) settings,
+     * there are: <br>
+     * - {@link SettingPersistence#TRANSIENT} settings that users are prompted to specify upon every request; <br>
+     * - {@link SettingPersistence#REQUIRED} settings that users should specify if not previously stored in a
+     * configuration field
+     * @return {@link SettingPersistence} value
+     */
+    public SettingPersistence getPersistence() {
+        return persistence;
+    }
+
+    /**
      * Retrieves a list of options if specified for this setting
      * @return A nullable list of {@link Option}s
      */
@@ -70,7 +85,7 @@ public class Setting {
     }
 
     /**
-     * Retrieves the minimal possible value if specified for the setting
+     * Retrieves the minimal possible numeric value if specified for the setting
      * @return Optional string value
      */
     public String getMinValue() {
@@ -78,7 +93,7 @@ public class Setting {
     }
 
     /**
-     * Retrieves the maximal possible value if specified for the setting
+     * Retrieves the maximal possible numeric value if one specified for the setting
      * @return Optional string value
      */
     public String getMaxValue() {
@@ -86,7 +101,7 @@ public class Setting {
     }
 
     /**
-     * Retrieves the default value if specified for the setting
+     * Retrieves the default value if one is specified for the setting
      * @return Optional string value
      */
     public String getDefaultValue() {
@@ -109,23 +124,29 @@ public class Setting {
         private String id;
         private String title;
         private SettingType type = SettingType.STRING;
+        private SettingPersistence persistence = SettingPersistence.DEFAULT;
         private List<Option> options;
         private String minValue;
         private String maxValue;
         private String defaultValue;
 
         public Builder id(String value) {
-            this.id = value;
+            id = value;
             return this;
         }
 
         public Builder title(String value) {
-            this.title = value;
+            title = value;
             return this;
         }
 
         public Builder type(SettingType value) {
-            this.type = value;
+            type = value;
+            return this;
+        }
+
+        public Builder persistence(SettingPersistence value) {
+            persistence = value;
             return this;
         }
 
@@ -143,17 +164,17 @@ public class Setting {
         }
 
         public Builder minValue(Object value) {
-            this.minValue = String.valueOf(value);
+            minValue = String.valueOf(value);
             return this;
         }
 
         public Builder maxValue(Object value) {
-            this.maxValue = String.valueOf(value);
+            maxValue = String.valueOf(value);
             return this;
         }
 
         public Builder defaultValue(Object value) {
-            this.defaultValue = String.valueOf(value);
+            defaultValue = String.valueOf(value);
             return this;
         }
 
@@ -162,6 +183,7 @@ public class Setting {
             result.id = id;
             result.title = title;
             result.type = type;
+            result.persistence = persistence;
             result.options = options;
             result.minValue = minValue;
             result.maxValue = maxValue;
