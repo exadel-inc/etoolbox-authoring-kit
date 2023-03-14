@@ -66,6 +66,7 @@
 
         execute: async function (id, value, params) {
             const dialogSetup = {
+                callerDialog: this.buttonUi.$ui.closest('coral-dialog'),
                 sourceField: this.sourceField,
                 settings: {
                   text:   this.getSelectedText()
@@ -79,10 +80,6 @@
                     this.editorKernel.relayCmd('inserthtml', text);
                 }
             };
-            const dialogSize = ns.Assistant.getDialogSize(this.buttonUi.$ui);
-            if (dialogSize) {
-                dialogSetup.size = dialogSize;
-            }
             ns.Assistant.openRequestDialog(dialogSetup);
         },
 
@@ -98,14 +95,7 @@
 
                     const flatVariants = facility.variants || [facility];
                     const actionParams = {};
-                    actionParams.variants = flatVariants
-                        .map((variant) => {
-                            return {
-                                title: variant.vendorName,
-                                id: variant.id,
-                                hasSettings: variant.settings && variant.settings.length > 0
-                            };
-                        });
+                    actionParams.variants = flatVariants.map((variant) => ns.Assistant.getAssistantFacilityVariantData(variant));
                     const actionParamsString = JSON.stringify(actionParams);
 
                     const newButton = ns.Assistant.initAssistantFacilityUi(facility, {

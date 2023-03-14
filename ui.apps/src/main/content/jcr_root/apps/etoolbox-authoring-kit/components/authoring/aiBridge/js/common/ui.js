@@ -22,7 +22,7 @@
     const CLS_FIELD_WRAPPER = 'eak-Form-field-wrapper';
     const CLS_ACTION_BUTTON = 'eak-assistant-button';
 
-    const FIELD_SETTING_DELIMITER = '@';
+    const FIELD_SETTING_SEPARATOR = '@';
 
     const DEBOUNCE_DELAY = 300;
 
@@ -31,13 +31,14 @@
 
         ATTR_ACTION: 'data-eak-assistant-action',
         ATTR_ACTION_PARAMS: 'data-eak-assistant-action-params',
+        ATTR_ASSISTANT_MODE: 'data-eak-assistant-mode',
         ATTR_SOURCE: 'data-eak-assistant-source',
         ATTR_SOURCE_REF: 'data-eak-assistant-source-ref',
         ATTR_SOURCE_SETTING_REF: 'data-eak-assistant-source-setting',
         ATTR_TARGET: 'data-eak-assistant-target',
 
-        DATA_KEY_SETUP: 'eak-assistant-setup',
         DATA_KEY_ACTION_PARAMS: 'eak-assistant-action-params',
+        DATA_KEY_SETUP: 'eak-assistant-setup',
 
         CLS_FACILITY_LIST: 'eak-assistant-facilities',
 
@@ -62,13 +63,7 @@
                     continue;
                 }
                 const flatVariants = facility.variants ? facility.variants : [facility];
-                const variantsJson = JSON.stringify(flatVariants.map((variant) => {
-                    return {
-                        title: variant.vendorName,
-                        id: variant.id,
-                        hasSettings: variant.settings && variant.settings.length > 0
-                    };
-                }));
+                const variantsJson = JSON.stringify(flatVariants.map((variant) => this.getAssistantFacilityVariantData(variant)));
                 const newButton = this.initAssistantFacilityUi(facility, { variantIdAttribute: 'data-eak-assistant-variant' });
                 newButton.setAttribute(ATTR_VARIANTS, variantsJson);
                 facilityList.items.add(newButton);
@@ -85,8 +80,9 @@
             attachEventHandlers($field);
 
             const $wrapper = $field.wrap(`<div class="${CLS_FIELD_WRAPPER}"></div>`).parent();
-            $(button).addClass(CLS_ACTION_BUTTON).appendTo($wrapper);
-            $(popover).appendTo($wrapper);
+            const $buttonTarget = findAssistantButtonInsertionTarget($wrapper, options);
+            $(button).addClass(CLS_ACTION_BUTTON).appendTo($buttonTarget);
+            $(popover).appendTo($buttonTarget);
         },
 
         initAssistantFacilityUi: function (facility, options = {}) {
@@ -116,16 +112,35 @@
             });
         },
 
-        getDialogSize: function (member) {
-            const $member = $(member);
-            const $dialog = $member.closest('coral-dialog');
-            if (!$dialog.length || $dialog.is('.coral3-Dialog--fullscreen')) {
-                return null;
+        getAssistantFacilityVariantData: function (variant) {
+            const result = {
+                title: variant.vendorName,
+                id: variant.id,
+            };
+            if (variant.settings) {
+                result.persistentSettings = variant.settings
+                    .filter((setting) => setting.persistence !== 'transient')
+                    .map((setting) => setting.id);
+                result.transientSettings = variant.settings
+                    .filter((setting) => setting.persistence === 'transient')
+                    .map((setting) => setting.id);
+                result.requiredSettings = variant.settings
+                    .filter((setting) => setting.persistence === 'required')
+                    .map((setting) => setting.id);
             }
-            const $dialogWrapper = $dialog.find('.coral3-Dialog-wrapper');
-            return {width: $dialogWrapper.outerWidth(), height: $dialogWrapper.outerHeight()};
+            return result;
         }
     });
+
+    function findAssistantButtonInsertionTarget($container, options) {
+        let $target = $container;
+        if (options.buttonTarget instanceof jQuery) {
+            $target = options.buttonTarget;
+        } else if (typeof options.buttonTarget === 'string') {
+            $target = $container.find(options.buttonTarget);
+        }
+        return $target;
+    }
 
     function attachEventHandlers($field) {
         const $dialog = $field.closest('coral-dialog');
@@ -159,12 +174,9 @@
             },
             variants: JSON.parse($masterButton.attr(ATTR_VARIANTS)),
             selectedVariantId: $button.attr(ATTR_VARIANT),
-            acceptDelegate: acceptDelegate
+            acceptDelegate: acceptDelegate,
+            callerDialog: $this.closest('coral-dialog')[0]
         };
-        const dialogSize = ns.Assistant.getDialogSize($button);
-        if (dialogSize) {
-            dialogSetup.size = dialogSize;
-        }
         ns.Assistant.openRequestDialog(dialogSetup);
     }
 
@@ -181,12 +193,12 @@
     function handleSettingChange(e) {
         const $this = $(e.target);
         const settingReference = $this.attr(ns.Assistant.ATTR_SOURCE_SETTING_REF);
-        if (!settingReference || !settingReference.includes(FIELD_SETTING_DELIMITER)) {
+        if (!settingReference || !settingReference.includes(FIELD_SETTING_SEPARATOR)) {
             return;
         }
-        const sourceFieldName = settingReference.split(FIELD_SETTING_DELIMITER)[0];
-        const settingName = settingReference.split(FIELD_SETTING_DELIMITER)[1];
-        ns.Assistant.storeSettings(sourceFieldName, settingName, $this.val());
+        const sourceFieldName = settingReference.split(FIELD_SETTING_SEPARATOR)[0];
+        const settingName = settingReference.split(FIELD_SETTING_SEPARATOR)[1];
+        ns.Assistant.storeSetting(sourceFieldName, settingName, $this.val());
     }
 
     function getValueSource($container) {
@@ -202,7 +214,7 @@
     function getSettingsSourceFieldName($container) {
         const sourceFieldValue = $container.find(`[${ns.Assistant.ATTR_SOURCE_SETTING_REF}]`).attr(ns.Assistant.ATTR_SOURCE_SETTING_REF);
         if (sourceFieldValue) {
-            return sourceFieldValue.split(FIELD_SETTING_DELIMITER)[0]
+            return sourceFieldValue.split(FIELD_SETTING_SEPARATOR)[0]
         }
         return $container.find('[name]').attr('name');
     }
