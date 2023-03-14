@@ -32,8 +32,7 @@
                 $imageUpload.trigger(assetSelectedEvent);
             }
 
-            const $innerWrapper = $imageUpload.wrap(`<div class="eak-assistant-prompt-wrapper align-bottom"></div>`).parent();
-
+            const $promptWrapper = $(`<div class="eak-assistant-prompt-wrapper"></div>`);
             const textField = new Coral.Textfield();
             textField.set({
                 placeholder: 'Image description to use with the generator service',
@@ -43,8 +42,12 @@
                 .addClass(`${CLS_PROMPT} coral-Form-field`)
                 .attr(ns.Assistant.ATTR_SOURCE, true)
                 .attr(ns.Assistant.ATTR_SOURCE_SETTING_REF, `${imageUploadName}@prompt`);
-            $innerWrapper.append($textField);
-            await ns.Assistant.initAssistantUi($innerWrapper, { facilityPrefix: 'image.' });
+            $promptWrapper.append($textField);
+
+            const $imageUploadWrapper = $imageUpload.wrap('<div class="full-width"/>').parent();
+            $imageUploadWrapper.append($promptWrapper);
+
+            await ns.Assistant.initAssistantUi($imageUploadWrapper, { facilityPrefix: 'image.', buttonTarget: $promptWrapper });
         });
     });
 
