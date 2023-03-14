@@ -18,8 +18,13 @@
     const FACILITIES_ENDPOINT = '/apps/etoolbox-authoring-kit/assistant/facilities';
     const SUFFIX_SETTINGS = '_eakAssistantSettings';
 
+    const DATA_KEY_UNFILTERED_SETTINGS = 'eak-unfiltered-settings';
+
     ns.Assistant = ns.Assistant || {};
     Object.assign(ns.Assistant, {
+
+        FACILITY_SETTING_SEPARATOR: '/',
+
         getServiceLink: function (setup = {}) {
             const settingsPart = setup.settings
                 ? Object.keys(setup.settings).map(key => '&' + key + '=' + encodeURIComponent(setup.settings[key])).join('')
@@ -44,41 +49,55 @@
         },
 
         getSettings: function (sourceField, prefix) {
-            let fieldValue;
+            let $sourceField;
             if (sourceField instanceof jQuery) {
-                fieldValue = sourceField.val();
+                $sourceField = sourceField;
             } else {
                 const fieldName = sourceField + (sourceField.endsWith('/') ? SUFFIX_SETTINGS.replace(/^_+/, '') : SUFFIX_SETTINGS);
-                fieldValue = $(`[name="${fieldName}"]`).val();
+                $sourceField = $(`[name="${fieldName}"]`);
             }
-            if (!fieldValue) {
-                return {};
-            }
-            const parsedSettings = JSON.parse(fieldValue);
+
+            const unfilteredSettings = $sourceField.data(DATA_KEY_UNFILTERED_SETTINGS) || JSON.parse($sourceField.val() || '{}');
             if (!prefix) {
-                return parsedSettings;
+                return unfilteredSettings;
             }
             const filteredSettings = {};
-            for (const key of Object.keys(parsedSettings)) {
-                if (!key.includes('/')) {
-                    filteredSettings[key] = parsedSettings[key];
-                } else if (key.startsWith(prefix + '/')) {
-                    filteredSettings[key.split('/')[1]] = parsedSettings[key];
+            for (const key of Object.keys(unfilteredSettings)) {
+                if (!key.includes(this.FACILITY_SETTING_SEPARATOR)) {
+                    filteredSettings[key] = unfilteredSettings[key];
+                } else if (key.startsWith(prefix + this.FACILITY_SETTING_SEPARATOR)) {
+                    filteredSettings[key.split(this.FACILITY_SETTING_SEPARATOR)[1]] = unfilteredSettings[key];
                 }
             }
             return filteredSettings;
         },
 
-        storeSettings: function (sourceFieldName, settingsOrKey, value) {
+        storeSetting: function (sourceFieldName, key, value) {
+            const settingsObject = {};
+            settingsObject[key] = value;
+            this.storeSettings(sourceFieldName, settingsObject);
+        },
+
+        storeSettings: function (sourceFieldName, settingsObject, transientSettings) {
             const fieldName = sourceFieldName + (sourceFieldName.endsWith('/') ? SUFFIX_SETTINGS.replace(/^_+/, '') : SUFFIX_SETTINGS);
             const $settingsField = $(`[name="${fieldName}"]`);
             const existingSettings = this.getSettings($settingsField);
-            if (typeof settingsOrKey === 'string' || settingsOrKey instanceof String) {
-                existingSettings[settingsOrKey] = value;
-            } else if (typeof settingsOrKey === 'object' && settingsOrKey !== null) {
-                Object.assign(existingSettings, settingsOrKey);
+
+            let filteredSettingsObject;
+            if (!Array.isArray(transientSettings) || !transientSettings.length) {
+                filteredSettingsObject = settingsObject;
+            } else {
+                filteredSettingsObject = {};
+                Object.keys(settingsObject)
+                    .filter((key) => !transientSettings.includes(key.split(ns.Assistant.FACILITY_SETTING_SEPARATOR)[1]))
+                    .forEach((key) => filteredSettingsObject[key] = settingsObject[key]);
             }
-            $settingsField.val(JSON.stringify(existingSettings));
+
+            const allSettings = Object.assign({}, existingSettings, settingsObject);
+            const filteredSettings = Object.assign({}, existingSettings, filteredSettingsObject);
+
+            $settingsField.val(JSON.stringify(filteredSettings));
+            $settingsField.data(DATA_KEY_UNFILTERED_SETTINGS, allSettings);
         }
     });
 
@@ -87,12 +106,12 @@
             fetch(FACILITIES_ENDPOINT)
                 .then((res) => res.json())
                 .then((facilitiesAndVendors) => {
-                    const vendorsMap = {};
-                    (facilitiesAndVendors.vendors || []).forEach((item) => vendorsMap[item.name] = item.logo);
+                    const facilitiesMap = {};
+                    (facilitiesAndVendors.vendors || []).forEach((item) => facilitiesMap[item.name] = item.logo);
                     if (Array.isArray(facilitiesAndVendors.facilities)) {
                         facilitiesAndVendors.facilities
                             .flatMap((facility) => Array.isArray(facility.variants) ? facility.variants : [facility])
-                            .forEach((item) => item.vendorLogo = vendorsMap[item.vendorName]);
+                            .forEach((item) => item.vendorLogo = facilitiesMap[item.vendorName]);
                     }
                     resolve(facilitiesAndVendors.facilities)
                 })
