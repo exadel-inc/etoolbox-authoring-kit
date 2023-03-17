@@ -33,9 +33,7 @@ public class DialogConstants {
     public static final String SEPARATOR_DOT = ".";
     public static final String SEPARATOR_SEMICOLON = ";";
 
-    public static final String RELATIVE_PATH_PREFIX = CoreConstants.RELATIVE_PATH_PREFIX;
-    public static final String PARENT_PATH_PREFIX = "../";
-    public static final String PARENT_PATH_INDICATOR = "..";
+    public static final String RELATIVE_PATH_PREFIX = CoreConstants.PATH_RELATIVE_PREFIX;
 
     public static final String NN_ACCORDION = "accordion";
     public static final String NN_ALLOW_BASICS = "allowBasics";

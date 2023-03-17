@@ -55,9 +55,6 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
 
     static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
-    private static final String PARENT_PATH = "..";
-    private static final String SELF_PATH = ".";
-
     /* -----------------------------
        Local fields and constructors
        ----------------------------- */
@@ -227,10 +224,10 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
             }
             return getOrCreateTarget(effectivePath);
         }
-        if (PARENT_PATH.equals(effectivePath)) {
+        if (CoreConstants.PATH_PARENT.equals(effectivePath)) {
             return getParent() != null ? getParent() : null;
         }
-        if (SELF_PATH.equals(effectivePath)) {
+        if (CoreConstants.SEPARATOR_DOT.equals(effectivePath)) {
             return this;
         }
         String effectiveName = NamingUtil.getUniqueName(effectivePath, CoreConstants.NN_ITEM, this);
@@ -266,10 +263,10 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
             return current;
         }
 
-        if (PARENT_PATH.equals(effectivePath) && getParent() != null) {
+        if (CoreConstants.PATH_PARENT.equals(effectivePath) && getParent() != null) {
             return getParent();
         }
-        if (PARENT_PATH.equals(effectivePath) || SELF_PATH.equals(effectivePath)) {
+        if (CoreConstants.PATH_PARENT.equals(effectivePath) || CoreConstants.SEPARATOR_DOT.equals(effectivePath)) {
             return this;
         }
         String nameToFind = NamingUtil.getValidNodeName(effectivePath);
@@ -358,7 +355,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
 
     /**
      * Performs a recursive search for a matching descendant {@code Target} with the provided filter
-     * @param current {@code Target object} children of which are currently tested
+     * @param current {@code Target object} to look for children
      * @param filter  {@code Predicate} to test the descendants of the current target
      * @return Relevant descendant {@code Target} object, or null
      */
@@ -395,7 +392,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
 
     /**
      * Performs a recursive search for matching descendant {@code Target}s with the provided filter
-     * @param current    {@code Target object} children of which are currently tested
+     * @param current    {@code Target object} to look for children
      * @param filter     {@code Predicate} to test the descendants of the current target
      * @param collection {@code List} object accumulating the relevant targets
      */
@@ -577,7 +574,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
     }
 
     /**
-     * Called by {@link TargetImpl#attributes(Element)} in order to store element attributes to the current instance
+     * Called by {@link TargetImpl#attributes(Element)} to store element attributes to the current instance
      * @param value {@code Element} object used as the source of attribute names and values
      */
     private void populateElementProperties(Element value) {
@@ -636,7 +633,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
             ignorePrefix = propertyRenderingAnnotation.ignorePrefix();
         }
 
-        // Extract property prefix and prepend it to the name
+        // Extract the property prefix and prepend it to the name
         String prefixByPropertyMapping = getPropertyPrefix(value);
         String namePrefix = prefixByPropertyMapping.contains(CoreConstants.SEPARATOR_SLASH)
             ? StringUtils.substringAfterLast(prefixByPropertyMapping, CoreConstants.SEPARATOR_SLASH)
@@ -684,11 +681,11 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
     }
 
     /**
-     * Merges two string attributes expressing either plain values or inline value lists into the resulting string.
+     * Merges into the resulting string two string attributes that express plain values or inline value lists.
      * This method leaves no duplicate elements
      * @param first  First string value
      * @param second Second string value
-     * @return String containing the merged value
+     * @return A string containing the merged value
      */
     private static String mergeStringAttributes(String first, String second) {
         if (!StringUtil.isCollection(first) || !StringUtil.isCollection(second)) {

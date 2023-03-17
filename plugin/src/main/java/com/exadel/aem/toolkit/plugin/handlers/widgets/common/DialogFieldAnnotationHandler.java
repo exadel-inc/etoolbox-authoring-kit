@@ -113,7 +113,7 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
             return right;
         }
         if (DialogConstants.RELATIVE_PATH_PREFIX.equals(left) && DialogConstants.RELATIVE_PATH_PREFIX.equals(right)
-            || DialogConstants.RELATIVE_PATH_PREFIX.equals(left) && right.startsWith(DialogConstants.PARENT_PATH_PREFIX)) {
+            || DialogConstants.RELATIVE_PATH_PREFIX.equals(left) && right.startsWith(CoreConstants.PATH_PARENT_PREFIX)) {
             return right;
         }
         return left + right;

@@ -132,7 +132,7 @@ public class InplaceEditingHandler implements BiConsumer<Source, Target> {
      */
     private static String getValidPropertyName(String rawName) {
         String propertyName = NamingUtil.getValidFieldName(rawName);
-        if (propertyName.startsWith(DialogConstants.PARENT_PATH_PREFIX)) {
+        if (propertyName.startsWith(CoreConstants.PATH_PARENT_PREFIX)) {
             return propertyName;
         }
         return DialogConstants.RELATIVE_PATH_PREFIX + propertyName;

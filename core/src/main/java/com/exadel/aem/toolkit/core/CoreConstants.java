@@ -47,7 +47,10 @@ public class CoreConstants {
     public static final String PN_UPDATE_COMPONENT_LIST = "updatecomponentlist";
     public static final String PN_VALUE = "value";
 
-    public static final String RELATIVE_PATH_PREFIX = "./";
+    public static final String PATH_PARENT = "..";
+    public static final String PATH_PARENT_PREFIX = "../";
+    public static final String PATH_RELATIVE_PREFIX = "./";
+    public static final String PATH_PARENT = "..";
 
     public static final String ELLIPSIS = "...";
 

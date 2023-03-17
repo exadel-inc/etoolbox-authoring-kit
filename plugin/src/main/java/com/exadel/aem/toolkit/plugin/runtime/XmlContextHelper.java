@@ -589,7 +589,7 @@ public class XmlContextHelper implements XmlUtility {
      * @return Element instance
      */
     private Element getParentOrChildElement(Element element, String nodeName) {
-        if (nodeName.contains(DialogConstants.PARENT_PATH_INDICATOR)) {
+        if (nodeName.contains(CoreConstants.PATH_PARENT)) {
             return (Element) element.getParentNode();
         }
         return getOrAddChildElement(element, nodeName);
