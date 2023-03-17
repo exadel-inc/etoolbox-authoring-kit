@@ -13,8 +13,6 @@
  */
 package com.exadel.aem.toolkit.plugin.utils;
 
-import com.exadel.aem.toolkit.core.CoreConstants;
-
 /**
  * Contains common string constants used for AEM Granite UI component and dialog rendering within the ToolKit Maven plugin
  * workflow
@@ -32,8 +30,6 @@ public class DialogConstants {
 
     public static final String SEPARATOR_DOT = ".";
     public static final String SEPARATOR_SEMICOLON = ";";
-
-    public static final String RELATIVE_PATH_PREFIX = CoreConstants.PATH_RELATIVE_PREFIX;
 
     public static final String NN_ACCORDION = "accordion";
     public static final String NN_ALLOW_BASICS = "allowBasics";

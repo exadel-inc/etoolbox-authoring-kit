@@ -135,7 +135,7 @@ public class InplaceEditingHandler implements BiConsumer<Source, Target> {
         if (propertyName.startsWith(CoreConstants.PATH_PARENT_PREFIX)) {
             return propertyName;
         }
-        return DialogConstants.RELATIVE_PATH_PREFIX + propertyName;
+        return CoreConstants.PATH_RELATIVE_PREFIX + propertyName;
     }
 
     /**

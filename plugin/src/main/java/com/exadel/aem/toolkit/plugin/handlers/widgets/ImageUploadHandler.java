@@ -20,6 +20,7 @@ import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
@@ -37,10 +38,10 @@ public class ImageUploadHandler implements Handler {
     @Override
     public void accept(Source source, Target target) {
         String fileRef = target.getAttribute(DialogConstants.PN_FILE_REFERENCE_PARAMETER);
-        if (StringUtils.isNotBlank(fileRef) && !StringUtils.startsWith(fileRef, DialogConstants.RELATIVE_PATH_PREFIX)) {
+        if (StringUtils.isNotBlank(fileRef) && !StringUtils.startsWith(fileRef, CoreConstants.PATH_RELATIVE_PREFIX)) {
             target.attribute(
                 DialogConstants.PN_FILE_REFERENCE_PARAMETER,
-                DialogConstants.RELATIVE_PATH_PREFIX + fileRef);
+                CoreConstants.PATH_RELATIVE_PREFIX + fileRef);
         }
     }
 }

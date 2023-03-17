@@ -56,7 +56,7 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
         // That is why we must alter the default name prefix for the ongoing set of sources
         Target multifieldAncestor = target.findParent(t -> ResourceTypes.MULTIFIELD.equals(t.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE)));
         if (multifieldAncestor == null || multifieldAncestor.equals(target.getParent())) {
-            prefix = mergeWithPrefix(DialogConstants.RELATIVE_PATH_PREFIX, prefix);
+            prefix = mergeWithPrefix(CoreConstants.PATH_RELATIVE_PREFIX, prefix);
         }
 
         name = mergeWithPrefix(prefix, name)
@@ -76,8 +76,8 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
             return StringUtils.EMPTY;
         }
         if (CoreConstants.SEPARATOR_SLASH.equals(dialogField.name())
-            || DialogConstants.RELATIVE_PATH_PREFIX.equals(dialogField.name())) {
-            return DialogConstants.RELATIVE_PATH_PREFIX;
+            || CoreConstants.PATH_RELATIVE_PREFIX.equals(dialogField.name())) {
+            return CoreConstants.PATH_RELATIVE_PREFIX;
         }
         if (dialogField.name().contains(CoreConstants.SEPARATOR_AT)) {
             return NamingUtil.getValidFieldName(StringUtils.substringBeforeLast(dialogField.name(), CoreConstants.SEPARATOR_AT));
@@ -112,8 +112,8 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
         if (StringUtils.isBlank(left)) {
             return right;
         }
-        if (DialogConstants.RELATIVE_PATH_PREFIX.equals(left) && DialogConstants.RELATIVE_PATH_PREFIX.equals(right)
-            || DialogConstants.RELATIVE_PATH_PREFIX.equals(left) && right.startsWith(CoreConstants.PATH_PARENT_PREFIX)) {
+        if (CoreConstants.PATH_RELATIVE_PREFIX.equals(left) && CoreConstants.PATH_RELATIVE_PREFIX.equals(right)
+            || CoreConstants.PATH_RELATIVE_PREFIX.equals(left) && right.startsWith(CoreConstants.PATH_PARENT_PREFIX)) {
             return right;
         }
         return left + right;
