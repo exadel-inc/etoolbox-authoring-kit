@@ -23,6 +23,7 @@
             const $imageUpload = $(this);
             const imageUploadName = $imageUpload.attr('name');
             $imageUpload.attr(ns.Assistant.ATTR_TARGET, true);
+            $imageUpload.attr(ns.Assistant.ATTR_ACCEPTING_MESSAGE, 'Retrieving image');
             $imageUpload.get(0).acceptDelegate = async function (value) {
                 const retrievedImage = await retrieveImage($imageUpload, value);
                 const assetSelectedEvent = $.Event('assetselected');
@@ -62,8 +63,7 @@
         }
 
         const fieldName = ($imageUpload.attr('name') || '').replace(/(^\.\/|\/+$)/g, '') || 'image';
-        const importToSubfolder = needsImportToSubfolder($imageUpload);
-        const target = `${action}/${fieldName}${importToSubfolder ? '/imported' : ''}`;
+        const target = `${action}/${fieldName}`;
         const serviceLink = ns.Assistant.getServiceLink({
             command: 'image.util.import',
             settings: {
@@ -72,21 +72,12 @@
             }
         })
         return new Promise((resolve, reject) => {
-            fetch(serviceLink, {method: 'POST'})
+            fetch(serviceLink, { method: 'POST' })
                 .then((response) => response.json())
                 .then((json) => resolve({ path: json.path, type: json.type }))
                 .catch((e) => reject(e));
 
         })
-    }
-
-    function needsImportToSubfolder($imageUpload) {
-        const fieldName = $imageUpload.attr('name');
-        const fileRefName = $imageUpload.find('[data-cq-fileupload-parameter="filereference"]').attr('name');
-        if (!fieldName || !fileRefName) {
-            return false;
-        }
-        return fileRefName.startsWith(fieldName);
     }
 
 })(Granite.$, window.eak = window.eak || {});

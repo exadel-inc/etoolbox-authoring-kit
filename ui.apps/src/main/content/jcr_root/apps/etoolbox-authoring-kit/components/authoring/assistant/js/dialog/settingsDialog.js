@@ -37,7 +37,7 @@
             if (options.display && !options.display.includes(setting.id)) {
                 continue;
             }
-            if (setting.persistence === 'transient' || !transientSettings.includes(setting.id)) {
+            if (setting.persistence === 'transient' && !transientSettings.includes(setting.id)) {
                 transientSettings.push(setting.id);
             }
             const settingName = currentFacilityId + ns.Assistant.FACILITY_SETTING_SEPARATOR + setting.id;
@@ -62,7 +62,7 @@
                     innerHTML: dialogContent
                 },
                 footer: {
-                    innerHTML: '<button is="coral-button" variant="primary">Ok</button><button is="coral-button" variant="secondary">Cancel</button>'
+                    innerHTML: '<button is="coral-button" variant="primary">OK</button><button is="coral-button" variant="secondary">Cancel</button>'
                 }
             },
             acceptDelegate);

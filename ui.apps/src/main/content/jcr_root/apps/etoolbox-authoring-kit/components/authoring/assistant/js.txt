@@ -1,6 +1,7 @@
 #base=js
 common/service.js
 common/ui.js
+dialog/dialogCommons.js
 dialog/requestDialog.js
 dialog/settingsDialog.js
 rte/clearCommand.js

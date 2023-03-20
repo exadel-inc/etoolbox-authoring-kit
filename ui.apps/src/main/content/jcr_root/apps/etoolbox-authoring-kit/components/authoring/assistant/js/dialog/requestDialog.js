@@ -14,10 +14,6 @@
 (function (ns) {
     'use strict';
 
-    const CLS_ERROR = 'is-error';
-    const CLS_LOADING = 'is-loading';
-    const CLS_DISABLED_ON_LOADING = 'disabled-on-loading';
-
     const SELECTOR_DIALOG = 'coral-dialog';
     const SELECTOR_FACILITIES = 'facilities coral-select';
 
@@ -34,12 +30,12 @@
                     innerHTML: `
                         <facilities class="flex-block">
                             <coral-select class="coral-Form-field grow"></coral-select>
-                            <button is="coral-button" class="refresh-button ${CLS_DISABLED_ON_LOADING}" variant="secondary" icon="refresh"></button>
+                            <button is="coral-button" class="refresh-button disabled-on-loading" variant="secondary" icon="refresh"></button>
                             <button is="coral-button" class="settings-button" variant="secondary" icon="gears"></button>
                         </facilities>
-                        <notifications></notifications>
-                        <coral-wait size="M"></coral-wait>
-                        <options class="grow scrollable"></options>`
+                        <notifications class="visible-on-error"></notifications>
+                        <coral-wait size="M" class="visible-on-loading"></coral-wait>
+                        <options class="grow scrollable hidden-on-loading hidden-on-error"></options>`
                 },
                 footer: {
                     innerHTML: '<button is="coral-button" variant="secondary" coral-close>Cancel</button>'
@@ -57,7 +53,7 @@
         Coral.commons.ready($dialog.get(0), function () {
             adjustRequestDialogSize($dialog);
         });
-        unsetLoadingState($dialog).removeClass(CLS_ERROR);
+        ns.Assistant.unsetErrorState(ns.Assistant.unsetLoadingState($dialog));
         $dialog.get(0).show();
         startRequest($dialog);
     };
@@ -72,9 +68,9 @@
         document.body.appendChild(dialog);
 
         $dialog = $(dialog);
+        $dialog.addClass(ns.Assistant.CLS_ASSISTANT_DIALOG);
         $dialog.find('coral-dialog-header,coral-dialog-content,coral-dialog-footer').addClass('assistant-options');
 
-        $dialog.on('coral-overlay:close', handleDialogClose);
         $dialog.find('.settings-button').on('click', handleSettingsButtonClick);
         $dialog.find('.refresh-button').on('click', handleRefreshButtonClick);
         $dialog.find(SELECTOR_FACILITIES).on('change', handleFacilityVariantChange);
@@ -149,7 +145,7 @@
             return;
         }
 
-        setLoadingState($dialog);
+        ns.Assistant.setLoadingState($dialog, 'Processing request');
         $dialog.find('coral-dialog-header').html(getHeaderText(command, text));
 
         const effectiveSettings = Object.assign(
@@ -188,17 +184,17 @@
         const serviceLink = ns.Assistant.getServiceLink(effectiveSetup);
 
         const abortController = new AbortController();
-        $dialog.get(0).abortController = abortController;
+        $dialog.data(ns.Assistant.DATA_KEY_ABORT_CONTROLLER, abortController);
 
-        setLoadingState($dialog);
+        ns.Assistant.setLoadingState($dialog, 'Processing request');
         $dialog.find('notifications').empty();
         $dialog.find('options').empty();
 
         fetch(serviceLink, {signal: abortController.signal})
             .then((res) => res.json())
             .then((json) => populateOptionList($dialog, json))
-            .then(() => unsetLoadingState($dialog))
-            .catch((err) => displayError($dialog, err));
+            .then(() => ns.Assistant.unsetLoadingState($dialog))
+            .catch((err) => ns.Assistant.setErrorState($dialog, err));
     }
 
     function isAheadSettingsDialogNeeded (facilityVariant, settingsObject) {
@@ -210,12 +206,12 @@
         let commandTitle = command.includes('.') ? command.split('.').slice(0, -1) : [command];
         commandTitle = commandTitle.slice(-1)[0];
         commandTitle = commandTitle.substring(0, 1).toUpperCase() + commandTitle.substring(1).toLowerCase();
-        return `${commandTitle} <span class="ellipsis">${text}</span>`;
+        return `${commandTitle} <span class="citation">${text}</span>`;
     }
 
     async function populateOptionList($dialog, solution) {
         if (!solution) {
-            throw new Error('Empty result received');
+            throw new Error('Empty response');
         }
         const messages = solution.messages;
         if (Array.isArray(messages) && messages[0]) {
@@ -288,42 +284,21 @@
         return Promise.all(promises);
     }
 
-    function setLoadingState($dialog) {
-        $dialog.removeClass(CLS_ERROR).addClass(CLS_LOADING).find(`.${CLS_DISABLED_ON_LOADING}`).attr('disabled', true);
-        return $dialog;
-    }
-
-    function unsetLoadingState($dialog) {
-        $dialog.removeClass(CLS_LOADING).find(`.${CLS_DISABLED_ON_LOADING}`).removeAttr('disabled');
-        return $dialog;
-    }
-
-    function displayError($dialog, err) {
-        if (err.toString().includes('AbortError')) {
-            return;
-        }
-        unsetLoadingState($dialog).addClass(CLS_ERROR);
-        $dialog.find('notifications').append(`<coral-alert variant="warning"><coral-alert-content>${err}</coral-alert-content></coral-alert>`);
-    }
-
-    function handleDialogClose (e) {
-        const dialog = e.target;
-        dialog.abortController && dialog.abortController.abort();
-    }
-
     async function handleOptionClick() {
         const $this = $(this);
         const $dialog = $this.closest(SELECTOR_DIALOG);
+        const setup = $dialog.data(ns.Assistant.DATA_KEY_SETUP);
         const value = $this.attr('value') || $(this).find('coral-list-item-content').text();
-        const acceptDelegate = $dialog.data(ns.Assistant.DATA_KEY_SETUP).acceptDelegate;
+        const acceptDelegate = setup.acceptDelegate;
         if (value && acceptDelegate) {
-            setLoadingState($dialog);
+            ns.Assistant.setLoadingState($dialog, setup.acceptingMessage);
             const readyValue = value.toString().trim().replace(/\n/g, '<br>');
             try {
                 await acceptDelegate(readyValue);
+                ns.Assistant.unsetLoadingState($dialog);
                 $dialog.get(0).hide();
             } catch (e) {
-                displayError($dialog, e);
+                ns.Assistant.setErrorState($dialog, e);
             }
         }
     }
@@ -345,7 +320,7 @@
         const $dialog = $(this).closest(SELECTOR_DIALOG);
         const setup = $dialog.data(ns.Assistant.DATA_KEY_SETUP);
         ns.Assistant.openSettingsUi($dialog, function () {
-            $dialog.get(0).abortController && $dialog.get(0).abortController.abort();
+            ns.Assistant.abortNetworkRequest($dialog);
             completeRequest($dialog, Object.assign({}, setup.settings, ns.Assistant.getSettings(setup.sourceField, setup.command)));
         });
     }
@@ -353,7 +328,7 @@
     function handleFacilityVariantChange() {
         const $this = $(this);
         const $dialog = $this.closest(SELECTOR_DIALOG);
-        $dialog.get(0).abortController && $dialog.get(0).abortController.abort();
+        ns.Assistant.abortNetworkRequest($dialog);
         updateSettingsButton($dialog, $this);
         Object.assign($dialog.data(ns.Assistant.DATA_KEY_SETUP), { command: $this.val() });
         startRequest($dialog);

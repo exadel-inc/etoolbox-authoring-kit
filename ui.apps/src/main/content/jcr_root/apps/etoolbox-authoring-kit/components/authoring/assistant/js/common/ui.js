@@ -19,16 +19,15 @@
 
     const DATA_KEY_EVENTS_INITIALIZED = 'eak-assistant-events';
 
-    const CLS_FIELD_WRAPPER = 'eak-Form-field-wrapper';
     const CLS_ACTION_BUTTON = 'eak-assistant-button';
+    const CLS_FIELD_WRAPPER = 'eak-Form-field-wrapper';
 
     const FIELD_SETTING_SEPARATOR = '@';
-
-    const DEBOUNCE_DELAY = 300;
 
     ns.Assistant = ns.Assistant || {};
     Object.assign(ns.Assistant, {
 
+        ATTR_ACCEPTING_MESSAGE: 'data-eak-assistant-accepting-message',
         ATTR_ACTION: 'data-eak-assistant-action',
         ATTR_ACTION_PARAMS: 'data-eak-assistant-action-params',
         ATTR_ASSISTANT_MODE: 'data-eak-assistant-mode',
@@ -41,6 +40,8 @@
         DATA_KEY_SETUP: 'eak-assistant-setup',
 
         CLS_FACILITY_LIST: 'eak-assistant-facilities',
+
+        DEBOUNCE_DELAY: 300,
 
         initAssistantUi: async function (field, options = {}) {
             const facilities = await this.getFacilities();
@@ -130,7 +131,7 @@
             }
             return result;
         }
-    });
+});
 
     function findAssistantButtonInsertionTarget($container, options) {
         let $target = $container;
@@ -148,7 +149,7 @@
             return;
         }
         $dialog.on('click', `[${ATTR_VARIANTS}],[${ATTR_VARIANT}]`, handleFacilityClick);
-        $dialog.on('keydown', `[${ns.Assistant.ATTR_SOURCE}]`, $.debounce(DEBOUNCE_DELAY, handleTextInputChange));
+        $dialog.on('keydown', `[${ns.Assistant.ATTR_SOURCE}]`, $.debounce(ns.Assistant.DEBOUNCE_DELAY, handleTextInputChange));
         $dialog.on('change', `[${ns.Assistant.ATTR_SOURCE_SETTING_REF}]`, handleSettingChange);
         $dialog.data(DATA_KEY_EVENTS_INITIALIZED, true);
     }
@@ -175,6 +176,7 @@
             variants: JSON.parse($masterButton.attr(ATTR_VARIANTS)),
             selectedVariantId: $button.attr(ATTR_VARIANT),
             acceptDelegate: acceptDelegate,
+            acceptingMessage: $valueTarget.attr(ns.Assistant.ATTR_ACCEPTING_MESSAGE),
             callerDialog: $this.closest('coral-dialog')[0]
         };
         ns.Assistant.openRequestDialog(dialogSetup);
