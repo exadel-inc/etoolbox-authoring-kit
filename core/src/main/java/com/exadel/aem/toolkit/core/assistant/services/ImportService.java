@@ -15,8 +15,10 @@ package com.exadel.aem.toolkit.core.assistant.services;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.SocketTimeoutException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -24,9 +26,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -36,24 +45,24 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.day.cq.dam.api.Asset;
 import com.day.cq.dam.api.AssetManager;
 import com.day.cq.dam.api.renditions.RenditionMaker;
-import com.day.cq.dam.api.renditions.RenditionTemplate;
+import com.day.cq.dam.commons.util.DamUtil;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.imageupload.ImageUploadConstants;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Facility;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.SimpleFacility;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
+import com.exadel.aem.toolkit.core.utils.ExecutorFactory;
 import com.exadel.aem.toolkit.core.utils.HttpClientFactory;
 import com.exadel.aem.toolkit.core.utils.ThrowingConsumer;
 
@@ -64,21 +73,36 @@ public class ImportService implements AssistantService {
     private static final String QUERY_PARAMETER_FROM = "from";
     private static final String QUERY_PARAMETER_TO = "to";
 
-    private static final int THUMBNAIL_DIMENSION = 256;
-
-    private static final String EXCEPTION_TEMPLATE = "Could not import asset from \"%s\" to \"%s\"";
-    private static final String EXCEPTION_MISSING_PARAMS = "Either \"from\" or \"to\" parameter is invalid";
-    private static final String EXCEPTION_MISSING_ASSET_MANAGER = "Could not obtain Asset Manager";
+    private static final String EXCEPTION_COULD_NOT_IMPORT = "Could not import asset from \"%s\" to \"%s\"";
+    private static final String EXCEPTION_COULD_NOT_COMPLETE_ASYNC = "Could not complete download";
     private static final String EXCEPTION_INVALID_CONTENT = "Content is missing or invalid";
+    private static final String EXCEPTION_MISSING_ASSET_MANAGER = "Could not obtain Asset Manager";
+    private static final String EXCEPTION_MISSING_PARAMS = "Either \"from\" or \"to\" parameter is invalid";
+    private static final String EXCEPTION_NO_RESPONSE = "Did not get response";
+    private static final String EXCEPTION_TIMEOUT = "Connection to {} timed out";
 
     private static final String SEPARATOR_COLON = ": ";
     private static final Pattern LOCALHOST_PATTERN = Pattern.compile("//localhost[.:]", Pattern.CASE_INSENSITIVE);
 
+    @Reference
+    private RenditionMaker renditionMaker;
+
     private List<Facility> facilities;
+    private ExecutorService threadPoolExecutor;
 
     @Activate
     private void init() {
-        facilities = Collections.singletonList(new Import());
+        if (facilities == null) {
+            facilities = Collections.singletonList(new Import());
+        }
+        threadPoolExecutor = ExecutorFactory.newCachedThreadPoolExecutor();
+    }
+
+    @Deactivate
+    private void destroy() {
+        if (threadPoolExecutor != null) {
+            threadPoolExecutor.shutdownNow();
+        }
     }
 
     @Override
@@ -86,8 +110,58 @@ public class ImportService implements AssistantService {
         return facilities;
     }
 
-    @Reference
-    private RenditionMaker renditionMaker;
+    public Map<String, String> downloadAssets(ResourceResolver resourceResolver, Map<String, String> destinations) throws AssistantException {
+        if (MapUtils.isEmpty(destinations)) {
+            return Collections.emptyMap();
+        }
+        Map<String, String> result = new HashMap<>();
+        if (destinations.size() == 1) {
+            Map.Entry<String, String> nextDestination = destinations.entrySet().iterator().next();
+            result.put(
+                nextDestination.getKey(),
+                downloadAsset(resourceResolver, nextDestination.getKey(), nextDestination.getValue()));
+            return result;
+        }
+        List<CompletableFuture<Map.Entry<String, String>>> tasks = new ArrayList<>();
+        for (Map.Entry<String, String> nextDestination : destinations.entrySet()) {
+            tasks.add(downloadAssetAsync(resourceResolver, nextDestination.getKey(), nextDestination.getValue()));
+        }
+        CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0])).join();
+        for (CompletableFuture<Map.Entry<String, String>> task : tasks) {
+            Map.Entry<String, String> entry = null;
+            try {
+                entry = task.get(
+                    (long) (HttpClientFactory.DEFAULT_TIMEOUT * HttpClientFactory.DEFAULT_ATTEMPTS_COUNT * 1.1),
+                    TimeUnit.MILLISECONDS);
+            } catch (InterruptedException e) {
+                LOG.warn(EXCEPTION_COULD_NOT_COMPLETE_ASYNC, e);
+                Thread.currentThread().interrupt();
+            } catch (ExecutionException | TimeoutException e) {
+                LOG.error(EXCEPTION_COULD_NOT_COMPLETE_ASYNC);
+            }
+            if (entry != null) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return result;
+    }
+
+    private CompletableFuture<Map.Entry<String, String>> downloadAssetAsync(
+        ResourceResolver resourceResolver,
+        String url,
+        String destination) {
+        return CompletableFuture.supplyAsync(
+            () -> {
+                try {
+                    String dest = downloadAsset(resourceResolver, url, destination);
+                    return new AbstractMap.SimpleEntry<>(url, dest);
+                } catch (AssistantException e) {
+                    LOG.error(e.getMessage());
+                }
+                return null;
+            },
+            threadPoolExecutor);
+    }
 
     public String downloadAsset(ResourceResolver resourceResolver, String url, String destination) throws AssistantException {
         String damUrl = toDamUrl(destination);
@@ -95,31 +169,36 @@ public class ImportService implements AssistantService {
             downloadAsset(url, entity -> store(resourceResolver, entity, damUrl));
             return damUrl;
         } catch (IOException e) {
-            String exceptionMessage = String.format(EXCEPTION_TEMPLATE, url, destination);
+            String exceptionMessage = String.format(EXCEPTION_COULD_NOT_IMPORT, url, destination);
             throw new AssistantException(exceptionMessage, e);
         }
     }
 
     private Map<String, Object> downloadAsset(String url, ThrowingConsumer<HttpEntity, IOException> storage) throws IOException {
         HttpGet request = new HttpGet(url);
-        try (
-            CloseableHttpClient client = HttpClientFactory
-                .newClient()
-                .timeout(HttpClientFactory.DEFAULT_TIMEOUT)
-                .skipSsl(LOCALHOST_PATTERN.matcher(url).find())
-                .get();
-            CloseableHttpResponse response = client.execute(request)
-        ) {
-            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                throw new IOException("Unexpected response " + response.getStatusLine().toString());
+        for (int attempt = 0; attempt < HttpClientFactory.DEFAULT_ATTEMPTS_COUNT; attempt++) {
+            try (
+                CloseableHttpClient client = HttpClientFactory
+                    .newClient()
+                    .timeout(HttpClientFactory.DEFAULT_TIMEOUT)
+                    .skipSsl(LOCALHOST_PATTERN.matcher(url).find())
+                    .get();
+                CloseableHttpResponse response = client.execute(request)
+            ) {
+                if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                    throw new IOException("Unexpected response " + response.getStatusLine().toString());
+                }
+                HttpEntity entity = response.getEntity();
+                storage.accept(entity);
+                Map<String, Object> result = new HashMap<>();
+                result.put(CoreConstants.PN_TYPE, getMimeType(entity));
+                EntityUtils.consume(entity);
+                return result;
+            } catch (ConnectTimeoutException | SocketTimeoutException e) {
+                LOG.warn(EXCEPTION_TIMEOUT, url);
             }
-            HttpEntity entity = response.getEntity();
-            storage.accept(entity);
-            Map<String, Object> result = new HashMap<>();
-            result.put(CoreConstants.PN_TYPE, getMimeType(entity));
-            EntityUtils.consume(entity);
-            return result;
         }
+        throw new IOException(EXCEPTION_NO_RESPONSE);
     }
 
     private void store(ResourceResolver resourceResolver, HttpEntity entity, String destination) throws IOException {
@@ -131,19 +210,9 @@ public class ImportService implements AssistantService {
             throw new IOException(EXCEPTION_INVALID_CONTENT);
         }
         try {
-            Resource existingResource = resourceResolver.getResource(destination);
-            if (existingResource != null) {
-                resourceResolver.delete(existingResource);
+            if (resourceResolver.getResource(destination) != null) {
+                assetManager.removeAssetForBinary(DamUtil.assetToBinaryPath(destination));
             }
-            Asset asset = assetManager.createAsset(destination, entity.getContent(), getMimeType(entity), true);
-
-            RenditionTemplate thumbnailTemplate = renditionMaker.createThumbnailTemplate(
-                asset,
-                THUMBNAIL_DIMENSION,
-                THUMBNAIL_DIMENSION,
-                false);
-            renditionMaker.generateRenditions(asset, thumbnailTemplate);
-
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -203,7 +272,7 @@ public class ImportService implements AssistantService {
                 downloadResult.put(CoreConstants.PN_PATH, destination);
                 return Solution.from(args).withValueMap(downloadResult);
             } catch (IOException e) {
-                String exceptionMessage = String.format(EXCEPTION_TEMPLATE, url, destination);
+                String exceptionMessage = String.format(EXCEPTION_COULD_NOT_IMPORT, url, destination);
                 LOG.error(exceptionMessage, e);
                 return Solution
                     .from(args)

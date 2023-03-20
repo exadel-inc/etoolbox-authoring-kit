@@ -28,8 +28,6 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
@@ -62,6 +60,7 @@ import com.exadel.aem.toolkit.core.assistant.models.facilities.Facility;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 import com.exadel.aem.toolkit.core.assistant.services.AssistantService;
 import com.exadel.aem.toolkit.core.assistant.services.ImportService;
+import com.exadel.aem.toolkit.core.utils.ExecutorFactory;
 import com.exadel.aem.toolkit.core.utils.HttpClientFactory;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
@@ -84,10 +83,6 @@ public class OpenAiService implements AssistantService {
     private static final String VENDOR_NAME = "OpenAI";
     private static final String LOGO_RESOURCE = "assistant/logo-openai";
     private static final String LOGO;
-
-    private static final int MULTITHREAD_CORE_POOL_SIZE = 5;
-    private static final int MULTITHREAD_MAX_POOL_SIZE = 20;
-    private static final int MULTITHREAD_TIMEOUT = 60;
 
     private static final String EXCEPTION_REQUEST_FAILED = "OpenAI service request failed";
     private static final String EXCEPTION_COULD_NOT_COMPLETE_ASYNC = "Could not complete request";
@@ -124,12 +119,7 @@ public class OpenAiService implements AssistantService {
                 new ProduceImageFacility(this),
                 new PageFacility(this, (ImportService) importService));
         }
-        this.threadPoolExecutor = new ThreadPoolExecutor(
-            MULTITHREAD_CORE_POOL_SIZE,
-            MULTITHREAD_MAX_POOL_SIZE,
-            MULTITHREAD_TIMEOUT,
-            TimeUnit.SECONDS,
-            new SynchronousQueue<>());
+        this.threadPoolExecutor = ExecutorFactory.newCachedThreadPoolExecutor();
     }
 
     @Deactivate
