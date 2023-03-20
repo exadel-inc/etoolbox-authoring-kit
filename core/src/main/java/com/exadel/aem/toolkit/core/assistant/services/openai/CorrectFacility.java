@@ -50,6 +50,7 @@ class CorrectFacility extends OpenAiFacility {
 
     @Override
     public Solution execute(ValueMap args) {
-        return getService().executeEdit(args, INSTRUCTION);
+        ArgumentsVersion newArgs = new ArgumentsVersion(args).putIfMissing(OpenAiConstants.PN_INSTRUCTION, INSTRUCTION);
+        return getService().executeEdit(newArgs.get());
     }
 }

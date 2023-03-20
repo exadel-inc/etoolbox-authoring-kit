@@ -64,7 +64,7 @@ abstract class OpenAiFacility extends SimpleFacility {
         .build();
     static final List<Setting> COMPLETION_SETTINGS = Arrays.asList(COMPLETION_MODEL_SETTING, TEMPERATURE_SETTING, MAX_TOKENS_SETTING);
     static final List<Setting> EDIT_SETTINGS = Arrays.asList(EDIT_MODEL_SETTING, TEMPERATURE_SETTING);
-    private static final String EXCEPTION_TOKEN_MISSING = "Authentication token is missing";
+    static final String EXCEPTION_TOKEN_MISSING = "Authentication token is missing";
 
     private final OpenAiService service;
 
@@ -94,9 +94,11 @@ abstract class OpenAiFacility extends SimpleFacility {
         return execute(args);
     }
 
+    Solution execute(ValueMap args) {
+        return Solution.from(args).empty();
+    }
+
     OpenAiService getService() {
         return service;
     }
-
-    abstract Solution execute(ValueMap args);
 }

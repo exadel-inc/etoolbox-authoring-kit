@@ -62,6 +62,7 @@ class RephraseFacility extends OpenAiFacility {
 
     @Override
     public Solution execute(ValueMap args) {
-        return getService().executeEdit(args, DEFAULT_INSTRUCTION);
+        ArgumentsVersion newArgs = new ArgumentsVersion(args).putIfMissing(OpenAiConstants.PN_INSTRUCTION, DEFAULT_INSTRUCTION);
+        return getService().executeEdit(newArgs.get());
     }
 }
