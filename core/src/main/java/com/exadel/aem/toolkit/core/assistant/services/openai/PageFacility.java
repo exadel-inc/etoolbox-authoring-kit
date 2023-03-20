@@ -224,9 +224,10 @@ class PageFacility extends OpenAiFacility {
 
     private void createTitles(PageFacilityBroker broker, ValueMap args) throws AssistantException {
         String summary = broker.getSummary();
+        String normalizedSummary = normalizeSummary(summary);
         ValueMap task = new ArgumentsVersion(args)
             .put(CoreConstants.PN_PROMPT, "Create a title for the following text")
-            .put(CoreConstants.PN_TEXT, summary)
+            .put(CoreConstants.PN_TEXT, normalizedSummary)
             .put(OpenAiConstants.PN_CHOICES_COUNT, 1)
             .get();
         Solution solution = getService().executeCompletion(task);
@@ -237,9 +238,10 @@ class PageFacility extends OpenAiFacility {
 
     private void createSubtitles(PageFacilityBroker broker, ValueMap args) throws AssistantException {
         String summary = broker.getSummary();
+        String normalizedSummary = normalizeSummary(summary);
         ValueMap task = new ArgumentsVersion(args)
             .put(CoreConstants.PN_PROMPT, "Summarize the following text in " + ABSTRACT_WORDS_LIMIT + " words")
-            .put(CoreConstants.PN_TEXT, summary)
+            .put(CoreConstants.PN_TEXT, normalizedSummary)
             .put(OpenAiConstants.PN_CHOICES_COUNT, 1)
             .get();
         Solution solution = getService().executeCompletion(task);
@@ -332,24 +334,27 @@ class PageFacility extends OpenAiFacility {
             tasks.add(newTask);
         }
 
-        Map<String, String> membersToValues = new HashMap<>();
+        Map<String, String> membersToDamUrls = new HashMap<>();
         Map<String, String> voidedMembers = getMapOfEmptyValues(imageMembers);
 
         List<Solution> solutions = getService().executeImageGeneration(tasks);
-
+        Map<String, String> downloadTasks = new HashMap<>();
         for (Solution solution : solutions) {
             if (!solution.isSuccess()) {
                 continue;
             }
+            String currentUrl = solution.asText();
             String currentMember = String.valueOf(solution.getArgs().get(PN_SOURCE));
-            String currentValue = solution.asText();
-
-            String damUrl = importService.downloadAsset(broker.getResourceResolver(), currentValue, currentMember);
-            membersToValues.put(currentMember, damUrl);
+            downloadTasks.put(currentUrl, currentMember);
+        }
+        Map<String, String> urlsToDamAddresses = importService.downloadAssets(broker.getResourceResolver(), downloadTasks);
+        for (Map.Entry<String, String> urlToDamAddress : urlsToDamAddresses.entrySet()) {
+            String currentMember = downloadTasks.get(urlToDamAddress.getKey());
+            membersToDamUrls.put(currentMember, urlToDamAddress.getValue());
             voidedMembers.remove(currentMember);
         }
-        membersToValues.putAll(voidedMembers);
-        broker.commitValues(membersToValues);
+        membersToDamUrls.putAll(voidedMembers);
+        broker.commitValues(membersToDamUrls);
     }
 
     private static List<String> getSummaryPhrases(String summary, Collection<String> members) {
@@ -372,6 +377,13 @@ class PageFacility extends OpenAiFacility {
             return value;
         }
     }
+
+    private static String normalizeSummary(String value) {
+        return PATTERN_SPLIT_BY_NEWLINE
+            .splitAsStream(value)
+            .map(String::trim)
+            .map(line -> StringUtils.appendIfMissing(line, CoreConstants.SEPARATOR_DOT))
+            .collect(Collectors.joining(StringUtils.SPACE));    }
 
     private static Map<String, String> getMapOfEmptyValues(Collection<String> keys) {
         return keys.stream().collect(Collectors.toMap(key -> key, key -> StringUtils.EMPTY));
