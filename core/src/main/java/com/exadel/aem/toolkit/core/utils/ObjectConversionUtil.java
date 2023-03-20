@@ -18,9 +18,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,7 +34,6 @@ import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 
 public class ObjectConversionUtil {
-
     private static final Logger LOG = LoggerFactory.getLogger(ObjectConversionUtil.class);
 
     private static final String EMPTY_JSON = "{}";
@@ -55,9 +57,20 @@ public class ObjectConversionUtil {
 
     public static String toJson(Object value) {
         return toJson(value, e -> {
-            LOG.error("Could not serialize to JSON", e);
+            LOG.error(EXCEPTION_COULD_NOT_SERIALIZE, e);
             return EMPTY_JSON;
         });
+    }
+
+    public static String toJson(String key, Object value) {
+        Map<String, Object> payload = new HashMap<>();
+        payload.put(key, value);
+        try {
+            return OBJECT_MAPPER.writeValueAsString(payload);
+        } catch (JsonProcessingException e) {
+            LOG.error(EXCEPTION_COULD_NOT_SERIALIZE);
+        }
+        return EMPTY_JSON;
     }
 
     public static String toJson(Object value, Function<Exception, String> fallback) {
@@ -72,12 +85,36 @@ public class ObjectConversionUtil {
         return OBJECT_MAPPER.readTree(value);
     }
 
+    public static Optional<JsonNode> toOptionalNodeTree(String value) {
+        try {
+            return Optional.of(OBJECT_MAPPER.readTree(value));
+        } catch (IOException e) {
+            LOG.error("Could not deserialize JSON", e);
+            return Optional.empty();
+        }
+    }
+
     public static JsonNode toNodeTree(InputStream input) throws IOException {
         return OBJECT_MAPPER.readTree(input);
     }
 
     public static JsonNode toNodeTree(Object value) {
         return OBJECT_MAPPER.valueToTree(value);
+    }
+
+    public static boolean isJson(String value) {
+        if (StringUtils.isBlank(value)) {
+            return false;
+        }
+        try {
+            OBJECT_MAPPER.readTree(value);
+            return true;
+        } catch (JsonProcessingException e) {
+            return false;
+        } catch (IOException e) {
+            LOG.error("Could not parse JSON value", e);
+            return false;
+        }
     }
 
     /**
