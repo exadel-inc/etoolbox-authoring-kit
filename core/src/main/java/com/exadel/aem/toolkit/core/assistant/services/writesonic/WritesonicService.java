@@ -14,15 +14,18 @@
 package com.exadel.aem.toolkit.core.assistant.services.writesonic;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
@@ -135,17 +138,27 @@ public class WritesonicService implements AssistantService {
         request.setHeader(HttpHeaders.ACCEPT, ContentType.APPLICATION_JSON.getMimeType());
         request.setEntity(new StringEntity(payload, StandardCharsets.UTF_8));
 
-        try (
-            CloseableHttpClient client = HttpClientFactory.newClient(config.timeout());
-            CloseableHttpResponse response = client.execute(request)
-        ) {
-            Solution solution = parseWritesonicResponse(args, response);
-            EntityUtils.consume(response.getEntity());
-            return solution;
-        } catch (IOException e) {
-            LOG.error("Writesonic service request failed", e);
-            return Solution.from(args).withMessage(HttpStatus.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+        int lastExceptionStatus = HttpStatus.SC_INTERNAL_SERVER_ERROR;
+        String lastExceptionMessage = null;
+        for (int attempt = 0; attempt < HttpClientFactory.DEFAULT_ATTEMPTS_COUNT; attempt++) {
+            try (
+                CloseableHttpClient client = HttpClientFactory.newClient(config.timeout());
+                CloseableHttpResponse response = client.execute(request)
+            ) {
+                Solution solution = parseWritesonicResponse(args, response);
+                EntityUtils.consume(response.getEntity());
+                return solution;
+            } catch (ConnectTimeoutException | SocketTimeoutException e) {
+                LOG.warn(EXCEPTION_TIMEOUT, endpoint);
+                lastExceptionStatus = HttpStatus.SC_REQUEST_TIMEOUT;
+                lastExceptionMessage = e.getMessage();
+            } catch (IOException e) {
+                LOG.error(EXCEPTION_REQUEST_FAILED, e);
+                lastExceptionStatus = HttpStatus.SC_BAD_GATEWAY;
+                lastExceptionMessage = e.getMessage();
+            }
         }
+        return Solution.from(args).withMessage(lastExceptionStatus, StringUtils.defaultIfEmpty(lastExceptionMessage, EXCEPTION_REQUEST_FAILED));
     }
 
     private String getEffectiveEndpoint(String endpoint, String command, ValueMap args) {
@@ -174,7 +187,7 @@ public class WritesonicService implements AssistantService {
 
     private String getImageGenerationPayload(ValueMap args) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(WritesonicConstants.PN_PROMPT, args.get(CoreConstants.PN_TEXT));
+        properties.put(CoreConstants.PN_PROMPT, args.get(CoreConstants.PN_TEXT));
         String size = args.get(CoreConstants.PN_SIZE, config.imageSize());
         Matcher sizeMatcher = WritesonicService.PATTERN_IMAGE_SIZE.matcher(size);
         if (sizeMatcher.find()) {
@@ -205,15 +218,13 @@ public class WritesonicService implements AssistantService {
     }
 
     private static String extractExceptionMessage(String value) {
-        JsonNode root;
-        try {
-            root = ObjectConversionUtil.toNodeTree(value);
-        } catch (IOException e) {
+        Optional<JsonNode> root = ObjectConversionUtil.toOptionalNodeTree(value);
+        if (!root.isPresent()) {
             return value;
         }
-        JsonNode detail = root.get(PN_DETAIL);
+        JsonNode detail = root.get().get(PN_DETAIL);
         if (detail == null) {
-            return root.asText();
+            return root.get().asText();
         }
         JsonNode detailEntry = detail.isArray() ? detail.get(0) : detail;
         JsonNode message = detailEntry.get(PN_MESSAGE);

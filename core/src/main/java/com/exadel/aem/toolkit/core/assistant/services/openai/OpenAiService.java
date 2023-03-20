@@ -14,16 +14,27 @@
 package com.exadel.aem.toolkit.core.assistant.services.openai;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import java.util.function.Function;
 
+import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +49,9 @@ import org.apache.http.util.EntityUtils;
 import org.apache.sling.api.resource.ValueMap;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Modified;
+import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.metatype.annotations.Designate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,17 +61,16 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Facility;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 import com.exadel.aem.toolkit.core.assistant.services.AssistantService;
+import com.exadel.aem.toolkit.core.assistant.services.ImportService;
 import com.exadel.aem.toolkit.core.utils.HttpClientFactory;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
 @Component(service = AssistantService.class, immediate = true, property = "service.ranking:Integer=100")
 @Designate(ocd = OpenAiServiceConfig.class)
 public class OpenAiService implements AssistantService {
-
     private static final Logger LOG = LoggerFactory.getLogger(OpenAiService.class);
 
     private static final String PN_CHOICES = "choices";
-    private static final String PN_CHOICES_COUNT = "n";
     private static final String PN_DATA = "data";
     private static final String PN_ERROR = "error";
     private static final String PN_FINISH = "finish_reason";
@@ -91,13 +103,17 @@ public class OpenAiService implements AssistantService {
         }
         LOGO = logo;
     }
+    @Reference(target = "(component.name=com.exadel.aem.toolkit.core.assistant.services.ImportService)")
+    private AssistantService importService;
 
     private OpenAiServiceConfig config;
+    private ExecutorService threadPoolExecutor;
     private List<Facility> facilities;
 
     @Activate
     @Modified
     private void init(OpenAiServiceConfig config) {
+        destroy();
         this.config = config;
         if (facilities == null) {
             facilities = Arrays.asList(
@@ -105,7 +121,21 @@ public class OpenAiService implements AssistantService {
                 new ShortenFacility(this),
                 new RephraseFacility(this),
                 new CorrectFacility(this),
-                new ProduceImageFacility(this));
+                new ProduceImageFacility(this),
+                new PageFacility(this, (ImportService) importService));
+        }
+        this.threadPoolExecutor = new ThreadPoolExecutor(
+            MULTITHREAD_CORE_POOL_SIZE,
+            MULTITHREAD_MAX_POOL_SIZE,
+            MULTITHREAD_TIMEOUT,
+            TimeUnit.SECONDS,
+            new SynchronousQueue<>());
+    }
+
+    @Deactivate
+    private void destroy() {
+        if (threadPoolExecutor != null) {
+            threadPoolExecutor.shutdownNow();
         }
     }
 
@@ -133,81 +163,125 @@ public class OpenAiService implements AssistantService {
         return config;
     }
 
-    Solution executeCompletion(ValueMap args, String defaultPrompt) {
-        return execute(config.completionsEndpoint(), getCompletionRequestPayload(args, defaultPrompt), args);
+    List<Solution> executeCompletion(List<ValueMap> args) {
+        return execute(config.completionsEndpoint(), args, this::getCompletionRequestPayload);
     }
 
-    Solution executeEdit(ValueMap args, String defautlInstruction) {
-        return execute(config.editsEndpoint(), getEditRequestPayload(args, defautlInstruction), args);
+    Solution executeCompletion(ValueMap args) {
+        return execute(config.completionsEndpoint(), args, this::getCompletionRequestPayload);
+    }
+
+    Solution executeEdit(ValueMap args) {
+        return execute(config.editsEndpoint(), args, this::getEditRequestPayload);
+    }
+
+    List<Solution> executeImageGeneration(List<ValueMap> args) {
+        return execute(config.imagesEndpoint(), args, this::getImageGenerationPayload);
     }
 
     Solution executeImageGeneration(ValueMap args) {
-        return execute(config.imagesEndpoint(), getImageGenerationPayload(args), args);
+        return execute(config.imagesEndpoint(), args, this::getImageGenerationPayload);
     }
 
-    private Solution execute(String endpoint, String payload, Map<String, Object> args) {
+    private List<Solution> execute(String endpoint, List<ValueMap> args, Function<ValueMap, String> payloadFactory) {
+        if (args.size() == 1) {
+            return Collections.singletonList(execute(endpoint, args.get(0), payloadFactory));
+        }
+        CompletableFuture<?>[] tasks = new CompletableFuture[args.size()];
+        for (int i = 0; i < args.size(); i++) {
+            tasks[i] = executeAsync(endpoint, args.get(i), payloadFactory);
+        }
+        CompletableFuture.allOf(tasks).join();
+        List<Solution> result = new ArrayList<>();
+        for (CompletableFuture<?> task : tasks) {
+            try {
+                Solution solution = (Solution) task.get(
+                    (long) (config.timeout() * HttpClientFactory.DEFAULT_ATTEMPTS_COUNT * 1.1),
+                    TimeUnit.MILLISECONDS);
+                result.add(solution);
+            } catch (InterruptedException e) {
+                LOG.warn(EXCEPTION_COULD_NOT_COMPLETE_ASYNC, e);
+                Thread.currentThread().interrupt();
+            } catch (TimeoutException | ExecutionException e) {
+                LOG.warn(EXCEPTION_COULD_NOT_COMPLETE_ASYNC, e);
+            }
+        }
+        return result;
+    }
+
+    private Solution execute(String endpoint, ValueMap args, Function<ValueMap, String> payloadFactory) {
+        String payload = payloadFactory.apply(args);
         HttpPost request = new HttpPost(endpoint);
         request.setHeader(HttpHeaders.AUTHORIZATION, HTTP_HEADER_BEARER + config.token());
         request.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
         request.setEntity(new StringEntity(payload, StandardCharsets.UTF_8));
 
-        try (
-            CloseableHttpClient client = HttpClientFactory.newClient(config.timeout());
-            CloseableHttpResponse response = client.execute(request)
-        ) {
-            Solution solution = parseOpenAiResponse(args, response);
-            EntityUtils.consume(response.getEntity());
-            return solution;
-        } catch (IOException e) {
-            LOG.error("OpenAI service request failed", e);
-            return Solution.from(args).withMessage(HttpStatus.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+        int lastExceptionStatus = HttpStatus.SC_INTERNAL_SERVER_ERROR;
+        String lastExceptionMessage = null;
+        for (int attempt = 0; attempt < HttpClientFactory.DEFAULT_ATTEMPTS_COUNT; attempt++) {
+            try (
+                CloseableHttpClient client = HttpClientFactory.newClient(config.timeout());
+                CloseableHttpResponse response = client.execute(request)
+            ) {
+                Solution solution = parseOpenAiResponse(response, args);
+                EntityUtils.consume(response.getEntity());
+                return solution;
+            } catch (ConnectTimeoutException | SocketTimeoutException e) {
+                LOG.warn(EXCEPTION_TIMEOUT, endpoint);
+                lastExceptionStatus = HttpStatus.SC_REQUEST_TIMEOUT;
+                lastExceptionMessage = e.getMessage();
+            } catch (IOException e) {
+                LOG.error(EXCEPTION_REQUEST_FAILED, e);
+                lastExceptionStatus = HttpStatus.SC_BAD_GATEWAY;
+                lastExceptionMessage = e.getMessage();
+            }
         }
+        return Solution.from(args).withMessage(lastExceptionStatus, StringUtils.defaultIfEmpty(lastExceptionMessage, EXCEPTION_REQUEST_FAILED));
     }
 
-    String getCompletionRequestPayload(ValueMap args, String defaultPrompt) {
+    private CompletableFuture<Solution> executeAsync(String endpoint, ValueMap args, Function<ValueMap, String> payloadFactory) {
+        return CompletableFuture.supplyAsync(
+            () -> execute(endpoint, args, payloadFactory),
+            threadPoolExecutor);
+    }
+
+    private String getCompletionRequestPayload(ValueMap args) {
+        String prompt = args.get(CoreConstants.PN_PROMPT, StringUtils.EMPTY);
+        if (!prompt.endsWith(CoreConstants.SEPARATOR_COLON)) {
+            prompt += CoreConstants.SEPARATOR_COLON;
+        }
         Map<String, Object> properties = new HashMap<>();
-        String prompt = extractPrompt(args, PN_PROMPT, defaultPrompt);
-        properties.put(PN_PROMPT, prompt + StringUtils.SPACE + args.get(CoreConstants.PN_TEXT));
+        properties.put(CoreConstants.PN_PROMPT, prompt + StringUtils.SPACE + args.get(CoreConstants.PN_TEXT));
         properties.put(OpenAiConstants.PN_MODEL, args.get(OpenAiConstants.PN_MODEL, config.completionModel()));
         properties.put(OpenAiConstants.PN_MAX_TOKENS, args.get(OpenAiConstants.PN_MAX_TOKENS, config.textLength()));
         properties.put(OpenAiConstants.PN_TEMPERATURE, args.get(OpenAiConstants.PN_TEMPERATURE, config.temperature()));
-        properties.put(PN_CHOICES_COUNT, config.choices());
+        properties.put(OpenAiConstants.PN_CHOICES_COUNT, args.get(OpenAiConstants.PN_CHOICES_COUNT, config.choices()));
         return ObjectConversionUtil.toJson(properties);
     }
 
-    String getEditRequestPayload(ValueMap args, String defaultInstruction) {
+    private String getEditRequestPayload(ValueMap args) {
         Map<String, Object> properties = new HashMap<>();
-        String instruction = extractPrompt(args, PN_INSTRUCTION, defaultInstruction);
-        properties.put(PN_INSTRUCTION, instruction);
+        properties.put(OpenAiConstants.PN_INSTRUCTION, args.get(OpenAiConstants.PN_INSTRUCTION, StringUtils.EMPTY));
         properties.put(OpenAiConstants.PN_MODEL, args.get(OpenAiConstants.PN_MODEL, config.editModel()));
         properties.put(PN_INPUT, args.get(CoreConstants.PN_TEXT));
         properties.put(OpenAiConstants.PN_TEMPERATURE, args.get(OpenAiConstants.PN_TEMPERATURE, config.temperature()));
-        properties.put(PN_CHOICES_COUNT, config.choices());
+        properties.put(OpenAiConstants.PN_CHOICES_COUNT, args.get(OpenAiConstants.PN_CHOICES_COUNT, config.choices()));
         return ObjectConversionUtil.toJson(properties);
     }
 
-    private String getImageGenerationPayload(Map<String, Object> args) {
+    private String getImageGenerationPayload(ValueMap args) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(PN_PROMPT, args.get(CoreConstants.PN_TEXT));
+        properties.put(CoreConstants.PN_PROMPT, args.get(CoreConstants.PN_TEXT));
         properties.put(CoreConstants.PN_SIZE, args.getOrDefault(CoreConstants.PN_SIZE, config.imageSize()));
-        properties.put(OpenAiService.PN_CHOICES_COUNT, config.choices());
+        properties.put(OpenAiConstants.PN_CHOICES_COUNT, args.get(OpenAiConstants.PN_CHOICES_COUNT, config.choices()));
         return ObjectConversionUtil.toJson(properties);
     }
 
-    private static String extractPrompt(ValueMap args, String key, String defaultValue) {
-        String result = args.get(key, StringUtils.EMPTY);
-        result = StringUtils.defaultIfBlank(result, defaultValue).trim();
-        if (!result.endsWith(CoreConstants.SEPARATOR_COLON)) {
-            result += CoreConstants.SEPARATOR_COLON;
-        }
-        return result;
-    }
-
-    private static Solution parseOpenAiResponse(Map<String, Object> args, CloseableHttpResponse response) throws IOException {
+    private static Solution parseOpenAiResponse(CloseableHttpResponse response, Map<String, Object> args) throws IOException {
         JsonNode jsonNode = ObjectConversionUtil.toNodeTree(response.getEntity().getContent());
         JsonNode errorNode = jsonNode.get(PN_ERROR);
         if (errorNode != null) {
-            String exceptionMessage = errorNode.get(PN_MESSAGE) != null ? errorNode.get(PN_MESSAGE).asText() : errorNode.asText();
+            String exceptionMessage = errorNode.get(CoreConstants.PN_MESSAGE) != null ? errorNode.get(CoreConstants.PN_MESSAGE).asText() : errorNode.asText();
             return Solution.from(args).withMessage(HttpStatus.SC_BAD_REQUEST, exceptionMessage);
         }
         JsonNode choices = ObjectUtils.firstNonNull(
