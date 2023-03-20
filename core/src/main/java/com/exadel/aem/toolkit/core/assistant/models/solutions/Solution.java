@@ -27,8 +27,12 @@ public abstract class Solution {
     static final Logger LOG = LoggerFactory.getLogger(Solution.class);
 
     static final String PN_ARGS = "args";
-    static final String ERROR_MESSAGE = "Could not serialize the solution";
-    static final String ERROR_MESSAGE_JSON = "{\"messages\": \"Serialization exception: %s\"}";
+    static final String PN_MESSAGES = "messages";
+    private static final String PN_STATUS = "status";
+
+    private static final String VALUE_STATUS_OK = "ok";
+
+    static final String EXCEPTION_COULD_NOT_SERIALIZE = "Could not serialize the solution";
 
     private final Map<String, Object> args;
 

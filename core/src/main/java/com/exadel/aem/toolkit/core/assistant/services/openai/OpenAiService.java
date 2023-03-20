@@ -63,9 +63,6 @@ public class OpenAiService implements AssistantService {
     private static final String PN_ERROR = "error";
     private static final String PN_FINISH = "finish_reason";
     private static final String PN_INPUT = "input";
-    private static final String PN_INSTRUCTION = "instruction";
-    private static final String PN_MESSAGE = "message";
-    private static final String PN_PROMPT = "prompt";
     private static final String PN_URL = "url";
 
     private static final String VALUE_LENGTH = "length";
@@ -75,6 +72,15 @@ public class OpenAiService implements AssistantService {
     private static final String VENDOR_NAME = "OpenAI";
     private static final String LOGO_RESOURCE = "assistant/logo-openai";
     private static final String LOGO;
+
+    private static final int MULTITHREAD_CORE_POOL_SIZE = 5;
+    private static final int MULTITHREAD_MAX_POOL_SIZE = 20;
+    private static final int MULTITHREAD_TIMEOUT = 60;
+
+    private static final String EXCEPTION_REQUEST_FAILED = "OpenAI service request failed";
+    private static final String EXCEPTION_COULD_NOT_COMPLETE_ASYNC = "Could not complete request";
+    private static final String EXCEPTION_TIMEOUT = "Connection to {} timed out";
+
     static {
         URL logoUrl = OpenAiService.class.getClassLoader().getResource(LOGO_RESOURCE);
         String logo = null;

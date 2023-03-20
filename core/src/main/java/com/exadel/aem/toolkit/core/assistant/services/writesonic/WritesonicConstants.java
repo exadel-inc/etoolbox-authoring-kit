@@ -23,7 +23,6 @@ class WritesonicConstants {
     public static final String PN_IMAGE_WIDTH = "image_width";
     public static final String PN_IMAGES_COUNT = "num_images";
     public static final String PN_LANGUAGE = "language";
-    public static final String PN_PROMPT = "prompt";
     public static final String PN_TONE = "tone_of_voice";
 
 

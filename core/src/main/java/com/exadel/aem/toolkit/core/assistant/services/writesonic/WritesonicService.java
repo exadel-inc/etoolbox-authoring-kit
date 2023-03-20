@@ -72,6 +72,9 @@ public class WritesonicService implements AssistantService {
         LOGO = logo;
     }
 
+    private static final String EXCEPTION_REQUEST_FAILED = "Writesonic service request failed";
+    private static final String EXCEPTION_TIMEOUT = "Connection to {} timed out";
+
     private static final Pattern PATTERN_ENDPOINT_VERSION = Pattern.compile("/v(\\d)/");
     private static final Pattern PATTERN_IMAGE_SIZE = Pattern.compile("(\\d+)x(\\d+)");
 

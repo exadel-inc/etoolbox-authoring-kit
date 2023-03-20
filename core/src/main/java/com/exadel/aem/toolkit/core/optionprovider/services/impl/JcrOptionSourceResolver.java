@@ -115,7 +115,7 @@ class JcrOptionSourceResolver implements OptionSourceResolver {
         Resource contentResource = request.getResourceResolver().resolve(contentResourcePath);
         if (contentResource instanceof NonExistingResource
             || StringUtils.isEmpty(relativePath)
-            || relativePath.equals(CoreConstants.RELATIVE_PATH_PREFIX)) {
+            || relativePath.equals(CoreConstants.PATH_RELATIVE_PREFIX)) {
             return contentResource;
         }
         return request.getResourceResolver().getResource(contentResource, relativePath);

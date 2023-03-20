@@ -25,7 +25,7 @@ public @interface OpenAiServiceConfig {
     String DEFAULT_IMAGE_SIZE = "512x512";
     String DEFAULT_EDIT_MODEL = "text-davinci-edit-001";
     double DEFAULT_TEMPERATURE = 0.8d;
-    int DEFAULT_TEXT_LENGTH = 120;
+    int DEFAULT_TEXT_LENGTH = 200;
 
     @AttributeDefinition(name = "Enabled")
     boolean enabled() default true;

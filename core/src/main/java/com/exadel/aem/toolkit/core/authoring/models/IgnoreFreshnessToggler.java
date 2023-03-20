@@ -77,8 +77,8 @@ public class IgnoreFreshnessToggler {
          */
         @Override
         public <T> T get(String name, Class<T> type) {
-            if (StringUtils.startsWith(name, CoreConstants.RELATIVE_PATH_PREFIX)) {
-                return super.get(name.substring(CoreConstants.RELATIVE_PATH_PREFIX.length()), type);
+            if (StringUtils.startsWith(name, CoreConstants.PATH_RELATIVE_PREFIX)) {
+                return super.get(name.substring(CoreConstants.PATH_RELATIVE_PREFIX.length()), type);
             }
             return super.get(name, type);
         }
@@ -88,8 +88,8 @@ public class IgnoreFreshnessToggler {
          */
         @Override
         public boolean containsKey(Object key) {
-            if (key != null && StringUtils.startsWith(key.toString(), CoreConstants.RELATIVE_PATH_PREFIX)) {
-                return super.containsKey(key.toString().substring(CoreConstants.RELATIVE_PATH_PREFIX.length()));
+            if (key != null && StringUtils.startsWith(key.toString(), CoreConstants.PATH_RELATIVE_PREFIX)) {
+                return super.containsKey(key.toString().substring(CoreConstants.PATH_RELATIVE_PREFIX.length()));
             }
             return super.containsKey(key);
         }

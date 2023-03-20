@@ -35,10 +35,12 @@ public class CoreConstants {
     public static final String PN_ITEM_RESOURCE_TYPE = "itemResourceType";
     public static final String PN_LIMIT = "limit";
     public static final String PN_LIST_ITEM = "listItem";
+    public static final String PN_MESSAGE = "message";
     public static final String PN_OFFSET = "offset";
     public static final String PN_OPTIONS = "options";
     public static final String PN_PATH = "path";
     public static final String PN_PREPEND = "prepend";
+    public static final String PN_PROMPT = "prompt";
     public static final String PN_SELECTED = "selected";
     public static final String PN_SIZE = "size";
 
@@ -50,7 +52,6 @@ public class CoreConstants {
     public static final String PATH_PARENT = "..";
     public static final String PATH_PARENT_PREFIX = "../";
     public static final String PATH_RELATIVE_PREFIX = "./";
-    public static final String PATH_PARENT = "..";
 
     public static final String ELLIPSIS = "...";
 

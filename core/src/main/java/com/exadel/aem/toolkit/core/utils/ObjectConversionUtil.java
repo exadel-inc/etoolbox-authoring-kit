@@ -34,10 +34,12 @@ public class ObjectConversionUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(ObjectConversionUtil.class);
 
-    public static final String EMPTY_JSON = "{}";
+    private static final String EMPTY_JSON = "{}";
 
     private static final TypeReference<Map<String, Object>> PROPERTY_MAP_REFERENCE = new TypeReference<Map<String, Object>>() {};
     private static final ObjectMapper OBJECT_MAPPER;
+    private static final String EXCEPTION_COULD_NOT_SERIALIZE = "Could not serialize to JSON";
+
 
     static {
         OBJECT_MAPPER = new ObjectMapper();
