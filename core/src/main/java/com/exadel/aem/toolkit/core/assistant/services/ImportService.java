@@ -14,12 +14,18 @@
 package com.exadel.aem.toolkit.core.assistant.services;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
@@ -30,6 +36,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.osgi.service.component.annotations.Activate;
@@ -82,6 +89,95 @@ public class ImportService implements AssistantService {
     @Reference
     private RenditionMaker renditionMaker;
 
+    public String downloadAsset(ResourceResolver resourceResolver, String url, String destination) throws AssistantException {
+        String damUrl = toDamUrl(destination);
+        try {
+            downloadAsset(url, entity -> store(resourceResolver, entity, damUrl));
+            return damUrl;
+        } catch (IOException e) {
+            String exceptionMessage = String.format(EXCEPTION_TEMPLATE, url, destination);
+            throw new AssistantException(exceptionMessage, e);
+        }
+    }
+
+    private Map<String, Object> downloadAsset(String url, ThrowingConsumer<HttpEntity, IOException> storage) throws IOException {
+        HttpGet request = new HttpGet(url);
+        try (
+            CloseableHttpClient client = HttpClientFactory
+                .newClient()
+                .timeout(HttpClientFactory.DEFAULT_TIMEOUT)
+                .skipSsl(LOCALHOST_PATTERN.matcher(url).find())
+                .get();
+            CloseableHttpResponse response = client.execute(request)
+        ) {
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                throw new IOException("Unexpected response " + response.getStatusLine().toString());
+            }
+            HttpEntity entity = response.getEntity();
+            storage.accept(entity);
+            Map<String, Object> result = new HashMap<>();
+            result.put(CoreConstants.PN_TYPE, getMimeType(entity));
+            EntityUtils.consume(entity);
+            return result;
+        }
+    }
+
+    private void store(ResourceResolver resourceResolver, HttpEntity entity, String destination) throws IOException {
+        AssetManager assetManager = resourceResolver.adaptTo(AssetManager.class);
+        if (assetManager == null) {
+            throw new IOException(EXCEPTION_MISSING_ASSET_MANAGER);
+        }
+        if (entity.getContent() == null) {
+            throw new IOException(EXCEPTION_INVALID_CONTENT);
+        }
+        try {
+            Resource existingResource = resourceResolver.getResource(destination);
+            if (existingResource != null) {
+                resourceResolver.delete(existingResource);
+            }
+            Asset asset = assetManager.createAsset(destination, entity.getContent(), getMimeType(entity), true);
+
+            RenditionTemplate thumbnailTemplate = renditionMaker.createThumbnailTemplate(
+                asset,
+                THUMBNAIL_DIMENSION,
+                THUMBNAIL_DIMENSION,
+                false);
+            renditionMaker.generateRenditions(asset, thumbnailTemplate);
+
+        } catch (Exception e) {
+            throw new IOException(e);
+        }
+    }
+
+    private static String getMimeType(HttpEntity entity) {
+        return Optional.ofNullable(entity.getContentType())
+            .map(Header::getValue)
+            .orElse(ImageUploadConstants.DEFAULT_MIME_TYPE);
+    }
+
+    private static String toDamUrl(String destination) {
+        if (StringUtils.isEmpty(destination) || StringUtils.startsWithIgnoreCase(destination, "/content/dam/")) {
+            return decodeSilently(destination);
+        }
+        List<String> pathChunks = Pattern.compile(CoreConstants.SEPARATOR_SLASH)
+            .splitAsStream(decodeSilently(destination))
+            .filter(StringUtils::isNotEmpty)
+            .collect(Collectors.toCollection(ArrayList::new));
+        if ("content".equals(pathChunks.get(0))) {
+            pathChunks.remove(0);
+        }
+        pathChunks.addAll(0, Arrays.asList("content", "dam", "eak-assistant"));
+        return CoreConstants.SEPARATOR_SLASH + String.join(CoreConstants.SEPARATOR_SLASH, pathChunks);
+    }
+
+    private static String decodeSilently(String value) {
+        try {
+            return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            return value;
+        }
+    }
+
     private class Import extends SimpleFacility {
 
         @Override
@@ -97,72 +193,22 @@ public class ImportService implements AssistantService {
         @Override
         public Solution execute(SlingHttpServletRequest request) {
             ValueMap args = getArguments(request);
-            String from = args.get(QUERY_PARAMETER_FROM, StringUtils.EMPTY);
-            String to = args.get(QUERY_PARAMETER_TO, StringUtils.EMPTY);
-            if (StringUtils.isAnyEmpty(from, to)) {
+            String url = args.get(QUERY_PARAMETER_FROM, StringUtils.EMPTY);
+            String destination = toDamUrl(args.get(QUERY_PARAMETER_TO, StringUtils.EMPTY));
+            if (StringUtils.isAnyEmpty(url, destination)) {
                 return Solution.from(args).withMessage(HttpStatus.SC_BAD_REQUEST, EXCEPTION_MISSING_PARAMS);
             }
             try {
-                Map<String, Object> downloadResult = downloadAsset(from, entity -> store(request.getResourceResolver(), entity, to));
-                downloadResult.put(CoreConstants.PN_PATH, to);
+                Map<String, Object> downloadResult = downloadAsset(url, entity -> store(request.getResourceResolver(), entity, destination));
+                downloadResult.put(CoreConstants.PN_PATH, destination);
                 return Solution.from(args).withValueMap(downloadResult);
             } catch (IOException e) {
-                String exceptionMessage = String.format(EXCEPTION_TEMPLATE, from, to);
+                String exceptionMessage = String.format(EXCEPTION_TEMPLATE, url, destination);
                 LOG.error(exceptionMessage, e);
                 return Solution
                     .from(args)
                     .withMessage(HttpStatus.SC_INTERNAL_SERVER_ERROR, exceptionMessage + SEPARATOR_COLON + e.getMessage());
             }
-        }
-
-        private Map<String, Object> downloadAsset(String url, ThrowingConsumer<HttpEntity, IOException> storage) throws IOException {
-            HttpGet request = new HttpGet(url);
-            try (
-                CloseableHttpClient client = HttpClientFactory
-                    .newClient()
-                    .timeout(HttpClientFactory.DEFAULT_TIMEOUT)
-                    .skipSsl(LOCALHOST_PATTERN.matcher(url).find())
-                    .get();
-                CloseableHttpResponse response = client.execute(request)
-            ) {
-                if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-                    throw new IOException("Unexpected response " + response.getStatusLine().toString());
-                }
-                HttpEntity entity = response.getEntity();
-                storage.accept(entity);
-                Map<String, Object> result = new HashMap<>();
-                result.put(CoreConstants.PN_TYPE, getMimeType(entity));
-                EntityUtils.consume(entity);
-                return result;
-            }
-        }
-
-        private void store(ResourceResolver resourceResolver, HttpEntity entity, String destination) throws IOException {
-            AssetManager assetManager = resourceResolver.adaptTo(AssetManager.class);
-            if (assetManager == null) {
-                throw new IOException(EXCEPTION_MISSING_ASSET_MANAGER);
-            }
-            if (entity.getContent() == null) {
-                throw new IOException(EXCEPTION_INVALID_CONTENT);
-            }
-            try {
-                Asset asset = assetManager.createAsset(destination, entity.getContent(), getMimeType(entity), true);
-                RenditionTemplate thumbnailTemplate = renditionMaker.createThumbnailTemplate(
-                    asset,
-                    THUMBNAIL_DIMENSION,
-                    THUMBNAIL_DIMENSION,
-                    false);
-                renditionMaker.generateRenditions(asset, thumbnailTemplate);
-
-            } catch (Exception e) {
-                throw new IOException(e);
-            }
-        }
-
-        private String getMimeType(HttpEntity entity) {
-            return Optional.ofNullable(entity.getContentType())
-                .map(Header::getValue)
-                .orElse(ImageUploadConstants.DEFAULT_MIME_TYPE);
         }
     }
 }
