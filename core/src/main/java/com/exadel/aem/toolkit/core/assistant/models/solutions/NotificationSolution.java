@@ -17,8 +17,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 class NotificationSolution extends Solution {
-    private static final String PN_MESSAGES = "messages";
 
     private final int statusCode;
     private final List<String> messages;
@@ -32,6 +33,11 @@ class NotificationSolution extends Solution {
     @Override
     public int getStatusCode() {
         return statusCode;
+    }
+
+    @Override
+    public String asText() {
+        return messages != null ? String.join("\n", messages) : StringUtils.EMPTY;
     }
 
     @Override

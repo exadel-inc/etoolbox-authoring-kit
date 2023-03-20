@@ -17,6 +17,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.exadel.aem.toolkit.core.CoreConstants;
 
 class OptionsSolution extends Solution {
@@ -34,6 +36,15 @@ class OptionsSolution extends Solution {
         super(args);
         this.options = options;
         this.continuous = continuous;
+    }
+
+    public List<String> getOptions() {
+        return options;
+    }
+
+    @Override
+    public String asText() {
+        return options != null ? String.join("\n", options).trim() : StringUtils.EMPTY;
     }
 
     @Override

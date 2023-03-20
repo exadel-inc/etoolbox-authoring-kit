@@ -17,10 +17,12 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
@@ -29,10 +31,6 @@ class JsonStringSolution extends Solution {
     private final String key;
     private final String content;
 
-    JsonStringSolution(Map<String, Object> args) {
-        this(args, null, null);
-    }
-
     JsonStringSolution(Map<String, Object> args, String key, String content) {
         super(args);
         this.key = key;
@@ -40,20 +38,34 @@ class JsonStringSolution extends Solution {
     }
 
     @Override
+    public String asText() {
+        return StringUtils.EMPTY;
+    }
+
+    @Override
     public String asJson() {
         if (StringUtils.isBlank(content)) {
             return super.asJson(Collections.emptyMap());
         }
+
+        ObjectNode result = new ObjectNode(JsonNodeFactory.instance);
+        if (MapUtils.isNotEmpty(getArgs())) {
+            ObjectNode args = (ObjectNode) ObjectConversionUtil.toNodeTree(getArgs());
+            result.set(PN_ARGS, args);
+        }
+
+        if (StringUtils.isNoneBlank(key, content) && !ObjectConversionUtil.isJson(content)) {
+            result.set(key, new TextNode(content));
+            return result.toString();
+        }
+
         JsonNode parsedNestedJson;
         try {
             parsedNestedJson = ObjectConversionUtil.toNodeTree(content);
         } catch (IOException e) {
-            LOG.error(ERROR_MESSAGE, e);
-            return String.format(ERROR_MESSAGE_JSON, e);
+            LOG.error(EXCEPTION_COULD_NOT_SERIALIZE, e);
+            return ObjectConversionUtil.toJson(PN_MESSAGES, e.getMessage());
         }
-        ObjectNode result = new ObjectNode(JsonNodeFactory.instance);
-        ObjectNode args = (ObjectNode) ObjectConversionUtil.toNodeTree(getArgs());
-        result.set(PN_ARGS, args);
         if (StringUtils.isNotEmpty(key)) {
             result.set(key, parsedNestedJson);
         } else if (parsedNestedJson instanceof ObjectNode) {

@@ -15,6 +15,8 @@ package com.exadel.aem.toolkit.core.assistant.models.solutions;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 class JsonValueMapSolution extends Solution {
 
     private final Map<String, Object> values;
@@ -22,6 +24,11 @@ class JsonValueMapSolution extends Solution {
     JsonValueMapSolution(Map<String, Object> args, Map<String, Object> values) {
         super(args);
         this.values = values;
+    }
+
+    @Override
+    public String asText() {
+        return StringUtils.EMPTY;
     }
 
     @Override

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.MapUtils;
 import org.apache.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,7 +45,11 @@ public abstract class Solution {
         return HttpStatus.SC_OK;
     }
 
-    Map<String, Object> getArgs() {
+    public boolean isSuccess() {
+        return getStatusCode() == HttpStatus.SC_OK;
+    }
+
+    public Map<String, Object> getArgs() {
         return args;
     }
 
@@ -52,16 +57,20 @@ public abstract class Solution {
        Serialization
        ------------- */
 
+    public abstract String asText();
+
     public abstract String asJson();
 
     String asJson(Map<String, Object> values) {
         Map<String, Object> effectiveValues = new HashMap<>(values);
-        effectiveValues.putIfAbsent(PN_ARGS, args);
+        if (MapUtils.isNotEmpty(args)) {
+            effectiveValues.putIfAbsent(PN_ARGS, args);
+        }
         return ObjectConversionUtil.toJson(
             effectiveValues,
             e -> {
-                LOG.error(ERROR_MESSAGE, e);
-                return String.format(ERROR_MESSAGE_JSON, e.getMessage());
+                LOG.error(EXCEPTION_COULD_NOT_SERIALIZE, e);
+                return ObjectConversionUtil.toJson(PN_MESSAGES, e.getMessage());
             });
     }
 
@@ -90,7 +99,7 @@ public abstract class Solution {
         }
 
         public Solution empty() {
-            return new JsonStringSolution(args);
+            return new JsonStringSolution(args, Solution.PN_STATUS, VALUE_STATUS_OK);
         }
 
         public Solution withJsonContent(String content) {
