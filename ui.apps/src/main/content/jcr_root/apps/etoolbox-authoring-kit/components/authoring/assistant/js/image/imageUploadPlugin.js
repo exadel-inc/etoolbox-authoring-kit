@@ -62,7 +62,8 @@
             return Promise.resolve({ path: src, type: 'image' });
         }
 
-        const fieldName = ($imageUpload.attr('name') || '').replace(/(^\.\/|\/+$)/g, '') || 'image';
+        const fieldName = ($imageUpload.find('[data-cq-fileupload-parameter="filereference"]').attr('name') || $imageUpload.attr('name') || '')
+            .replace(/(^\.\/|\/+$)/g, '') || 'image';
         const target = `${action}/${fieldName}`;
         const serviceLink = ns.Assistant.getServiceLink({
             command: 'image.util.import',
