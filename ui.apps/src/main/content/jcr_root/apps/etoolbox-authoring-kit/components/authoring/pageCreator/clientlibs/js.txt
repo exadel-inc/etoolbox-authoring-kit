@@ -1,0 +1,3 @@
+#base=js
+main.js
+dialog/pageCreatorDialog.js
