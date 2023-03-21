@@ -35,7 +35,7 @@ public class HttpClientFactory {
     private static final Logger LOG = LoggerFactory.getLogger(HttpClientFactory.class);
 
     public static final int DEFAULT_TIMEOUT = 20000;
-    public static final int DEFAULT_ATTEMPTS_COUNT = 5;
+    public static final int DEFAULT_ATTEMPTS_COUNT = 3;
 
     private static final String PROTOCOL_TLS = "TLS";
     private static final X509TrustManager PERMISSIVE_TRUST_MANAGER = new PermissiveTrustManager();
