@@ -164,9 +164,9 @@ class PageFacilityBroker {
        Metadata operations
        ------------------- */
 
-    private void readMetadata() {
+    private void readMetadata(boolean skipExisting) {
         Resource metadataResource = pageContentResource.getChild(NN_METADATA);
-        if (metadataResource != null) {
+        if (metadataResource != null && !skipExisting) {
             ValueMap metadataValueMap = metadataResource.getValueMap();
             Stream.of(KEY_SUMMARY, KEY_TITLE, KEY_SUBTITLE, KEY_TEXT, KEY_IMAGE_PROMPT, KEY_IMAGE)
                 .forEach(key -> putIfNotNull(key, metadataValueMap.get(key + METADATA_KEY_POSTFIX, String[].class)));
@@ -221,7 +221,7 @@ class PageFacilityBroker {
         commit();
     }
 
-    private void cleanMetadata() throws AssistantException {
+    public void cleanMetadata() throws AssistantException {
         if (!isValid()) {
             return;
         }
@@ -312,13 +312,14 @@ class PageFacilityBroker {
 
     public static PageFacilityBroker getInstance(
         ResourceResolver resourceResolver,
-        Resource pageResource) throws AssistantException {
+        Resource pageResource,
+        boolean skipExistingMetadata) throws AssistantException {
 
         PageFacilityBroker result = new PageFacilityBroker();
         result.resourceResolver = resourceResolver;
         result.pageContentResource = pageResource != null ? pageResource.getChild(JcrConstants.JCR_CONTENT) : null;
-        result.readMetadata();
-        if (result.pageContentResource.getChild(NN_METADATA) == null) {
+        result.readMetadata(skipExistingMetadata);
+        if (result.pageContentResource.getChild(NN_METADATA) == null || skipExistingMetadata) {
             result.commitMetadata();
         }
         return result;

@@ -146,7 +146,8 @@ class PageFacility extends OpenAiFacility {
         try {
             PageFacilityBroker pageBroker = PageFacilityBroker.getInstance(
                 request.getResourceResolver(),
-                request.getResourceResolver().getResource(currentPath));
+                request.getResourceResolver().getResource(currentPath),
+                currentStage.equals(stages.get(0)));
             if (!pageBroker.isValid()) {
                 String exceptionMessage = String.format(EXCEPTION_INVALID_PATH, currentPath);
                 return Solution.from(args).withMessage(HttpStatus.SC_BAD_REQUEST, exceptionMessage);
