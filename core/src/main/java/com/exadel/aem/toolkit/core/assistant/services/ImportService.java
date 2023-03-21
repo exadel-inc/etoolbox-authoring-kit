@@ -213,6 +213,7 @@ public class ImportService implements AssistantService {
             if (resourceResolver.getResource(destination) != null) {
                 assetManager.removeAssetForBinary(DamUtil.assetToBinaryPath(destination));
             }
+            assetManager.createAsset(destination, entity.getContent(), getMimeType(entity), true);
         } catch (Exception e) {
             throw new IOException(e);
         }
