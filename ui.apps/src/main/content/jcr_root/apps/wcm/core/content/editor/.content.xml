@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          jcr:primaryType="cq:Page">
+    <jcr:content jcr:primaryType="cq:PageContent">
+        <content jcr:primaryType="nt:unstructured">
+            <items jcr:primaryType="sling:OrderedFolder">
+                <content jcr:primaryType="sling:OrderedFolder">
+                    <header jcr:primaryType="nt:unstructured">
+                        <items jcr:primaryType="nt:unstructured">
+                            <headerbar jcr:primaryType="nt:unstructured">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <pageCreator jcr:primaryType="nt:unstructured"
+                                                 sling:resourceType="granite/ui/components/coral/foundation/button"
+                                                 granite:class="editor-GlobalBar-item js-editor-PageCreator"
+                                                 granite:title="Page Creator"
+                                                 align="left"
+                                                 icon="assistant-mono"
+                                                 iconSize="S"
+                                                 variant="minimal"/>
+                                </items>
+                            </headerbar>
+                        </items>
+                    </header>
+                </content>
+            </items>
+        </content>
+    </jcr:content>
+</jcr:root>
