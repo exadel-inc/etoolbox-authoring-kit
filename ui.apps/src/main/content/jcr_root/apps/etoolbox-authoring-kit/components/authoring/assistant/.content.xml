@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0" xmlns:jcr="http://www.jcp.org/jcr/1.0"
-          jcr:primaryType="cq:ClientLibraryFolder"
-          categories="[eak.authoring.assistant]"
-          jsProcessor="[min:gcc;languageIn=ECMASCRIPT_2015,compilationLevel=advanced,languageOut=ECMASCRIPT5]"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="nt:folder"/>
