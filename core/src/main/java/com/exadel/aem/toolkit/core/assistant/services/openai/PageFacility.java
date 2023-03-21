@@ -57,7 +57,9 @@ class PageFacility extends OpenAiFacility {
     private static final String EXCEPTION_COULD_NOT_STORE = "Could not save changes to \"%s\": %s";
 
     private static final Pattern PATTERN_SPLIT_BY_NEWLINE = Pattern.compile("\\n+");
+    private static final Pattern PATTERN_SPLIT_BY_DOT_SPACE = Pattern.compile("\\.\\s+");
     private static final String PATTERN_LEADING_NUMBER = "^\\d+\\.\\s*";
+
     private static final String SEPARATOR_NEWLINE = "\n";
     private static final String SEPARATOR_DOT_SPACE = ". ";
     private static final String TERMINATOR_SPACE_QUOTE = " \"";
@@ -198,7 +200,6 @@ class PageFacility extends OpenAiFacility {
     private void createSummary(
         PageFacilityBroker broker,
         ValueMap args) throws AssistantException {
-
         int phrasesCount = Math.max(broker.getTextMembers().size(), 1);
         ValueMap task = new ArgumentsVersion(args)
             .put(
@@ -247,11 +248,7 @@ class PageFacility extends OpenAiFacility {
         Solution solution = getService().executeCompletion(task);
         if (solution.isSuccess()) {
             String text = solution.asText();
-            StringTokenizer stringTokenizer = new StringTokenizer(text);
-            if (stringTokenizer.countTokens() > ABSTRACT_WORDS_LIMIT * 1.3 && text.contains(SEPARATOR_DOT_SPACE)) {
-                text = StringUtils.substringBefore(text, SEPARATOR_DOT_SPACE);
-            }
-            broker.setSubtitle(text);
+            broker.setSubtitle(stripAfterWordsLimit(text));
         }
     }
 
@@ -261,7 +258,7 @@ class PageFacility extends OpenAiFacility {
             args,
             ExpandFacility.PROMPT,
             PageFacilityBroker::getTextMembers,
-            value -> value);
+            PageFacility::stripUnfinishedPhrase);
     }
 
     private void createImagePrompts(PageFacilityBroker broker, ValueMap args) throws AssistantException {
@@ -357,14 +354,6 @@ class PageFacility extends OpenAiFacility {
         broker.commitValues(membersToDamUrls);
     }
 
-    private static List<String> getSummaryPhrases(String summary, Collection<String> members) {
-        List<String> summaryPhrases = PATTERN_SPLIT_BY_NEWLINE
-            .splitAsStream(summary)
-            .collect(Collectors.toList());
-        int limit = Math.min(members.size(), summaryPhrases.size());
-        return summaryPhrases.subList(0, limit);
-    }
-
 
     /* ---------------
        Utility methods
@@ -378,12 +367,41 @@ class PageFacility extends OpenAiFacility {
         }
     }
 
+    private static List<String> getSummaryPhrases(String summary, Collection<String> members) {
+        List<String> summaryPhrases = PATTERN_SPLIT_BY_NEWLINE
+            .splitAsStream(summary)
+            .collect(Collectors.toList());
+        int limit = Math.min(members.size(), summaryPhrases.size());
+        return summaryPhrases.subList(0, limit);
+    }
+
     private static String normalizeSummary(String value) {
         return PATTERN_SPLIT_BY_NEWLINE
             .splitAsStream(value)
             .map(String::trim)
             .map(line -> StringUtils.appendIfMissing(line, CoreConstants.SEPARATOR_DOT))
-            .collect(Collectors.joining(StringUtils.SPACE));    }
+            .collect(Collectors.joining(StringUtils.SPACE));
+    }
+
+    private static String stripAfterWordsLimit(String value) {
+        StringTokenizer stringTokenizer = new StringTokenizer(value);
+        if (stringTokenizer.countTokens() > ABSTRACT_WORDS_LIMIT * 1.3 && value.contains(SEPARATOR_DOT_SPACE)) {
+            return StringUtils.substringBefore(value, SEPARATOR_DOT_SPACE);
+        }
+        return value;
+    }
+
+    private static String stripUnfinishedPhrase(String value) {
+        if (!StringUtils.endsWith(value, CoreConstants.ELLIPSIS)) {
+            return value;
+        }
+        List<String> phrases = PATTERN_SPLIT_BY_DOT_SPACE.splitAsStream(StringUtils.strip(value, CoreConstants.SEPARATOR_DOT))
+            .collect(Collectors.toList());
+        if (phrases.size() <= 1) {
+            return value;
+        }
+        return String.join(SEPARATOR_DOT_SPACE, phrases.subList(0, phrases.size() - 1)) + CoreConstants.SEPARATOR_DOT;
+    }
 
     private static Map<String, String> getMapOfEmptyValues(Collection<String> keys) {
         return keys.stream().collect(Collectors.toMap(key -> key, key -> StringUtils.EMPTY));
