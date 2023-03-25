@@ -16,8 +16,9 @@ package com.exadel.aem.toolkit.core.injectors.utils;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -27,7 +28,8 @@ import org.apache.sling.models.factory.ModelFactory;
 
 /**
  * Contains utility methods for validating types of entities involved in Sing injectors processing.
- * <p><u>Note</u>: This class is not a part of the public API</p>
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  */
 public class TypeUtil {
 
@@ -40,36 +42,82 @@ public class TypeUtil {
     /**
      * Retrieves the {@code Class<?>} object that represents either the parameter type of collection or the element type
      * of array. If the passed {@code type} cannot be treated as either array or collection, {@code null} is returned
-     * @param type {@code Type} reference that characterizes the current class member
+     * @param value {@code Type} reference that characterizes the current class member
      * @return {@code Class} object, or null
      */
-    public static Class<?> extractComponentType(Type type) {
-        if (type instanceof ParameterizedType) {
-            return (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[0];
-        } else if (type instanceof Class<?>) {
-            Class<?> cls = (Class<?>) type;
-            return cls.isArray() ? cls.getComponentType() : cls;
+    public static Class<?> getElementType(Type value) {
+        if (value instanceof Class<?> && ((Class<?>) value).isArray()) {
+            return ((Class<?>) value).getComponentType();
+        }
+        Type currentType = value;
+        while (currentType != null) {
+            if (currentType instanceof ParameterizedType && ((ParameterizedType) currentType).getActualTypeArguments()[0] != null) {
+                return (Class<?>) ((ParameterizedType) currentType).getActualTypeArguments()[0];
+            }
+            if (!(currentType instanceof Class<?>)) {
+                break;
+            }
+            currentType = ((Class<?>) currentType).getGenericSuperclass();
+        }
+        return value instanceof Class<?> ? (Class<?>) value : null;
+    }
+
+    public static Class<?> getRawType(Type value) {
+        if (value instanceof ParameterizedType) {
+            return (Class<?>) ((ParameterizedType) value).getRawType();
+        } else if (value instanceof Class<?>) {
+            return (Class<?>) value;
         }
         return null;
+    }
+
+    /**
+     * Gets whether the provided {@code Type} of Java class member is a parametrized collection type and checks whether
+     * its parameter type matches the list of allowed value types
+     * @param value              {@code Type} object
+     * @param allowedMemberTypes {@code Class} objects representing allowed value types
+     * @return True or false
+     */
+    public static boolean isValidArray(Type value, Class<?>... allowedMemberTypes) {
+        if (!(value instanceof Class<?>) || !((Class<?>) value).isArray()) {
+            return false;
+        }
+        if (ArrayUtils.isEmpty(allowedMemberTypes)) {
+            return true;
+        }
+        Class<?> componentType = ((Class<?>) value).getComponentType();
+        return isValidObjectType(componentType, allowedMemberTypes);
+    }
+
+    /**
+     * Gets whether the provided {@code Type} object represents a collection such as {@link List} or {@link Set}
+     * @param value   {@code Type} object
+     * @return True or false
+     */
+    public static boolean isValidCollectionType(Type value) {
+        if (!(value instanceof Class<?>) && !(value instanceof ParameterizedType)) {
+            return false;
+        }
+        Class<?> effectiveClass = getRawType(value);
+        return ClassUtils.isAssignable(effectiveClass, List.class) || ClassUtils.isAssignable(effectiveClass, Set.class);
     }
 
     /**
      * Retrieves whether the provided {@code Type} of Java class member is a parametrized collection type and its
      * parameter type matches the list of allowed value types
      * @param value              {@code Type} object
-     * @param allowedMemberTypes {@code Class} objects representing allowed value types
+     * @param allowedMemberTypes {@code Class} objects representing allowed entry types
      * @return True or false
      */
     public static boolean isValidCollection(Type value, Class<?>... allowedMemberTypes) {
-        if (!(value instanceof ParameterizedType)
-            || !ClassUtils.isAssignable((Class<?>) ((ParameterizedType) value).getRawType(), Collection.class)) {
+        if (!isValidCollectionType(value)) {
             return false;
         }
         if (ArrayUtils.isEmpty(allowedMemberTypes)) {
             return true;
         }
-        Class<?> componentType = extractComponentType(value);
-        return isValidObjectType(componentType, allowedMemberTypes);
+        Class<?> elementType = getElementType(value);
+        return isValidObjectType(elementType, allowedMemberTypes);
     }
 
     /**
@@ -103,24 +151,6 @@ public class TypeUtil {
     }
 
     /**
-     * Gets whether the provided {@code Type} of Java class member is a parametrized collection type and checks whether
-     * its parameter type matches the list of allowed value types
-     * @param value              {@code Type} object
-     * @param allowedMemberTypes {@code Class} objects representing allowed value types
-     * @return True or false
-     */
-    public static boolean isValidArray(Type value, Class<?>... allowedMemberTypes) {
-        if (!(value instanceof Class<?>) || !((Class<?>) value).isArray()) {
-            return false;
-        }
-        if (ArrayUtils.isEmpty(allowedMemberTypes)) {
-            return true;
-        }
-        Class<?> componentType = ((Class<?>) value).getComponentType();
-        return isValidObjectType(componentType, allowedMemberTypes);
-    }
-
-    /**
      * Gets whether the provided {@code Type} of Java class member is eligible for injection
      * @param value        {@code Type} object
      * @param allowedTypes {@code Class} objects representing allowed value types
@@ -143,16 +173,18 @@ public class TypeUtil {
         if (value == null) {
             return false;
         }
-        if (ArrayUtils.isEmpty(allowedTypes)) {
+        if (value.equals(Object.class) || ArrayUtils.isEmpty(allowedTypes)) {
             return true;
         }
-        return Arrays.asList(allowedTypes).contains(ClassUtils.primitiveToWrapper(value)) || value.equals(Object.class);
+        return Arrays
+            .stream(allowedTypes)
+            .anyMatch(type -> ClassUtils.isAssignable(value, type));
     }
 
     /**
      * Gets whether the given {@code type} is a {@code SlingHttpServletRequest} adapter
      * @param modelFactory {@link ModelFactory} instance
-     * @param type Type of injectable
+     * @param type         Type of injectable
      * @return True or false
      */
     public static boolean isSlingRequestAdapter(ModelFactory modelFactory, Type type) {
@@ -166,7 +198,7 @@ public class TypeUtil {
     /**
      * Gets whether the given {@code type} is a {@code SlingHttpServletRequest} adapter
      * @param modelFactory {@link ModelFactory} instance
-     * @param type {@code Class<?>} object representing the type of injectable
+     * @param type         {@code Class<?>} object representing the type of injectable
      * @return True or false
      */
     public static boolean isSlingRequestAdapter(ModelFactory modelFactory, Class<?> type) {
