@@ -11,20 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.injectors;
+package com.exadel.aem.toolkit.core.injectors.models.requestattribute;
 
-/**
- * Contains constant values used across the injectors logic
- */
-class InjectorConstants {
+public interface ValueSupplier <T> {
 
-    public static final int SERVICE_RANKING = 10000;
-
-    public static final String EXCEPTION = "Could not inject a value for annotation {} in class {}";
-
-    /**
-     * Default (instantiation-restricting) constructor.
-     */
-    private InjectorConstants() {
-    }
+    T getValue();
 }

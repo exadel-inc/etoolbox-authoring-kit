@@ -13,15 +13,15 @@
  */
 package com.exadel.aem.toolkit.core;
 
-import com.exadel.aem.toolkit.core.injectors.ChildInjectorSubResourceTest;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.exadel.aem.toolkit.core.injectors.ChildInjectorSubResourceTest;
 import com.exadel.aem.toolkit.core.injectors.ChildInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.ChildrenInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.I18nInjectorTest;
+import com.exadel.aem.toolkit.core.injectors.RequestAttributeInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.RequestParamInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.RequestSelectorsInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.RequestSuffixInjectorTest;
@@ -47,6 +47,7 @@ import com.exadel.aem.toolkit.core.policymanagement.filters.TopLevelPolicyFilter
     ListItemTest.class,
     ItemComponentsServletTest.class,
 
+    RequestAttributeInjectorTest.class,
     RequestParamInjectorTest.class,
     RequestSelectorsInjectorTest.class,
     RequestSuffixInjectorTest.class,
