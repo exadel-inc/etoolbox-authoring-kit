@@ -29,12 +29,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The parent injector class, which is an implementation of the design pattern - template method. The class accumulates an abstract algorithm for injecting a value into an annotated field.
- * To add a new injector, you need to override the following methods in the child classes:
- * getName
- * getValue
- * getAnnotation
- * logError
+ * Represents a base for a Sling injector. A descendant of this class must extract an annotation from a Java class
+ * member and provide a value that matches the annotation. This value is subsequently assigned to the Java class member
+ * by the Sling engine
  * @see Injector
  */
 abstract class BaseInjector<T extends Annotation> implements Injector {
@@ -47,14 +44,14 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
     private static final String INJECTION_ERROR_MESSAGE = BRIEF_INJECTION_ERROR_MESSAGE + " at {}#{}";
 
     /**
-     * Attempts to inject a value into the given adaptable
-     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance.
+     * Attempts to produce a value that can be further injected by Sling into the given adaptable
+     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
      * @param name             Name of the Java class member to inject the value into
      * @param type             Type of receiving Java class member
-     * @param annotatedElement {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
-     *                         annotation objects
+     * @param element          {@link AnnotatedElement} instance that facades the Java class member and allows to
+     *                         retrieve annotations
      * @param callbackRegistry {@link DisposalCallbackRegistry} object
-     * @return {@code Resource} or adapted object if successful. Otherwise, null is returned
+     * @return {@code Resource} or adapted object if successful. Otherwise, null
      */
     @CheckForNull
     @Override
@@ -79,26 +76,30 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
     }
 
     /**
-     * Get the annotation class based on elements declared annotation
-     * The necessary implementation is needed to implement in the descendant classes
-     * @param element        A {@link AnnotatedElement} element
-     * @return {@code AnnotationType} implementation of the {@link Annotation} interface
+     * When overridden in an injector class, retrieves the annotation type processed by this particular injector. Takes
+     * into account that there might be several annotations attached to the current Java class member, and an injector
+     * can potentially process several annotation types, depending on the setup
+     * @param element {@link AnnotatedElement} instance that facades the Java class member and allows retrieving
+     *                annotations
+     * @return {@code AnnotationType} instance
      */
     abstract T getAnnotationType(AnnotatedElement element);
 
     /**
-     * Extracts value from a {@link SlingHttpServletRequest} or a {@link Resource} instance.
-     * The necessary implementation is needed to implement in the descendant classes
-     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param name             Name of the Java class member to inject the value into
-     * @param type             Type of receiving Java class member
+     * When overridden in an injector class, extracts a value from a {@link SlingHttpServletRequest} or a
+     * {@link Resource} instance
+     * @param adaptable A {@link SlingHttpServletRequest} or a {@link Resource} instance
+     * @param name      Name of the Java class member to inject the value into
+     * @param type      Type of receiving Java class member
      * @return {@code Resource} or adapted object if successful. Otherwise, null is returned
      */
     abstract Object getValue(Object adaptable, String name, Type type, T annotation);
 
     /**
-     Generates and displays an error message if the value cannot be injected.
-     * @param  annotation            Аннотация, объявленная в целевом поле
+     * Outputs a formatted message informing that the injection has not been successful
+     * @param annotatedElement {@link AnnotatedElement} instance that facades the Java class member and allows to
+     *                         retrieve annotations
+     * @param annotationType   Type of annotation that they attempted to retrieve
      */
     private void logException(AnnotatedElement annotatedElement, T annotationType) {
         if (annotationType instanceof Member) {

@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.api.annotations.injectors.RequestParam;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 /**
- * Injects into a Sling model the value of a HTTP request parameter (multiple parameters) obtained
+ * Provides injecting into a Sling model the value of an HTTP request parameter (multiple parameters) obtained
  * via a {@code SlingHttpServletRequest} object
  * @see RequestParam
  * @see BaseInjector

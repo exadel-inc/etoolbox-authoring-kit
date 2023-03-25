@@ -44,8 +44,8 @@ import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
- * Injects into a Sling model a collection of resources or secondary models that are derived from resources according to
- * the type of the underlying array or the parameter type of the underlying collection
+ * Provides injecting into a Sling model a collection of resources or secondary models that are derived from resources
+ * according to the type of the underlying array or else the parameter type of the underlying collection
  * @see Children
  * @see BaseInjector
  */

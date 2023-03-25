@@ -33,7 +33,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
- * Injects into a Sling model a child resource or a secondary model that is adapted from a child resource
+ * Provides injecting into a Sling model a child resource or a secondary model that is adapted from a child resource
  * @see Child
  * @see BaseInjector
  */

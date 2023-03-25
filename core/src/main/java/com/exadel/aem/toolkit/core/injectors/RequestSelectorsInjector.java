@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
- * Injects into a Sling model the value of the {@code selectors} property of the {@link SlingHttpServletRequest}
+ * Provides injecting into a Sling model the value of the {@code selectors} property of the {@link SlingHttpServletRequest}
  * obtained via {@link org.apache.sling.api.request.RequestPathInfo}
  * @see RequestSelectors
  * @see BaseInjector

@@ -25,20 +25,19 @@ import com.exadel.aem.toolkit.core.injectors.RequestAttributeInjector;
 
 /**
  * Used on either a field, a method, or a method parameter of a Sling model to inject a request attribute.
- * <p>Supported types: {@code Object}, {@code class extends Object}
- *                      List {@code List} of:
- *                           {@code class extends Object}, {@code String} ,{@code Integer},
- *                           {@code Boolean}, {@code Long}, {@code Calendar}
- *                      Array {@code Array} of:
- *                           {@code class extends Object}, {@code String} ,boxed/unboxed {@code Integer},
- *                           boxed/unboxed {@code Boolean}, boxed/unboxed {@code Long}, {@code Calendar}
- *                          </p>
+ * <p>The annotated member can be of an arbitrary object or primitive type, or else a {@code List}, a {@code Set}, or
+ * an array.</p>
+ * <p>While injecting, a numeric value can be cast to a widening type if needed ({@code byte -> int}, {@code int ->
+ * long}, {@code long -> double}, etc.) Similarly, an object type can be cast to an ancestor class or an interface. If
+ * the injectable member is a collection/array, and the injected value is singular, a singleton collection/array is
+ * created</p>
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
 @InjectAnnotation
 @Source(RequestAttributeInjector.NAME)
 public @interface RequestAttribute {
+
     /**
      * Used to specify the name of the attribute to inject if it differs from the name of the underlying Java class
      * member

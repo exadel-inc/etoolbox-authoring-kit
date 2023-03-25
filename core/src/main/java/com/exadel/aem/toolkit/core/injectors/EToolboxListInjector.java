@@ -36,7 +36,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 
 /**
- * Injects into a Sling model entries of an EToolbox List obtained via a {@code ResourceResolver} instance
+ * Provides injecting into a Sling model entries of an EToolbox List obtained via a {@code ResourceResolver} instance
  * @see ListHelper
  * @see EToolboxList
  * @see BaseInjector

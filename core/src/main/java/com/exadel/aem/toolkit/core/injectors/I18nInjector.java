@@ -43,8 +43,8 @@ import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
- * Injects into a Sling model an {@link com.day.cq.i18n.I18n} object that corresponds to the current locale, or else an
- * internationalized string value
+ * Provides injecting into a Sling model an {@link com.day.cq.i18n.I18n} object that corresponds to the current locale,
+ * or else an internationalized string value
  * @see I18N
  * @see BaseInjector
  */
