@@ -1,11 +1,25 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.exadel.aem.toolkit.core.injectors;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Member;
 import java.lang.reflect.Type;
 import java.util.Objects;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
@@ -13,8 +27,6 @@ import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static com.exadel.aem.toolkit.core.injectors.InjectorConstants.EXCEPTION;
 
 /**
  * The parent injector class, which is an implementation of the design pattern - template method. The class accumulates an abstract algorithm for injecting a value into an annotated field.
@@ -25,9 +37,14 @@ import static com.exadel.aem.toolkit.core.injectors.InjectorConstants.EXCEPTION;
  * logError
  * @see Injector
  */
-public abstract class BaseInjector<AnnotationType extends Annotation> implements Injector {
+abstract class BaseInjector<T extends Annotation> implements Injector {
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseInjector.class);
+
+    static final int SERVICE_RANKING = 10000;
+
+    private static final String BRIEF_INJECTION_ERROR_MESSAGE = "Could not inject a value for annotation {}";
+    private static final String INJECTION_ERROR_MESSAGE = BRIEF_INJECTION_ERROR_MESSAGE + " at {}#{}";
 
     /**
      * Attempts to inject a value into the given adaptable
@@ -45,17 +62,17 @@ public abstract class BaseInjector<AnnotationType extends Annotation> implements
         @Nonnull Object adaptable,
         String name,
         @Nonnull Type type,
-        @Nonnull AnnotatedElement annotatedElement,
+        @Nonnull AnnotatedElement element,
         @Nonnull DisposalCallbackRegistry callbackRegistry) {
 
-        AnnotationType annotation = getAnnotation(annotatedElement);
+        T annotation = getAnnotationType(element);
         if (Objects.isNull(annotation)) {
             return null;
         }
 
         Object value = getValue(adaptable, name, type, annotation);
         if (Objects.isNull(value)) {
-            logError(annotation);
+            logException(element, annotation);
         }
 
         return value;
@@ -67,7 +84,7 @@ public abstract class BaseInjector<AnnotationType extends Annotation> implements
      * @param element        A {@link AnnotatedElement} element
      * @return {@code AnnotationType} implementation of the {@link Annotation} interface
      */
-    abstract AnnotationType getAnnotation(AnnotatedElement element);
+    abstract T getAnnotationType(AnnotatedElement element);
 
     /**
      * Extracts value from a {@link SlingHttpServletRequest} or a {@link Resource} instance.
@@ -77,21 +94,19 @@ public abstract class BaseInjector<AnnotationType extends Annotation> implements
      * @param type             Type of receiving Java class member
      * @return {@code Resource} or adapted object if successful. Otherwise, null is returned
      */
-    abstract Object getValue(
-        Object adaptable,
-        String name,
-        Type type,
-        AnnotationType annotation
-    );
+    abstract Object getValue(Object adaptable, String name, Type type, T annotation);
 
     /**
      Generates and displays an error message if the value cannot be injected.
      * @param  annotation            Аннотация, объявленная в целевом поле
      */
-     void logError(AnnotationType annotation) {
-        LOG.debug(EXCEPTION, annotation, getName());
+    private void logException(AnnotatedElement annotatedElement, T annotationType) {
+        if (annotationType instanceof Member) {
+            String className = ((Member) annotatedElement).getDeclaringClass().getName();
+            String memberName = ((Member) annotatedElement).getName();
+            LOG.debug(INJECTION_ERROR_MESSAGE, annotationType, className, memberName);
+        } else {
+            LOG.debug(BRIEF_INJECTION_ERROR_MESSAGE, annotationType);
+        }
     }
-
-
-
 }

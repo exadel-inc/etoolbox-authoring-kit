@@ -31,9 +31,9 @@ import org.osgi.service.component.annotations.Component;
 import com.day.cq.commons.jcr.JcrConstants;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.EToolboxList;
-import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
+import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 
 /**
  * Injects into a Sling model entries of an EToolbox List obtained via a {@code ResourceResolver} instance
@@ -42,7 +42,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
  * @see BaseInjector
  */
 @Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING
 )
 public class EToolboxListInjector extends BaseInjector<EToolboxList> {
 
@@ -63,7 +63,7 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
      * {@inheritDoc}
      */
     @Override
-    public EToolboxList getAnnotation(AnnotatedElement element) {
+    public EToolboxList getAnnotationType(AnnotatedElement element) {
         return element.getDeclaredAnnotation(EToolboxList.class);
     }
 
@@ -92,9 +92,9 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
     }
 
     /**
-     * Retrieves the collection of list entries stored under the given {@code path}. If the {@code type} parameter
-     * points to a {@code Resource} or an {@code Object}, a list of resources is retrieved. Otherwise, a list of
-     * generic-typed entities adapted to the provided {@code type} is retrieved
+     * Retrieves the list entries stored under the given {@code path}. If the {@code type} parameter points to a
+     * {@code Resource} or an {@code Object}, a list of resources is returned. Otherwise, a list of generic-typed
+     * entities adapted to the provided {@code type} is returned
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
      * @param type             {@code Type} object
@@ -109,10 +109,10 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
     }
 
     /**
-     * Retrieves the list entries stored under the given {@code path}. Each is transformed into an entry of a key-value
-     * map. If the {@code keyProperty} is not specified, the map key represents the {@code jcr:title} property of the
-     * underlying resource. Otherwise, the key represents the attribute of the underlying resource specified by the
-     * given {@code keyProperty}
+     * Retrieves the list entries stored under the given {@code path}. Each is put into a key-value map. If the
+     * {@code keyProperty} is not specified, the map key represents the {@code jcr:title} property of the underlying
+     * resource. Otherwise, the key represents the attribute of the underlying resource specified by the given
+     * {@code keyProperty}
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
      * @param keyProperty      Name of the property from which to extract keys for the resulting map
@@ -129,9 +129,9 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
 
     /**
      * Retrieves list entries stored under the given {@code path} in the form of a key-value map. The key represents the
-     * {@code jcr:title} property of the underlying resource. If the provided {@code type} is {@code String} or {@code
-     * Object}, the value represents {@code value} property. Otherwise, values are the underlying resources themselves
-     * adapted to the provided {@code type} model
+     * {@code jcr:title} property of the underlying resource. If the provided {@code type} is {@code String} or
+     * {@code Object}, the value represents {@code value} property. Otherwise, values are the underlying resources
+     * themselves adapted to the provided {@code type} model
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
      * @param type             {@code Class} reference representing the type of the map values
@@ -165,9 +165,9 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
     }
 
     /**
-     * Retrieves an array representing list entries stored under the given {@code path}. If the {@code type} parameter is
-     * {@code Resource} or {@code Object}, an array of resources is retrieved. Otherwise, an array of generic-typed
-     * instances adapted to the provided {@code type} is retrieved
+     * Retrieves an array representing list entries stored under the given {@code path}. If the {@code type} parameter
+     * is {@code Resource} or {@code Object}, an array of resources is returned. Otherwise, generic-typed instances
+     * adapted to the provided {@code type} are returned
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
      * @param type             {@code Type} object

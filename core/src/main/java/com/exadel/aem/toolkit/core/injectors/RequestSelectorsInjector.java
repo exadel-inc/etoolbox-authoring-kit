@@ -24,8 +24,8 @@ import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestSelectors;
-import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
  * Injects into a Sling model the value of the {@code selectors} property of the {@link SlingHttpServletRequest}
@@ -34,7 +34,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
  * @see BaseInjector
  */
 @Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING
 )
 public class RequestSelectorsInjector extends BaseInjector<RequestSelectors> {
 
@@ -55,7 +55,7 @@ public class RequestSelectorsInjector extends BaseInjector<RequestSelectors> {
      * {@inheritDoc}
      */
     @Override
-    public RequestSelectors getAnnotation(AnnotatedElement element) {
+    public RequestSelectors getAnnotationType(AnnotatedElement element) {
         return element.getDeclaredAnnotation(RequestSelectors.class);
     }
 

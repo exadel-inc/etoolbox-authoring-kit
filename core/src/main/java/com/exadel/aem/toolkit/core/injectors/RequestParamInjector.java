@@ -28,8 +28,8 @@ import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestParam;
-import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 /**
  * Injects into a Sling model the value of a HTTP request parameter (multiple parameters) obtained
  * via a {@code SlingHttpServletRequest} object
@@ -37,7 +37,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
  * @see BaseInjector
  */
 @Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING
 )
 public class RequestParamInjector extends BaseInjector<RequestParam> {
 
@@ -58,7 +58,7 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
      * {@inheritDoc}
      */
     @Override
-    public RequestParam getAnnotation(AnnotatedElement element) {
+    public RequestParam getAnnotationType(AnnotatedElement element) {
         return element.getDeclaredAnnotation(RequestParam.class);
     }
 

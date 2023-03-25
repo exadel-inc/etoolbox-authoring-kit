@@ -17,6 +17,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
@@ -49,7 +50,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
  * @see BaseInjector
  */
 @Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING
 )
 public class ChildrenInjector extends BaseInjector<Children> {
 
@@ -78,7 +79,7 @@ public class ChildrenInjector extends BaseInjector<Children> {
      * {@inheritDoc}
      */
     @Override
-    public Children getAnnotation(AnnotatedElement element) {
+    Children getAnnotationType(AnnotatedElement element) {
         return element.getDeclaredAnnotation(Children.class);
     }
 
@@ -147,9 +148,9 @@ public class ChildrenInjector extends BaseInjector<Children> {
      * @return List of adapted objects
      */
     private List<Object> getAdaptedObjects(Object source, List<Resource> childResources, Type type, Children settingsHolder) {
-        final Class<?> actualType = TypeUtil.extractComponentType(type);
+        final Class<?> actualType = TypeUtil.getElementType(type);
         if (actualType == null) {
-            return null;
+            return Collections.emptyList();
         }
         return childResources.stream()
             .map(resource -> InstantiationUtil.getFilteredResource(resource, settingsHolder.prefix(), settingsHolder.postfix()))

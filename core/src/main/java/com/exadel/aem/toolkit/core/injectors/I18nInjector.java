@@ -49,7 +49,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
  * @see BaseInjector
  */
 @Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING
 )
 public class I18nInjector extends BaseInjector<I18N> {
 
@@ -75,7 +75,7 @@ public class I18nInjector extends BaseInjector<I18N> {
      * {@inheritDoc}
      */
     @Override
-    public I18N getAnnotation(AnnotatedElement element) {
+    public I18N getAnnotationType(AnnotatedElement element) {
         return element.getDeclaredAnnotation(I18N.class);
     }
 
@@ -158,5 +158,4 @@ public class I18nInjector extends BaseInjector<I18N> {
     private static boolean isI18nType(Type value) {
         return value instanceof Class<?> && ClassUtils.isAssignable((Class<?>) value, I18n.class);
     }
-
 }

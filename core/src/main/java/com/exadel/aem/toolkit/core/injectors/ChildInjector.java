@@ -38,7 +38,7 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
  * @see BaseInjector
  */
 @Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING
 )
 public class ChildInjector extends BaseInjector<Child> {
 
@@ -65,7 +65,7 @@ public class ChildInjector extends BaseInjector<Child> {
      * {@inheritDoc}
      */
     @Override
-    public Child getAnnotation(AnnotatedElement element) {
+    Child getAnnotationType(AnnotatedElement element) {
         return element.getDeclaredAnnotation(Child.class);
     }
 
