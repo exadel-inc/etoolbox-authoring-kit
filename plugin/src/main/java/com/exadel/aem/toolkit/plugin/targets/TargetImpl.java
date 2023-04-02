@@ -55,9 +55,6 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
 
     static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
 
-    private static final String PARENT_PATH = "..";
-    private static final String SELF_PATH = ".";
-
     /* -----------------------------
        Local fields and constructors
        ----------------------------- */
@@ -227,10 +224,10 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
             }
             return getOrCreateTarget(effectivePath);
         }
-        if (PARENT_PATH.equals(effectivePath)) {
+        if (CoreConstants.PARENT_PATH.equals(effectivePath)) {
             return getParent() != null ? getParent() : null;
         }
-        if (SELF_PATH.equals(effectivePath)) {
+        if (CoreConstants.SELF_PATH.equals(effectivePath)) {
             return this;
         }
         String effectiveName = NamingUtil.getUniqueName(effectivePath, CoreConstants.NN_ITEM, this);
@@ -266,10 +263,10 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
             return current;
         }
 
-        if (PARENT_PATH.equals(effectivePath) && getParent() != null) {
+        if (CoreConstants.PARENT_PATH.equals(effectivePath) && getParent() != null) {
             return getParent();
         }
-        if (PARENT_PATH.equals(effectivePath) || SELF_PATH.equals(effectivePath)) {
+        if (CoreConstants.PARENT_PATH.equals(effectivePath) || CoreConstants.SELF_PATH.equals(effectivePath)) {
             return this;
         }
         String nameToFind = NamingUtil.getValidNodeName(effectivePath);

@@ -35,7 +35,6 @@ public class DialogConstants {
 
     public static final String RELATIVE_PATH_PREFIX = CoreConstants.RELATIVE_PATH_PREFIX;
     public static final String PARENT_PATH_PREFIX = "../";
-    public static final String PARENT_PATH_INDICATOR = "..";
 
     public static final String NN_ACCORDION = "accordion";
     public static final String NN_ALLOW_BASICS = "allowBasics";
@@ -144,7 +143,6 @@ public class DialogConstants {
     public static final String PN_TEXT_MEMBER = "textMember";
     public static final String PN_TEXT_PROPERTY_NAME = "textPropertyName";
     public static final String PN_TEXT_TRANSFORM = "textTransform";
-    public static final String PN_TITLE = "title";
     public static final String PN_TOOLBAR = "toolbar";
     public static final String PN_TRACKING_ELEMENT = "trackingElement";
     public static final String PN_TYPE = "type";
