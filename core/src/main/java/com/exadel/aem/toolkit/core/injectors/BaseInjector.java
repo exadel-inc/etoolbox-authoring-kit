@@ -51,7 +51,7 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
      * @param element          {@link AnnotatedElement} instance that facades the Java class member and allows to
      *                         retrieve annotations
      * @param callbackRegistry {@link DisposalCallbackRegistry} object
-     * @return {@code Resource} or adapted object if successful. Otherwise, null
+     * @return A nullable value
      */
     @CheckForNull
     @Override
@@ -91,14 +91,14 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
      * @param adaptable A {@link SlingHttpServletRequest} or a {@link Resource} instance
      * @param name      Name of the Java class member to inject the value into
      * @param type      Type of receiving Java class member
-     * @return {@code Resource} or adapted object if successful. Otherwise, null is returned
+     * @return A nullable value
      */
     abstract Object getValue(Object adaptable, String name, Type type, T annotation);
 
     /**
      * Outputs a formatted message informing that the injection has not been successful
-     * @param annotatedElement {@link AnnotatedElement} instance that facades the Java class member and allows to
-     *                         retrieve annotations
+     * @param annotatedElement {@link AnnotatedElement} instance that facades the Java class member and allows
+     *                         retrieving annotations
      * @param annotationType   Type of annotation that they attempted to retrieve
      */
     private void logException(AnnotatedElement annotatedElement, T annotationType) {

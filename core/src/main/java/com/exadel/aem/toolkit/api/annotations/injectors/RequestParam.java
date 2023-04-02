@@ -26,9 +26,9 @@ import com.exadel.aem.toolkit.core.injectors.RequestParamInjector;
 /**
  * Used on either a field, a method, or a method parameter of a Sling model to inject a request parameter.
  * <p>If the annotated member is of type {@code String} or {@code Object}, the string value is injected. If the
- * annotated member is a {@code Collection}, {@code List}, or an array of strings, the array or list of string values
- * is injected. If the annotated member is of type {@code RequestParameter}, {@code RequestParameter[]} or {@code
- * RequestParameterMap}, the corresponding objects obtained via the {@code SlingHttpServletRequest} instance are
+ * annotated member is a {@code Collection}, {@code List}, or an array of strings, the array or list of string values is
+ * injected. If the annotated member is of type {@code RequestParameter}, {@code RequestParameter[]} or
+ * {@code RequestParameterMap}, the corresponding objects obtained via the {@code SlingHttpServletRequest} instance are
  * injected. Otherwise, nothing is injected</p>
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
@@ -38,9 +38,9 @@ import com.exadel.aem.toolkit.core.injectors.RequestParamInjector;
 public @interface RequestParam {
 
     /**
-     * Used to specify the name of the parameter to inject if it differs from the name of the underlying Java class
-     * member. If the underlying member is of type {@code List<RequestParameter>}, {@code RequestParameter[]} or {@code
-     * RequestParameterMap}, this value is ignored
+     * Used to specify the parameter to inject if its name differs from the name of the underlying Java class member. If
+     * the underlying member is of type {@code List<RequestParameter>}, {@code RequestParameter[]} or
+     * {@code RequestParameterMap}, this value is ignored
      * @return Optional non-blank string
      */
     String name() default "";

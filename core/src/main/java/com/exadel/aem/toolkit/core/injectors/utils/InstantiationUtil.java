@@ -32,7 +32,8 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * Contains utility methods for creating instances ob objects
- * <p><u>Note</u>: This class is not a part of the public API</p>
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  */
 public class InstantiationUtil {
 
