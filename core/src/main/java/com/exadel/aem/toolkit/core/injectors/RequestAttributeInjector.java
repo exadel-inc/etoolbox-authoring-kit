@@ -19,9 +19,9 @@ import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
  * @see RequestAttribute
  * @see BaseInjector
  */
-@Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING
-)
+@Component(
+    service = Injector.class,
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING)
 public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
 
     public static final String NAME = "eak-request-attribute-injector";
@@ -41,8 +41,18 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
         if (request == null) {
             return null;
         }
-        String attributeName = annotation.name().isEmpty() ? name : annotation.name();
-        return CastUtil.toType(request.getAttribute(attributeName), type);
+        return getValue(request, annotation.name().isEmpty() ? name : annotation.name(), type);
+    }
+
+    /**
+     * Extracts an attribute value from the given {@link SlingHttpServletRequest} object and casts it to the given type
+     * @param request A {@code SlingHttpServletRequest} instance
+     * @param name    Name of the parameter
+     * @param type    Type of the returned value
+     * @return A nullable value
+     */
+    Object getValue(SlingHttpServletRequest request, String name, Type type) {
+        return CastUtil.toType(request.getAttribute(name), type);
     }
 
     /**

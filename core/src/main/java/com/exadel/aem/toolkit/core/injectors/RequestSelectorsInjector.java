@@ -18,6 +18,7 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import javax.annotation.Nonnull;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
@@ -25,7 +26,7 @@ import org.osgi.service.component.annotations.Component;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestSelectors;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
-import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
 
 /**
  * Provides injecting into a Sling model the value of the {@code selectors} property of the {@link SlingHttpServletRequest}
@@ -33,9 +34,9 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
  * @see RequestSelectors
  * @see BaseInjector
  */
-@Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING
-)
+@Component(
+    service = Injector.class,
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING)
 public class RequestSelectorsInjector extends BaseInjector<RequestSelectors> {
 
     public static final String NAME = "eak-request-selectors-injector";
@@ -70,22 +71,25 @@ public class RequestSelectorsInjector extends BaseInjector<RequestSelectors> {
         RequestSelectors annotation) {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
-
-        if(request == null) {
+        if (request == null) {
             return null;
         }
-
-        if (TypeUtil.isValidCollection(type, String.class)) {
-            return Arrays.asList(request.getRequestPathInfo().getSelectors());
-        }
-        if (TypeUtil.isValidArray(type, String.class)) {
-            return request.getRequestPathInfo().getSelectors();
-        }
-        if (TypeUtil.isValidObjectType(type, String.class)) {
-            return request.getRequestPathInfo().getSelectorString();
-        }
-
-        return null;
+        return getValue(request, type);
     }
 
+    /**
+     * Extracts an attribute value from the given {@link SlingHttpServletRequest} object and casts it to the given type
+     * @param request A {@code SlingHttpServletRequest} instance
+     * @param type    Type of the returned value
+     * @return A nullable value
+     */
+    Object getValue(SlingHttpServletRequest request, Type type) {
+        String[] selectors = request.getRequestPathInfo().getSelectors();
+        if (ArrayUtils.isEmpty(selectors)) {
+            return null;
+        } else if (ArrayUtils.getLength(selectors) == 1) {
+            return CastUtil.toType(selectors[0], type);
+        }
+        return CastUtil.toType(Arrays.asList(selectors), type);
+    }
 }

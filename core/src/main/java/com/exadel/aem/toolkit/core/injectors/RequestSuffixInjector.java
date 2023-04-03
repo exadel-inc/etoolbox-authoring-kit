@@ -25,17 +25,18 @@ import org.osgi.service.component.annotations.Component;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestSuffix;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
- * Provides injecting into a Sling model the value of the {@code suffix} or {@code suffixResource} properties
- * of the {@link SlingHttpServletRequest} obtained via {@link org.apache.sling.api.request.RequestPathInfo}
+ * Provides injecting into a Sling model the value of the {@code suffix} or {@code suffixResource} properties of the
+ * {@link SlingHttpServletRequest} obtained via {@link org.apache.sling.api.request.RequestPathInfo}
  * @see RequestSuffix
  * @see BaseInjector
  */
-@Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING
-)
+@Component(
+    service = Injector.class,
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING)
 public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
 
     public static final String NAME = "eak-request-suffix-injector";
@@ -70,17 +71,28 @@ public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
         RequestSuffix annotation) {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
-        if(request == null) {
+        if (request == null) {
             return null;
         }
+        return getValue(request, type);
+    }
 
-        if (TypeUtil.isValidObjectType(type, String.class)) {
-            return request.getRequestPathInfo().getSuffix();
-
-        } else if (type.equals(Resource.class)) {
-            return request.getRequestPathInfo().getSuffixResource();
+    /**
+     * Extracts an attribute value from the given {@link SlingHttpServletRequest} object and casts it to the given type
+     * @param request A {@code SlingHttpServletRequest} instance
+     * @param type    Type of the returned value
+     * @return A nullable value
+     */
+    Object getValue(SlingHttpServletRequest request, Type type) {
+        if (Resource.class.equals(type)
+            || Object.class.equals(type)
+            || TypeUtil.isSupportedCollectionOrArrayOfType(type, Resource.class)) {
+            return CastUtil.toType(request.getRequestPathInfo().getSuffixResource(), type);
         }
-
+        if (String.class.equals(type)
+            || TypeUtil.isSupportedCollectionOrArrayOfType(type, String.class)) {
+            return CastUtil.toType(request.getRequestPathInfo().getSuffix(), type);
+        }
         return null;
     }
 
