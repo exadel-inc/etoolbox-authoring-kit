@@ -50,7 +50,7 @@ class FilteredResourceDecorator extends SlingAdaptable implements Resource {
      * @param prefix  Optional prefix value
      * @param postfix Optional postfix value
      */
-    public FilteredResourceDecorator(@Nonnull Resource base, String prefix, String postfix) {
+    FilteredResourceDecorator(@Nonnull Resource base, String prefix, String postfix) {
         this.base = base;
         this.prefix = prefix;
         this.postfix = postfix;
@@ -215,8 +215,8 @@ class FilteredResourceDecorator extends SlingAdaptable implements Resource {
             return name;
         }
         String normalizedName = StringUtils.startsWith(name, CoreConstants.SEPARATOR_SLASH)
-            ? name :
-            base.getPath() + CoreConstants.SEPARATOR_SLASH + name;
+            ? name
+            : base.getPath() + CoreConstants.SEPARATOR_SLASH + name;
         return ResourceUtil.normalize(normalizedName);
     }
 
@@ -225,6 +225,7 @@ class FilteredResourceDecorator extends SlingAdaptable implements Resource {
      * specified for the current decorator, into the path (a path chunk) to the child resource. If the {@code name}
      * argument is a complex (slash-separated) path, the method takes care of prefixing only the chunk of the path that
      * refers to an immediate child of the current resource
+     * @param name String argument as passed to {@link Resource#getChild(String)}
      * @return A nullable string value
      */
     private String injectPrefixAndPostfix(String name) {
