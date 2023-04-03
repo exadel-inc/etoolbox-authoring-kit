@@ -14,33 +14,74 @@
 package com.exadel.aem.toolkit.core.injectors;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.testing.mock.sling.servlet.MockRequestPathInfo;
+import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-
-import com.exadel.aem.toolkit.core.injectors.models.ITestModelSuffix;
-import com.exadel.aem.toolkit.core.injectors.models.TestModelSuffix;
-
-import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class RequestSuffixInjectorTest {
-    private static final String SUFFIX_1 = "/suffix1";
-    private static final String SUFFIX_2 = "/suffix2";
+import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.injectors.models.requestproperty.Resources;
 
-    @Rule
-    public final AemContext context = new AemContext();
+public class RequestSuffixInjectorTest extends RequestPropertyInjectorTestBase {
+    private static final String DEFAULT_SUFFIX = "/content/jcr:content/foo";
 
+    /* -----------
+       Preparation
+       ----------- */
 
     @Before
     public void beforeTest() {
-        context.addModelsForClasses(TestModelSuffix.class);
-        context.registerInjectActivateService(new RequestSuffixInjector());
+        super.beforeTest();
         context.load().json("/com/exadel/aem/toolkit/core/injectors/suffixInjector.json", "/content");
     }
 
+    @Override
+    BaseInjector<?> prepareInjector() {
+        return new RequestSuffixInjector();
+    }
+
+    @Override
+    void prepareRequest(MockSlingHttpServletRequest request, Object payload) {
+        ((MockRequestPathInfo) request.getRequestPathInfo()).setSuffix(payload != null ? payload.toString() : StringUtils.EMPTY);
+    }
+
+    /* -----
+       Tests
+       ----- */
+
+    @Test
+    public void shouldInjectString() {
+        super.shouldInjectString(model -> assertNull(model.getObjectValue()));
+    }
+
+    @Test
+    public void shouldInjectResource() {
+        ((MockRequestPathInfo) context.request().getRequestPathInfo()).setSuffix(DEFAULT_SUFFIX);
+        Resources model = context.request().adaptTo(Resources.class);
+        assertNotNull(model);
+
+        assertNotNull(model.getValue());
+        assertEquals(DEFAULT_SUFFIX, model.getValue().getPath());
+        assertEquals("This is a test", model.getValue().getValueMap().get(CoreConstants.PN_TEXT, String.class));
+
+        assertNotNull(model.getConstructorValue());
+        assertEquals(1, model.getConstructorValue().length);
+        assertEquals(model.getValue().getPath(), model.getConstructorValue()[0].getPath());
+
+        assertNotNull(model.getValueSupplier().getValue());
+        assertEquals(1, model.getValueSupplier().getValue().size());
+        assertEquals(model.getValue().getPath(), model.getValueSupplier().getValue().iterator().next().getPath());
+    }
+
+    @Test
+    public void shouldNotCauseExceptionWhenPayloadMissing() {
+        super.shouldNotCauseExceptionWhenPayloadMissing();
+    }
+
+/*
     @Test
     public void shouldInjectSuffix() {
         context.requestPathInfo().setSuffix(SUFFIX_1);
@@ -113,5 +154,5 @@ public class RequestSuffixInjectorTest {
         assertNotNull(testModel);
         assertNull(testModel.getSuffixList());
         assertEquals(0, testModel.getSuffixInt());
-    }
+    }*/
 }

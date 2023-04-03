@@ -33,14 +33,13 @@ import org.junit.Test;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.WCMException;
-
-import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
-
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+
+import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
 public class ListHelperTest {
 
@@ -62,7 +61,7 @@ public class ListHelperTest {
         List<NonModel> actual = ListHelper.getList(context.resourceResolver(), CUSTOM_LIST_PATH, NonModel.class);
         assertEquals(0, actual.size());
 
-        Map<String, NonModel> actual2 = ListHelper.getMap(context.resourceResolver(), CUSTOM_LIST_PATH, "title", NonModel.class);
+        Map<String, NonModel> actual2 = ListHelper.getMap(context.resourceResolver(), CUSTOM_LIST_PATH, CoreConstants.PN_TITLE, NonModel.class);
         assertEquals(0, actual2.size());
 
         List<Resource> actual3 = ListHelper.getResourceList(context.resourceResolver(), "non-existing-path");
