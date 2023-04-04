@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.core.injectors.RequestParamInjector;
 
 /**
  * Used on a field, a method, or a method parameter of a Sling model to inject a request parameter.
- * <p>If the annotated Java class member is of type  {@code RequestParameter}, {@code RequestParameter[]} or
+ * <p>If the annotated Java class member is of type {@code RequestParameter}, {@code RequestParameter[]} or
  * {@code RequestParameterMap}, values of the correspondent type are injected.</p>
  * <p>Otherwise, the annotated member can be a string or of any primitive type or a boxed variant. The request
  * parameter is then considered a string and parsed to the target type. Array-typed values are supported, as well as
