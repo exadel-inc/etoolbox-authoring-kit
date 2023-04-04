@@ -58,6 +58,7 @@ class PageFacilityBroker {
 
     private static final String KEY_IMAGE = "image";
     private static final String KEY_IMAGE_PROMPT = "imagePrompt";
+    private static final String KEY_QUOTE= "quote";
     private static final String KEY_TEXT = "text";
     private static final String KEY_TITLE = "title";
     private static final String KEY_SUBTITLE = "subtitle";
@@ -140,6 +141,11 @@ class PageFacilityBroker {
         return getMembers(KEY_TEXT);
     }
 
+    public Set<String> getQuoteMembers() {
+        return getMembers(KEY_QUOTE);
+    }
+
+
     // Images
 
     public Set<String> getImagePromptMembers() {
@@ -168,7 +174,7 @@ class PageFacilityBroker {
         Resource metadataResource = pageContentResource.getChild(NN_METADATA);
         if (metadataResource != null && !skipExisting) {
             ValueMap metadataValueMap = metadataResource.getValueMap();
-            Stream.of(KEY_SUMMARY, KEY_TITLE, KEY_SUBTITLE, KEY_TEXT, KEY_IMAGE_PROMPT, KEY_IMAGE)
+            Stream.of(KEY_SUMMARY, KEY_TITLE, KEY_SUBTITLE, KEY_TEXT, KEY_QUOTE, KEY_IMAGE_PROMPT, KEY_IMAGE)
                 .forEach(key -> putIfNotNull(key, metadataValueMap.get(key + METADATA_KEY_POSTFIX, String[].class)));
             detachedSummary = metadataValueMap.get(KEY_SUMMARY, String.class);
         } else {
@@ -359,7 +365,7 @@ class PageFacilityBroker {
             if (!NODE_GRANITE_DATA.equals(resource.getName())) {
                 return;
             }
-            Stream.of(KEY_TITLE, KEY_SUBTITLE, KEY_SUMMARY, KEY_TEXT, KEY_IMAGE)
+            Stream.of(KEY_TITLE, KEY_SUBTITLE, KEY_SUMMARY, KEY_TEXT, KEY_QUOTE, KEY_IMAGE)
                 .forEach(key -> storeMember(resource, key));
         }
 

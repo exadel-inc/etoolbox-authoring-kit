@@ -94,6 +94,11 @@ class PageFacility extends OpenAiFacility {
                 broker -> !broker.getTextMembers().isEmpty(),
                 this::createTexts),
             new Stage(
+                "quotes",
+                "Creating quotes",
+                broker -> !broker.getQuoteMembers().isEmpty(),
+                this::createQuotes),
+            new Stage(
                 "imageprompts",
                 "Creating image descriptions",
                 broker -> !broker.getImagePromptMembers().isEmpty(),
@@ -262,6 +267,14 @@ class PageFacility extends OpenAiFacility {
             PageFacility::stripUnfinishedPhrase);
     }
 
+    private void createQuotes(PageFacilityBroker broker, ValueMap args) throws AssistantException {
+        createStringValues(
+            broker,
+            args,
+            null,
+            PageFacilityBroker::getQuoteMembers,
+            StringUtils::trim);
+    }
     private void createImagePrompts(PageFacilityBroker broker, ValueMap args) throws AssistantException {
         createStringValues(
             broker,
@@ -278,23 +291,37 @@ class PageFacility extends OpenAiFacility {
         Function<PageFacilityBroker, Collection<String>> memberCollectionFactory,
         UnaryOperator<String> valueFactory) throws AssistantException {
 
-        List<String> summaryPhrases = getSummaryPhrases(broker.getSummary(), memberCollectionFactory.apply(broker));
-        List<ValueMap> tasks = new ArrayList<>();
-        Iterator<String> memberIterator = memberCollectionFactory.apply(broker).iterator();
-        for (String phrase : summaryPhrases) {
-            ValueMap newTask = new ArgumentsVersion(args)
-                .put(PN_SOURCE, memberIterator.next())
-                .put(CoreConstants.PN_PROMPT, prompt)
-                .put(CoreConstants.PN_TEXT, phrase)
-                .put(OpenAiConstants.PN_CHOICES_COUNT, 1)
-                .get();
-            tasks.add(newTask);
+        Collection<String> members = memberCollectionFactory.apply(broker);
+        Iterator<String> memberIterator = members.iterator();
+        List<String> summaryPhrases = getSummaryPhrases(broker.getSummary(), members);
+
+        List<Solution> solutions;
+        if (prompt != null) {
+            List<ValueMap> tasks = new ArrayList<>();
+            for (String phrase : summaryPhrases) {
+                ValueMap newTask = new ArgumentsVersion(args)
+                    .put(PN_SOURCE, memberIterator.next())
+                    .put(CoreConstants.PN_PROMPT, prompt)
+                    .put(CoreConstants.PN_TEXT, phrase)
+                    .put(OpenAiConstants.PN_CHOICES_COUNT, 1)
+                    .get();
+                tasks.add(newTask);
+            }
+            solutions = getService().executeCompletion(tasks);
+        } else {
+            solutions = new ArrayList<>();
+            for (String phrase : summaryPhrases) {
+                if (memberIterator.hasNext()) {
+                    ValueMap newTask = new ArgumentsVersion(args)
+                        .put(PN_SOURCE, memberIterator.next())
+                        .get();
+                    solutions.add(Solution.from(newTask).withMessage(phrase));
+                }
+            }
         }
 
         Map<String, String> membersToValues = new HashMap<>();
-        Map<String, String> voidedMembers = getMapOfEmptyValues(memberCollectionFactory.apply(broker));
-
-        List<Solution> solutions = getService().executeCompletion(tasks);
+        Map<String, String> voidedMembers = getMapOfEmptyValues(members);
 
         for (Solution solution : solutions) {
             if (!solution.isSuccess()) {
