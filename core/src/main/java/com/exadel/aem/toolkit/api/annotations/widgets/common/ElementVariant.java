@@ -28,6 +28,10 @@ public enum ElementVariant {
 
     private final String value;
 
+    /**
+     * Initializes a new enum value
+     * @param value String representation of the value
+     */
     ElementVariant(String value) {
         this.value = value;
     }

@@ -36,5 +36,8 @@ public class ListenerConstants {
     public static final String EVENT_AFTER_INSERT = "afterinsert";
     public static final String EVENT_AFTER_MOVE = "aftermove";
 
+    /**
+     * Default (instantiation-preventing) constructor
+     */
     private ListenerConstants() {}
 }

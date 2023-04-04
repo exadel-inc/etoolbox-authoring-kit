@@ -15,11 +15,10 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.request.RequestParameterMap;
@@ -28,17 +27,19 @@ import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestParam;
-import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
+
 /**
- * Injects into a Sling model the value of a HTTP request parameter (multiple parameters) obtained
+ * Provides injecting into a Sling model the value of an HTTP request parameter (multiple parameters) obtained
  * via a {@code SlingHttpServletRequest} object
  * @see RequestParam
  * @see BaseInjector
  */
-@Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
-)
+@Component(
+    service = Injector.class,
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING)
 public class RequestParamInjector extends BaseInjector<RequestParam> {
 
     public static final String NAME = "eak-request-parameter-injector";
@@ -58,7 +59,7 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
      * {@inheritDoc}
      */
     @Override
-    public RequestParam getAnnotation(AnnotatedElement element) {
+    public RequestParam getAnnotationType(AnnotatedElement element) {
         return element.getDeclaredAnnotation(RequestParam.class);
     }
 
@@ -67,60 +68,59 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
      */
     @Override
     public Object getValue(
-            Object adaptable,
-            String name,
-            Type type,
-            RequestParam annotation,
-            Object defaultValue) {
+        Object adaptable,
+        String name,
+        Type type,
+        RequestParam annotation) {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
-        if(request == null) {
+        if (request == null) {
             return null;
         }
+        return getValue(request, annotation.name().isEmpty() ? name : annotation.name(), type);
+    }
 
-        String paramName = annotation.name().isEmpty() ? name : annotation.name();
+    /**
+     * Extracts a parameter value from the given {@link SlingHttpServletRequest} object and casts it to the given type
+     * @param request A {@code SlingHttpServletRequest} instance
+     * @param name    Name of the parameter
+     * @param type    Type of the returned value
+     * @return A nullable value
+     */
+    Object getValue(SlingHttpServletRequest request, String name, Type type) {
 
-        if (TypeUtil.isValidObjectType(type, String.class)) {
-            return request.getParameter(paramName);
-
-        } else if (TypeUtil.isValidArray(type, String.class)) {
-            return getFilteredRequestParameters(request, paramName)
-                .map(RequestParameter::getString)
-                .toArray(String[]::new);
-
-        } else if (TypeUtil.isValidCollection(type, String.class)) {
-            return getFilteredRequestParameters(request, paramName)
-                .map(RequestParameter::getString)
-                .collect(Collectors.toList());
-
-        } else if (TypeUtil.isValidObjectType(type, RequestParameter.class)) {
-            return request.getRequestParameter(paramName);
-
-        } else if (TypeUtil.isValidCollection(type, RequestParameter.class)) {
+        if (RequestParameter.class.equals(type) || Object.class.equals(type)) {
+            return request.getRequestParameter(name);
+        } else if (TypeUtil.isSupportedCollectionOfType(type, RequestParameter.class)) {
             return request.getRequestParameterList();
-
-        } else if (TypeUtil.isValidArray(type, RequestParameter.class)) {
-            return request.getRequestParameters(paramName);
-
-        } else if (TypeUtil.isValidObjectType(type, RequestParameterMap.class)) {
+        } else if (TypeUtil.isArrayOfType(type, RequestParameter.class)) {
+            return request.getRequestParameters(name);
+        } else if (RequestParameterMap.class.equals(type)) {
             return request.getRequestParameterMap();
+        }
+
+        Class<?> elementType = TypeUtil.getElementType(type);
+        if (ClassUtils.isPrimitiveOrWrapper(elementType) || ClassUtils.isAssignable(elementType, String.class)) {
+            return CastUtil.toType(getRequestParameterValues(request, name), type);
         }
 
         return null;
     }
 
     /**
-     * Retrieves the stream of {@link RequestParameter} objects extracted from the current Sling request filtered with
-     * the given parameter name
+     * Retrieves query parameter(-s) by the given name extracted from the current Sling request
      * @param request {@code SlingHttpServletRequest} instance
      * @param name    The parameter name to filter the request parameters with
-     * @return {@code Stream} object containing matched request parameters
+     * @return A non-null string array (can be empty)
      */
-    private Stream<RequestParameter> getFilteredRequestParameters(SlingHttpServletRequest request, String name) {
+    private String[] getRequestParameterValues(SlingHttpServletRequest request, String name) {
         return request
             .getRequestParameterList()
             .stream()
-            .filter(requestParameter -> StringUtils.equals(name, requestParameter.getName()));
+            .filter(requestParameter -> StringUtils.equals(name, requestParameter.getName()))
+            .map(RequestParameter::getString)
+            .filter(StringUtils::isNotEmpty)
+            .toArray(String[]::new);
     }
 
 }

@@ -27,6 +27,9 @@ public class Scopes {
     public static final String CQ_CHILD_EDIT_CONFIG = "_cq_childEditConfig.xml";
     public static final String CQ_HTML_TAG = "_cq_htmlTag.xml";
 
+    /**
+     * Default (instantiation-preventing) constructor
+     */
     private Scopes() {
     }
 }

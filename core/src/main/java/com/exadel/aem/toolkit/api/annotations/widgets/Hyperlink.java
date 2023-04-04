@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
 /**
  * Used to set up
  * <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/hyperlink/index.html">
- * Hyperlink</a> component in Granite UI. It represents an HTML hyperlink ({@code <a>}) in the user interface
+ * Hyperlink</a> component in Granite UI. It represents an HTML hyperlink ({@code <a></a>}) in the user interface
  */
 @Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

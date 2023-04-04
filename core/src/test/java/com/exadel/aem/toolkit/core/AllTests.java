@@ -19,10 +19,13 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import com.exadel.aem.toolkit.core.injectors.ChildInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.ChildrenInjectorTest;
+import com.exadel.aem.toolkit.core.injectors.EToolboxListInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.I18nInjectorTest;
+import com.exadel.aem.toolkit.core.injectors.RequestAttributeInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.RequestParamInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.RequestSelectorsInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.RequestSuffixInjectorTest;
+import com.exadel.aem.toolkit.core.injectors.utils.FilteredResourceDecoratorTest;
 import com.exadel.aem.toolkit.core.lists.models.ListItemTest;
 import com.exadel.aem.toolkit.core.lists.servlets.ItemComponentsServletTest;
 import com.exadel.aem.toolkit.core.lists.servlets.ListsServletTest;
@@ -30,6 +33,7 @@ import com.exadel.aem.toolkit.core.lists.utils.ListHelperTest;
 import com.exadel.aem.toolkit.core.lists.utils.ListPageUtilTest;
 import com.exadel.aem.toolkit.core.lists.utils.ListResourceUtilTest;
 import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionProviderTest;
+import com.exadel.aem.toolkit.core.policymanagement.filters.TopLevelPolicyFilterTest;
 
 /**
  * Shortcut class for running all available test cases in a batch
@@ -44,14 +48,19 @@ import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionProviderTe
     ListItemTest.class,
     ItemComponentsServletTest.class,
 
+    RequestAttributeInjectorTest.class,
     RequestParamInjectorTest.class,
     RequestSelectorsInjectorTest.class,
     RequestSuffixInjectorTest.class,
+    I18nInjectorTest.class,
+    EToolboxListInjectorTest.class,
     ChildInjectorTest.class,
     ChildrenInjectorTest.class,
-    I18nInjectorTest.class,
+    FilteredResourceDecoratorTest.class,
 
-    OptionProviderTest.class
+    OptionProviderTest.class,
+
+    TopLevelPolicyFilterTest.class
 })
 public class AllTests {
 }

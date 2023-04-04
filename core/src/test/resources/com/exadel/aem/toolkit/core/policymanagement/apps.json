@@ -1,0 +1,23 @@
+{
+  "jcr:primaryType": "nt:unstructured",
+  "acme": {
+    "jcr:primaryType": "nt:unstructured",
+    "components": {
+      "jcr:primaryType": "nt:unstructured",
+      "pages": {
+        "jcr:primaryType": "nt:unstructured",
+        "generic": {
+          "jcr:primaryType": "cq:Component",
+          "jcr:title": "Generic Page",
+          "cq:childEditConfig": {
+            "jcr:primaryType": "cq:ChildEditConfig",
+            "listeners": {
+              "jcr:primaryType": "nt:unstructured",
+              "updatecomponentlist": "Granite.PolicyResolver.build('{&quot;isEditConfig&quot;:false,&quot;rules&quot;:[{&quot;value&quot;:[&quot;res/Type1&quot;,&quot;res/Type2&quot;,&quot;res/Type3&quot;],&quot;pageResourceTypes&quot;:[&quot;page/Res/Type1&quot;,&quot;page/Res/Type2&quot;],&quot;templates&quot;:[&quot;template1, template2&quot;],&quot;pagePaths&quot;:[&quot;page/Path1, page/Path2&quot;],&quot;containers&quot;:[&quot;resource1, resource2&quot;,&quot;resource3&quot;]}]}')"
+            }
+          }
+        }
+      }
+    }
+  }
+}

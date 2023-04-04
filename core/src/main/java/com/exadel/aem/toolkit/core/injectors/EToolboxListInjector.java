@@ -18,8 +18,10 @@ import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.IntStream;
 import javax.annotation.Nonnull;
 
@@ -31,19 +33,19 @@ import org.osgi.service.component.annotations.Component;
 import com.day.cq.commons.jcr.JcrConstants;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.EToolboxList;
-import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
+import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 
 /**
- * Injects into a Sling model entries of an EToolbox List obtained via a {@code ResourceResolver} instance
+ * Provides injecting into a Sling model entries of an EToolbox List obtained via a {@code ResourceResolver} instance
  * @see ListHelper
  * @see EToolboxList
  * @see BaseInjector
  */
-@Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
-)
+@Component(
+    service = Injector.class,
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING)
 public class EToolboxListInjector extends BaseInjector<EToolboxList> {
 
     public static final String NAME = "eak-etoolbox-list-injector";
@@ -63,7 +65,7 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
      * {@inheritDoc}
      */
     @Override
-    public EToolboxList getAnnotation(AnnotatedElement element) {
+    public EToolboxList getAnnotationType(AnnotatedElement element) {
         return element.getDeclaredAnnotation(EToolboxList.class);
     }
 
@@ -71,30 +73,31 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
      * {@inheritDoc}
      */
     @Override
-    public Object getValue(Object adaptable, String name, Type type, EToolboxList annotation, Object defaultValue) {
-
+    public Object getValue(Object adaptable, String name, Type type, EToolboxList annotation) {
         ResourceResolver resourceResolver = AdaptationUtil.getResourceResolver(adaptable);
         if (resourceResolver == null) {
             return null;
         }
-
-        if (TypeUtil.isValidRawType(type, Collection.class)) {
+        Class<?> rawType = TypeUtil.getRawType(type);
+        if (List.class.equals(rawType) || Collection.class.equals(rawType)) {
             return getList(resourceResolver, annotation.value(), type);
 
-        } else if (TypeUtil.isValidRawType(type, Map.class)) {
+        } else if (Set.class.equals(rawType)) {
+            return new LinkedHashSet<>(getList(resourceResolver, annotation.value(), type));
+
+        } else if (Map.class.equals(rawType)) {
             return getMap(resourceResolver, annotation.value(), annotation.keyProperty(), type);
 
-        } else if (!(type instanceof ParameterizedType) && ((Class<?>) type).isArray()) {
+        } else if (type instanceof Class<?> && ((Class<?>) type).isArray()) {
             return getArray(resourceResolver, annotation.value(), (Class<?>) type);
         }
-
         return null;
     }
 
     /**
-     * Retrieves the collection of list entries stored under the given {@code path}. If the {@code type} parameter
-     * points to a {@code Resource} or an {@code Object}, a list of resources is retrieved. Otherwise, a list of
-     * generic-typed entities adapted to the provided {@code type} is retrieved
+     * Retrieves the list entries stored under the given {@code path}. If the {@code type} parameter points to a
+     * {@code Resource} or an {@code Object}, a list of resources is returned. Otherwise, a list of generic-typed
+     * entities adapted to the provided {@code type} is returned
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
      * @param type             {@code Type} object
@@ -102,17 +105,16 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
      * returned
      */
     private List<?> getList(ResourceResolver resourceResolver, String path, Type type) {
-
-        return TypeUtil.isValidCollection(type, Resource.class)
+        return TypeUtil.isSupportedCollectionOfType(type, Resource.class)
             ? ListHelper.getResourceList(resourceResolver, path)
-            : ListHelper.getList(resourceResolver, path, getClass(type, 0));
+            : ListHelper.getList(resourceResolver, path, getTypeArgument(type, 0));
     }
 
     /**
-     * Retrieves the list entries stored under the given {@code path}. Each is transformed into an entry of a key-value
-     * map. If the {@code keyProperty} is not specified, the map key represents the {@code jcr:title} property of the
-     * underlying resource. Otherwise, the key represents the attribute of the underlying resource specified by the
-     * given {@code keyProperty}
+     * Retrieves the list entries stored under the given {@code path}. Each is put into a key-value map. If the
+     * {@code keyProperty} is not specified, the map key represents the {@code jcr:title} property of the underlying
+     * resource. Otherwise, the key represents the attribute of the underlying resource specified by the given
+     * {@code keyProperty}
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
      * @param keyProperty      Name of the property from which to extract keys for the resulting map
@@ -121,7 +123,6 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
      * map is returned
      */
     private Map<?, ?> getMap(ResourceResolver resourceResolver, String path, String keyProperty, Type type) {
-
         return keyProperty.isEmpty()
             ? getMapWithoutKeyProperty(resourceResolver, path, type)
             : getMapWithKeyProperty(resourceResolver, path, keyProperty, type);
@@ -129,9 +130,9 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
 
     /**
      * Retrieves list entries stored under the given {@code path} in the form of a key-value map. The key represents the
-     * {@code jcr:title} property of the underlying resource. If the provided {@code type} is {@code String} or {@code
-     * Object}, the value represents {@code value} property. Otherwise, values are the underlying resources themselves
-     * adapted to the provided {@code type} model
+     * {@code jcr:title} property of the underlying resource. If the provided {@code type} is {@code String} or
+     * {@code Object}, the value represents {@code value} property. Otherwise, values are the underlying resources
+     * themselves adapted to the provided {@code type} model
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
      * @param type             {@code Class} reference representing the type of the map values
@@ -139,10 +140,9 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
      * map is returned
      */
     private Map<?, ?> getMapWithoutKeyProperty(ResourceResolver resourceResolver, String path, Type type) {
-
-        return TypeUtil.isValidMap(type, String.class)
+        return TypeUtil.isMapOfValueType(type, String.class)
             ? ListHelper.getMap(resourceResolver, path)
-            : ListHelper.getMap(resourceResolver, path, JcrConstants.JCR_TITLE, getClass(type, 1));
+            : ListHelper.getMap(resourceResolver, path, JcrConstants.JCR_TITLE, getTypeArgument(type, 1));
     }
 
     /**
@@ -159,15 +159,15 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
      */
     private Map<?, ?> getMapWithKeyProperty(ResourceResolver resourceResolver, String path, String keyProperty, Type type) {
 
-        return TypeUtil.isValidMap(type, Resource.class)
+        return TypeUtil.isMapOfValueType(type, Resource.class)
             ? ListHelper.getResourceMap(resourceResolver, path, keyProperty)
-            : ListHelper.getMap(resourceResolver, path, keyProperty, getClass(type, 1));
+            : ListHelper.getMap(resourceResolver, path, keyProperty, getTypeArgument(type, 1));
     }
 
     /**
-     * Retrieves an array representing list entries stored under the given {@code path}. If the {@code type} parameter is
-     * {@code Resource} or {@code Object}, an array of resources is retrieved. Otherwise, an array of generic-typed
-     * instances adapted to the provided {@code type} is retrieved
+     * Retrieves an array representing list entries stored under the given {@code path}. If the {@code type} parameter
+     * is {@code Resource} or {@code Object}, an array of resources is returned. Otherwise, generic-typed instances
+     * adapted to the provided {@code type} are returned
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
      * @param type             {@code Type} object
@@ -176,7 +176,7 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
      */
     private Object[] getArray(ResourceResolver resourceResolver, String path, Class<?> type) {
 
-        return TypeUtil.isValidArray(type, Resource.class)
+        return TypeUtil.isArrayOfType(type, Resource.class)
             ? toArray(ListHelper.getResourceList(resourceResolver, path), type.getComponentType())
             : toArray(ListHelper.getList(resourceResolver, path, type.getComponentType()), type.getComponentType());
     }
@@ -187,7 +187,7 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
      * @param index The index of the type argument
      * @return {@code Class} object that matches the type parameter
      */
-    private Class<?> getClass(Type type, int index) {
+    private Class<?> getTypeArgument(Type type, int index) {
         return (Class<?>) ((ParameterizedType) type).getActualTypeArguments()[index];
     }
 

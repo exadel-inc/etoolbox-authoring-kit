@@ -29,8 +29,8 @@ class RteNodeWithListBuilder extends RteNodeBuilderBase {
 
     /**
      * Initializes a class instance
-     * @param tagName String representing the name of the node being built
-     * @param featureAttributeName String representing the name of feature
+     * @param tagName A string representing the name of the node being built
+     * @param featureAttributeName A string representing the name of the feature
      */
     RteNodeWithListBuilder(String tagName, String featureAttributeName) {
         super(tagName, featureAttributeName);
@@ -80,8 +80,12 @@ class RteNodeWithListBuilder extends RteNodeBuilderBase {
         if (!isEmpty()) {
             Target result = parent.getOrCreateTarget(getName());
             result.attribute(getAttributeName(), argumentList.toString().replace(" ", ""));
-            if (childBuilder != null) childBuilder.build(result);
-            if (getPostprocessing() != null) getPostprocessing().accept(result);
+            if (childBuilder != null) {
+                childBuilder.build(result);
+            }
+            if (getPostprocessing() != null) {
+                getPostprocessing().accept(result);
+            }
             return result;
         }
         return null;

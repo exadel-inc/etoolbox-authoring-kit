@@ -75,31 +75,29 @@ public class AttributeHelper<T, V> {
     }
 
     /**
-     * Sets name of current instance. Suitable for chained initialization of XmlAttributeSettingHelper
-     * @param name Provisional name
+     * Sets the name of the current instance. Suitable for chained initialization of XmlAttributeSettingHelper
+     * @param value Provisional name
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
-    public AttributeHelper<T,V> withName(String name) {
-        this.name = name;
+    public AttributeHelper<T, V> withName(String value) {
+        this.name = value;
         return this;
     }
 
     /**
      * Sets a merger for the current instance. Suitable for chained initialization of XmlAttributeSettingHelper
-     * @param merger Function that manages an existing attribute value, and a new one (whether to keep only one of them
-     *               or combine/merge)
+     * @param value A function that manages an existing attribute value, and a new one (whether to keep only one of them
+     *              or combine/merge)
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
-    public AttributeHelper<T,V> withMerger(BinaryOperator<String> merger) {
-        this.valueMerger = merger;
+    public AttributeHelper<T, V> withMerger(BinaryOperator<String> value) {
+        this.valueMerger = value;
         return this;
     }
-
 
     /* --------------
        Values setting
        -------------- */
-
 
     /**
      * Stores the attribute value defined by the wrapped {@code Annotation} property to the given target
@@ -163,7 +161,6 @@ public class AttributeHelper<T, V> {
         setValue(StringUtil.format(validValues, getTypeHintValueType()), target);
     }
 
-
     /**
      * Assigns a {@code String}-casted attribute value to the given target
      * @param value  String to store as the attribute
@@ -190,14 +187,15 @@ public class AttributeHelper<T, V> {
     private void removeAttributeFrom(T target) {
         if (Element.class.equals(holderType)) {
             ((Element) target).removeAttribute(name);
-        } else if (Target.class.equals(holderType)){
+        } else if (Target.class.equals(holderType)) {
             ((Target) target).getAttributes().remove(name);
         }
     }
 
     /**
-     * Gets whether this string, as an arbitrary user-set value representation, is valid to be stored as an XML attribute
-     * @param value String representing a user-set value
+     * Gets whether this string, as an arbitrary user-set value representation, is valid to be stored as an XML
+     * attribute
+     * @param value A string representing a user-set value
      * @return True or false
      */
     private boolean isValid(String value) {
@@ -217,11 +215,9 @@ public class AttributeHelper<T, V> {
             : valueType;
     }
 
-
     /* --------------
        Values casting
        -------------- */
-
 
     /**
      * Tries to cast a generic value to the current instance's type
@@ -267,16 +263,13 @@ public class AttributeHelper<T, V> {
         return transformation.apply(value);
     }
 
-
     /* -------------
        Factory logic
        ------------- */
 
-
     /**
-     * Retrieves an {@link AttributeHelper.Builder} aimed at creating helper object for manipulation with XML
-     * elements. This is mainly to be used with notation such as
-     * {@code AttributeSettingHelper.forXmlTarget().forAnnotationProperty(...)}
+     * Retrieves an {@link AttributeHelper.Builder} aimed at creating helper object for manipulation with XML elements.
+     * This is mainly to be used with notation such as {@code AttributeSettingHelper.forXmlTarget().forAnnotationProperty(...)}
      * @return {@link AttributeHelper.Builder} instance
      */
     public static Builder<Element> forXmlTarget() {
@@ -295,13 +288,15 @@ public class AttributeHelper<T, V> {
 
     /**
      * Builds instances of {@link AttributeHelper} for a particular attribute-storing media type
+     * @param <T> Type of managed entity
      */
     public static class Builder<T> {
         private final Class<T> holderType;
 
         /**
          * Creates a new {@code Builder} instance
-         * @param holderType {@code Class<?>} reference representing the type of media where attributes values are stored
+         * @param holderType {@code Class<?>} reference representing the type of media where attributes values are
+         *                   stored
          */
         private Builder(Class<T> holderType) {
             this.holderType = holderType;
@@ -350,7 +345,7 @@ public class AttributeHelper<T, V> {
          * @return New {@code AttributeHelper} instance
          */
         public <V> AttributeHelper<T, V> forNamedValue(String name, Class<V> valueType) {
-            AttributeHelper<T,V> attributeSetter = new AttributeHelper<>(holderType, valueType);
+            AttributeHelper<T, V> attributeSetter = new AttributeHelper<>(holderType, valueType);
             if (!fits(valueType)) {
                 return attributeSetter;
             }
@@ -369,6 +364,18 @@ public class AttributeHelper<T, V> {
         }
 
         /**
+         * Gets whether a value of a specific type can be rendered to a Granite-compliant entity
+         * @param valueType Annotation's property {@code Class}
+         * @return True or false
+         */
+        private static boolean fits(Class<?> valueType) {
+            return valueType.equals(String.class)
+                || valueType.equals(Long.class)
+                || valueType.equals(Double.class)
+                || valueType.equals(Boolean.class);
+        }
+
+        /**
          * Retrieves an eligible object type for a method ({@code Enum}s being cast to {@code String}s)
          * @param method {@code Method} instance representing an annotation property
          * @return Object type
@@ -379,18 +386,6 @@ public class AttributeHelper<T, V> {
                 return String.class;
             }
             return ClassUtils.primitiveToWrapper(effectiveType);
-        }
-
-        /**
-         * Gets whether a value of specific type can be rendered to a Granite-compliant entity
-         * @param valueType Annotation's property {@code Class}
-         * @return True or false
-         */
-        private static boolean fits(Class<?> valueType) {
-            return valueType.equals(String.class)
-                || valueType.equals(Long.class)
-                || valueType.equals(Double.class)
-                || valueType.equals(Boolean.class);
         }
     }
 }

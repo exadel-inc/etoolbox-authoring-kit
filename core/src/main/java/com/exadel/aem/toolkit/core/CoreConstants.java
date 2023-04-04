@@ -29,12 +29,15 @@ public class CoreConstants {
     public static final String PN_PREPEND = "prepend";
     public static final String PN_SELECTED = "selected";
     public static final String PN_TEXT = "text";
+    public static final String PN_TITLE = "title";
+    public static final String PN_UPDATE_COMPONENT_LIST = "updatecomponentlist";
     public static final String PN_VALUE = "value";
 
     public static final String PARAMETER_ID = "@id";
     public static final String PARAMETER_NAME = "@name";
 
     public static final String SEPARATOR_AT = "@";
+    public static final String SEPARATOR_DOT = ".";
     public static final String SEPARATOR_COLON = ":";
     public static final String SEPARATOR_COMMA = ",";
     public static final String SEPARATOR_HYPHEN = "-";
@@ -42,6 +45,8 @@ public class CoreConstants {
     public static final String SEPARATOR_UNDERSCORE = "_";
 
     public static final String RELATIVE_PATH_PREFIX = "./";
+    public static final String SELF_PATH = SEPARATOR_DOT;
+    public static final String PARENT_PATH = "..";
 
     /**
      * Default (instantiation-restricting) constructor

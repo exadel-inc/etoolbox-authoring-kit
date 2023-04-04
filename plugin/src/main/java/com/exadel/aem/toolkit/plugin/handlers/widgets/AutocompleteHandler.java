@@ -38,19 +38,25 @@ public class AutocompleteHandler implements Handler {
     public void accept(Source source, Target target) {
         Autocomplete autocomplete = source.adaptTo(Autocomplete.class);
         target.getOrCreateTarget(DialogConstants.NN_DATASOURCE)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value())
+                .attribute(
+                    DialogConstants.PN_SLING_RESOURCE_TYPE,
+                    autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value())
                 .attributes(
                     autocomplete.datasource(),
                     AnnotationUtil.getPropertyMappingFilter(autocomplete.datasource()))
                 .getParent()
                 .getOrCreateTarget(DialogConstants.NN_OPTIONS)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.options().annotationType().getAnnotation(ResourceType.class).value())
+                .attribute(
+                    DialogConstants.PN_SLING_RESOURCE_TYPE,
+                    autocomplete.options().annotationType().getAnnotation(ResourceType.class).value())
                 .attributes(
                     autocomplete.options(),
                     AnnotationUtil.getPropertyMappingFilter(autocomplete.options()))
                 .getParent()
                 .getOrCreateTarget(DialogConstants.NN_VALUES)
-                .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, autocomplete.values().annotationType().getAnnotation(ResourceType.class).value())
+                .attribute(
+                    DialogConstants.PN_SLING_RESOURCE_TYPE,
+                    autocomplete.values().annotationType().getAnnotation(ResourceType.class).value())
                 .attributes(
                     autocomplete.values(),
                     AnnotationUtil.getPropertyMappingFilter(autocomplete.values()));

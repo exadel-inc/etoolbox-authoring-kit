@@ -22,11 +22,29 @@
 
     ns.PolicyResolver.cache = new Map();
 
+    $(document).on('cq-editables-loaded', function (event) {
+        if (window.eakApplyTopLevelPolicy) {
+            event.editables.forEach((e) => window.eakApplyTopLevelPolicy(e));
+        }
+        patchFindAllowedComponentsFromPolicy();
+    });
+
     ns.PolicyResolver.build = function (rules) {
         return function (cell, allowed, componentList) {
             resolve(allowed, componentList, this, rules);
         };
     };
+
+    /**
+     * Modifies the OOTB {@code _findAllowedComponentsFromPolicy} function to make it return an empty array instead of
+     * an {@code undefined} value
+     */
+    function patchFindAllowedComponentsFromPolicy() {
+        const original = ns.author.components._findAllowedComponentsFromPolicy;
+        ns.author.components._findAllowedComponentsFromPolicy = function _findAllowedComponentsFromPolicyPatched() {
+            return original.apply(this, arguments) || [];
+        };
+    }
 
     /**
      * Modifies the list of allowed components for the current container according to the set of rules
@@ -44,11 +62,11 @@
 
         const config = JSON.parse(configJson);
         const settings = getContainerProperties(editable, ns.author, !config.isEditConfig);
-        const applicableRule = config.rules.find(rule => isRuleApplicable(rule, settings, componentList));
-        applicableRule.mode = applicableRule.mode || 'OVERRIDE';
+        const applicableRule = config.rules.find((rule) => isRuleApplicable(rule, settings, componentList));
 
         if (applicableRule) {
-            applyRule(applicableRule, allowed, componentList);
+            applicableRule.mode = applicableRule.mode || 'OVERRIDE';
+            applyRule(applicableRule, allowed, editable);
         }
         ns.PolicyResolver.cache.set(editable.path, allowed);
     }
@@ -63,9 +81,9 @@
      */
     function getContainerProperties(editable, graniteAuthor, skipFirstParent) {
         return {
-            template: graniteAuthor.pageInfo.editableTemplate ? graniteAuthor.pageInfo.editableTemplate : '',
+            template: document.querySelector('[name="cq:template"]').content,
             pageResType: graniteAuthor.pageInfo.pageResourceType,
-            parentsResTypes: editable.getAllParents().map(parent => parent.type).slice(skipFirstParent ? 1 : 0).reverse(),
+            parentsResTypes: editable.getAllParents().map((parent) => parent.type).slice(skipFirstParent ? 1 : 0).reverse(),
             pagePath: editable.path.substring(0, editable.path.indexOf('/jcr:content')),
             container: editable.path.substring(editable.path.lastIndexOf('/') + 1)
         };
@@ -95,7 +113,7 @@
         if (!templates || !templates.length || !value) {
             return true;
         }
-        return templates.some(template => isMatching(template, value));
+        return templates.some((template) => isMatching(template, value));
     }
 
     /**
@@ -104,7 +122,7 @@
      * @param value - current identifier
      */
     function arrayContains(array, value) {
-        return !array || !array.length || array.some(element => isMatching(element, value));
+        return !array || !array.length || array.some((element) => isMatching(element, value));
     }
 
     /**
@@ -115,7 +133,7 @@
      * @param componentList
      */
     function checkParent(parentsResTypes, values, componentList) {
-        return !parentsResTypes || !parentsResTypes.length || parentsResTypes.some(parents => parentMatch(parents, values, componentList));
+        return !parentsResTypes || !parentsResTypes.length || parentsResTypes.some((parents) => parentMatch(parents, values, componentList));
     }
 
     /**
@@ -170,7 +188,7 @@
                 }
             }
         }
-        return chunks.filter(chunk => chunk).map(chunk => chunk.replace(/(['"`]){2}/g, '$1'));
+        return chunks.filter((chunk) => chunk).map((chunk) => chunk.replace(/(['"`]){2}/g, '$1'));
     }
 
     /**
@@ -233,12 +251,12 @@
     }
 
     /**
-     * Modifies the list of allowed components for the current container according to the mode of specified rule
+     * Modifies the list of allowed components for the current container according to the mode specified in a rule
      * @param rule - matched rule
      * @param allowed - array of allowed components; modified within the method by reference
-     * @param componentList - list of all components available in the instance
+     * @param editable - current container
      */
-    function applyRule(rule, allowed, componentList) {
+    function applyRule(rule, allowed, editable) {
         if (rule.mode === 'OVERRIDE') {
             allowed.length = 0;
         }
@@ -253,6 +271,6 @@
      * @param componentList - list of all components available in the instance
      */
     function getComponentsResTypesByGroup(group, componentList) {
-        return componentList.filter(comp => comp.componentConfig.group === group).map(comp => comp.componentConfig.resourceType);
+        return componentList.filter((comp) => comp.componentConfig.group === group).map((comp) => comp.componentConfig.resourceType);
     }
 }(Granite));

@@ -17,6 +17,9 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.sling.models.annotations.Source;
 import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
@@ -24,10 +27,12 @@ import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
 import com.exadel.aem.toolkit.core.injectors.RequestSelectorsInjector;
 
 /**
- * Used on either a field, a method, or a method parameter of a Sling model to inject Sling request selectors.
- * <p>If the annotated member is of type {@code String} or {@code Object}, the selector string is injected.
- * If the annotated member represents an array or a {@code Collection} or {@code List} of strings or objects, selectors
- * are injected array-like. Otherwise. nothing is injected</p>
+ * Used on a field, a method, or a method parameter of a Sling model to inject Sling request selectors.
+ * <p>If the annotated Java class member is of type {@code String} or {@code Object}, the selector string is injected.
+ * Otherwise, the annotated member can be a string of any primitive type or a boxed variant. Each selector is then
+ * considered a string and parsed to the target type.</p>
+ * <p>The annotated member can represent an array, or else a {@link Collection}, a {@link List}, or a {@link Set}.
+ * Selectors are then injected into the collection one by one.</p>
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)

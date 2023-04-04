@@ -37,7 +37,7 @@ public @interface Heading {
 
     /**
      * Maps to the {@code level} attribute of this Granite UI component's node. Accepts a number that corresponds to the
-     * header tag level ({@code <h1>} to {@code <h6>})
+     * header tag level ({@code <h1/>} to {@code <h6/>})
      * @return Long value
      */
     @ValueRestriction(value = ValueRestrictions.POSITIVE)

@@ -38,7 +38,7 @@ public class FormParametersHandler implements BiConsumer<Source, Target> {
     @Override
     public void accept(Source source, Target target) {
         EditConfig editConfig = source.adaptTo(EditConfig.class);
-        if(editConfig.formParameters().length == 0){
+        if (editConfig.formParameters().length == 0) {
             return;
         }
         Map<String, Object> propertiesMap = Arrays.stream(editConfig.formParameters())

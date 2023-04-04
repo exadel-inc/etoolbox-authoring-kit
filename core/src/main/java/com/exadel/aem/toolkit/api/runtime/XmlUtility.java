@@ -26,8 +26,8 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**
  * An abstraction of class encapsulating routines for XML generation and handling
- * @deprecated Since v. 2.0.2 users are encouraged to use the new custom handlers API that is based
- * on {@link Source} and {@link Target} objects handling. Legacy API will be removed in the versions to come
+ * @deprecated Since v. 2.0.2 users are encouraged to use the new custom handlers API that is based on {@link Source}
+ * and {@link Target} objects handling. Legacy API will be removed in the versions to come
  */
 @Deprecated
 @SuppressWarnings({"unused", "squid:S1133"})
@@ -66,8 +66,8 @@ public interface XmlUtility {
     Element createNodeElement(String name, String nodeType, Map<String, String> properties);
 
     /**
-     * Creates named XML {@code Element} node with default JCR type,
-     * additional properties, and specific {@code sling:resourceType}
+     * Creates named XML {@code Element} node with default JCR type, additional properties, and specific {@code
+     * sling:resourceType}
      * @param name         Tag name of the XML node
      * @param properties   {@code Map} of String values to be rendered as additional XML node attributes
      * @param resourceType Value of {@code sling:resourceType} attribute
@@ -138,8 +138,8 @@ public interface XmlUtility {
      * @param element         {@code Element} node
      * @param name            Attribute name
      * @param values          Values to set
-     * @param attributeMerger Function that manages an existing attribute value and a new one
-     *                        in case when a new value is set to an existing {@code Element}
+     * @param attributeMerger Function that manages an existing attribute value and a new one in case when a new value
+     *                        is set to an existing {@code Element}
      */
     void setAttribute(Element element, String name, List<String> values, BinaryOperator<String> attributeMerger);
 
@@ -156,8 +156,8 @@ public interface XmlUtility {
      * @param element         {@code Element} node
      * @param name            Attribute name, same as annotation property name
      * @param source          Annotation to look for a value in
-     * @param attributeMerger Function that manages an existing attribute value and a new one
-     *                        in case when a new value is set to an existing {@code Element}
+     * @param attributeMerger Function that manages an existing attribute value and a new one in case when a new value
+     *                        is set to an existing {@code Element}
      */
     void setAttribute(Element element, String name, Annotation source, BinaryOperator<String> attributeMerger);
 
@@ -169,8 +169,8 @@ public interface XmlUtility {
     void mapProperties(Element element, Annotation annotation);
 
     /**
-     * Populates {@code Element} node with all eligible property values of an {@code Annotation} instance,
-     * honoring the scope specified for an annotation or a particular annotation method
+     * Populates {@code Element} node with all eligible property values of an {@code Annotation} instance, honoring the
+     * scope specified for an annotation or a particular annotation method
      * @param element    Element node
      * @param annotation Annotation to take property values from
      * @param scope      Non-null string representing the current scope
@@ -178,8 +178,8 @@ public interface XmlUtility {
     void mapProperties(Element element, Annotation annotation, String scope);
 
     /**
-     * Populates {@code Element} node with property values of an {@code Annotation} instance,
-     * skipping specified annotation fields
+     * Populates {@code Element} node with property values of an {@code Annotation} instance, skipping specified
+     * annotation fields
      * @param element       Element node
      * @param annotation    Annotation to take property values from
      * @param skippedFields List of field names to skip
@@ -187,7 +187,8 @@ public interface XmlUtility {
     void mapProperties(Element element, Annotation annotation, List<String> skippedFields);
 
     /**
-     * Appends {@link Data} values to an {@code Element} node, storing them within {@code granite:data} predefined subnode
+     * Appends {@link Data} values to an {@code Element} node, storing them within {@code granite:data} predefined
+     * subnode
      * @param element Element to store data in
      * @param data    Provided values as an array of {@code Data} annotations
      */
@@ -201,10 +202,9 @@ public interface XmlUtility {
     void appendDataAttributes(Element element, Map<String, String> data);
 
     /**
-     * Tries to append provided {@code Element} node as a child to a parent {@code Element} node.
-     * The appended node must be non-empty, i.e. containing at least one attribute that is not a {@code jcr:primaryType},
-     * or a child node
-     * If a child node with the same name already exists, it is updated with attribute values of the newly arrived node
+     * Tries to append provided {@code Element} node as a child to a parent {@code Element} node. The appended node must
+     * be non-empty, i.e. containing at least one attribute that is not a {@code jcr:primaryType}, or a child node If a
+     * child node with the same name already exists, it is updated with attribute values of the newly arrived node
      * @param parent Routine than provides Element to serve as parent
      * @param child  Element to serve as child
      * @return Appended child
@@ -212,26 +212,30 @@ public interface XmlUtility {
     Element appendNonemptyChildElement(Element parent, Element child);
 
     /**
-     * Retrieves child {@code Element} node of the specified node by its name / relative path. Same as {@link XmlUtility#getOrAddChildElement(Element, String)},
-     * but if the parent's child (or any of the specified grandchildren) do not exist, a null value is returned
+     * Retrieves child {@code Element} node of the specified node by its name / relative path. Same as {@link
+     * XmlUtility#getOrAddChildElement(Element, String)}, but if the parent's child (or any of the specified
+     * grandchildren) do not exist, a null value is returned
      * @param parent Element to analyze
-     * @param child  Name of a child to look for, can be a simple name or a relative path e.g. {@code child/otherChild/yetAnotherChild}
+     * @param child  Name of a child to look for, can be a simple name or a relative path e.g. {@code
+     *               child/otherChild/yetAnotherChild}
      * @return Element instance if path traversing was successful, null otherwise
      */
     Element getChildElement(Element parent, String child);
 
     /**
-     * Retrieves child {@code Element} node of the specified node by its name / relative path.Same as {@link XmlUtility#getChildElement(Element, String)},
-     * but as soon as the parent's child (or any of the specified grandchildren) not found, an empty node of {@code jcr:primaryType="nt:unstructured"}
-     * is created
+     * Retrieves child {@code Element} node of the specified node by its name / relative path.Same as {@link
+     * XmlUtility#getChildElement(Element, String)}, but as soon as the parent's child (or any of the specified
+     * grandchildren) not found, an empty node of {@code jcr:primaryType="nt:unstructured"} is created
      * @param parent Element to analyze
-     * @param child  Name of a child to look for, can be a simple name or a relative path e.g. {@code child/otherChild/yetAnotherChild}
+     * @param child  Name of a child to look for, can be a simple name or a relative path e.g. {@code
+     *               child/otherChild/yetAnotherChild}
      * @return Element instance
      */
     Element getOrAddChildElement(Element parent, String child);
 
     /**
-     * Generates compliant XML tag or attribute name (optionally prepended by an XML namespace) from an arbitrary string
+     * Generates compliant XML tag or attribute name (optionally prepended by an XML namespace) from an arbitrary
+     * string
      * @param name Raw (unchecked) string for a tag/attribute name
      * @return Valid tag/attribute name
      */

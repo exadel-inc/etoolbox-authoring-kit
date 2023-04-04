@@ -50,13 +50,10 @@ import com.exadel.aem.toolkit.plugin.utils.StringUtil;
  * Implements {@link Target} to manage a tree-like data structure that is further rendered in a Granite UI component
  * or component configurations
  */
+@SuppressWarnings("HiddenField") // Allows to pass {@code name} arguments in attribute constructors
 class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandlerAcceptor {
 
-    private static final String PARENT_PATH = "..";
-    private static final String SELF_PATH = ".";
-
     static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
-
 
     /* -----------------------------
        Local fields and constructors
@@ -73,7 +70,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
 
     /**
      * Initializes a class instance with the instance name and parent reference specified
-     * @param name   Non-blank string representing the name of the new instance
+     * @param name   A non-blank string representing the name of the new instance
      * @param parent Nullable {@code Target} object that will serve as the parent reference
      */
     TargetImpl(String name, Target parent) {
@@ -85,7 +82,6 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
         this.scope = parent != null ? parent.getScope() : Scopes.COMPONENT;
         this.attributes.put(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED);
     }
-
 
     /* -----------------
        Naming operations
@@ -197,7 +193,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
 
     @Override
     public Target getTarget(String path) {
-        return getTarget(path, false);
+        return getTargetInternal(path, false);
     }
 
     /**
@@ -205,7 +201,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
      */
     @Override
     public Target getOrCreateTarget(String path) {
-        return getTarget(path, true);
+        return getTargetInternal(path, true);
     }
 
     /**
@@ -228,10 +224,10 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
             }
             return getOrCreateTarget(effectivePath);
         }
-        if (PARENT_PATH.equals(effectivePath)) {
+        if (CoreConstants.PARENT_PATH.equals(effectivePath)) {
             return getParent() != null ? getParent() : null;
         }
-        if (SELF_PATH.equals(effectivePath)) {
+        if (CoreConstants.SELF_PATH.equals(effectivePath)) {
             return this;
         }
         String effectiveName = NamingUtil.getUniqueName(effectivePath, CoreConstants.NN_ITEM, this);
@@ -246,7 +242,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
      * @param createIfMissing True to create a {@code Target} for the unmatched path segment; otherwise, false
      * @return New {@code Target} instance
      */
-    private Target getTarget(String path, boolean createIfMissing) {
+    private Target getTargetInternal(String path, boolean createIfMissing) {
         if (StringUtils.isBlank(path)) {
             return null;
         }
@@ -259,7 +255,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
             Target current = this;
             while (!pathChunks.isEmpty()) {
                 String currentChunk = pathChunks.poll();
-                current = ((TargetImpl) current).getTarget(currentChunk, createIfMissing);
+                current = ((TargetImpl) current).getTargetInternal(currentChunk, createIfMissing);
                 if (current == null) {
                     break;
                 }
@@ -267,10 +263,10 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
             return current;
         }
 
-        if (PARENT_PATH.equals(effectivePath) && getParent() != null) {
+        if (CoreConstants.PARENT_PATH.equals(effectivePath) && getParent() != null) {
             return getParent();
         }
-        if (PARENT_PATH.equals(effectivePath) || SELF_PATH.equals(effectivePath)) {
+        if (CoreConstants.PARENT_PATH.equals(effectivePath) || CoreConstants.SELF_PATH.equals(effectivePath)) {
             return this;
         }
         String nameToFind = NamingUtil.getValidNodeName(effectivePath);
@@ -359,7 +355,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
 
     /**
      * Performs a recursive search for a matching descendant {@code Target} with the provided filter
-     * @param current {@code Target object} children of which are currently tested
+     * @param current {@code Target object} whose children are currently tested
      * @param filter  {@code Predicate} to test the descendants of the current target
      * @return Relevant descendant {@code Target} object, or null
      */
@@ -373,7 +369,8 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
             return match;
         }
         for (Target child : current.getChildren()) {
-            if ((match = findChild(child, filter)) != null) {
+            match = findChild(child, filter);
+            if (match != null) {
                 return match;
             }
         }
@@ -395,7 +392,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
 
     /**
      * Performs a recursive search for matching descendant {@code Target}s with the provided filter
-     * @param current    {@code Target object} children of which are currently tested
+     * @param current    {@code Target object} whose children are currently tested
      * @param filter     {@code Predicate} to test the descendants of the current target
      * @param collection {@code List} object accumulating the relevant targets
      */
@@ -577,7 +574,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
     }
 
     /**
-     * Called by {@link TargetImpl#attributes(Element)} in order to store element attributes to the current instance
+     * Called by {@link TargetImpl#attributes(Element)} to store element attributes to the current instance
      * @param value {@code Element} object used as the source of attribute names and values
      */
     private void populateElementProperties(Element value) {
@@ -636,7 +633,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
             ignorePrefix = propertyRenderingAnnotation.ignorePrefix();
         }
 
-        // Extract property prefix and prepend it to the name
+        // Extract the property prefix and prepend it to the name
         String prefixByPropertyMapping = getPropertyPrefix(value);
         String namePrefix = prefixByPropertyMapping.contains(CoreConstants.SEPARATOR_SLASH)
             ? StringUtils.substringAfterLast(prefixByPropertyMapping, CoreConstants.SEPARATOR_SLASH)
@@ -688,7 +685,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
      * This method leaves no duplicate elements
      * @param first  First string value
      * @param second Second string value
-     * @return String containing the merged value
+     * @return A string containing the merged value
      */
     private static String mergeStringAttributes(String first, String second) {
         if (!StringUtil.isCollection(first) || !StringUtil.isCollection(second)) {

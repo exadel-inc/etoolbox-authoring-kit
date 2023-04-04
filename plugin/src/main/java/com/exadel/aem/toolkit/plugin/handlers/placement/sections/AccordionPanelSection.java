@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.exadel.aem.toolkit.api.annotations.layouts.AccordionPanel;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
@@ -33,7 +34,7 @@ class AccordionPanelSection extends Section {
      * @param panel    {@code AccordionPanel} object
      * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      */
-    public AccordionPanelSection(AccordionPanel panel, boolean isLayout) {
+    AccordionPanelSection(AccordionPanel panel, boolean isLayout) {
         super(isLayout);
         this.panel = panel;
     }
@@ -62,7 +63,7 @@ class AccordionPanelSection extends Section {
         itemsContainer.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER)
             .attribute(DialogConstants.PN_JCR_TITLE, getTitle());
         Target configContainer = Targets.newTarget(DialogConstants.NN_PARENT_CONFIG);
-        configContainer.attributes(panel, method -> !method.getName().equals(DialogConstants.PN_TITLE));
+        configContainer.attributes(panel, method -> !method.getName().equals(CoreConstants.PN_TITLE));
         if (!configContainer.isEmpty()) {
             itemsContainer.addTarget(configContainer);
         }

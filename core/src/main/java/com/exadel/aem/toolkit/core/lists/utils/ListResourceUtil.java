@@ -34,21 +34,26 @@ import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
-
-import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.lists.ListConstants;
-import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.lists.ListConstants;
+import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
+
 /**
  * Contains methods for manipulation with List Resource
- * <p><u>Note</u>: This class is not a part of the public API</p>
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  */
 class ListResourceUtil {
+
+    private static final List<String> PROPERTIES_TO_IGNORE = Arrays.asList(
+        "jcr:createdBy", "jcr:created", "cq:lastModified", "cq:lastModifiedBy", "jcr:lastModified", "jcr:lastModifiedBy",
+        "cq:lastReplicationAction", "cq:lastReplicatedBy", "cq:lastReplicated"
+    );
 
     private static final ObjectMapper OBJECT_MAPPER;
 
@@ -63,11 +68,6 @@ class ListResourceUtil {
     private ListResourceUtil() {
     }
 
-    private static final List<String> PROPERTIES_TO_IGNORE = Arrays.asList(
-        "jcr:createdBy", "jcr:created", "cq:lastModified", "cq:lastModifiedBy", "jcr:lastModified", "jcr:lastModifiedBy",
-        "cq:lastReplicationAction", "cq:lastReplicatedBy", "cq:lastReplicated"
-    );
-
     /**
      * Create a {@link com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel} resource under {@code parent}
      * container with given properties.
@@ -76,7 +76,11 @@ class ListResourceUtil {
      * @param properties       Properties of the list entry
      * @throws PersistenceException If the list item could not be created
      */
-    public static void createListItem(ResourceResolver resourceResolver, Resource parent, Map<String, Object> properties) throws PersistenceException {
+    public static void createListItem(
+        ResourceResolver resourceResolver,
+        Resource parent,
+        Map<String, Object> properties)
+        throws PersistenceException {
         Map<String, Object> valueMapWithoutSystemProps = excludeSystemProperties(properties);
         valueMapWithoutSystemProps.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ListConstants.LIST_ITEM_RESOURCE_TYPE);
         resourceResolver.create(parent, ResourceUtil.createUniqueChildName(parent, CoreConstants.PN_LIST_ITEM), valueMapWithoutSystemProps);
@@ -109,7 +113,8 @@ class ListResourceUtil {
 
     /**
      * Converts a key-value map to the list of {@link ValueMapResource} objects
-     * @param values {@code Map} instance that will be converted to the {@link ValueMapResource}
+     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
+     * @param values           {@code Map} instance that will be converted to the {@link ValueMapResource}
      * @return List of {@link ValueMapResource} objects
      */
     public static List<Resource> mapToValueMapResources(ResourceResolver resourceResolver, Map<String, Object> values) {

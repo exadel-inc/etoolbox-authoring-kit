@@ -17,7 +17,7 @@ import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**
- * Extends the {@code MemberSource} interface with methods that allow modifying ("overlaying") the reported properties
+ * Extends the {@code MemberSource} with methods that allow modifying ("overlaying") the reported properties
  * of Java classes' fields and methods
  * @see Source
  * @see MemberSource

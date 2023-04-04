@@ -55,10 +55,14 @@ public class MyComponent {
     @Select(
         optionProvider = @OptionProvider(
             value = {
-                @OptionSource(value = "/content/path/to/acs/list"),
                 @OptionSource(
-                        value = "/content/path/to/etoolbox/list",
-                        fallbackPath = "/content/path/to/node", textMember = "title", valueMember = "descr"),
+                    value = "/content/path/to/acs/list",
+                    fallback = "https://acme.com/apis/sample.json/data/path"),
+                @OptionSource(
+                    value = "/content/path/to/etoolbox/list",
+                    fallback = "/content/path/to/node",
+                    textMember = "title",
+                    valueMember = "descr"),
             },
             prepend = "None:none",
             selectedValue = "none",
@@ -85,9 +89,9 @@ _sorted_ - if set to true, options will be sorted in their labels' alphabetical 
 
 Every `@OptionSource` object can be specified with the following properties:
 
-_value_ - defines the path to a List-like structure, a node tree, or a tag folder. Plain paths and _path references_ are supported (i.e., if a value is presented like `/typical/jcr/path`, this exact path will be looked for, but if given in the `/some/node@attr` format, the _attr_ attribute will be retrieved from _/some/node_, and its value will be then assumed to be the "true" path).
+_value_ - defines the path to a List-like structure, a node tree, or a tag folder. Plain paths and _path references_ are supported. I.e. if a value is presented like `/typical/jcr/path`, this exact path will be looked for. However, if given in the `/some/node@attr` format, the _attr_ attribute will be retrieved from _/some/node_, and its value will be then assumed to be the "true" path.
 
-_fallback_ defines a reserve path value for situations in which _value_-specified address is not reachable. This may be the case when _value_ comes from an authored parameter of a component and the component has just been created. Then _fallback_ may present a constant alternative;
+_fallback_ defines a reserve path value for situations in which the address specified in _value_ is not reachable. This may be the case when _value_ comes from an authored parameter of a component and the component has just been created. Then _fallback_ may present a constant alternative;
 
 _textMember_ - if specified, defines the attribute of a JCR node to be rendered as RadioButton's or Select's _label_.
 <br>Default is the _"jcr:title"_ attribute;
@@ -106,11 +110,17 @@ _textTransform_ - if specified, defines the way the <u>label</u> will be transfo
 
 _valueTransform_ - if specified, defines the way the <u>value</u> will be transformed before rendering.
 
+#### JCR paths and HTTP endpoints
+
+`@OptionSource` allows specifying not only a JCR path but also a standard URL for either _path_ or _fallback_ (note: must be a complete URL string parseable with `new URL("...")`. The content downloaded this the URL is expected to be a JSON entity. A JSON array becomes the list of options much the same way as JCR resource with children. A singular JSON object will be converted into a singleton list (containing one option).
+
+If the JSON structure is such that the required array is nested deeper than the "root" node, you can add a "path" to the url like `http://acme.com/apis/sample.json/internal/path` The "path" is defined similar to a Sling suffix: it is the trailing part of the URL after the ".json/" extension.
+
 #### Dynamic option change
 
 Because an `@OptionProvider` supports _path references_ apart from regular paths, the setting that says "where to look for the path" can be stored in a dialog field other than the one that actually deals with paths.
 
-Therefore, it ought to be possible to dynamically respond to a _path reference_ change. In the real world, it may look like the following. Imagine there is a dialog field (say, a path picker) that allows you to select a data source (say, an Exadel Toolbox List). Below is a select dropdown with options coming from the Exadel Toolbox List selected in the above path picker.
+Therefore, it ought to be possible to dynamically respond to a _path reference_ change. In the real world, it may look like the following. Imagine there is a dialog field (say, a path picker) that allows you to select a data source (say, an EToolbox List). Below is a select dropdown with options coming from the Exadel Toolbox List selected in the above path picker.
 
 Here's how it may look in Java code:
 

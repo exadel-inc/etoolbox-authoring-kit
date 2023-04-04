@@ -120,7 +120,7 @@ public class ListHelper {
      * is effective
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
-     * @param keyName          Item resource property that holds the key of the resulting map
+     * @param keyName          Item resource property that manifests the key of the resulting map
      * @return Map representing title-to-value pairs. If the path provided is invalid or cannot be resolved, an empty
      * map is returned
      */
@@ -140,7 +140,7 @@ public class ListHelper {
      */
     @Nonnull
     public static Map<String, String> getMap(ResourceResolver resourceResolver, String path) {
-        return getMap(
+        return getMapInternal(
             resourceResolver,
             path,
             JcrConstants.JCR_TITLE,
@@ -154,7 +154,7 @@ public class ListHelper {
      * key, the last one is effective
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
-     * @param keyName          Item resource property that holds the key of the resulting map
+     * @param keyName          Item resource property that manifests the key of the resulting map
      * @param itemType         {@code Class} reference representing the type of map values required
      * @param <T>              Type of map values; must be one adaptable from a Sling {@code Resource}
      * @return Map containing {@code <T>}-typed instances. If the path provided is invalid or cannot be resolved,
@@ -162,7 +162,7 @@ public class ListHelper {
      */
     @Nonnull
     public static <T> Map<String, T> getMap(ResourceResolver resourceResolver, String path, String keyName, Class<T> itemType) {
-        return getMap(resourceResolver, path, keyName, getMapperFunction(itemType));
+        return getMapInternal(resourceResolver, path, keyName, getMapperFunction(itemType));
     }
 
 
@@ -189,7 +189,7 @@ public class ListHelper {
             return null;
         }
 
-        Class<?> modelType = CollectionUtils.isNotEmpty(values)? values.get(0).getClass() : null;
+        Class<?> modelType = CollectionUtils.isNotEmpty(values) ? values.get(0).getClass() : null;
 
         Function<Object, Map<String, Object>> mapping = ListResourceUtil.getMappingFunction(modelType);
 
@@ -247,7 +247,7 @@ public class ListHelper {
             }
 
             listPage = ListPageUtil.createPage(resourceResolver, path);
-            Resource list = listPage.getContentResource().getChild(CoreConstants.NN_LIST);
+            Resource list = Objects.requireNonNull(listPage.getContentResource()).getChild(CoreConstants.NN_LIST);
             for (Resource resource : resources) {
                 ListResourceUtil.createListItem(resourceResolver, list, resource.getValueMap());
             }
@@ -258,7 +258,6 @@ public class ListHelper {
 
         return listPage;
     }
-
 
     /* -----------------------
        Private utility methods
@@ -274,7 +273,7 @@ public class ListHelper {
      * @param <T>              Type of map values
      * @return Map containing {@code <T>}-typed instances
      */
-    private static <T> Map<String, T> getMap(
+    private static <T> Map<String, T> getMapInternal(
         ResourceResolver resourceResolver,
         String path,
         String keyName,
@@ -333,7 +332,7 @@ public class ListHelper {
      * @return {@code Function} object
      */
     private static <T> Function<Resource, T> getMapperFunction(Class<T> itemType) {
-        if (Resource.class.equals(itemType)) {
+        if (Resource.class.equals(itemType) || Object.class.equals(itemType)) {
             return itemType::cast;
         }
         return resource -> resource.adaptTo(itemType);

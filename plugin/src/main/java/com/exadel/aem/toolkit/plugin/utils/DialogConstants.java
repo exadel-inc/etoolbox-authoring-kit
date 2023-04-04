@@ -27,13 +27,14 @@ public class DialogConstants {
     public static final String DOUBLE_QUOTE = "\"";
     public static final String NEGATION = "!";
     public static final String WILDCARD = "*";
+    public static final String ARRAY_OPENING = "[";
+    public static final String ARRAY_CLOSING = "]";
 
     public static final String SEPARATOR_DOT = ".";
     public static final String SEPARATOR_SEMICOLON = ";";
 
     public static final String RELATIVE_PATH_PREFIX = CoreConstants.RELATIVE_PATH_PREFIX;
     public static final String PARENT_PATH_PREFIX = "../";
-    public static final String PARENT_PATH_INDICATOR = "..";
 
     public static final String NN_ACCORDION = "accordion";
     public static final String NN_ALLOW_BASICS = "allowBasics";
@@ -142,12 +143,10 @@ public class DialogConstants {
     public static final String PN_TEXT_MEMBER = "textMember";
     public static final String PN_TEXT_PROPERTY_NAME = "textPropertyName";
     public static final String PN_TEXT_TRANSFORM = "textTransform";
-    public static final String PN_TITLE = "title";
     public static final String PN_TOOLBAR = "toolbar";
     public static final String PN_TRACKING_ELEMENT = "trackingElement";
     public static final String PN_TYPE = "type";
     public static final String PN_TYPE_HINT = "typeHint";
-    public static final String PN_UPDATE_COMPONENT_LIST = "updatecomponentlist";
     public static final String PN_USE_FIXED_INLINE_TOOLBAR = "useFixedInlineToolbar";
     public static final String PN_VALUE_MEMBER = "valueMember";
     public static final String PN_VALUE_TRANSFORM = "valueTransform";
@@ -156,5 +155,8 @@ public class DialogConstants {
     public static final String VALUE_ALL = "all";
     public static final String VALUE_NONE = "none";
 
+    /**
+     * Default (instantiation-preventing) constructor
+     */
     private DialogConstants() {}
 }

@@ -29,20 +29,27 @@ import org.osgi.service.component.annotations.Reference;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.Child;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
- * Injects into a Sling model a child resource or a secondary model that is adapted from a child resource
+ * Provides injecting into a Sling model a child resource or a secondary model that is adapted from a child resource
  * @see Child
  * @see BaseInjector
  */
-@Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
-)
+@Component(
+    service = Injector.class,
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING)
 public class ChildInjector extends BaseInjector<Child> {
 
     public static final String NAME = "eak-child-resource-injector";
+
+    @Reference
+    private ModelFactory modelFactory;
+
+    @Reference
+    private AdapterManager adapterManager;
 
     /**
      * Retrieves the name of the current instance
@@ -55,17 +62,11 @@ public class ChildInjector extends BaseInjector<Child> {
         return NAME;
     }
 
-    @Reference
-    private ModelFactory modelFactory;
-
-    @Reference
-    private AdapterManager adapterManager;
-
     /**
      * {@inheritDoc}
      */
     @Override
-    public Child getAnnotation(AnnotatedElement element) {
+    Child getAnnotationType(AnnotatedElement element) {
         return element.getDeclaredAnnotation(Child.class);
     }
 
@@ -73,7 +74,7 @@ public class ChildInjector extends BaseInjector<Child> {
      * {@inheritDoc}
      */
     @Override
-    public Object getValue(Object adaptable, String name, Type type, Child annotation, Object defaultValue) {
+    public Object getValue(Object adaptable, String name, Type type, Child annotation) {
 
         Resource adaptableResource = AdaptationUtil.getResource(adaptable);
         if (adaptableResource == null) {
@@ -92,15 +93,20 @@ public class ChildInjector extends BaseInjector<Child> {
             annotation.postfix()
         );
 
-        if (TypeUtil.isValidObjectType(type, Resource.class)) {
-            return preparedResource;
-        } else if (type instanceof Class) {
-            if (adaptable instanceof SlingHttpServletRequest && TypeUtil.isSlingRequestAdapter(modelFactory, type)) {
-                return adapterManager.getAdapter(
+        Class<?> elementType = TypeUtil.getElementType(type);
+        if (elementType == null) {
+            elementType = (Class<?>) type;
+        }
+        if (Resource.class.equals(elementType)) {
+            return CastUtil.toType(preparedResource, type);
+        } else if (elementType != null) {
+            if (adaptable instanceof SlingHttpServletRequest && TypeUtil.isSlingRequestAdapter(modelFactory, elementType)) {
+                Object adapter = adapterManager.getAdapter(
                     AdaptationUtil.getRequest((SlingHttpServletRequest) adaptable, preparedResource),
-                    (Class<?>) type);
+                    elementType);
+                return CastUtil.toType(adapter, elementType);
             }
-            return preparedResource.adaptTo((Class<?>) type);
+            return CastUtil.toType(preparedResource.adaptTo(elementType), type);
         }
         return null;
     }

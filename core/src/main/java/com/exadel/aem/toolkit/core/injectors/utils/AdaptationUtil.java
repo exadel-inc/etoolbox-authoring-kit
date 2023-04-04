@@ -23,7 +23,8 @@ import org.apache.sling.api.wrappers.SlingHttpServletRequestWrapper;
 
 /**
  * Contains utility methods for adaptation and conversion of entities involved in Sing injectors processing.
- * <p><u>Note</u>: This class is not a part of the public API</p>
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  */
 public class AdaptationUtil {
 
@@ -122,7 +123,7 @@ public class AdaptationUtil {
      * the pre-defined {@code Resource} as its bundled resource
      */
     private static class SlingHttpServletRequestFacade extends SlingHttpServletRequestWrapper {
-        private Resource resource;
+        private final Resource resource;
 
         /**
          * Creates a new instance that is based on the given {@code SlingHttpServletRequest} while reporting the given
@@ -130,7 +131,7 @@ public class AdaptationUtil {
          * @param request  {@code SlingHttpServletRequest} instance used for the decoration
          * @param resource Sling resource that the resulting request will report as its bundled resource
          */
-        public SlingHttpServletRequestFacade(SlingHttpServletRequest request, Resource resource) {
+        SlingHttpServletRequestFacade(SlingHttpServletRequest request, Resource resource) {
             super(request);
             this.resource = resource;
         }

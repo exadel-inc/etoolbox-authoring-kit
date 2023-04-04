@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.exadel.aem.toolkit.api.annotations.layouts.Tab;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
@@ -31,7 +32,7 @@ import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 class TabSection extends Section {
     private static final Predicate<Method> MAIN_NODE_MEMBERS = method -> StringUtils.equalsAny(
         method.getName(),
-        DialogConstants.PN_TITLE,
+        CoreConstants.PN_TITLE,
         DialogConstants.PN_TRACKING_ELEMENT);
 
     private final Tab tab;
@@ -41,7 +42,7 @@ class TabSection extends Section {
      * @param tab      {@code Tab} object this helper wraps
      * @param isLayout True if the current section is a dialog layout section; false if it is a dialog widget section
      */
-    public TabSection(Tab tab, boolean isLayout) {
+    TabSection(Tab tab, boolean isLayout) {
         super(isLayout);
         this.tab = tab;
     }

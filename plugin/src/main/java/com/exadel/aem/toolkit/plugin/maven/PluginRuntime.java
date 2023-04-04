@@ -21,6 +21,9 @@ package com.exadel.aem.toolkit.plugin.maven;
 public class PluginRuntime {
     private static final ThreadLocal<PluginRuntimeContext> INSTANCE = ThreadLocal.withInitial(EmptyRuntimeContext::new);
 
+    /**
+     * Default (instantiation-preventing) constructor
+     */
     private PluginRuntime() {
     }
 

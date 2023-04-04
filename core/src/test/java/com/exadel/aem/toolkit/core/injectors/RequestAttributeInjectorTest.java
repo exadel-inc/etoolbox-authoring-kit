@@ -1,173 +1,260 @@
 package com.exadel.aem.toolkit.core.injectors;
 
-import io.wcm.testing.mock.aem.junit.AemContext;
-
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Optional;
 
-import com.exadel.aem.toolkit.core.injectors.models.TestModelRequestAttribute;
-
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.IterableUtils;
+import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest;
+import org.junit.Test;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
+import com.exadel.aem.toolkit.core.injectors.models.RequestAdapterBase;
+import com.exadel.aem.toolkit.core.injectors.models.requestproperty.Booleans;
+import com.exadel.aem.toolkit.core.injectors.models.requestproperty.CalendarArrays;
+import com.exadel.aem.toolkit.core.injectors.models.requestproperty.CalendarCollections;
+import com.exadel.aem.toolkit.core.injectors.models.requestproperty.Calendars;
+import com.exadel.aem.toolkit.core.injectors.models.requestproperty.DoubleArrays;
+import com.exadel.aem.toolkit.core.injectors.models.requestproperty.DoubleCollections;
+import com.exadel.aem.toolkit.core.injectors.models.requestproperty.Doubles;
+import com.exadel.aem.toolkit.core.injectors.models.requestproperty.IntegerArrays;
+import com.exadel.aem.toolkit.core.injectors.models.requestproperty.IntegerCollections;
+import com.exadel.aem.toolkit.core.injectors.models.requestproperty.Integers;
+import com.exadel.aem.toolkit.core.injectors.models.requestproperty.LongArrays;
+import com.exadel.aem.toolkit.core.injectors.models.requestproperty.LongCollections;
+import com.exadel.aem.toolkit.core.injectors.models.requestproperty.Longs;
 
-public class RequestAttributeInjectorTest {
+public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBase {
 
-    private static final String EXPECTED_PARAM = "same old string value";
+    private static final String[] STRINGIFIED_FLOAT_ARRAY = new String[] {"-42.1", "43.2d", "NaN", "44"};
+    private static final List<String> STRINGIFIED_FLOAT_COLLECTION = Arrays.asList(STRINGIFIED_FLOAT_ARRAY);
 
-    private static final List<String> EXPECTED_STRINGS_LIST = Arrays.asList("s1", "s2", "s3");
-    private static final List<Integer> EXPECTED_INTEGER_LIST = Arrays.asList(1, 2, 3);
-    private static final List<Long> EXPECTED_LONG_LIST = Arrays.asList(1L, 2L, 3L);
-    private static final List<Boolean> EXPECTED_BOOLEAN_LIST = Arrays.asList(true, true, false);
+    private static final int[] EXPECTED_INT_ARRAY = new int[] {-42, 43, 0, 44};
+    private static final Integer[] EXPECTED_INTEGER_ARRAY = new Integer[] {-42, 43, null, 44};
+    private static final List<Integer> EXPECTED_INTEGER_COLLECTION = Arrays.asList(-42, 43, null, 44);
 
-    private static final Object[]  STRING_ARRAY_FROM_REQUEST_IMITATION = {"wake", "up", "Neo"};
-    private static final Object[]  INTEGER_ARRAY_FROM_REQUEST_IMITATION = {1, 2, 3};
-    private static final Object[]  LONG_ARRAY_FROM_REQUEST_IMITATION = {1L, 2L, 3L};
-    private static final Object[]  BOOLEAN_ARRAY_FROM_REQUEST_IMITATION = {true, true, false};
+    /* -----------
+       Preparation
+       ----------- */
 
-    @Rule
-    public final AemContext context = new AemContext();
-
-    private TestModelRequestAttribute testModel;
-
-    @Before
-    public void beforeTest() {
-        context.addModelsForClasses(TestModelRequestAttribute.class);
-        context.registerInjectActivateService(new RequestAttributeInjector());
+    @Override
+    BaseInjector<?> prepareInjector() {
+        return new RequestAttributeInjector();
     }
 
-    @Test
-    public void shouldInjectValue() {
-        context.request().setAttribute("sameOldStringParam", EXPECTED_PARAM);
-        testModel = context.request().adaptTo(TestModelRequestAttribute.class);
-
-        assertNotNull(testModel);
-        assertEquals(EXPECTED_PARAM, testModel.getSameOldStringParam());
+    @Override
+    void prepareRequest(MockSlingHttpServletRequest request, Object payload) {
+        if (payload != null) {
+            request.setAttribute(ATTRIBUTE_VALUE, payload);
+        } else {
+            request.removeAttribute(ATTRIBUTE_VALUE);
+        }
     }
 
-    @Test
-    public void shouldInjectNamedValue() {
-        context.request().setAttribute("sameOldStringParam", EXPECTED_PARAM);
-        testModel = context.request().adaptTo(TestModelRequestAttribute.class);
-        assertNotNull(testModel);
-        assertEquals(EXPECTED_PARAM, testModel.getNamedParam());
-    }
+    /* -----
+       Tests
+       ----- */
 
     @Test
-    public void shouldInjectStringList() {
-        context.request().setAttribute("stringsList", EXPECTED_STRINGS_LIST);
-        testModel = context.request().adaptTo(TestModelRequestAttribute.class);
-
-        assertNotNull(testModel);
-        assertEquals(EXPECTED_STRINGS_LIST, testModel.getRequestAttributeStringList());
-    }
-
-    @Test
-    public void shouldInjectIntegerList() {
-        context.request().setAttribute("integerList", EXPECTED_INTEGER_LIST);
-        testModel = context.request().adaptTo(TestModelRequestAttribute.class);
-
-        assertNotNull(testModel);
-        assertEquals(EXPECTED_INTEGER_LIST, testModel.getRequestAttributeIntegerList());
-    }
-
-    @Test
-    public void shouldInjectLongList() {
-        context.request().setAttribute("longList", EXPECTED_LONG_LIST);
-        testModel = context.request().adaptTo(TestModelRequestAttribute.class);
-
-        assertNotNull(testModel);
-        assertEquals(EXPECTED_LONG_LIST, testModel.getRequestParameterLongList());
-    }
-
-    @Test
-    public void shouldInjectBooleanList() {
-        context.request().setAttribute("booleanList", EXPECTED_BOOLEAN_LIST);
-        testModel = context.request().adaptTo(TestModelRequestAttribute.class);
-
-        assertNotNull(testModel);
-        assertEquals(EXPECTED_BOOLEAN_LIST, testModel.getRequestAttributeBooleanList());
+    public void shouldInjectString() {
+        super.shouldInjectString();
     }
 
     @Test
     public void shouldInjectStringArray() {
-        final String[] expected = {"wake", "up", "Neo"};
-
-        context.request().setAttribute("stringArray", STRING_ARRAY_FROM_REQUEST_IMITATION);
-        testModel = context.request().adaptTo(TestModelRequestAttribute.class);
-
-        assertNotNull(testModel);
-        assertArrayEquals(expected, testModel.getRequestAttributeStringArray());
+        super.shouldInjectStringArray();
     }
 
     @Test
-    public void shouldInjectIntegerArrayWrapped() {
-        final Integer[] expected = {1, 2, 3};
-
-        context.request().setAttribute("wrappedIntegerArray", INTEGER_ARRAY_FROM_REQUEST_IMITATION);
-        testModel = context.request().adaptTo(TestModelRequestAttribute.class);
-
-        assertNotNull(testModel);
-        assertArrayEquals(expected, testModel.getRequestAttributeIntegerArrayWrapped());
+    public void shouldInjectStringCollection() {
+        super.shouldInjectStringCollection();
     }
 
     @Test
-    public void shouldInjectIntegerArrayNotWrapped() {
-        final int[] expected = {1, 2, 3};
-
-        context.request().setAttribute("notWrappedIntegerArray", INTEGER_ARRAY_FROM_REQUEST_IMITATION);
-        testModel = context.request().adaptTo(TestModelRequestAttribute.class);
-
-        assertNotNull(testModel);
-        assertArrayEquals(expected, testModel.getRequestAttributeIntegerArrayNotWrapped());
+    public void shouldInjectInteger() {
+        super.shouldInjectInteger();
     }
 
     @Test
-    public void shouldInjectLongArrayWrapped() {
-        final Long[] expected = {1L, 2L, 3L};
-
-        context.request().setAttribute("wrappedLongArray", LONG_ARRAY_FROM_REQUEST_IMITATION);
-        testModel = context.request().adaptTo(TestModelRequestAttribute.class);
-
-        assertNotNull(testModel);
-        assertArrayEquals(expected, testModel.getRequestAttributeLongArrayWrapped());
+    public void shouldInjectIntegerArray() {
+        super.shouldInjectIntegerArray();
     }
 
     @Test
-    public void shouldInjectLongArrayNotWrapped() {
-        final long[] expected = {1L, 2L, 3L};
-
-        context.request().setAttribute("notWrappedLongArray", LONG_ARRAY_FROM_REQUEST_IMITATION);
-        testModel = context.request().adaptTo(TestModelRequestAttribute.class);
-
-        assertNotNull(testModel);
-        assertArrayEquals(expected, testModel.getRequestAttributeLongArrayNotWrapped());
+    public void shouldInjectIntegerCollection() {
+        super.shouldInjectIntegerCollection();
     }
 
     @Test
-    public void shouldInjectBooleanArrayWrapped() {
-        final Boolean[] expected = {true, true, false};
-
-        context.request().setAttribute("wrappedBooleanArray", BOOLEAN_ARRAY_FROM_REQUEST_IMITATION);
-        testModel = context.request().adaptTo(TestModelRequestAttribute.class);
-
-        assertNotNull(testModel);
-        assertArrayEquals(expected, testModel.getRequestAttributeBooleanArrayWrapped());
+    public void shouldInjectLong() {
+        super.shouldInjectLong();
     }
 
     @Test
-    public void shouldInjectBooleanArrayNotWrapped() {
-        final boolean[] expected = {true, true, false};
+    public void shouldInjectLongArray() {
+        super.shouldInjectLongArray();
+    }
 
-        context.request().setAttribute("notWrappedBooleanArray", BOOLEAN_ARRAY_FROM_REQUEST_IMITATION);
-        testModel = context.request().adaptTo(TestModelRequestAttribute.class);
+    @Test
+    public void shouldInjectLongCollection() {
+        super.shouldInjectLongCollection();
+    }
 
-        assertNotNull(testModel);
-        assertArrayEquals(expected, testModel.getRequestAttributeBooleanArrayNotWrapped());
+    @Test
+    public void shouldInjectDouble() {
+        super.shouldInjectDouble();
+    }
+
+    @Test
+    public void shouldInjectDoubleArray() {
+        super.shouldInjectDoubleArray();
+    }
+
+    @Test
+    public void shouldInjectDoubleCollection() {
+        super.shouldInjectDoubleCollection();
+    }
+
+    @Test
+    public void shouldInjectBoolean() {
+        super.shouldInjectBoolean();
+    }
+
+    @Test
+    public void shouldInjectBooleanArray() {
+        super.shouldInjectBooleanArray();
+    }
+
+    @Test
+    public void shouldInjectBooleanCollection() {
+        super.shouldInjectBooleanCollection();
+    }
+
+    @Test
+    public void shouldInjectToWideningType() {
+        GregorianCalendar calendar = new GregorianCalendar();
+        prepareRequest(context.request(), calendar);
+        Calendars model = context.request().adaptTo(Calendars.class);
+        assertNotNull(model);
+        assertEquals(calendar, model.getValue());
+        assertEquals(calendar, model.getObjectValue());
+        assertEquals(calendar, model.getConstructorValue());
+        assertEquals(calendar, model.getValueSupplier().getValue());
+    }
+
+    @Test
+    public void shouldInjectToWideningTypeArray() {
+        GregorianCalendar calendar1 = new GregorianCalendar();
+        GregorianCalendar calendar2 = (GregorianCalendar) calendar1.clone();
+        Calendar[] calendars = new Calendar[] {calendar1, calendar2};
+
+        prepareRequest(context.request(), calendars);
+        CalendarArrays model = context.request().adaptTo(CalendarArrays.class);
+        assertNotNull(model);
+        assertArrayEquals(calendars, model.getValue());
+        assertEquals(calendars, model.getObjectValue());
+        assertArrayEquals(calendars, model.getConstructorValue());
+        assertArrayEquals(calendars, model.getValueSupplier().getValue());
+
+        prepareRequest(context.request(), calendar1);
+        model = context.request().adaptTo(CalendarArrays.class);
+        assertNotNull(model);
+        assertEquals(calendar1, model.getValue()[0]);
+        assertEquals(calendar1, model.getConstructorValue()[0]);
+    }
+
+    @Test
+    public void shouldInjectToWideningTypeCollection() {
+        GregorianCalendar calendar1 = new GregorianCalendar();
+        GregorianCalendar calendar2 = new GregorianCalendar();
+        calendar2.add(Calendar.YEAR, 1);
+        Collection<Calendar> calendars = Arrays.asList(calendar1, calendar2);
+
+        prepareRequest(context.request(), calendars);
+        CalendarCollections model = context.request().adaptTo(CalendarCollections.class);
+        assertNotNull(model);
+        assertTrue(CollectionUtils.isEqualCollection(calendars, model.getValue()));
+        assertEquals(calendars, model.getObjectValue());
+        assertTrue(CollectionUtils.isEqualCollection(calendars, model.getConstructorValue()));
+        assertTrue(CollectionUtils.isEqualCollection(calendars, model.getValueSupplier().getValue()));
+
+        prepareRequest(context.request(), calendar1);
+        model = context.request().adaptTo(CalendarCollections.class);
+        assertNotNull(model);
+        assertEquals(calendar1, model.getValue().toArray()[0]);
+        assertEquals(calendar1, model.getObjectValue());
+        assertEquals(calendar1, model.getConstructorValue().toArray()[0]);
+    }
+
+    @Test
+    public void shouldInterpretStringIntoPrimitive() {
+        prepareRequest(context.request(), STRINGIFIED_FLOAT_ARRAY[0]);
+        for (Class<? extends RequestAdapterBase<? extends Number>> modelClass : Arrays.asList(Integers.class, Longs.class, Doubles.class)) {
+            RequestAdapterBase<? extends Number> model = context.request().adaptTo(modelClass);
+            assertNotNull(model);
+            assertEquals(EXPECTED_INT_ARRAY[0], model.getValue().intValue());
+        }
+        prepareRequest(context.request(), Boolean.TRUE.toString());
+        RequestAdapterBase<Boolean> model = context.request().adaptTo(Booleans.class);
+        assertNotNull(model);
+        assertTrue(model.getValue());
+    }
+
+    @Test
+    public void shouldInterpretStringsIntoNumberArray() {
+        prepareRequest(context.request(), STRINGIFIED_FLOAT_ARRAY);
+        for (Class<? extends RequestAdapterBase<? extends Number[]>> modelClass :
+            Arrays.asList(IntegerArrays.class, LongArrays.class, DoubleArrays.class)) {
+
+            RequestAdapterBase<? extends Number[]> model = context.request().adaptTo(modelClass);
+            assertNotNull(model);
+            Number[] values = model.getValue();
+            Number[] constructorValues = model.getConstructorValue();
+            for (int i = 0; i < values.length; i++) {
+                assertEquals(EXPECTED_INT_ARRAY[i], values[i].intValue());
+                assertEquals(
+                    EXPECTED_INTEGER_ARRAY[i],
+                    constructorValues[i] != null ? constructorValues[i].intValue() : null);
+            }
+        }
+    }
+
+    @Test
+    public void shouldInterpretStringsIntoNumberCollection() {
+        prepareRequest(context.request(), STRINGIFIED_FLOAT_COLLECTION);
+        for (Class<? extends RequestAdapterBase<? extends Collection<? extends Number>>> modelClass :
+            Arrays.asList(IntegerCollections.class, LongCollections.class, DoubleCollections.class)) {
+
+            RequestAdapterBase<? extends Collection<? extends Number>> model = context.request().adaptTo(modelClass);
+            assertNotNull(model);
+            Collection<? extends Number> values = model.getValue();
+            Collection<? extends Number> constructorValues = model.getConstructorValue();
+            for (int i = 0; i < values.size(); i++) {
+                int value = Optional.ofNullable(IterableUtils.get(values, i)).map(Number::intValue).orElse(0);
+                Integer constructorValue = Optional
+                    .ofNullable(IterableUtils.get(constructorValues, i))
+                    .map(Number::intValue).orElse(null);
+                assertTrue(
+                    EXPECTED_INTEGER_COLLECTION.get(i) == null
+                        && value == 0
+                        || EXPECTED_INTEGER_COLLECTION.get(i) == value);
+                assertEquals(EXPECTED_INTEGER_COLLECTION.get(i), constructorValue);
+            }
+        }
+    }
+
+    @Test
+    public void shouldNotCauseExceptionWhenPayloadMissing() {
+        super.shouldNotCauseExceptionWhenPayloadMissing();
+        assertNotNull(context.request().adaptTo(Calendars.class));
+        assertNotNull(context.request().adaptTo(CalendarArrays.class));
+        assertNotNull(context.request().adaptTo(CalendarCollections.class));
     }
 }

@@ -34,7 +34,7 @@ import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
 import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
 import com.exadel.aem.toolkit.plugin.handlers.common.DomHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.sources.Sources;
+import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
 import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
@@ -58,7 +58,6 @@ abstract class PackageEntryWriter {
         this.transformer = transformer;
     }
 
-
     /* -----------------------
        Common instance members
        ----------------------- */
@@ -71,11 +70,12 @@ abstract class PackageEntryWriter {
     abstract String getScope();
 
     /**
-     * Gets whether this component {@code Class} is processable by this particular {@code PackageEntryWriter} implementation
-     * @param componentClass The {@code Class} under consideration
+     * Gets whether this {@link Source} representing a Java class is processable by this particular {@code
+     * PackageEntryWriter} implementation
+     * @param source The {@code Source} that refers to a class under consideration
      * @return True or false
      */
-    abstract boolean canProcess(Class<?> componentClass);
+    abstract boolean canProcess(Source source);
 
     /**
      * Retrieves the {@link com.exadel.aem.toolkit.api.handlers.Handler} or handler chain associated with the current
@@ -100,8 +100,8 @@ abstract class PackageEntryWriter {
        ---------------------------- */
 
     /**
-     * Called by {@link PackageWriter#write(Class)} before storing new XML entities into the component's folder
-     * to remove redundant and obsolete XML entries
+     * Called by {@link PackageWriter#write(ComponentSource)} before storing new XML entities into the component's
+     * folder to remove redundant and obsolete XML entries
      * @param componentPath {@link Path} representing a file within a file system the data is written to
      */
     final void cleanUp(Path componentPath) {
@@ -125,27 +125,27 @@ abstract class PackageEntryWriter {
     }
 
     /**
-     * Used to store XML markup filled with annotation data taken from current {@code Class} instance
-     * @param componentClass {@link Class} to analyze
-     * @param componentPath  {@link Path} representing a file within a file system the data is written to
+     * Used to store XML markup filled with annotation data taken from the current {@code Source} instance
+     * @param source {@link Source} instance that delivers the rendering data
+     * @param path   {@link Path} representing a file system entry the data is written to
      */
-    final void writeXml(Class<?> componentClass, Path componentPath) {
-        try (Writer writer = Files.newBufferedWriter(componentPath.resolve(getScope()), StandardOpenOption.CREATE)) {
-            writeXml(componentClass, writer);
+    final void writeXml(Source source, Path path) {
+        try (Writer writer = Files.newBufferedWriter(path.resolve(getScope()), StandardOpenOption.CREATE)) {
+            writeXml(source, writer);
         } catch (IOException e) {
             PluginRuntime.context().getExceptionHandler().handle(e);
         }
     }
 
     /**
-     * Used to store XML markup filled with annotation data taken from current {@code Class} instance
-     * @param componentClass {@link Class} to analyze
+     * Used to store XML markup filled with annotation data taken from current {@code Source} instance
+     * @param source {@link Source} instance that delivers the rendering data
      * @param writer {@link Writer} managing the data storage procedure
      */
-    private void writeXml(Class<?> componentClass, Writer writer) {
-        Document document = createDocument(componentClass);
+    private void writeXml(Source source, Writer writer) {
+        Document document = createDocument(source);
         try {
-             transformer.transform(new DOMSource(document), new StreamResult(writer));
+            transformer.transform(new DOMSource(document), new StreamResult(writer));
         } catch (TransformerException e) {
             PluginRuntime.context().getExceptionHandler().handle(e);
         }
@@ -154,11 +154,10 @@ abstract class PackageEntryWriter {
     /**
      * Creates a DOM document that reflects the data that is provided by the component class and is relevant to the
      * scope of the current writer
-     * @param componentClass The {@code Class} being processed
+     * @param source {@link Source} instance that delivers the rendering data
      * @return {@link Document} created
      */
-    private Document createDocument(Class<?> componentClass) {
-        Source source = Sources.fromClass(componentClass);
+    private Document createDocument(Source source) {
         Target target = Targets.newRoot(getScope());
         getHandlers().accept(source, target);
 

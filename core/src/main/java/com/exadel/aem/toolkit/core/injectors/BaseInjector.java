@@ -1,44 +1,58 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.exadel.aem.toolkit.core.injectors;
 
-import javax.annotation.CheckForNull;
-import javax.annotation.Nonnull;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Member;
 import java.lang.reflect.Type;
 import java.util.Objects;
+import javax.annotation.CheckForNull;
+import javax.annotation.Nonnull;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.exadel.aem.toolkit.core.injectors.InjectorConstants.EXCEPTION;
-
 /**
- * The parent injector class, which is an implementation of the design pattern - template method. The class accumulates an abstract algorithm for injecting a value into an annotated field.
- * To add a new injector, you need to override the following methods in the child classes:
- * getName
- * getValue
- * getAnnotation
- * logError
+ * Represents a base for a Sling injector. A descendant of this class must extract an annotation from a Java class
+ * member and provide a value that matches the annotation. This value is subsequently assigned to the Java class member
+ * by the Sling engine
+ * @param <T> Type of annotation handled by this injector
  * @see Injector
  */
-public abstract class BaseInjector<AnnotationType extends Annotation> implements Injector {
+abstract class BaseInjector<T extends Annotation> implements Injector {
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseInjector.class);
 
+    static final int SERVICE_RANKING = 10000;
+
+    private static final String BRIEF_INJECTION_ERROR_MESSAGE = "Could not inject a value for annotation {}";
+    private static final String INJECTION_ERROR_MESSAGE = BRIEF_INJECTION_ERROR_MESSAGE + " at {}#{}";
+
     /**
-     * Attempts to inject a value into the given adaptable
-     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance.
+     * Attempts to produce a value that can be further injected by Sling into the given adaptable
+     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
      * @param name             Name of the Java class member to inject the value into
      * @param type             Type of receiving Java class member
-     * @param annotatedElement {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
-     *                         annotation objects
+     * @param element          {@link AnnotatedElement} instance that facades the Java class member and allows to
+     *                         retrieve annotations
      * @param callbackRegistry {@link DisposalCallbackRegistry} object
-     * @return {@code Resource} or adapted object if successful. Otherwise, null is returned
+     * @return A nullable value
      */
     @CheckForNull
     @Override
@@ -46,74 +60,56 @@ public abstract class BaseInjector<AnnotationType extends Annotation> implements
         @Nonnull Object adaptable,
         String name,
         @Nonnull Type type,
-        @Nonnull AnnotatedElement annotatedElement,
+        @Nonnull AnnotatedElement element,
         @Nonnull DisposalCallbackRegistry callbackRegistry) {
 
-        AnnotationType annotation = getAnnotation(annotatedElement);
+        T annotation = getAnnotationType(element);
         if (Objects.isNull(annotation)) {
             return null;
         }
 
-        Object defaultValue = null;
-        if (getHasDefaultValue(annotatedElement)) {
-            defaultValue = getDefaultValue(annotatedElement, type);
-        }
-
-        Object value = getValue(adaptable, name, type, annotation, defaultValue);
+        Object value = getValue(adaptable, name, type, annotation);
         if (Objects.isNull(value)) {
-            logError(annotation);
+            logException(element, annotation);
         }
 
         return value;
     }
 
-    private boolean getHasDefaultValue(AnnotatedElement element) {
-        return element.isAnnotationPresent(Default.class);
-    }
+    /**
+     * When overridden in an injector class, extracts a value from a {@link SlingHttpServletRequest} or a
+     * {@link Resource} instance
+     * @param adaptable  A {@link SlingHttpServletRequest} or a {@link Resource} instance
+     * @param name       Name of the Java class member to inject the value into
+     * @param type       Type of the receiving Java class member
+     * @param annotation Annotation handled by the current injector
+     * @return A nullable value
+     */
+    abstract Object getValue(Object adaptable, String name, Type type, T annotation);
 
     /**
-     * The method assumes getting a default value based on the Default annotation.
-     * Can be useful in cases where the functionality of the standard default injection algorithm is not enough.
-     * {@see org.apache.sling.models.impl.model.AbstractInjectableElement}
-     * @param element           {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
-     *                          annotation objects
-     * @param type             Type of receiving Java class member
-     * @return Object wrapped value
+     * When overridden in an injector class, retrieves the annotation type processed by this particular injector. Takes
+     * into account that there might be several annotations attached to the current Java class member, and an injector
+     * can potentially process several annotation types, depending on the setup
+     * @param element {@link AnnotatedElement} instance that facades the Java class member and allows retrieving
+     *                annotations
+     * @return {@code AnnotationType} instance
      */
-    Object getDefaultValue(AnnotatedElement element, Type type) {
-        //implement me if needed
-        return null;
-    }
+    abstract T getAnnotationType(AnnotatedElement element);
 
     /**
-     * Get the annotation class based on elements declared annotation
-     * The necessary implementation is needed to implement in the descendant classes
-     * @param element A {@link AnnotatedElement} element
-     * @return {@code AnnotationType} implementation of the {@link Annotation} interface
+     * Outputs a formatted message informing that the injection has not been successful
+     * @param annotatedElement {@link AnnotatedElement} instance that facades the Java class member and allows
+     *                         retrieving annotations
+     * @param annotationType   Type of annotation that they attempted to retrieve
      */
-    abstract AnnotationType getAnnotation(AnnotatedElement element);
-
-    /**
-     * Extracts value from a {@link SlingHttpServletRequest} or a {@link Resource} instance.
-     * The necessary implementation is needed to implement in the descendant classes
-     * @param adaptable    A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param name         Name of the Java class member to inject the value into
-     * @param type         Type of receiving Java class member
-     * @param defaultValue {@see BaseInjector.getDefaultValue}
-     * @return {@code Resource} or adapted object if successful. Otherwise, null is returned
-     */
-    abstract Object getValue(
-        Object adaptable,
-        String name,
-        Type type,
-        AnnotationType annotation,
-        Object defaultValue);
-
-    /**
-     * Generates and displays an error message if the value cannot be injected.
-     * @param annotation target annotation
-     */
-    void logError(AnnotationType annotation) {
-        LOG.debug(EXCEPTION, annotation, getName());
+    private void logException(AnnotatedElement annotatedElement, T annotationType) {
+        if (annotationType instanceof Member) {
+            String className = ((Member) annotatedElement).getDeclaringClass().getName();
+            String memberName = ((Member) annotatedElement).getName();
+            LOG.debug(INJECTION_ERROR_MESSAGE, annotationType, className, memberName);
+        } else {
+            LOG.debug(BRIEF_INJECTION_ERROR_MESSAGE, annotationType);
+        }
     }
 }

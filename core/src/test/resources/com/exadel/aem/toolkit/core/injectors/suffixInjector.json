@@ -1,17 +1,15 @@
 {
-  "test": {
-    "jcr:primaryType": "cq:Page",
-    "sling:resourceType": "site/components/pages/test-page",
-    "cq:template": "/conf/site/settings/wcm/templates/test-template",
-    "jcr:content": {
-      "jcr:primaryType": "cq:PageContent",
-      "jcr:title": "Test Page",
-      "foo": {
-        "jcr:primaryType": "nt:unstructured",
-        "jcr:createdBy": "admin",
-        "text": "This is a test",
-        "sling:resourceType": "site/components/text"
-      }
+  "jcr:primaryType": "cq:Page",
+  "sling:resourceType": "site/components/pages/test-page",
+  "cq:template": "/conf/site/settings/wcm/templates/test-template",
+  "jcr:content": {
+    "jcr:primaryType": "cq:PageContent",
+    "jcr:title": "Test Page",
+    "foo": {
+      "jcr:primaryType": "nt:unstructured",
+      "jcr:createdBy": "admin",
+      "text": "This is a test",
+      "sling:resourceType": "site/components/text"
     }
   }
 }

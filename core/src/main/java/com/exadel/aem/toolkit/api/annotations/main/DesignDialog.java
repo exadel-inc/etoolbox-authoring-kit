@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 @Retention(RetentionPolicy.RUNTIME)
 @AnnotationRendering(
     scope = Scopes.CQ_DESIGN_DIALOG,
-    properties ="!forceIgnoreFreshness"
+    properties = "!forceIgnoreFreshness"
 )
 public @interface DesignDialog {
 

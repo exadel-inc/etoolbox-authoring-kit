@@ -14,9 +14,21 @@
 package com.exadel.aem.toolkit.plugin.handlers.common;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import com.google.common.collect.ImmutableMap;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
@@ -25,14 +37,11 @@ import com.exadel.aem.toolkit.api.annotations.policies.PolicyTarget;
 import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.utils.ArrayUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
-
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
@@ -66,7 +75,8 @@ public class AllowedChildrenHandler implements Handler {
      */
     private static void populatePolicies(AllowedChildren[] rules, Target target) {
         List<AllowedChildren> allowedChildrenList = Arrays.stream(rules)
-            .filter(ac -> isEditConfig(target) == PolicyTarget.CURRENT.equals(ac.targetContainer()))
+            .filter(rule -> isEditConfig(target) == PolicyTarget.CURRENT.equals(rule.targetContainer()))
+            .map(AllowedChildrenHandler::combineValues)
             .collect(Collectors.toList());
         if (allowedChildrenList.isEmpty()) {
             return;
@@ -77,7 +87,7 @@ public class AllowedChildrenHandler implements Handler {
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
             .getOrCreateTarget(DialogConstants.NN_LISTENERS)
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_LISTENERS)
-            .attribute(DialogConstants.PN_UPDATE_COMPONENT_LIST, String.format(VALUE_POLICY_RESOLVER_FORMAT, json));
+            .attribute(CoreConstants.PN_UPDATE_COMPONENT_LIST, String.format(VALUE_POLICY_RESOLVER_FORMAT, json));
     }
 
     /**
@@ -87,6 +97,27 @@ public class AllowedChildrenHandler implements Handler {
      */
     private static boolean isEditConfig(Target target) {
         return Scopes.CQ_EDIT_CONFIG.equals(target.getScope());
+    }
+
+    /**
+     * Called from {@link AllowedChildrenHandler#populatePolicies(AllowedChildren[], Target)} to produce a combined
+     * rendition of rule's values (i.e. components that are referenced either by path or by class)
+     * @param rule {@link AllowedChildren} instance
+     * @return The same instance, or else a modified proxy object that fulfills the {@code AllowedChildren} contract
+     */
+    private static AllowedChildren combineValues(AllowedChildren rule) {
+        if (ArrayUtils.isEmpty(rule.classes())) {
+            return rule;
+        }
+        List<String> effectiveValues = new ArrayList<>(Arrays.asList(rule.value()));
+        Arrays.stream(rule.classes())
+            .map(cls -> PluginRuntime.context().getReflection().getComponent(cls).getJcrPath())
+            .filter(StringUtils::isNotBlank)
+            .forEach(effectiveValues::add);
+        Map<String, Object> modification = ImmutableMap.of(
+            CoreConstants.PN_VALUE,
+            effectiveValues.stream().distinct().toArray(String[]::new));
+        return AnnotationUtil.createInstance(AllowedChildren.class, rule, modification);
     }
 
     /* -------------
@@ -128,12 +159,36 @@ public class AllowedChildrenHandler implements Handler {
             SerializerProvider serializerProvider) throws IOException {
 
             jsonGenerator.writeStartObject();
-            serializeNonEmptyArray("value", allowedChildren.value(), jsonGenerator, serializerProvider);
-            serializeNonEmptyArray("pageResourceTypes", allowedChildren.pageResourceTypes(), jsonGenerator, serializerProvider);
-            serializeNonEmptyArray("templates", allowedChildren.templates(), jsonGenerator, serializerProvider);
-            serializeNonEmptyArray("parentsResourceTypes", allowedChildren.parents(), jsonGenerator, serializerProvider);
-            serializeNonEmptyArray("pagePaths", allowedChildren.pagePaths(), jsonGenerator, serializerProvider);
-            serializeNonEmptyArray("containers", allowedChildren.resourceNames(), jsonGenerator, serializerProvider);
+            serializeNonEmptyArray(
+                "value",
+                ArrayUtil.flatten(allowedChildren.value()),
+                jsonGenerator,
+                serializerProvider);
+            serializeNonEmptyArray(
+                "pageResourceTypes",
+                ArrayUtil.flatten(allowedChildren.pageResourceTypes()),
+                jsonGenerator,
+                serializerProvider);
+            serializeNonEmptyArray(
+                "templates",
+                ArrayUtil.flatten(allowedChildren.templates()),
+                jsonGenerator,
+                serializerProvider);
+            serializeNonEmptyArray(
+                "parentsResourceTypes",
+                allowedChildren.parents(),
+                jsonGenerator,
+                serializerProvider);
+            serializeNonEmptyArray(
+                "pagePaths",
+                ArrayUtil.flatten(allowedChildren.pagePaths()),
+                jsonGenerator,
+                serializerProvider);
+            serializeNonEmptyArray(
+                "containers",
+                ArrayUtil.flatten(allowedChildren.resourceNames()),
+                jsonGenerator,
+                serializerProvider);
             if (!PolicyMergeMode.OVERRIDE.equals(allowedChildren.mode())) {
                 serializerProvider.defaultSerializeField("mode", allowedChildren.mode(), jsonGenerator);
             }

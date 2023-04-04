@@ -27,33 +27,29 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.project.MavenProject;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Streams;
 
-import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.WriteMode;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
-import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidSettingException;
 import com.exadel.aem.toolkit.plugin.exceptions.MissingResourceException;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginInfo;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
 import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 /**
- * Implements actions needed to store collected/processed data into AEM package, optimal for use in "try-with-resources" block
+ * Implements actions needed to store collected/processed data into an AEM package, optimal for use in
+ * "try-with-resources" block
  */
 public class PackageWriter implements AutoCloseable {
 
@@ -61,35 +57,35 @@ public class PackageWriter implements AutoCloseable {
     private static final String FILESYSTEM_PREFIX = "jar:";
     private static final Map<String, String> FILESYSTEM_OPTIONS = ImmutableMap.of("create", "true");
 
-    private static final String PACKAGE_ROOT_DIRECTORY = "jcr_root";
     private static final String PACKAGE_INFO_DIRECTORY = "META-INF/etoolbox-authoring-kit";
     private static final String PACKAGE_INFO_FILE_NAME = "version.info";
 
     private static final String CANNOT_WRITE_TO_PACKAGE_EXCEPTION_MESSAGE = "Cannot write to package ";
-    private static final String COMPONENT_DATA_MISSING_EXCEPTION_MESSAGE = "No data to build .content.xml file wile processing component ";
-    private static final String COMPONENT_NAME_MISSING_EXCEPTION_MESSAGE = "Component name missing in class ";
-    private static final String COMPONENT_PATH_MISSING_EXCEPTION_MESSAGE = "Component path missing for project ";
+    private static final String COMPONENT_DATA_MISSING_EXCEPTION_MESSAGE = "No data to build .content.xml file while processing component ";
+    private static final String COMPONENT_PATH_MISSING_EXCEPTION_MESSAGE = "Component path missing in class ";
     private static final String INVALID_PROJECT_EXCEPTION_MESSAGE = "Invalid project";
     private static final String MULTIPLE_MODULES_EXCEPTION_MESSAGE = "Multiple modules available for %s while processing component %s";
     private static final String UNRECOGNIZED_MODULE_EXCEPTION_MESSAGE = "Unrecognized component module %s while processing component %s";
-
 
     /* -----------------------------
        Class fields and constructors
        ----------------------------- */
 
-    private final String componentsPathBase;
     private final FileSystem fileSystem;
     private final List<PackageEntryWriter> writers;
     private final EmptyCqEditConfigWriter emptyEditConfigWriter;
 
-    private PackageWriter(FileSystem fileSystem, String componentsPathBase, List<PackageEntryWriter> writers) {
+    /**
+     * Initializes a new {@link PackageWriter} instance
+     * @param fileSystem The {@link FileSystem} to create {@code PackageWriter} for
+     * @param writers    Collection of {@link PackageEntryWriter} objects that are invoked one by one for storing
+     *                   rendered file data
+     */
+    private PackageWriter(FileSystem fileSystem, List<PackageEntryWriter> writers) {
         this.fileSystem = fileSystem;
-        this.componentsPathBase = componentsPathBase;
         this.writers = writers;
         this.emptyEditConfigWriter = new EmptyCqEditConfigWriter(writers.get(0).getTransformer());
     }
-
 
     /* ------------------------
        Public interface members
@@ -104,13 +100,12 @@ public class PackageWriter implements AutoCloseable {
         }
     }
 
-
     /* ----------------
        Instance members
        ---------------- */
 
     /**
-     * Stores information about the current binary into the package for the purposes of versioning
+     * Stores information about the current binary into the package for the version tracking
      * @param info {@link PluginInfo} object
      */
     public void writeInfo(PluginInfo info) {
@@ -122,6 +117,7 @@ public class PackageWriter implements AutoCloseable {
         Path infoFilePath = infoDirPath.resolve(PACKAGE_INFO_FILE_NAME);
         try {
             Files.createDirectories(infoDirPath);
+            Files.deleteIfExists(infoFilePath);
             Files.createFile(infoFilePath);
         } catch (IOException e) {
             PluginRuntime.context().getExceptionHandler().handle(e);
@@ -140,50 +136,31 @@ public class PackageWriter implements AutoCloseable {
     }
 
     /**
-     * Stores AEM component's authoring markup into the package. To do this, several package entry writers,
-     * e.g. for populating {@code .content.xml}, {@code _cq_dialog.xml}, {@code _cq_editConfig.xml}, etc.
-     * are called in sequence. If the component is split into several "modules" (views), each is processed separately
-     * @param componentClass Current {@code Class} instance
+     * Stores AEM component's authoring markup into the package. To do this, several package entry writers, e.g. for
+     * populating {@code .content.xml}, {@code _cq_dialog.xml}, {@code _cq_editConfig.xml}, etc. are called in sequence.
+     * If the component is split into several "modules" (views), each is processed separately
+     * @param component {@link ComponentSource} instance representing the component class
      * @return True if at least one file/node was stored in the component's folder; otherwise, false
      */
-    public boolean write(Class<?> componentClass) {
-        String providedComponentPath = getComponentPath(componentClass);
-        if (StringUtils.isBlank(providedComponentPath)) {
-            ValidationException validationException = new ValidationException(COMPONENT_NAME_MISSING_EXCEPTION_MESSAGE + componentClass.getSimpleName());
+    public boolean write(ComponentSource component) {
+        if (StringUtils.isBlank(component.getPath())) {
+            String exceptionMessage = COMPONENT_PATH_MISSING_EXCEPTION_MESSAGE + component.adaptTo(Class.class).getSimpleName();
+            ValidationException validationException = new ValidationException(exceptionMessage);
             PluginRuntime.context().getExceptionHandler().handle(validationException);
             return false;
         }
 
-        Path fullComponentPath;
-        if (providedComponentPath.startsWith(PACKAGE_ROOT_DIRECTORY)) {
-            fullComponentPath = fileSystem.getPath(providedComponentPath);
-        } else if (providedComponentPath.startsWith(CoreConstants.SEPARATOR_SLASH + PACKAGE_ROOT_DIRECTORY)) {
-            fullComponentPath = fileSystem.getPath(providedComponentPath.substring(1));
-        } else if (providedComponentPath.startsWith(CoreConstants.SEPARATOR_SLASH)) {
-            fullComponentPath = fileSystem.getPath(PACKAGE_ROOT_DIRECTORY + providedComponentPath);
-        } else {
-            fullComponentPath = fileSystem.getPath(componentsPathBase, providedComponentPath);
-        }
-
-        if (!Files.exists(fullComponentPath) && isAllowedToCreateFolder(componentClass)) {
-            try {
-                Files.createDirectories(fullComponentPath);
-            } catch (IOException ex) {
-                PluginRuntime.context().getExceptionHandler().handle(ex);
-                return false;
-            }
-        }
-        if (!Files.isWritable(fullComponentPath)) {
-            PluginRuntime.context().getExceptionHandler().handle(new MissingResourceException(fullComponentPath));
+        Path fileSystemPath = fileSystem.getPath(component.getPath());
+        if (!ensureTargetPath(component, fileSystemPath)) {
             return false;
         }
 
-        Map<PackageEntryWriter, Class<?>> viewsByWriter = getComponentViews(componentClass);
+        Map<PackageEntryWriter, Source> viewsByWriter = getViewsByWriter(component);
 
-        // Raise an exception in case there's no data to write to .content.xml file/node
+        // Raise an exception in case there's no data to write to {@code .content.xml} file/node
         if (viewsByWriter.keySet().stream().noneMatch(writer -> Scopes.COMPONENT.equals(writer.getScope()))) {
             InvalidSettingException e = new InvalidSettingException(
-                COMPONENT_DATA_MISSING_EXCEPTION_MESSAGE + componentClass.getName());
+                COMPONENT_DATA_MISSING_EXCEPTION_MESSAGE + component.adaptTo(Class.class).getName());
             PluginRuntime.context().getExceptionHandler().handle(e);
         }
 
@@ -191,38 +168,55 @@ public class PackageWriter implements AutoCloseable {
         // via "Insert new component" popup or component rail; also the in-place editing popup won't be displayed.
         // To mitigate this, we need to create a minimal cq:editConfig node
         if (viewsByWriter.keySet().stream().noneMatch(writer ->
-            StringUtils.equalsAny(writer.getScope(), Scopes.CQ_DIALOG, Scopes.CQ_EDIT_CONFIG, Scopes.CQ_DESIGN_DIALOG, Scopes.CQ_CHILD_EDIT_CONFIG))) {
-            viewsByWriter.put(emptyEditConfigWriter, componentClass);
+            StringUtils.equalsAny(
+                writer.getScope(),
+                Scopes.CQ_DIALOG,
+                Scopes.CQ_EDIT_CONFIG,
+                Scopes.CQ_DESIGN_DIALOG,
+                Scopes.CQ_CHILD_EDIT_CONFIG))) {
+            viewsByWriter.put(emptyEditConfigWriter, component);
         }
 
         viewsByWriter.forEach((writer, view) -> {
-            writer.cleanUp(fullComponentPath);
-            writer.writeXml(view, fullComponentPath);
+            writer.cleanUp(fileSystemPath);
+            writer.writeXml(view, fileSystemPath);
         });
 
         return true;
     }
 
     /**
-     * Collects a registry of views available for the given AEM component and matches each view to an appropriate
-     * {@link PackageEntryWriter}
-     * @param componentClass Current {@code Class} instance
-     * @return {@code Map} that exposes {@code PackageEntryWriter} instances as keys and the matched component views
-     * as values
+     * Called by {@link PackageWriter#write(ComponentSource)} to make sure that the target folder for storing the
+     * component's markup is accessible
+     * @param component {@link ComponentSource} instance representing the component class
+     * @param path      {@code Path} object representing the required folder
+     * @return True or false
      */
-    private Map<PackageEntryWriter, Class<?>> getComponentViews(Class<?> componentClass) {
-        Class<?>[] referencedViews = Optional
-            .ofNullable(componentClass.getAnnotation(AemComponent.class))
-            .map(AemComponent::views)
-            .orElse(ArrayUtils.EMPTY_CLASS_ARRAY);
+    private boolean ensureTargetPath(ComponentSource component, Path path) {
+        if (!Files.exists(path) && component.getWriteMode() == WriteMode.CREATE) {
+            try {
+                Files.createDirectories(path);
+            } catch (IOException ex) {
+                PluginRuntime.context().getExceptionHandler().handle(ex);
+                return false;
+            }
+        }
+        if (!Files.isWritable(path)) {
+            PluginRuntime.context().getExceptionHandler().handle(new MissingResourceException(path));
+            return false;
+        }
+        return true;
+    }
 
-        List<Class<?>> allViews = Streams
-            .concat(Stream.of(componentClass), Arrays.stream(referencedViews))
-            .distinct()
-            .collect(Collectors.toList());
-
-        Map<PackageEntryWriter, Class<?>> result = new HashMap<>();
-        for (Class<?> view: allViews) {
+    /**
+     * Collects a registry of views available for the given AEM component and matches each view to an appropriate {@link
+     * PackageEntryWriter}
+     * @param component {@code ComponentSource} instance representing the AEM component class
+     * @return {@code Map} that exposes {@code PackageEntryWriter} instances as keys and component views as values
+     */
+    private Map<PackageEntryWriter, Source> getViewsByWriter(ComponentSource component) {
+        Map<PackageEntryWriter, Source> result = new HashMap<>();
+        for (Source view : component.getViews()) {
             List<PackageEntryWriter> matchedWriters = writers
                 .stream()
                 .filter(w -> w.canProcess(view))
@@ -231,8 +225,8 @@ public class PackageWriter implements AutoCloseable {
             if (matchedWriters.isEmpty()) {
                 InvalidSettingException ex = new InvalidSettingException(String.format(
                     UNRECOGNIZED_MODULE_EXCEPTION_MESSAGE,
-                    view.getSimpleName(),
-                    componentClass.getName()
+                    view.getName(),
+                    component.getName()
                 ));
                 PluginRuntime.context().getExceptionHandler().handle(ex);
             }
@@ -242,7 +236,7 @@ public class PackageWriter implements AutoCloseable {
                     InvalidSettingException ex = new InvalidSettingException(String.format(
                         MULTIPLE_MODULES_EXCEPTION_MESSAGE,
                         matchedWriter.getScope(),
-                        componentClass.getName()
+                        component.getName()
                     ));
                     PluginRuntime.context().getExceptionHandler().handle(ex);
                 } else if (!result.containsKey(matchedWriter)) {
@@ -254,52 +248,16 @@ public class PackageWriter implements AutoCloseable {
     }
 
     /* ---------------
-       Utility methods
-       --------------- */
-
-    /**
-     * Retrieves the path specified for the current component in either {@link AemComponent} or {@link Dialog} annotation
-     * @param componentClass The {@code Class<?>} to get the path for
-     * @return String value
-     */
-    private static String getComponentPath(Class<?> componentClass) {
-        String pathByComponent = Optional.ofNullable(componentClass.getAnnotation(AemComponent.class))
-            .map(AemComponent::path)
-            .orElse(null);
-        @SuppressWarnings("deprecation") // "name" processing is for compatibility; will be removed in a version after 2.0.2
-        String pathByDialog = Optional.ofNullable(componentClass.getAnnotation(Dialog.class))
-            .map(Dialog::name)
-            .orElse(null);
-        return StringUtils.firstNonBlank(pathByComponent, pathByDialog);
-    }
-
-    /**
-     * Gets whether a new folder can be created for the component which is reflected by the current class
-     * @param componentClass The component-backing {@code Class<?>}; is expected to carry the {@link AemComponent}
-     *                       annotation
-     * @return True or false
-     */
-    private static boolean isAllowedToCreateFolder(Class<?> componentClass) {
-        return componentClass.isAnnotationPresent(AemComponent.class)
-            && componentClass.getAnnotation(AemComponent.class).writeMode().equals(WriteMode.CREATE);
-    }
-
-
-    /* ---------------
        Factory methods
        --------------- */
 
     /**
      * Initializes an instance of {@link PackageWriter} profiled for the current {@link MavenProject} and the tree of
      * folders storing AEM components' data
-     * @param project            {@code MavenProject instance}
-     * @param componentsPathBase Path to the sub-folder within package under which AEM component folders are situated
+     * @param project {@code MavenProject instance}
      * @return {@code PackageWriter} instance
      */
-    public static PackageWriter forMavenProject(MavenProject project, String componentsPathBase) {
-        if (StringUtils.isBlank(componentsPathBase)) {
-            throw new PluginException(COMPONENT_PATH_MISSING_EXCEPTION_MESSAGE + project.getBuild().getFinalName());
-        }
+    public static PackageWriter forMavenProject(MavenProject project) {
         if (project == null) {
             throw new PluginException(INVALID_PROJECT_EXCEPTION_MESSAGE);
         }
@@ -309,7 +267,7 @@ public class PackageWriter implements AutoCloseable {
         URI uri = URI.create(FILESYSTEM_PREFIX + path.toUri());
         try {
             FileSystem fs = FileSystems.newFileSystem(uri, FILESYSTEM_OPTIONS);
-            return forFileSystem(fs, project.getBuild().getFinalName(), componentsPathBase);
+            return forFileSystem(fs, project.getBuild().getFinalName());
         } catch (IOException e) {
             // Exceptions caught here are critical for the execution, so no further handling
             throw new PluginException(CANNOT_WRITE_TO_PACKAGE_EXCEPTION_MESSAGE + project.getBuild().getFinalName(), e);
@@ -317,29 +275,28 @@ public class PackageWriter implements AutoCloseable {
     }
 
     /**
-     * Initializes an instance of {@link PackageWriter} profiled for the particular {@link FileSystem} representing
-     * the structure of the package
-     * @param fileSystem         Current {@link FileSystem} instance
-     * @param projectName        Name of the project this file system contains information for
-     * @param componentsPathBase Path to the sub-folder within package under which AEM component folders are situated
+     * Initializes an instance of {@link PackageWriter} profiled for the particular {@link FileSystem} representing the
+     * structure of the package
+     * @param fileSystem  Current {@link FileSystem} instance
+     * @param projectName Name of the project this file system contains information for
      * @return {@code PackageWriter} instance
      */
-    static PackageWriter forFileSystem(FileSystem fileSystem, String projectName, String componentsPathBase) {
+    public static PackageWriter forFileSystem(FileSystem fileSystem, String projectName) {
         List<PackageEntryWriter> writers;
         try {
             Transformer transformer = XmlFactory.newDocumentTransformer();
             writers = Arrays.asList(
-                    new ContentXmlWriter(transformer),
-                    new CqDialogWriter(transformer, Scopes.CQ_DIALOG),
-                    new CqDialogWriter(transformer, Scopes.CQ_DESIGN_DIALOG),
-                    new CqEditConfigWriter(transformer),
-                    new CqChildEditConfigWriter(transformer),
-                    new CqHtmlTagWriter(transformer)
+                new ContentXmlWriter(transformer),
+                new CqDialogWriter(transformer, Scopes.CQ_DIALOG),
+                new CqDialogWriter(transformer, Scopes.CQ_DESIGN_DIALOG),
+                new CqEditConfigWriter(transformer),
+                new CqChildEditConfigWriter(transformer),
+                new CqHtmlTagWriter(transformer)
             );
         } catch (TransformerConfigurationException e) {
             // Exceptions caught here are due to possible XXE security vulnerabilities, so no further handling
             throw new PluginException(CANNOT_WRITE_TO_PACKAGE_EXCEPTION_MESSAGE + projectName, e);
         }
-        return new PackageWriter(fileSystem, componentsPathBase, writers);
+        return new PackageWriter(fileSystem, writers);
     }
 }

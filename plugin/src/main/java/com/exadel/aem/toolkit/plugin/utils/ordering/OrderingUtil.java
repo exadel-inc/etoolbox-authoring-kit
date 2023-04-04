@@ -193,7 +193,6 @@ public class OrderingUtil {
         return targetClass.getName() + DialogConstants.SEPARATOR_DOT + name;
     }
 
-
     /* -----------------
        Comparing methods
        ----------------- */

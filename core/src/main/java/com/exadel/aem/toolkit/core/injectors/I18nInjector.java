@@ -40,17 +40,16 @@ import com.day.cq.i18n.I18n;
 import com.exadel.aem.toolkit.api.annotations.injectors.I18N;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
-import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
- * Injects into a Sling model an {@link com.day.cq.i18n.I18n} object that corresponds to the current locale, or else an
- * internationalized string value
+ * Provides injecting into a Sling model an {@link com.day.cq.i18n.I18n} object that corresponds to the current locale,
+ * or else an internationalized string value
  * @see I18N
  * @see BaseInjector
  */
-@Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
-)
+@Component(
+    service = Injector.class,
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING)
 public class I18nInjector extends BaseInjector<I18N> {
 
     public static final String NAME = "eak-etoolbox-i18n-injector";
@@ -75,7 +74,7 @@ public class I18nInjector extends BaseInjector<I18N> {
      * {@inheritDoc}
      */
     @Override
-    public I18N getAnnotation(AnnotatedElement element) {
+    public I18N getAnnotationType(AnnotatedElement element) {
         return element.getDeclaredAnnotation(I18N.class);
     }
 
@@ -83,7 +82,7 @@ public class I18nInjector extends BaseInjector<I18N> {
      * {@inheritDoc}
      */
     @Override
-    public Object getValue(Object adaptable, String name, Type type, I18N annotation, Object defaultValue) {
+    public Object getValue(Object adaptable, String name, Type type, I18N annotation) {
         String value = StringUtils.defaultIfEmpty(annotation.value(), name);
 
         Function<Object, Locale> localeDetector = InstantiationUtil.getObjectInstance(annotation.localeDetector());
@@ -95,7 +94,7 @@ public class I18nInjector extends BaseInjector<I18N> {
 
         if (isI18nType(type)) {
             return i18n;
-        } else if (TypeUtil.isValidObjectType(type, String.class)) {
+        } else if (String.class.equals(type)) {
             return i18n.get(value);
         }
 
@@ -158,5 +157,4 @@ public class I18nInjector extends BaseInjector<I18N> {
     private static boolean isI18nType(Type value) {
         return value instanceof Class<?> && ClassUtils.isAssignable((Class<?>) value, I18n.class);
     }
-
 }

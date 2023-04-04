@@ -13,15 +13,26 @@
  */
 package com.exadel.aem.toolkit.core.optionprovider.services.impl;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Objects;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
+import org.apache.http.client.HttpClient;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.message.BasicHttpResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.testing.mock.sling.servlet.MockRequestPathInfo;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mockito;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
@@ -29,8 +40,13 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
 
 import io.wcm.testing.mock.aem.junit.AemContext;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class OptionProviderTest {
+
+    private static final String MOCK_DATA_ROOT = "/com/exadel/aem/toolkit/core/optionprovider/";
 
     private OptionProviderService optionProvider;
 
@@ -39,7 +55,7 @@ public class OptionProviderTest {
 
     @Before
     public void setUp() {
-        context.load().json("/com/exadel/aem/toolkit/core/optionprovider/content.json", "/content");
+        context.load().json(MOCK_DATA_ROOT + "content.json", "/content");
         context.request().setResource(context.resourceResolver().getResource("/content"));
         optionProvider = context.registerInjectActivateService(new OptionProviderServiceImpl());
         ((MockRequestPathInfo) context.request().getRequestPathInfo()).setResourcePath("/apps/" + ResourceTypes.OPTION_PROVIDER);
@@ -71,39 +87,99 @@ public class OptionProviderTest {
                                                         // the underlying resource
         OptionSourceParameters parameters = OptionSourceParameters.forRequest(context.request());
         // Checking paths
-        Assert.assertEquals("/content/options", parameters.getPathParameters().get(0).getPath());
-        Assert.assertEquals(path1, parameters.getPathParameters().get(1).getPath());
-        Assert.assertEquals(fallbackPath2, parameters.getPathParameters().get(2).getFallbackPath());
+        assertEquals("/content/options", parameters.getPathParameters().get(0).getPath());
+        assertEquals(path1, parameters.getPathParameters().get(1).getPath());
+        assertEquals(fallbackPath2, parameters.getPathParameters().get(2).getFallbackPath());
         // Checking attributes and 'attributeMembers' param
-        Assert.assertEquals(2, parameters.getPathParameters().get(0).getAttributes().length);
-        Assert.assertEquals(attributeMember1, parameters.getPathParameters().get(1).getAttributeMembers()[0]);
+        assertEquals(2, parameters.getPathParameters().get(0).getAttributes().length);
+        assertEquals(attributeMember1, parameters.getPathParameters().get(1).getAttributeMembers()[0]);
         // Checking 'textMember' and 'valueMember' params
-        Assert.assertEquals(textMember2, parameters.getPathParameters().get(2).getTextMember());
-        Assert.assertEquals(valueMember2, parameters.getPathParameters().get(2).getValueMember());
+        assertEquals(textMember2, parameters.getPathParameters().get(2).getTextMember());
+        assertEquals(valueMember2, parameters.getPathParameters().get(2).getValueMember());
         // Checking 'append' and 'prepend' params
-        Assert.assertEquals("none", StringUtils.substringAfter(parameters.getPrependedOptions()[0], ":"));
-        Assert.assertEquals("prefix\\\\:value", StringUtils.substringAfter(parameters.getAppendedOptions()[0], ":"));
+        assertEquals("none", StringUtils.substringAfter(parameters.getPrependedOptions()[0], ":"));
+        assertEquals("prefix\\\\:value", StringUtils.substringAfter(parameters.getAppendedOptions()[0], ":"));
         // Checking 'exclude' params
-        Assert.assertEquals("some*", parameters.getExcludedOptions()[0]);
-        Assert.assertEquals("*ing",  parameters.getExcludedOptions()[1]);
+        assertEquals("some*", parameters.getExcludedOptions()[0]);
+        assertEquals("*ing",  parameters.getExcludedOptions()[1]);
         // Checking transform params
-        Assert.assertEquals(StringTransformation.UPPERCASE, parameters.getPathParameters().get(0).getTextTransform());
-        Assert.assertEquals(StringTransformation.LOWERCASE, parameters.getPathParameters().get(1).getValueTransform());
+        assertEquals(StringTransformation.UPPERCASE, parameters.getPathParameters().get(0).getTextTransform());
+        assertEquals(StringTransformation.LOWERCASE, parameters.getPathParameters().get(1).getValueTransform());
 
         // Checking 'sorted' param
-        Assert.assertTrue(parameters.isSorted());
+        assertTrue(parameters.isSorted());
     }
 
     @Test
-    public void shouldMergePathsAndCreateDataSource() {
+    public void shouldCreateJcrBasedDataSource() {
+        String queryString = "path=/content/options&exclude=*more";
+        context.request().setQueryString(queryString);
+        List<Resource> options = optionProvider.getOptions(context.request());
+        assertArrayEquals(
+            new String[] {"none", "value0", "value1", "value2"},
+            options.stream().map(resource -> resource.getValueMap().get("value")).toArray());
+    }
+
+    @Test
+    public void shouldCreateHttpBasedDataSource() throws IOException {
+        String queryString = "path=https://acme.com/sample.json&textMember=label&exclude=*more";
+        context.request().setQueryString(queryString);
+
+        HttpClient mockHttpClient = getMockHttpClient("httpResponse1.json");
+        context.request().setAttribute(OptionSourceResolver.class.getName(), new HttpOptionSourceResolver(mockHttpClient));
+
+        assertArrayEquals(
+            new String[] {"none", "1", "2", "3"},
+            optionProvider.getOptions(context.request()).stream().map(resource -> resource.getValueMap().get("value")).toArray());
+    }
+
+    @Test
+    public void shouldCreateHttpBasedDataSourceViaPath() throws IOException {
+        String queryString = "path=https://acme.com/sample.json/base/data&textMember=label&exclude=*more";
+        context.request().setQueryString(queryString);
+
+        HttpClient mockHttpClient = getMockHttpClient("httpResponse2.json");
+        context.request().setAttribute(OptionSourceResolver.class.getName(), new HttpOptionSourceResolver(mockHttpClient));
+
+        assertArrayEquals(
+            new String[] {"none", "4", "5", "6"},
+            optionProvider.getOptions(context.request()).stream().map(resource -> resource.getValueMap().get("value")).toArray());
+    }
+
+    @Test
+    public void shouldCreateHttpBasedDataSourceSingleton() throws IOException {
+        String queryString = "path=https://acme.com/sample.json/base&textMember=dummy&exclude=*more";
+        context.request().setQueryString(queryString);
+
+        HttpClient mockHttpClient = getMockHttpClient("httpResponse2.json");
+        context.request().setAttribute(OptionSourceResolver.class.getName(), new HttpOptionSourceResolver(mockHttpClient));
+
+        assertArrayEquals(
+            new String[] {"none", StringUtils.EMPTY},
+            optionProvider.getOptions(context.request()).stream().map(resource -> resource.getValueMap().get("value")).toArray());
+    }
+
+    @Test
+    public void shouldMergePaths() {
         String queryString = "path2=/content/optionsPathHolder@moreOptionsPath"  // this way we merge options from more than one source
-                + "&textMember2=text&exclude=Excluded*,*6";                                       // and implement path-by-reference facility
+                + "&textMember2=text&exclude=Excluded*,*6";                      // and implement path-by-reference facility
         context.request().setQueryString(queryString);
 
         List<Resource> options = optionProvider.getOptions(context.request());
 
-        Assert.assertEquals(7, options.size());
-        Assert.assertEquals("value4", options.get(5).getValueMap().get("value"));
-        Assert.assertEquals("prefix:more", options.get(options.size() - 1).getValueMap().get(CoreConstants.PN_VALUE));
+        assertEquals(7, options.size());
+        assertEquals("value4", options.get(5).getValueMap().get("value"));
+        assertEquals("prefix:more", options.get(options.size() - 1).getValueMap().get(CoreConstants.PN_VALUE));
+    }
+
+    private HttpClient getMockHttpClient(String contentFile) throws IOException {
+        String expectedJson = IOUtils.toString(
+            Objects.requireNonNull(OptionProviderTest.class.getResourceAsStream(MOCK_DATA_ROOT + contentFile)),
+            StandardCharsets.UTF_8);
+        HttpClient mockHttpClient = Mockito.mock(HttpClient.class);
+        HttpResponse mockHttpResponse = new BasicHttpResponse(new HttpVersion(1, 0), HttpStatus.SC_OK, StringUtils.EMPTY);
+        mockHttpResponse.setEntity(new StringEntity(expectedJson, ContentType.APPLICATION_JSON));
+        Mockito.when(mockHttpClient.execute(Mockito.any())).thenReturn(mockHttpResponse);
+        return mockHttpClient;
     }
 }

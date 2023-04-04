@@ -27,7 +27,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
  * Accordion panel</a> item in an accordion-shaped Granite UI dialog or within an {@code Accordion} widget
  * @see Accordion
  */
-@Target(value = ElementType.TYPE)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @AnnotationRendering(properties = "all")
 public @interface AccordionPanel {

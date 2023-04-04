@@ -14,21 +14,16 @@
 package com.exadel.aem.toolkit.core.injectors.utils;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.wrappers.ValueMapDecorator;
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.day.crx.JcrConstants;
-import com.adobe.granite.ui.components.ds.ValueMapResource;
 
 /**
  * Contains utility methods for creating instances ob objects
- * <p><u>Note</u>: This class is not a part of the public API</p>
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  */
 public class InstantiationUtil {
 
@@ -42,7 +37,7 @@ public class InstantiationUtil {
 
     /**
      * Creates a new instance of the specified {@code Class}
-     * @param type The class to instantiate
+     * @param type The class that needs to be instantiated
      * @param <T>  Instance type
      * @return New object instance, or null if the creation or initialization failed
      */
@@ -50,9 +45,9 @@ public class InstantiationUtil {
         try {
             return type.getConstructor().newInstance();
         } catch (InstantiationException
-            | IllegalAccessException
-            | InvocationTargetException
-            | NoSuchMethodException ex) {
+                 | IllegalAccessException
+                 | InvocationTargetException
+                 | NoSuchMethodException ex) {
             LOG.error("Could not initialize object {}", type.getName(), ex);
         }
         return null;
@@ -70,56 +65,6 @@ public class InstantiationUtil {
         if (StringUtils.isEmpty(prefix) && StringUtils.isEmpty(postfix)) {
             return current;
         }
-        Map<String, Object> values = current
-            .getValueMap()
-            .entrySet()
-            .stream()
-            .filter(entry -> isMatchByPrefixOrPostfix(entry.getKey(), prefix, postfix))
-            .collect(Collectors.toMap(
-                entry -> clearPrefixOrPostfix(entry.getKey(), prefix, postfix),
-                Map.Entry::getValue));
-        return new ValueMapResource(
-            current.getResourceResolver(),
-            current.getPath(),
-            values.getOrDefault(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, JcrConstants.NT_UNSTRUCTURED).toString(),
-            new ValueMapDecorator(values));
-    }
-
-    /**
-     * Returns whether the given property name is matched by the provided prefix or postfix
-     * @param property String value representing the property name
-     * @param prefix   String value representing an optional prefix
-     * @param postfix  String value representing an optional postfix
-     * @return True or false
-     */
-    private static boolean isMatchByPrefixOrPostfix(String property, String prefix, String postfix) {
-        if (StringUtils.isNotEmpty(prefix) && StringUtils.isNotEmpty(postfix)) {
-            return StringUtils.startsWith(property, prefix) && StringUtils.endsWith(property, postfix);
-        }
-        if (StringUtils.isNotEmpty(prefix) && StringUtils.isEmpty(postfix)) {
-            return StringUtils.startsWith(property, prefix);
-        }
-        if (StringUtils.isEmpty(prefix) && StringUtils.isNotEmpty(postfix)) {
-            return StringUtils.endsWith(property, postfix);
-        }
-        return true;
-    }
-
-    /**
-     * Removes the given prefix and/or postfix from the provided string if they are present
-     * @param property String value representing the property name
-     * @param prefix   String value representing an optional prefix
-     * @param postfix  String value representing an optional postfix
-     * @return String value
-     */
-    private static String clearPrefixOrPostfix(String property, String prefix, String postfix) {
-        String result = property;
-        if (StringUtils.isNotEmpty(prefix)) {
-            result = StringUtils.removeStart(result, prefix);
-        }
-        if (StringUtils.isNotEmpty(postfix)) {
-            result = StringUtils.removeEnd(result, postfix);
-        }
-        return result;
+        return new FilteredResourceDecorator(current, prefix, postfix);
     }
 }

@@ -35,7 +35,7 @@ class TopologicalSorter<T> {
      * Initializes a class instance
      * @param nodes Collection of entities to be sorted
      */
-    public TopologicalSorter(List<Orderable<T>> nodes) {
+    TopologicalSorter(List<Orderable<T>> nodes) {
         this.nodes = nodes;
         this.adjacencyList = new ArrayList<>(this.nodes.size());
         for (int i = 0; i < this.nodes.size(); i++) {
