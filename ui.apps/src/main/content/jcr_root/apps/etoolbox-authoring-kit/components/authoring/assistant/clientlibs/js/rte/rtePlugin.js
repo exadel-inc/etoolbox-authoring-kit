@@ -61,7 +61,7 @@
 
         updateState: function (selfDef) {
             const isEmpty = !selfDef.nodeList.commonAncestor.textContent.length;
-            this.buttonUi.setDisabled(isEmpty);
+            this.buttonUi && this.buttonUi.setDisabled(isEmpty);
         },
 
         execute: async function (id, value, params) {
