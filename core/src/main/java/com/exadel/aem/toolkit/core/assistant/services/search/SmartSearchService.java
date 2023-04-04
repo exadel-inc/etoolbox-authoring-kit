@@ -24,7 +24,7 @@ import org.osgi.service.metatype.annotations.Designate;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Facility;
 import com.exadel.aem.toolkit.core.assistant.services.AssistantService;
 
-@Component(service = AssistantService.class, immediate = true, property = "service.ranking:Integer=102")
+@Component(service = AssistantService.class, immediate = true, property = "service.ranking:Integer=103")
 @Designate(ocd = SmartSearchServiceConfig.class)
 public class SmartSearchService implements AssistantService {
 
