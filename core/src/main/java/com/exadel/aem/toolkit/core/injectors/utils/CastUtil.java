@@ -18,11 +18,17 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
 import java.util.function.Supplier;
 
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
+
+import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * Contains utility methods for casting value types involved in Sing injectors processing.
@@ -30,6 +36,8 @@ import org.apache.commons.lang3.ClassUtils;
  * code</p>
  */
 public class CastUtil {
+
+    private static final String SIGN_DOUBLE = "d";
 
     /**
      * Default (instantiation-restricting) constructor
@@ -48,19 +56,22 @@ public class CastUtil {
             return null;
         }
 
-        Class<?> memberElementType = TypeUtil.getElementType(type);
+        Class<?> elementType = TypeUtil.getElementType(type);
 
-        if (TypeUtil.isValidArray(type)) {
-            return toArray(value, memberElementType);
+        if (TypeUtil.isArray(type)) {
+            return toArray(value, elementType);
         }
 
-        if (TypeUtil.isValidCollectionType(type)) {
-            return List.class.equals(TypeUtil.getRawType(type))
-                ? toCollection(value, memberElementType, ArrayList::new)
-                : toCollection(value, memberElementType, HashSet::new);
+        if (TypeUtil.isSupportedCollection(type, true)) {
+            return Set.class.equals(TypeUtil.getRawType(type))
+                ? toCollection(value, elementType, LinkedHashSet::new)
+                : toCollection(value, elementType, ArrayList::new);
         }
 
-        return toMatchingType(value, type);
+        if (Object.class.equals(type)) {
+            return toMatchingType(value, type);
+        }
+        return toMatchingType(extractFirstElement(value), type);
     }
 
     /**
@@ -118,10 +129,29 @@ public class CastUtil {
     }
 
     /**
+     * Called by {@link CastUtil#toType(Object, Type)} to "flatten" the given argument value. If the argument is an
+     * array or collection, the first element is returned. Otherwise, the given value itself is returned
+     * @param source The object to extract an element from; a non-null value is expected
+     * @return Object reference
+     */
+    private static Object extractFirstElement(Object source) {
+        if (source.getClass().isArray() && Array.getLength(source) > 0) {
+            return Array.get(source, 0);
+        } else if (TypeUtil.isSupportedCollection(source.getClass())
+            && !IterableUtils.isEmpty((Collection<?>) source)) {
+            Iterator<?> iterator = ((Collection<?>) source).iterator();
+            if (iterator.hasNext()) {
+                return iterator.next();
+            }
+        }
+        return source;
+    }
+
+    /**
      * Called by {@link CastUtil#toType(Object, Type)} to further adapt the passed value to the given type if there is
      * type compatibility. E.g., when an {@code int} value is passed, and the receiving type is {@code long}, or else
      * the passed value is an implementation of an interface, and the receiving type is the interface itself. The
-     * adaptation is usually made to increase the probability of successful value injection
+     * adaptation is made to increase the probability of successful value injection
      * @param value An arbitrary non-null value
      * @param type  {@link Type} reference; usually reflects the type of Java class member
      * @return Usually, a transformed value. Returns an original one if type casting is not possible or not needed
@@ -130,13 +160,26 @@ public class CastUtil {
         if (value.getClass().equals(type) || type instanceof ParameterizedType) {
             return value;
         }
-        if (ClassUtils.isPrimitiveOrWrapper(value.getClass()) && ClassUtils.isPrimitiveOrWrapper((Class<?>) type)) {
-            return toMatchingPrimitive(value, type);
+        if ((StringUtils.equalsIgnoreCase(value.toString(), Boolean.TRUE.toString())
+            || StringUtils.equalsIgnoreCase(value.toString(), Boolean.FALSE.toString()))
+            && ClassUtils.primitiveToWrapper((Class<?>) type).equals(Boolean.class)) {
+            return Boolean.parseBoolean(value.toString().toLowerCase());
         }
-        if (ClassUtils.isAssignable(value.getClass(), (Class<?>) type)) {
-            return ((Class<?>) type).cast(value);
+        Object effectiveValue = value;
+        if (value instanceof String && NumberUtils.isCreatable(value.toString())) {
+            String stringifiedValue = value.toString();
+            if (stringifiedValue.contains(CoreConstants.SEPARATOR_DOT) && !stringifiedValue.endsWith(SIGN_DOUBLE)) {
+                stringifiedValue += SIGN_DOUBLE;
+            }
+            effectiveValue = NumberUtils.createNumber(stringifiedValue);
         }
-        return value;
+        if (ClassUtils.isPrimitiveOrWrapper(effectiveValue.getClass()) && ClassUtils.isPrimitiveOrWrapper((Class<?>) type)) {
+            return toMatchingPrimitive(effectiveValue, type);
+        }
+        if (ClassUtils.isAssignable(effectiveValue.getClass(), (Class<?>) type)) {
+            return ((Class<?>) type).cast(effectiveValue);
+        }
+        return getDefaultValue(type);
     }
 
     /**
@@ -218,5 +261,16 @@ public class CastUtil {
             return ((Long) value).doubleValue();
         }
         return toInt(value);
+    }
+
+    /**
+     * Retrieves the default value for the given Java type by creating an empty array of that type. The return value is
+     * going to be {@code 0} for the numeric fields, {@code false} for the booleans fields, and {@code null} for the
+     * reference types
+     * @param type The type of the field
+     * @return The default value for the type
+     */
+    private static Object getDefaultValue(Type type) {
+        return Array.get(Array.newInstance((Class<?>) type, 1), 0);
     }
 }

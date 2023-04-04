@@ -13,131 +13,188 @@
  */
 package com.exadel.aem.toolkit.core.injectors;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.Collection;
+import java.util.Collections;
 
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.request.RequestParameterMap;
-import org.junit.Before;
-import org.junit.Rule;
+import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest;
 import org.junit.Test;
-
-import com.exadel.aem.toolkit.core.injectors.models.ITestModelRequestParam;
-import com.exadel.aem.toolkit.core.injectors.models.TestModelRequestParam;
-
-import io.wcm.testing.mock.aem.junit.AemContext;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-public class RequestParamInjectorTest {
-    private static final String EXPECTED_PARAM1_VALUE = "value1";
-    private static final String EXPECTED_PARAM2_VALUE = "value2";
+import com.exadel.aem.toolkit.core.injectors.models.RequestAdapterBase;
+import com.exadel.aem.toolkit.core.injectors.models.requestproperty.RequestParams;
+import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
-    @Rule
-    public final AemContext context = new AemContext();
+public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
 
-    private TestModelRequestParam testModel;
+    /* -----------
+       Preparation
+       ----------- */
 
-    @Before
-    public void beforeTest() {
-        context.addModelsForClasses(TestModelRequestParam.class);
-        context.registerInjectActivateService(new RequestParamInjector());
-
-        Map<String, Object> requestMap = new HashMap<>();
-        requestMap.put("param1", EXPECTED_PARAM1_VALUE);
-        requestMap.put("param2", EXPECTED_PARAM2_VALUE);
-        context.request().setParameterMap(requestMap);
-
-        testModel = context.request().adaptTo(TestModelRequestParam.class);
+    @Override
+    BaseInjector<?> prepareInjector() {
+        return new RequestParamInjector();
     }
 
-    @Test
-    public void shouldInjectValue() {
-        assertNotNull(testModel);
-        assertEquals(EXPECTED_PARAM1_VALUE, testModel.getParam1());
-    }
-
-    @Test
-    public void shouldInjectNamedValue() {
-        assertEquals(EXPECTED_PARAM2_VALUE, testModel.getNamedParam());
-    }
-
-    @Test
-    public void shouldInjectValueObject() {
-        assertEquals(EXPECTED_PARAM2_VALUE, testModel.getParamObjectType());
-    }
-
-    @Test
-    public void shouldInjectRequestParameter() {
-        RequestParameter expected = context.request().getRequestParameter("param1");
-        assertEquals(expected, testModel.getRequestParameter());
-    }
-
-    @Test
-    public void shouldInjectRequestParameterArray() {
-        RequestParameter[] expected = context.request().getRequestParameters("param2");
-        assertArrayEquals(expected, testModel.getRequestParameterArray());
-    }
-
-    @Test
-    public void shouldInjectRequestParameterStringArray() {
-        RequestParameter[] expected = context.request().getRequestParameters("param2");
-        String[] actual = testModel.getRequestParameterStringArray();
-        assertNotNull(expected);
-        assertNotNull(actual);
-        for (int i = 0; i < expected.length; i++) {
-            assertEquals(expected[i].getString(), actual[i]);
+    @Override
+    void prepareRequest(MockSlingHttpServletRequest request, Object payload) {
+        request.setParameterMap(Collections.emptyMap());
+        if (payload == null) {
+            return;
+        }
+        if (payload.getClass().isArray()) {
+            for (int i = 0; i < Array.getLength(payload); i++) {
+                request.addRequestParameter(ATTRIBUTE_VALUE, Array.get(payload, i).toString());
+            }
+        } else if (TypeUtil.isSupportedCollection(payload.getClass())) {
+            for (Object next : (Collection<?>) payload) {
+                request.addRequestParameter(ATTRIBUTE_VALUE, next.toString());
+            }
+        } else {
+            request.addRequestParameter(ATTRIBUTE_VALUE, payload.toString());
         }
     }
 
+    /* -----
+       Tests
+       ----- */
+
     @Test
-    public void shouldInjectRequestParameterList() {
-        List<RequestParameter> expected = context.request().getRequestParameterList();
-        List<RequestParameter> actual = testModel.getRequestParameterList();
-        assertNotNull(expected);
-        assertNotNull(actual);
-        assertEquals(expected.size(), actual.size());
-        for (int i = 0; i < expected.size(); i++) {
-            assertEquals(expected.get(i).getString(), actual.get(i).getString());
+    public void shouldInjectString() {
+        super.shouldInjectString(model -> assertTrue(model.getObjectValue() instanceof RequestParameter));
+    }
+
+    @Test
+    public void shouldInjectStringArray() {
+        super.shouldInjectStringArray((model, payload) -> {
+            assertTrue(model.getObjectValue() instanceof RequestParameter);
+            assertEquals(extractFirstElement(payload), ((RequestParameter) model.getObjectValue()).getString());
+        });
+    }
+
+    @Test
+    public void shouldInjectStringCollection() {
+        super.shouldInjectStringCollection((model, payload) -> {
+            assertTrue(model.getObjectValue() instanceof RequestParameter);
+            assertEquals(extractFirstElement(payload), ((RequestParameter) model.getObjectValue()).getString());
+        });
+    }
+
+    @Test
+    public void shouldInjectInteger() {
+        super.shouldInjectInteger(RequestParamInjectorTest::assertObjectValueEquals);
+    }
+
+    @Test
+    public void shouldInjectIntegerArray() {
+        super.shouldInjectIntegerCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+    }
+
+    @Test
+    public void shouldInjectIntegerCollection() {
+        super.shouldInjectIntegerCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+    }
+
+    @Test
+    public void shouldInjectLong() {
+        super.shouldInjectLong(RequestParamInjectorTest::assertObjectValueEquals);
+    }
+
+    @Test
+    public void shouldInjectLongArray() {
+        super.shouldInjectLongArray(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+    }
+
+    @Test
+    public void shouldInjectLongCollection() {
+        super.shouldInjectLongCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+    }
+
+    @Test
+    public void shouldInjectDouble() {
+        super.shouldInjectDouble(RequestParamInjectorTest::assertObjectValueEquals);
+    }
+
+    @Test
+    public void shouldInjectDoubleArray() {
+        super.shouldInjectDoubleArray(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+    }
+
+    @Test
+    public void shouldInjectDoubleCollection() {
+        super.shouldInjectDoubleCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+    }
+
+    @Test
+    public void shouldInjectBoolean() {
+        super.shouldInjectBoolean(RequestParamInjectorTest::assertObjectValueEquals);
+    }
+
+    @Test
+    public void shouldInjectBooleanArray() {
+        super.shouldInjectBooleanArray(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+    }
+
+    @Test
+    public void shouldInjectBooleanCollection() {
+        super.shouldInjectBooleanCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+    }
+
+    @Test
+    public void shouldInjectRequestParameterObjects() {
+        context.request().setParameterMap(Collections.emptyMap());
+        context.request().addRequestParameter(ATTRIBUTE_VALUE, EXPECTED_STRING_ARRAY[0]);
+        context.request().addRequestParameter(ATTRIBUTE_VALUE, EXPECTED_STRING_ARRAY[1]);
+        RequestParams model = context.request().adaptTo(RequestParams.class);
+        assertNotNull(model);
+
+        assertNotNull(model.getValue());
+        assertEquals(EXPECTED_STRING_ARRAY[0], model.getValue().getString());
+
+        assertEquals(EXPECTED_STRING_ARRAY.length,  model.getConstructorValue().length);
+        assertEquals(EXPECTED_STRING_ARRAY[0], model.getConstructorValue()[0].getString());
+
+        assertNotNull(model.getCollectionValue());
+        assertEquals(EXPECTED_STRING_ARRAY.length, model.getCollectionValue().size());
+        assertEquals(EXPECTED_STRING_ARRAY[0], model.getCollectionValue().get(0).getString());
+
+        assertNotNull(model.getValueSupplier().getValue());
+        RequestParameterMap requestParametersViaInterface = model.getValueSupplier().getValue();
+        assertEquals(EXPECTED_STRING_ARRAY.length,  requestParametersViaInterface.get(ATTRIBUTE_VALUE).length);
+    }
+
+    @Test
+    public void shouldNotCauseExceptionWhenPayloadMissing() {
+        super.shouldNotCauseExceptionWhenPayloadMissing();
+    }
+
+    /* ---------------
+       Service methods
+       --------------- */
+
+    private static Object extractFirstElement(Object arrayOrCollection) {
+        if (arrayOrCollection.getClass().isArray() && Array.getLength(arrayOrCollection) > 0) {
+            return Array.get(arrayOrCollection, 0);
         }
-    }
-
-    @Test
-    public void shouldInjectRequestParameterStringList() {
-        RequestParameter[] expected = context.request().getRequestParameters("param2");
-        List<String> actual = testModel.getRequestParameterStringList();
-        assertNotNull(expected);
-        assertNotNull(actual);
-        assertEquals(expected.length, actual.size());
-        for (int i = 0; i < expected.length; i++) {
-            assertEquals(expected[i].getString(), actual.get(i));
+        if (TypeUtil.isSupportedCollection(arrayOrCollection.getClass())
+            && !IterableUtils.isEmpty((Collection<?>) arrayOrCollection)) {
+            return IterableUtils.get((Collection<?>) arrayOrCollection, 0);
         }
-    }
-    @Test
-    public void shouldInjectRequestParameterMap() {
-        RequestParameterMap expected = context.request().getRequestParameterMap();
-        assertEquals(expected, testModel.getRequestParameterMap());
+        return arrayOrCollection;
     }
 
-    @Test
-    public void shouldInjectIntoMethodParameter() {
-        assertEquals(EXPECTED_PARAM2_VALUE, testModel.getParamRequestFromMethodParameter());
+    private static void assertObjectValueEquals(RequestAdapterBase<?> model, Object payload) {
+        assertTrue(model.getObjectValue() instanceof RequestParameter);
+        assertEquals(String.valueOf(payload), ((RequestParameter) model.getObjectValue()).getString());
     }
 
-    @Test
-    public void shouldInjectToMethod() {
-        ITestModelRequestParam testInterface = context.request().adaptTo(ITestModelRequestParam.class);
-        assertNotNull(testInterface);
-        assertEquals(EXPECTED_PARAM2_VALUE, testInterface.getRequestParamFromMethod());
-    }
-
-    @Test
-    public void shouldNotInjectIfParamMissingOrWrongType() {
-        assertNull(testModel.getParamStringWrongName());
-        assertNull(testModel.getParamSet());
-        assertNull(testModel.getParamListWrongType());
+    private static void assertArrayOrCollectionValueEquals(RequestAdapterBase<?> model, Object payload) {
+        assertTrue(model.getObjectValue() instanceof RequestParameter);
+        assertEquals(String.valueOf(extractFirstElement(payload)), ((RequestParameter) model.getObjectValue()).getString());
     }
 }

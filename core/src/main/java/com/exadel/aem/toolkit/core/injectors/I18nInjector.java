@@ -40,7 +40,6 @@ import com.day.cq.i18n.I18n;
 import com.exadel.aem.toolkit.api.annotations.injectors.I18N;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
-import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
  * Provides injecting into a Sling model an {@link com.day.cq.i18n.I18n} object that corresponds to the current locale,
@@ -48,9 +47,9 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
  * @see I18N
  * @see BaseInjector
  */
-@Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING
-)
+@Component(
+    service = Injector.class,
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING)
 public class I18nInjector extends BaseInjector<I18N> {
 
     public static final String NAME = "eak-etoolbox-i18n-injector";
@@ -95,7 +94,7 @@ public class I18nInjector extends BaseInjector<I18N> {
 
         if (isI18nType(type)) {
             return i18n;
-        } else if (TypeUtil.isValidObjectType(type, String.class)) {
+        } else if (String.class.equals(type)) {
             return i18n.get(value);
         }
 

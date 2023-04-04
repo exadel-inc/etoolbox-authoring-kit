@@ -1,3 +1,16 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
@@ -19,13 +32,18 @@ import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
  * @see RequestAttribute
  * @see BaseInjector
  */
-@Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING
-)
+@Component(
+    service = Injector.class,
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING)
 public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
 
     public static final String NAME = "eak-request-attribute-injector";
 
+    /**
+     * Retrieves the name of the current instance
+     * @return String value
+     * @see Injector
+     */
     @Nonnull
     @Override
     public String getName() {
@@ -41,8 +59,18 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
         if (request == null) {
             return null;
         }
-        String attributeName = annotation.name().isEmpty() ? name : annotation.name();
-        return CastUtil.toType(request.getAttribute(attributeName), type);
+        return getValue(request, annotation.name().isEmpty() ? name : annotation.name(), type);
+    }
+
+    /**
+     * Extracts an attribute value from the given {@link SlingHttpServletRequest} object and casts it to the given type
+     * @param request A {@code SlingHttpServletRequest} instance
+     * @param name    Name of the parameter
+     * @param type    Type of the returned value
+     * @return A nullable value
+     */
+    Object getValue(SlingHttpServletRequest request, String name, Type type) {
+        return CastUtil.toType(request.getAttribute(name), type);
     }
 
     /**

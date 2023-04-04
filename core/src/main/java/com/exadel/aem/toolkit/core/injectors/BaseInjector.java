@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * Represents a base for a Sling injector. A descendant of this class must extract an annotation from a Java class
  * member and provide a value that matches the annotation. This value is subsequently assigned to the Java class member
  * by the Sling engine
+ * @param <T> Type of annotation handled by this injector
  * @see Injector
  */
 abstract class BaseInjector<T extends Annotation> implements Injector {
@@ -76,6 +77,17 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
     }
 
     /**
+     * When overridden in an injector class, extracts a value from a {@link SlingHttpServletRequest} or a
+     * {@link Resource} instance
+     * @param adaptable  A {@link SlingHttpServletRequest} or a {@link Resource} instance
+     * @param name       Name of the Java class member to inject the value into
+     * @param type       Type of the receiving Java class member
+     * @param annotation Annotation handled by the current injector
+     * @return A nullable value
+     */
+    abstract Object getValue(Object adaptable, String name, Type type, T annotation);
+
+    /**
      * When overridden in an injector class, retrieves the annotation type processed by this particular injector. Takes
      * into account that there might be several annotations attached to the current Java class member, and an injector
      * can potentially process several annotation types, depending on the setup
@@ -84,16 +96,6 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
      * @return {@code AnnotationType} instance
      */
     abstract T getAnnotationType(AnnotatedElement element);
-
-    /**
-     * When overridden in an injector class, extracts a value from a {@link SlingHttpServletRequest} or a
-     * {@link Resource} instance
-     * @param adaptable A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param name      Name of the Java class member to inject the value into
-     * @param type      Type of receiving Java class member
-     * @return A nullable value
-     */
-    abstract Object getValue(Object adaptable, String name, Type type, T annotation);
 
     /**
      * Outputs a formatted message informing that the injection has not been successful
