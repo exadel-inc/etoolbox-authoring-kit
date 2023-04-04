@@ -53,7 +53,7 @@ public @interface Child {
 
     /**
      * Used to specify the prefix. If set to a non-blank string, the properties of the child/relative resource that
-     * start with the given value will be used for injection, while others will be skipped
+     * starts with the given value will be used for injection, while others will be skipped
      * @return Optional non-blank string
      */
     String prefix() default StringUtils.EMPTY;
