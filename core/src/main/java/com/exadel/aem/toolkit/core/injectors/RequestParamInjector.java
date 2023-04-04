@@ -111,7 +111,7 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
      * Retrieves query parameter(-s) by the given name extracted from the current Sling request
      * @param request {@code SlingHttpServletRequest} instance
      * @param name    The parameter name to filter the request parameters with
-     * @return A non-null string array (can be emp[ty)
+     * @return A non-null string array (can be empty)
      */
     private String[] getRequestParameterValues(SlingHttpServletRequest request, String name) {
         return request
