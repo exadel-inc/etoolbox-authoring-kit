@@ -253,7 +253,7 @@ class FilteredResourceDecorator extends SlingAdaptable implements Resource {
 
     /**
      * Based on the given {@link ValueMap}, produces a new {@code ValueMap} containing only keys matched by the given
-     * {@code prefix} and/or {@code postfix}. The prefix and postfix substrings are removed from the keys oif the
+     * {@code prefix} and/or {@code postfix}. The prefix and postfix substrings are removed from the keys if the
      * resulting value map
      * @param source  The original value map
      * @param prefix  String value representing an optional prefix
