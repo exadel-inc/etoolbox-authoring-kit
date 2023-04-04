@@ -14,6 +14,7 @@
 package com.exadel.aem.toolkit.core.injectors;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -88,8 +89,8 @@ public class ChildInjectorTest {
         assertNotNull(model);
 
         assertNotNull(model.getDefaultChild());
-        assertEquals("Hello", model.getDefaultChild().getTitle());
-        assertEquals("World", model.getDefaultChild().getValue());
+        assertEquals(STANDALONE_ITEM_TITLE, model.getDefaultChild().getTitle());
+        assertEquals(STANDALONE_ITEM_VALUE, model.getDefaultChild().getValue());
 
         assertNotNull(model.getDefaultChildFromConstructor());
         assertEquals(
@@ -316,10 +317,16 @@ public class ChildInjectorTest {
 
         assertEquals(NESTED_RESOURCE_TITLE, nestedViaChild.getNestedTitle());
         assertEquals(NESTED_RESOURCE_VALUE, nestedViaChild.getNestedValue());
-        assertEquals(expectedPath, nestedViaChild.getNestedResource().getPath());
-        assertEquals(ROOT_PAGE_CONTENT_PATH, nestedViaChild.getAncestorResource().getPath());
+        assertEquals(
+            expectedPath,
+            Objects.requireNonNull(nestedViaChild.getNestedResource()).getPath());
+        assertEquals(
+            ROOT_PAGE_CONTENT_PATH,
+            Objects.requireNonNull(nestedViaChild.getAncestorResource()).getPath());
 
         assertEquals(nestedViaChild.getNestedTitle(), nestedViaChildResource.getNestedTitle());
-        assertEquals(nestedViaChild.getNestedResource().getPath(), nestedViaChildResource.getNestedResource().getPath());
+        assertEquals(
+            nestedViaChild.getNestedResource().getPath(),
+            Objects.requireNonNull(nestedViaChildResource.getNestedResource()).getPath());
     }
 }
