@@ -36,7 +36,7 @@ import com.exadel.aem.toolkit.core.injectors.filters.NonNullFilter;
  * previous. Use "{@code ..}" to traverse to a parent resource. Use "{@code ./}" to refer to the current resource
  * itself.
  * <p>Note: unlike in {@link Child}, one does not specify the precise Sling object to inject but instead
- * the "parent" object * children of which are injected.</p>
+ * the "parent" object children of which are injected.</p>
  * <p>You can choose to use only a subset of resource properties used for injection by specifying their common
  * {@code prefix} and/or {@code postfix}.</p>
  * <p>Also you can provide one or more references to classes serving as filters for the children/related resources.

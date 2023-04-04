@@ -81,7 +81,7 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
      * {@link Resource} instance
      * @param adaptable  A {@link SlingHttpServletRequest} or a {@link Resource} instance
      * @param name       Name of the Java class member to inject the value into
-     * @param type       Type of receiving Java class member
+     * @param type       Type of the receiving Java class member
      * @param annotation Annotation handled by the current injector
      * @return A nullable value
      */
