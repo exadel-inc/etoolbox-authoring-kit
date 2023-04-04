@@ -78,7 +78,7 @@ public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
     }
 
     /**
-     * Extracts an attribute value from the given {@link SlingHttpServletRequest} object and casts it to the given type
+     * Extracts a suffix from the given {@link SlingHttpServletRequest} object and casts it to the given type
      * @param request A {@code SlingHttpServletRequest} instance
      * @param type    Type of the returned value
      * @return A nullable value

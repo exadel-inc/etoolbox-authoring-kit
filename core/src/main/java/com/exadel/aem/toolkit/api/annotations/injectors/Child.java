@@ -19,6 +19,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Source;
 import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
 
@@ -30,10 +32,10 @@ import com.exadel.aem.toolkit.core.injectors.ChildInjector;
  * "{@code ..}" to traverse to a parent resource. Use "{@code ./}" to refer to the current resource itself.
  * <p>You can choose to use only a subset of properties of the given resource by specifying their common {@code prefix}
  * and/or {@code postfix}.</p>
- * <p>The type of the annotated Java class member is expected to be {@link org.apache.sling.api.resource.Resource} or a
- * class adaptable from {@code Resource}. If and array, a {@code Collection}, {@code List}, or {@code Set} is specified
- * instead of a simple type, an array/collection consisting of just one member is injected. Otherwise, nothing is
- * injected
+ * <p>The type of the annotated Java class member is expected to be {@link Resource} or a
+ * class adaptable from {@code Resource} or else {@link SlingHttpServletRequest}. If an array, a {@code Collection},
+ * {@code List}, or {@code Set} is specified instead of a simple type, an array/collection consisting of just one member
+ * is injected. Otherwise, nothing is injected
  * @see Children
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})

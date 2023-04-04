@@ -17,9 +17,11 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.List;
 import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Source;
 import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
@@ -39,10 +41,9 @@ import com.exadel.aem.toolkit.core.injectors.filters.NonNullFilter;
  * {@code prefix} and/or {@code postfix}.</p>
  * <p>Also you can provide one or more references to classes serving as filters for the children/related resources.
  * These classes must implement {@link Predicate}. (See, e.g., {@link NonNullFilter}).
- * <p>The underlying Java class member must be or an array type or else {@link java.util.Collection},
- * {@link java.util.List} or {@link java.util.Set}. A member of array/collection must be of type
- * {@link org.apache.sling.api.resource.Resource} or else a class that is adaptable from {@code Resource}. Otherwise,
- * nothing is injected
+ * <p>The underlying Java class member must be an array or else {@link java.util.Collection}, {@link List} or
+ * {@link java.util.Set}. A member of array/collection must be of type {@link Resource} or else a class
+ * that is adaptable from {@code Resource} or {@link SlingHttpServletRequest}. Otherwise, nothing is injected
  * @see Child
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})

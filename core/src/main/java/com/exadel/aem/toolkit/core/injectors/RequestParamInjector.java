@@ -81,7 +81,7 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
     }
 
     /**
-     * Extracts an attribute value from the given {@link SlingHttpServletRequest} object and casts it to the given type
+     * Extracts a parameter value from the given {@link SlingHttpServletRequest} object and casts it to the given type
      * @param request A {@code SlingHttpServletRequest} instance
      * @param name    Name of the parameter
      * @param type    Type of the returned value
