@@ -86,11 +86,11 @@ public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
     Object getValue(SlingHttpServletRequest request, Type type) {
         if (Resource.class.equals(type)
             || Object.class.equals(type)
-            || TypeUtil.isSupportedCollectionOrArrayOfType(type, Resource.class)) {
+            || TypeUtil.isSupportedCollectionOrArrayOfType(type, Resource.class, true)) {
             return CastUtil.toType(request.getRequestPathInfo().getSuffixResource(), type);
         }
         if (String.class.equals(type)
-            || TypeUtil.isSupportedCollectionOrArrayOfType(type, String.class)) {
+            || TypeUtil.isSupportedCollectionOrArrayOfType(type, String.class, true)) {
             return CastUtil.toType(request.getRequestPathInfo().getSuffix(), type);
         }
         return null;

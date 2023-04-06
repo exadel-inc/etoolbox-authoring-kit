@@ -91,7 +91,7 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
 
         if (RequestParameter.class.equals(type) || Object.class.equals(type)) {
             return request.getRequestParameter(name);
-        } else if (TypeUtil.isSupportedCollectionOfType(type, RequestParameter.class)) {
+        } else if (TypeUtil.isSupportedCollectionOfType(type, RequestParameter.class, false)) {
             return request.getRequestParameterList();
         } else if (TypeUtil.isArrayOfType(type, RequestParameter.class)) {
             return request.getRequestParameters(name);

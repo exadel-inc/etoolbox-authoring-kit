@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -50,27 +51,32 @@ public class TypeUtil {
      * parameter type matches the list of allowed value types
      * @param value  {@code Type} reference that matches a Java class member
      * @param sample {@code Class} object representing the parameter type
+     * @param strict If set to {@code true}, the {@code value} must be exactly {@code Collection}, {@code List} or
+     *               {@code Set}. Otherwise, the value just needs to be assignable to a collection type
      * @return True or false
      */
-    public static boolean isSupportedCollectionOfType(Type value, Class<?> sample) {
-        if (!isSupportedCollection(value)) {
+    public static boolean isSupportedCollectionOfType(Type value, Class<?> sample, boolean strict) {
+        return isSupportedCollectionOfType(value, componentType -> ClassUtils.isAssignable(componentType, sample), strict);
+    }
+
+    /**
+     * Retrieves whether the provided {@code Type} of Java class member is a parametrized collection type, and its
+     * parameter type matches the list of allowed value types
+     * @param value  {@code Type} reference that matches a Java class member
+     * @param sample A routine that tests whether the array/collection element matches the requirement
+     * @param strict If set to {@code true}, the {@code value} must be exactly {@code Collection}, {@code List} or
+     *               {@code Set}. Otherwise, the value just needs to be assignable to a collection type
+     * @return True or false
+     */
+    public static boolean isSupportedCollectionOfType(Type value, Predicate<Class<?>> sample, boolean strict) {
+        if (!isSupportedCollection(value, strict)) {
             return false;
         }
         if (sample == null) {
             return true;
         }
         Class<?> elementType = getElementType(value);
-        return ClassUtils.isAssignable(elementType, sample);
-    }
-
-    /**
-     * Gets whether the provided {@code Type} object represents a collection of type {@link Collection}, {@link List} or
-     * {@link Set}
-     * @param value {@code Type} object
-     * @return True or false
-     */
-    public static boolean isSupportedCollection(Type value) {
-        return isSupportedCollection(value, false);
+        return sample.test(elementType);
     }
 
     /**
@@ -79,10 +85,10 @@ public class TypeUtil {
      * @param value  {@code Type} object
      * @param strict If set to {@code true}, the {@code value} must be exactly {@code Collection}, {@code List} or
      *               {@code Set}. This flag is useful, e.g., when checking an injection target field for compliance.
-     *               Otherwise. the value just needs to be assignable to a collection type
+     *               Otherwise, the value just needs to be assignable to a collection type
      * @return True or false
      */
-    static boolean isSupportedCollection(Type value, boolean strict) {
+    public static boolean isSupportedCollection(Type value, boolean strict) {
         if (!(value instanceof Class<?>) && !(value instanceof ParameterizedType)) {
             return false;
         }
@@ -106,14 +112,24 @@ public class TypeUtil {
      * @return True or false
      */
     public static boolean isArrayOfType(Type value, Class<?> sample) {
+        return isArrayOfType(value, componentType -> ClassUtils.isAssignable(componentType, sample));
+    }
+
+    /**
+     * Gets whether the provided {@code Type} represents a Java array of the provided type
+     * @param value  {@code Type} reference that matches a Java class member
+     * @param sample A routine that tests whether the array/collection element matches the requirement
+     * @return True or false
+     */
+    public static boolean isArrayOfType(Type value, Predicate<Class<?>> sample) {
         if (!(value instanceof Class<?>) || !((Class<?>) value).isArray()) {
             return false;
         }
         if (sample == null) {
             return true;
         }
-        Class<?> thisComponentType = ((Class<?>) value).getComponentType();
-        return ClassUtils.isAssignable(thisComponentType, sample);
+        Class<?> componentType = ((Class<?>) value).getComponentType();
+        return sample.test(componentType);
     }
 
     /**
@@ -128,22 +144,42 @@ public class TypeUtil {
     /**
      * Gets whether the provided {@code Type} object represents either a collection of type {@link Collection},
      * {@link List} or {@link Set}, or else an array
-     * @param value {@code Type} object
+     * @param value  {@code Type} object
+     * @param strict If set to {@code true}, and {@code value} is a collection type, the {@code value} must be exactly
+     *               {@code Collection}, {@code List} or {@code Set}. Otherwise, the value just needs to be assignable
+     *               to a collection type. This flag does not have meaning if {@code value} is not a collection type
      * @return True or false
      */
-    public static boolean isSupportedCollectionOrArray(Type value) {
-        return isSupportedCollection(value) || isArray(value);
+    public static boolean isSupportedCollectionOrArray(Type value, boolean strict) {
+        return isSupportedCollection(value, strict) || isArray(value);
     }
 
     /**
      * Gets whether the provided {@code Type} object represents either a collection of type {@link Collection},
      * {@link List} or {@link Set}, or else an array of elements having the provided type
      * @param value  {@code Type} object
-     * @param sample {@code Class} object that the array type must match
+     * @param sample {@code Class} object that the array/collection type must match
+     * @param strict If set to {@code true}, and {@code value} is a collection type, the {@code value} must be exactly
+     *               {@code Collection}, {@code List} or {@code Set}. Otherwise, the value just needs to be assignable
+     *               to a collection type. This flag does not have meaning if {@code value} is not a collection type
      * @return True or false
      */
-    public static boolean isSupportedCollectionOrArrayOfType(Type value, Class<?> sample) {
-        return isSupportedCollectionOfType(value, sample) || isArrayOfType(value, sample);
+    public static boolean isSupportedCollectionOrArrayOfType(Type value, Class<?> sample, boolean strict) {
+        return isSupportedCollectionOrArrayOfType(value, cls -> ClassUtils.isAssignable(sample, cls), strict);
+    }
+
+    /**
+     * Gets whether the provided {@code Type} object represents either a collection of type {@link Collection},
+     * {@link List} or {@link Set}, or else an array of elements having the provided type
+     * @param value  {@code Type} object
+     * @param sample A routine that tests whether the array/collection element matches the requirement
+     * @param strict If set to {@code true}, and {@code value} is a collection type, the {@code value} must be exactly
+     *               {@code Collection}, {@code List} or {@code Set}. Otherwise, the value just needs to be assignable
+     *               to a collection type. This flag does not have meaning if {@code value} is not a collection type
+     * @return True or false
+     */
+    public static boolean isSupportedCollectionOrArrayOfType(Type value, Predicate<Class<?>> sample, boolean strict) {
+        return isSupportedCollectionOfType(value, sample, strict) || isArrayOfType(value, sample);
     }
 
     // Maps
@@ -195,7 +231,7 @@ public class TypeUtil {
         if (value instanceof Class<?> && ((Class<?>) value).isArray()) {
             return ((Class<?>) value).getComponentType();
         }
-        if (!isSupportedCollection(value)) {
+        if (!isSupportedCollection(value, false)) {
             return null;
         }
         Type currentType = value;
