@@ -77,7 +77,7 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
      * {@inheritDoc}
      */
     @Override
-    public RequestAttribute getAnnotationType(AnnotatedElement element) {
+    public RequestAttribute getManagedAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(RequestAttribute.class);
     }
 

@@ -66,7 +66,7 @@ public class ChildInjector extends BaseInjector<Child> {
      * {@inheritDoc}
      */
     @Override
-    Child getAnnotationType(AnnotatedElement element) {
+    Child getManagedAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(Child.class);
     }
 

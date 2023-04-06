@@ -20,6 +20,7 @@ import org.junit.runners.Suite.SuiteClasses;
 import com.exadel.aem.toolkit.core.injectors.ChildInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.ChildrenInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.EToolboxListInjectorTest;
+import com.exadel.aem.toolkit.core.injectors.EnumValueInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.I18nInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.RequestAttributeInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.RequestParamInjectorTest;
@@ -56,6 +57,7 @@ import com.exadel.aem.toolkit.core.policymanagement.filters.TopLevelPolicyFilter
     EToolboxListInjectorTest.class,
     ChildInjectorTest.class,
     ChildrenInjectorTest.class,
+    EnumValueInjectorTest.class,
     FilteredResourceDecoratorTest.class,
 
     OptionProviderTest.class,

@@ -65,7 +65,7 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
      * {@inheritDoc}
      */
     @Override
-    public EToolboxList getAnnotationType(AnnotatedElement element) {
+    public EToolboxList getManagedAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(EToolboxList.class);
     }
 
@@ -105,7 +105,7 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
      * returned
      */
     private List<?> getList(ResourceResolver resourceResolver, String path, Type type) {
-        return TypeUtil.isSupportedCollectionOfType(type, Resource.class)
+        return TypeUtil.isSupportedCollectionOfType(type, Resource.class, false)
             ? ListHelper.getResourceList(resourceResolver, path)
             : ListHelper.getList(resourceResolver, path, getTypeArgument(type, 0));
     }
