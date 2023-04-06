@@ -59,7 +59,7 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
      * {@inheritDoc}
      */
     @Override
-    public RequestParam getAnnotationType(AnnotatedElement element) {
+    public RequestParam getManagedAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(RequestParam.class);
     }
 

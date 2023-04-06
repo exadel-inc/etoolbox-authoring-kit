@@ -79,7 +79,7 @@ public class ChildrenInjector extends BaseInjector<Children> {
      * {@inheritDoc}
      */
     @Override
-    Children getAnnotationType(AnnotatedElement element) {
+    Children getManagedAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(Children.class);
     }
 
@@ -94,7 +94,7 @@ public class ChildrenInjector extends BaseInjector<Children> {
             return null;
         }
 
-        if (!TypeUtil.isSupportedCollectionOrArray(type)) {
+        if (!TypeUtil.isSupportedCollectionOrArray(type, true)) {
             return null;
         }
 

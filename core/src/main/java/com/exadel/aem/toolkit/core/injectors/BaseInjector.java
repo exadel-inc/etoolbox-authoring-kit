@@ -63,14 +63,14 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
         @Nonnull AnnotatedElement element,
         @Nonnull DisposalCallbackRegistry callbackRegistry) {
 
-        T annotation = getAnnotationType(element);
+        T annotation = getManagedAnnotation(element);
         if (Objects.isNull(annotation)) {
             return null;
         }
 
         Object value = getValue(adaptable, name, type, annotation);
         if (Objects.isNull(value)) {
-            logException(element, annotation);
+            logNullValue(element, annotation);
         }
 
         return value;
@@ -88,28 +88,28 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
     abstract Object getValue(Object adaptable, String name, Type type, T annotation);
 
     /**
-     * When overridden in an injector class, retrieves the annotation type processed by this particular injector. Takes
-     * into account that there might be several annotations attached to the current Java class member, and an injector
-     * can potentially process several annotation types, depending on the setup
+     * When overridden in an injector class, retrieves the annotation processed by this particular injector. Takes into
+     * account that there might be several annotations attached to the current Java class member, and an injector can
+     * potentially process several annotation types, depending on the setup
      * @param element {@link AnnotatedElement} instance that facades the Java class member and allows retrieving
      *                annotations
-     * @return {@code AnnotationType} instance
+     * @return {@code Annotation} instance
      */
-    abstract T getAnnotationType(AnnotatedElement element);
+    abstract T getManagedAnnotation(AnnotatedElement element);
 
     /**
      * Outputs a formatted message informing that the injection has not been successful
      * @param annotatedElement {@link AnnotatedElement} instance that facades the Java class member and allows
      *                         retrieving annotations
-     * @param annotationType   Type of annotation that they attempted to retrieve
+     * @param annotation       The annotation that they attempted to retrieve
      */
-    private void logException(AnnotatedElement annotatedElement, T annotationType) {
-        if (annotationType instanceof Member) {
+    private void logNullValue(AnnotatedElement annotatedElement, T annotation) {
+        if (annotatedElement instanceof Member) {
             String className = ((Member) annotatedElement).getDeclaringClass().getName();
             String memberName = ((Member) annotatedElement).getName();
-            LOG.debug(INJECTION_ERROR_MESSAGE, annotationType, className, memberName);
+            LOG.debug(INJECTION_ERROR_MESSAGE, annotation, className, memberName);
         } else {
-            LOG.debug(BRIEF_INJECTION_ERROR_MESSAGE, annotationType);
+            LOG.debug(BRIEF_INJECTION_ERROR_MESSAGE, annotation);
         }
     }
 }

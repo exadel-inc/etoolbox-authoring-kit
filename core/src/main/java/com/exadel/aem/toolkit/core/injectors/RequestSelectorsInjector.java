@@ -56,7 +56,7 @@ public class RequestSelectorsInjector extends BaseInjector<RequestSelectors> {
      * {@inheritDoc}
      */
     @Override
-    public RequestSelectors getAnnotationType(AnnotatedElement element) {
+    public RequestSelectors getManagedAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(RequestSelectors.class);
     }
 

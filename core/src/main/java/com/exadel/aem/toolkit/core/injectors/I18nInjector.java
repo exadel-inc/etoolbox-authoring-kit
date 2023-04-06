@@ -74,7 +74,7 @@ public class I18nInjector extends BaseInjector<I18N> {
      * {@inheritDoc}
      */
     @Override
-    public I18N getAnnotationType(AnnotatedElement element) {
+    public I18N getManagedAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(I18N.class);
     }
 

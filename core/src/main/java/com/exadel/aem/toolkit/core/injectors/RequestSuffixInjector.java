@@ -56,7 +56,7 @@ public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
      * {@inheritDoc}
      */
     @Override
-    public RequestSuffix getAnnotationType(AnnotatedElement element) {
+    public RequestSuffix getManagedAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(RequestSuffix.class);
     }
 
