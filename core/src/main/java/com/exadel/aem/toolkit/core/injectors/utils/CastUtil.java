@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 import org.apache.commons.collections4.IterableUtils;
@@ -47,11 +48,25 @@ public class CastUtil {
 
     /**
      * Attempts to cast the given value to the provided {@code Type}. Designed for use with Sling injectors
-     * @param value An arbitrary value
-     * @param type  {@link Type} reference; usually reflects the type of Java class member
+     * @param value     An arbitrary value
+     * @param type      A {@link Type} reference; usually reflects the type of Java class member
      * @return Transformed value; returns null in case type casting is not possible
      */
     public static Object toType(Object value, Type type) {
+        return toType(value, type, CastUtil::toInstanceOfType);
+    }
+
+    /**
+     * Attempts to cast the given value to the provided {@code Type}. Designed for use with Sling injectors
+     * @param value     An arbitrary value
+     * @param type      A {@link Type} reference; usually reflects the type of Java class member
+     * @param converter A function that we use to convert a single entry of the provided value into the given type.
+     *                  Considering the given value is an array or collection, the {@code converter} must provide
+     *                  processing for every separate array's (collection's) element. If the given value is a singleton
+     *                  object or primitive, the {@code converter} processes it as is
+     * @return Transformed value; returns null in case type casting is not possible
+     */
+    public static Object toType(Object value, Type type, BiFunction<Object, Type, Object> converter) {
         if (value == null) {
             return null;
         }
@@ -59,28 +74,30 @@ public class CastUtil {
         Class<?> elementType = TypeUtil.getElementType(type);
 
         if (TypeUtil.isArray(type)) {
-            return toArray(value, elementType);
+            return toArray(value, elementType, converter);
         }
 
         if (TypeUtil.isSupportedCollection(type, true)) {
             return Set.class.equals(TypeUtil.getRawType(type))
-                ? toCollection(value, elementType, LinkedHashSet::new)
-                : toCollection(value, elementType, ArrayList::new);
+                ? toCollection(value, elementType, converter, LinkedHashSet::new)
+                : toCollection(value, elementType, converter, ArrayList::new);
         }
 
         if (Object.class.equals(type)) {
-            return toMatchingType(value, type);
+            return converter.apply(value, type);
         }
-        return toMatchingType(extractFirstElement(value), type);
+        return converter.apply(extractFirstElement(value), type);
     }
 
     /**
-     * Called by {@link CastUtil#toType(Object, Type)} to transform the given value into an array of the given type
-     * @param value An arbitrary non-null value
-     * @param type  {@link Type} reference; usually reflects the type of Java class member
+     * Transforms the given value into an array of the given type. If the source value is not array-like, a singleton
+     * array is created
+     * @param value     An arbitrary non-null value
+     * @param type      {@link Type} reference; usually reflects the type of Java class member
+     * @param converter A function that we use to convert a single entry of the provided value into the given type
      * @return A non-null array instance; contains nullable entries
      */
-    private static Object toArray(Object value, Class<?> type) {
+    private static Object toArray(Object value, Class<?> type, BiFunction<Object, Type, Object> converter) {
         int length = 1;
         if (value.getClass().isArray()) {
             length = Array.getLength(value);
@@ -90,54 +107,59 @@ public class CastUtil {
         Object result = Array.newInstance(type, length);
         if (value.getClass().isArray()) {
             for (int i = 0; i < length; i++) {
-                Array.set(result, i, toType(Array.get(value, i), type));
+                Array.set(result, i, toType(Array.get(value, i), type, converter));
             }
         } else if (value instanceof Collection) {
             int i = 0;
             for (Object entry : (Collection<?>) value) {
-                Array.set(result, i++, toType(entry, type));
+                Array.set(result, i++, converter.apply(entry, type));
             }
         } else {
-            Array.set(result, 0, toType(value, type));
+            Array.set(result, 0, converter.apply(value, type));
         }
         return result;
     }
 
     /**
-     * Called by {@link CastUtil#toType(Object, Type)} to transform the given value into a {@code List}  or a
-     * {@code Set} containing entries of the given type
-     * @param value   An arbitrary non-null value
-     * @param type    {@link Type} reference; usually reflects the type of Java class member
-     * @param factory A reference to the routine that produces a particular {@code List} or {@code Set} instance
+     * Transforms the given value into a {@code List} or a {@code Set} containing entries of the given type
+     * @param value     An arbitrary non-null value
+     * @param type      {@link Type} reference; usually reflects the type of Java class member
+     * @param converter A function that we use to convert a single entry of the provided value into the given type
+     * @param factory   A reference to the routine that produces a particular {@code List} or {@code Set} instance
      * @return A non-null {@code List} or {@code Set} instance; contains nullable entries
      */
-    private static Object toCollection(Object value, Class<?> type, Supplier<Collection<Object>> factory) {
+    private static Object toCollection(
+        Object value,
+        Class<?> type,
+        BiFunction<Object, Type, Object> converter,
+        Supplier<Collection<Object>> factory) {
+
         Collection<Object> result = factory.get();
         if (value.getClass().isArray()) {
             int length = Array.getLength(value);
             for (int i = 0; i < length; i++) {
-                result.add(toType(Array.get(value, i), type));
+                result.add(converter.apply(Array.get(value, i), type));
             }
         } else if (value instanceof Collection) {
             for (Object entry : (Collection<?>) value) {
-                result.add(toType(entry, type));
+                result.add(converter.apply(entry, type));
             }
         } else {
-            result.add(toType(value, type));
+            result.add(converter.apply(value, type));
         }
         return result;
     }
 
     /**
-     * Called by {@link CastUtil#toType(Object, Type)} to "flatten" the given argument value. If the argument is an
-     * array or collection, the first element is returned. Otherwise, the given value itself is returned
+     * This method is used to "flatten" the given argument value. If the argument is an array or collection, the first
+     * element is returned. Otherwise, the given value itself is returned
      * @param source The object to extract an element from; a non-null value is expected
      * @return Object reference
      */
     private static Object extractFirstElement(Object source) {
         if (source.getClass().isArray() && Array.getLength(source) > 0) {
             return Array.get(source, 0);
-        } else if (TypeUtil.isSupportedCollection(source.getClass())
+        } else if (TypeUtil.isSupportedCollection(source.getClass(), false)
             && !IterableUtils.isEmpty((Collection<?>) source)) {
             Iterator<?> iterator = ((Collection<?>) source).iterator();
             if (iterator.hasNext()) {
@@ -148,18 +170,21 @@ public class CastUtil {
     }
 
     /**
-     * Called by {@link CastUtil#toType(Object, Type)} to further adapt the passed value to the given type if there is
-     * type compatibility. E.g., when an {@code int} value is passed, and the receiving type is {@code long}, or else
-     * the passed value is an implementation of an interface, and the receiving type is the interface itself. The
-     * adaptation is made to increase the probability of successful value injection
+     * Called by {@code CastUtil#toType} to further adapt the passed value to the given type if there is type
+     * compatibility. E.g., when an {@code int} value is passed, and the receiving type is {@code long}, or else the
+     * passed value is an implementation of an interface, and the receiving type is the interface itself. The adaptation
+     * is made to increase the probability of successful value injection
      * @param value An arbitrary non-null value
-     * @param type  {@link Type} reference; usually reflects the type of Java class member
+     * @param type  {@link Type} reference. When passed to this method, {@code type} is expected to be singular (not an
+     *              array or collection)
      * @return Usually, a transformed value. Returns an original one if type casting is not possible or not needed
      */
-    private static Object toMatchingType(Object value, Type type) {
-        if (value.getClass().equals(type) || type instanceof ParameterizedType) {
+    private static Object toInstanceOfType(Object value, Type type) {
+        if (value == null || value.getClass().equals(type) || type instanceof ParameterizedType) {
             return value;
         }
+        assert type instanceof Class<?>;
+
         if ((StringUtils.equalsIgnoreCase(value.toString(), Boolean.TRUE.toString())
             || StringUtils.equalsIgnoreCase(value.toString(), Boolean.FALSE.toString()))
             && ClassUtils.primitiveToWrapper((Class<?>) type).equals(Boolean.class)) {
@@ -174,7 +199,7 @@ public class CastUtil {
             effectiveValue = NumberUtils.createNumber(stringifiedValue);
         }
         if (ClassUtils.isPrimitiveOrWrapper(effectiveValue.getClass()) && ClassUtils.isPrimitiveOrWrapper((Class<?>) type)) {
-            return toMatchingPrimitive(effectiveValue, type);
+            return toNumeric(effectiveValue, type);
         }
         if (ClassUtils.isAssignable(effectiveValue.getClass(), (Class<?>) type)) {
             return ((Class<?>) type).cast(effectiveValue);
@@ -183,14 +208,14 @@ public class CastUtil {
     }
 
     /**
-     * Called by {@link CastUtil#toMatchingType(Object, Type)} to adapt the passed primitive or boxed value to the given
-     * type. E.g., when an {@code int} value is passed and the receiving type is {@code long}
+     * Adapts the passed primitive or boxed numeric value to the given type. E.g., when an {@code int} value is passed
+     * and the receiving type is {@code long}
      * @param value An arbitrary object
      * @param type  {@link Type} reference; usually reflects the type of Java class member
      * @return Usually, a transformed value. Returns an original one if type casting is not possible, or {@code 0} if
      * {@code null} was passed
      */
-    private static Object toMatchingPrimitive(Object value, Type type) {
+    private static Object toNumeric(Object value, Type type) {
         if (ClassUtils.isAssignable((Class<?>) type, Integer.class)) {
             return value != null ? toInt(value) : 0;
         }
@@ -204,7 +229,7 @@ public class CastUtil {
     }
 
     /**
-     * Called by {@link CastUtil#toMatchingPrimitive(Object, Type)} to try and cast the given value to {@code int}
+     * Attempts to cast the given value to {@code int}
      * @param value An arbitrary non-null value. Java primitive number or a boxed number is expected
      * @return A transformed value or {@code 0}
      */
@@ -231,7 +256,7 @@ public class CastUtil {
     }
 
     /**
-     * Called by {@link CastUtil#toMatchingPrimitive(Object, Type)} to try and cast the given value to {@code long}
+     * Attempts to cast the given value to {@code long}
      * @param value An arbitrary non-null value. Java primitive number or a boxed number is expected
      * @return A transformed value or {@code 0}
      */
@@ -246,7 +271,7 @@ public class CastUtil {
     }
 
     /**
-     * Called by {@link CastUtil#toMatchingPrimitive(Object, Type)} to try and cast the given value to {@code double}
+     * Attempts to cast the given value to {@code double}
      * @param value An arbitrary non-null value, a Java primitive number, or a boxed number is expected
      * @return A transformed value or {@code 0}
      */
