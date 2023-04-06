@@ -51,7 +51,7 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
             for (int i = 0; i < Array.getLength(payload); i++) {
                 request.addRequestParameter(ATTRIBUTE_VALUE, Array.get(payload, i).toString());
             }
-        } else if (TypeUtil.isSupportedCollection(payload.getClass())) {
+        } else if (TypeUtil.isSupportedCollection(payload.getClass(), false)) {
             for (Object next : (Collection<?>) payload) {
                 request.addRequestParameter(ATTRIBUTE_VALUE, next.toString());
             }
@@ -181,7 +181,7 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
         if (arrayOrCollection.getClass().isArray() && Array.getLength(arrayOrCollection) > 0) {
             return Array.get(arrayOrCollection, 0);
         }
-        if (TypeUtil.isSupportedCollection(arrayOrCollection.getClass())
+        if (TypeUtil.isSupportedCollection(arrayOrCollection.getClass(), false)
             && !IterableUtils.isEmpty((Collection<?>) arrayOrCollection)) {
             return IterableUtils.get((Collection<?>) arrayOrCollection, 0);
         }

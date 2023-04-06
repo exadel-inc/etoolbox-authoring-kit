@@ -27,7 +27,7 @@ import org.osgi.service.component.annotations.Component;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 
 /**
- * This is a testing scope injector that hooks ot {@link RequestProperty} to make it possible to use the same testcase
+ * This is a testing scope injector that hooks on {@link RequestProperty} to make it possible to use the same testcase
  * Sling models for different injection scenarios
  */
 @Component(

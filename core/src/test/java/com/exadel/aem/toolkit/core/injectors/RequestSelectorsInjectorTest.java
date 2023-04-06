@@ -141,7 +141,7 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
         String result = value.toString();
         if (value.getClass().isArray()) {
             result =  ArrayUtils.toString(value);
-        } else if (TypeUtil.isSupportedCollection(value.getClass())) {
+        } else if (TypeUtil.isSupportedCollection(value.getClass(), false)) {
             result = StringUtils.join((Iterable<?>) value, CoreConstants.SEPARATOR_COMMA);
         }
         return StringUtils.strip(result, ARRAY_BRACKETS)

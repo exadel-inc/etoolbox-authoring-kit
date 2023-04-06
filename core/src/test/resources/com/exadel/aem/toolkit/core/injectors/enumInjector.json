@@ -2,25 +2,15 @@
   "jcr:primaryType": "cq:Page",
   "jcr:content": {
     "jcr:primaryType": "cq:PageContent",
-    "jcr:title": "Sample"
-  },
-  "page": {
-    "jcr:primaryType": "cq:Page",
-    "jcr:content": {
-      "jcr:primaryType": "cq:PageContent",
-      "jcr:title": "Sample Page",
-      "resource": {
-        "jcr:primaryType": "nt:unstructured",
-        "plainOldEnumField": "VAL1",
-        "plainOldEnumFieldAsConstructorArgument": "VAL1",
-        "enumValueByFieldName": "value1",
-        "custom": "VAL2",
-        "custom2": "value2",
-        "enumValueWithIntegerField": 3,
-        "enumValueWithIntField": 3,
-        "enumFromConstructor": "VAL1",
-        "enumFromMethod": "VAL2"
-      }
+    "jcr:title": "Sample",
+    "resource": {
+      "jcr:primaryType": "nt:unstructured",
+      "value": "YELLOW",
+      "arrayValue": ["YELLOW", "orange"],
+      "customString": "#0000FF",
+      "customStringArray": ["#FFFF00", "#FFA500"],
+      "customInt": 65280,
+      "customIntArray": [16776960, 16753920]
     }
   }
 }
