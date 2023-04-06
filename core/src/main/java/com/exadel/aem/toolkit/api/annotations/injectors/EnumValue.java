@@ -32,10 +32,10 @@ import com.exadel.aem.toolkit.core.injectors.EnumValueInjector;
  * <p>The annotated Java class member is expected to be an enum type. It can also be an array, a {@link Collection},
  * a {@link List}, or a {@link Set} of enum constants.</p>
  * <p>The source value for an enum constant is extracted from the current resource's {@code ValueMap} in the same
- * manner that the injector for the standard @{@link ValueMapValue} would do. The value map value needs to be a string
- * that is compared to enum constants' {@code name()} values, then to the return values of enum constants'
- * {@code toString()} methods, or else to the return value of a specified arbitrary enum method/field. The comparison is
- * case-insensitive</p>
+ * manner that the injector for the standard @{@link ValueMapValue} would do. The value map value taken in the string
+ * form is compared to enum constants' {@code name()} values, then to the return values of enum constants'
+ * {@code toString()} methods. It can also be compared to the return value of a specified arbitrary enum method/field.
+ * The comparison is case-insensitive</p>
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
