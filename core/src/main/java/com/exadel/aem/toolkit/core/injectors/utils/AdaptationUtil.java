@@ -23,7 +23,8 @@ import org.apache.sling.api.wrappers.SlingHttpServletRequestWrapper;
 
 /**
  * Contains utility methods for adaptation and conversion of entities involved in Sing injectors processing.
- * <p><u>Note</u>: This class is not a part of the public API</p>
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  */
 public class AdaptationUtil {
 

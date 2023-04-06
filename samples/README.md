@@ -39,7 +39,7 @@ This project contains examples of using *Exadel Toolbox Authoring Kit* (*ToolKit
 ## Project structure and installation
 The project consists of three modules: the **core** module containing *ToolKit*-annotated Sling models; the **apps** module that contains matching AEM components; and the **content** module used to deploy sandboxing pages and supplementary AEM entities.
 
-To compile and install the project's artifacts to the local Maven repository use `mvn clean install` command. To deploy the installation to an arbitrary AEM instance, run `mvn clean install -Pinstall-samples`.
+To compile and install the project's artifacts to the local Maven repository use `mvn clean install` command. To deploy the installation to an arbitrary AEM instance, run `mvn clean install -PautoInstallPackage`.
 
 The content is deployed to *http://localhost:4502* by default; however you can control the target with the additional command line switches like `-Dhost=some_host`, `-Dport=XXXX`.
 

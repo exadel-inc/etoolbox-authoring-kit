@@ -26,11 +26,20 @@ import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
 public interface PluginRuntimeContext extends RuntimeContext {
 
     /**
+     * Provides the settings specified for the current plugin instance
+     * @return A non-null {@link PluginSettings} instance
+     */
+    PluginSettings getSettings();
+
+    /**
      * Provides the reference to the active {@link ReflectionContextHelper} instance
      * @return {@code PluginReflectionUtility} initialized for this context
      */
     ReflectionContextHelper getReflection();
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     XmlContextHelper getXmlUtility();
 

@@ -49,11 +49,11 @@ class EmptyCqEditConfigWriter extends PackageEntryWriter {
     /**
      * Gets whether the current {@code Class} is eligible for populating a {@code _cq_editConfig.xml} structure. This
      * is a stub implementation designed to always return {@code true}
-     * @param componentClass The {@code Class} under consideration
+     * @param source The {@code Source} that refers to a class under consideration
      * @return Boolean value
      */
     @Override
-    boolean canProcess(Class<?> componentClass) {
+    boolean canProcess(Source source) {
         return true;
     }
 

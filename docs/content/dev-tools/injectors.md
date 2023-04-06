@@ -260,9 +260,47 @@ The `@RequestSuffix` is used to inject a Sling request suffix. If the annotated 
 Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
 constructor, write it like `(@RequestSuffix @Named String argument)` and annotate the constructor itself with `@Inject`.
 
+### Injector for request attributes
+
+The `@RequestAttribute` is an advanced variant of the Sling models API annotation sharing the same name. Same as its Sling API prototype, it allows to a assign a value of the request's attribute to a Java class member. It is more universal and "forgiving" as it comes to value types, though.
+
+With EAK Authoring Kit's `@RequestAttrbiute`, you can
+- Inject attribute values of any reference or primitive type. Boxed types are cast as needed;
+- Inject arrays and `List`-s / `Set`-s. If the attribute value is of an array type, it can be injected into either an array-typed or `List`/`Set`-typed class member. Similarly, a collection can be injected into either an array, a `List`. or a `Set`;
+- Inject into a Java class member of a "widening" numeric type (e.g. an `int` value into a `long`-typed or `double`-typed field, etc.);
+- Inject an implementation of an interface or an abstract class into a Java class member typed as the ancestor class / interface.
+
+A usual case for `@RequestAttribute` is processing data passed via `data-sly-use` like in the following sample:
+```html
+<sly data-sly-use.model0="${'com.acme.project.MyModel' @ foo='Hello World', bar=42}"></sly>
+<sly data-sly-use.model1="${'com.acme.project.MyModel' @ foo='Hello World', bar=[42, 43]}"></sly>
+```
+Both instructions would work well with a model designed like the following:
+```java
+@Model(adaptables = SlingHttpServletRequest.class)
+public class MyModel {
+
+    @RequestAttribute
+    private CharSequence foo; // injects "Hello World" in both cases
+
+    @RequestAttribute(name = "foo")
+    private String foo2; // injects "Hello World" in both cases
+
+    @RequestAttrbute
+    private int bar; // injects 42 in the first case, 0 in the second case
+
+    @RequestAttrbute(name = "bar")
+    private long[] barArray; // injects {42L} in the first case, {42L, 43L} in the second case
+
+    @RequestAttrbute(name = "bar")
+    private List<Integer> barList; // injects Arrays.asList(42L) in the first case, Arrays.asList(42L, 43L) in the second case
+}
+```
+Thus, `@RequestAttribute` makes integration with HTL more straightforward as it massively eliminates the need to guess what exact value type is being passed into the Sling model under the hood.
+
 ### Injector for I18n
 
-The `@I18N` annotation can be used to inject either the OOTB `I18n` object or a particular internationalized value. Therefore, it is legitimate to use this annotation with an *I18n*-typed or a *String*-typed class member (and also with an *Object*-typed member which is then considered a string).
+The `@I18N` annotation can be used to inject either the OOTB `I18n` object or a particular internationalized value. Therefore, it is legitimate to use this annotation with an *I18n*-typed or a *String*-typed class member (plus with an *Object*-typed member which is then considered a string).
 
 The behavior of *I18N* depends on the current locale. By default, the locale is guessed from the path of the page the current resource belongs to, or else the *jcr:language* property of that page. That is, a resource with the path like `/content/site/us/en/myPage/jcr:content/resource` or `/content/site/us-en/myPage/jcr:content/resource` will be considered belonging to the *en_US* locale.
 
