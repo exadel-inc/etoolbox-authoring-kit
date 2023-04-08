@@ -41,7 +41,7 @@
     "@types/smoothscroll-polyfill": "^0.3.1",
     "@typescript-eslint/eslint-plugin": "^5.48.1",
     "@typescript-eslint/parser": "^5.48.1",
-    "browser-sync": "^2.27.11",
+    "browser-sync": "^2.29.1",
     "chokidar-cli": "^3.0.0",
     "clean-css-cli": "^5.6.1",
     "concurrently": "^7.6.0",
