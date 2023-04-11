@@ -152,10 +152,9 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
      * @return {@code JsonNode} object or null
      */
     private static JsonNode parseJson(String source, String suffix) {
-        ObjectMapper objectMapper = new ObjectMapper();
         try {
-            JsonNode jsonNode = objectMapper.readTree(source);
-            if (StringUtils.isBlank(suffix)) {
+            JsonNode jsonNode = ObjectConversionUtil.toNodeTree(source);
+            if (StringUtils.isBlank(suffix) || jsonNode == null) {
                 return jsonNode;
             }
             String[] pathChunks = suffix.split(CoreConstants.SEPARATOR_SLASH);
