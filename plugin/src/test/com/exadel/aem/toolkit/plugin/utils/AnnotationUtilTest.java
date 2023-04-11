@@ -21,7 +21,6 @@ import java.util.function.Predicate;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 import com.google.common.collect.ImmutableMap;
 
@@ -32,13 +31,9 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComplexComponent1;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComplexComponent2;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.cases.RichTextEditorWidget;
-import com.exadel.aem.toolkit.plugin.maven.PluginContextRule;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 public class AnnotationUtilTest {
-
-    @Rule
-    public final PluginContextRule pluginContext = new PluginContextRule();
 
     @Test
     public void testIsNotDefault() throws NoSuchFieldException {
