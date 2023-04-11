@@ -15,6 +15,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.buttongroup;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
@@ -25,6 +26,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.common.Size;
  * See documentation on <a href="https://www.adobe.io/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/buttongroup/index.html">
  * ButtonGroup</a> component
  */
+@Target({})
 @Retention(RetentionPolicy.RUNTIME)
 @AnnotationRendering(properties = "all")
 public @interface ButtonGroupItem {

@@ -22,6 +22,8 @@ public class TestConstants {
     public static final String RESOURCE_FOLDER_DEPENDSON = "handlers/dependsOn";
     public static final String RESOURCE_FOLDER_WIDGETS = "handlers/widgets";
 
+    public static final String DEFAULT_PROJECT_NAME = "test-package";
+
     public static final String DEFAULT_COMPONENT_NAME = "test-component";
     public static final String NONEXISTENT_COMPONENT_NAME = "nonexistent/component";
     public static final String DEFAULT_COMPONENT_TITLE = "Test Component";
@@ -37,6 +39,8 @@ public class TestConstants {
     public static final String LABEL_TAB_5 = "Fifth tab";
     public static final String LABEL_TAB_6 = "Sixth tab";
     public static final String LABEL_TAB_7 = "Seventh tab";
+
+    public static final String PROPERTY_TIMESTAMP = "timestamp";
 
     private TestConstants() {
     }

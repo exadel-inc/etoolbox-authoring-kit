@@ -13,12 +13,15 @@
  */
 package com.exadel.aem.toolkit.api.annotations.editconfig;
 
+import java.lang.annotation.Target;
+
 /**
  * Used to populate {@link EditConfig#formParameters()} setting. If one or more {@code FormParameter}s are set for this
  * editing configuration, a {@code cq:editConfig/cq:FormParameters} node is created and filled in the current
  * component's configuration. See <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/components-basics.html#main-pars_title_8_waqwbc_refd_">
  * AEM Components documentation</a>
  */
+@Target({})
 public @interface FormParameter {
 
     /**

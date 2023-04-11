@@ -17,6 +17,9 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.sling.models.annotations.Source;
 import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
@@ -27,7 +30,9 @@ import com.exadel.aem.toolkit.core.injectors.RequestSuffixInjector;
  * Used on either a field, a method, or a method parameter of a Sling model to inject a Sling request suffix.
  * <p>If the annotated member is of type {@code String} or {@code Object}, the string value of suffix is injected.
  * If the annotated member is of type {@code Resource}, there will be an attempt to inject the corresponding JCR
- * resource. Nothing is injected into members of other types</p>
+ * resource.</p>
+ * <p>The annotated Java class member can represent either a singular value or an array, a {@link Collection},
+ * a {@link List}, or a {@link Set}. in the case of an array/collection, a one-entry collection is injected.</p>
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)

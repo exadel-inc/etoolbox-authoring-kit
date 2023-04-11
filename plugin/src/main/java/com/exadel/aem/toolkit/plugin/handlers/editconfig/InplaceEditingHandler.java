@@ -90,7 +90,7 @@ public class InplaceEditingHandler implements BiConsumer<Source, Target> {
     private static void getSingleChildEditorNode(InplaceEditingConfig config, Target target) {
         target.getOrCreateTarget(getConfigName(config))
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_CHILD_EDITORS_CONFIG)
-            .attribute(DialogConstants.PN_TITLE, StringUtils.isNotBlank(config.title()) ? config.title() : getConfigName(config))
+            .attribute(CoreConstants.PN_TITLE, StringUtils.isNotBlank(config.title()) ? config.title() : getConfigName(config))
             .attribute(DialogConstants.PN_TYPE, config.type().toLowerCase());
     }
 

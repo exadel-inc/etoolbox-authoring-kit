@@ -27,15 +27,15 @@ import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.NameConstants;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.WCMException;
-
-import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.lists.ListConstants;
-
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
+
+import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.TestConstants;
+import com.exadel.aem.toolkit.core.lists.ListConstants;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ListPageUtilTest {
@@ -44,7 +44,7 @@ public class ListPageUtilTest {
     public AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
 
     @Test
-    public void shouldNotCreatePageIfCannotGetPageManager() throws WCMException {
+    public void shouldNotCreatePageIfCannotGetPageManager() {
         // Needed to emulate a case when {@code PageManager} is null
         ResourceResolver mockResourceResolver = mock(ResourceResolver.class);
         assertThrows(WCMException.class, () -> ListPageUtil.createPage(mockResourceResolver, "/test/path"));
@@ -59,12 +59,12 @@ public class ListPageUtilTest {
 
     @Test
     public void shouldCreateListPageUnderExisingPath() throws WCMException, PersistenceException {
-        context.create().page("/content");
-
+        context.create().page(TestConstants.ROOT_RESOURCE);
         Page listPage = ListPageUtil.createPage(context.resourceResolver(), "/content/test");
-
         assertNotNull(listPage);
+
         ValueMap properties = listPage.getProperties();
+        assertNotNull(properties);
         assertEquals(ListConstants.LIST_TEMPLATE_NAME, properties.get(NameConstants.NN_TEMPLATE, StringUtils.EMPTY));
         assertEquals(ListConstants.SIMPLE_LIST_ITEM_RESOURCE_TYPE, properties.get(CoreConstants.PN_ITEM_RESOURCE_TYPE, StringUtils.EMPTY));
     }
@@ -86,6 +86,7 @@ public class ListPageUtilTest {
 
         assertNotNull(listPage);
         ValueMap properties = listPage.getProperties();
+        assertNotNull(properties);
         assertEquals(ListConstants.LIST_TEMPLATE_NAME, properties.get(NameConstants.NN_TEMPLATE, StringUtils.EMPTY));
         assertEquals(ListConstants.SIMPLE_LIST_ITEM_RESOURCE_TYPE, properties.get(CoreConstants.PN_ITEM_RESOURCE_TYPE, StringUtils.EMPTY));
     }

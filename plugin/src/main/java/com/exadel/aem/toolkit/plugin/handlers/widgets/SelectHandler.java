@@ -48,6 +48,6 @@ public class SelectHandler extends OptionProviderHandler implements Handler {
                 appendOption(option, option.value(), items);
             }
         }
-        appendDataSource(select.datasource(), target);
+        appendDataSourceData(select.datasource(), target);
     }
 }
