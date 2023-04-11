@@ -15,6 +15,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.markers._Default;
@@ -24,6 +25,7 @@ import com.exadel.aem.toolkit.api.markers._Default;
  * option supplier, such as a JCR node, an HTTP endpoint, or a Java enumeration, and specifies the way to render the
  * data
  */
+@Target({})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface OptionSource {
 
