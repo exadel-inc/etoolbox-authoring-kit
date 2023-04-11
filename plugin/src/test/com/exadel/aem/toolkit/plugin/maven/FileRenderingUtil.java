@@ -66,7 +66,7 @@ class FileRenderingUtil {
             Files.delete(filePath);
         }
 
-        return FileComparingUtil.compare(actualFiles, expectedFiles, sampleFilesPath.toString());
+        return FileSetComparisonUtil.compare(actualFiles, expectedFiles, sampleFilesPath.toString());
     }
 
     private static Map<String, String> getFiles(Path componentPath) {

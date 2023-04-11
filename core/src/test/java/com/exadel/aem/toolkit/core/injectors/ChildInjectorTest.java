@@ -30,6 +30,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.TestConstants;
 import com.exadel.aem.toolkit.core.injectors.models.child.ExtendedListItem;
 import com.exadel.aem.toolkit.core.injectors.models.child.InjectedByMemberName;
 import com.exadel.aem.toolkit.core.injectors.models.child.InjectedByPath;
@@ -42,8 +43,6 @@ public class ChildInjectorTest {
 
     private static final String MODELS_PACKAGE_NAME = "com.exadel.aem.toolkit.core.injectors.models.child";
     public static final String MODELS_RESOURCES_FOLDER = "/com/exadel/aem/toolkit/core/injectors/childInjector.json";
-    public static final String ROOT_JCR_PATH = "/content";
-    public static final String ROOT_PAGE_CONTENT_PATH = ROOT_JCR_PATH + "/jcr:content";
 
     private static final String EXPECTED_RESOURCE_TYPE = "etoolbox-authoring-kit/lists/components/content/listItem";
 
@@ -70,8 +69,8 @@ public class ChildInjectorTest {
     public void beforeTest() {
         context.addModelsForPackage(MODELS_PACKAGE_NAME);
         context.registerInjectActivateService(new ChildInjector());
-        context.load().json(MODELS_RESOURCES_FOLDER, ROOT_JCR_PATH);
-        context.request().setResource(context.resourceResolver().getResource(ROOT_PAGE_CONTENT_PATH));
+        context.load().json(MODELS_RESOURCES_FOLDER, TestConstants.ROOT_RESOURCE);
+        context.request().setResource(context.resourceResolver().getResource(TestConstants.ROOT_PAGE_CONTENT));
     }
 
     /* -----
@@ -321,7 +320,7 @@ public class ChildInjectorTest {
             expectedPath,
             Objects.requireNonNull(nestedViaChild.getNestedResource()).getPath());
         assertEquals(
-            ROOT_PAGE_CONTENT_PATH,
+            TestConstants.ROOT_PAGE_CONTENT,
             Objects.requireNonNull(nestedViaChild.getAncestorResource()).getPath());
 
         assertEquals(nestedViaChild.getNestedTitle(), nestedViaChildResource.getNestedTitle());

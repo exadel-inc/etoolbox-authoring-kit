@@ -31,6 +31,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.TestConstants;
 import com.exadel.aem.toolkit.core.injectors.models.child.ExtendedListItem;
 import com.exadel.aem.toolkit.core.injectors.models.children.InjectedByLoopbackPath;
 import com.exadel.aem.toolkit.core.injectors.models.children.InjectedByMemberName;
@@ -60,8 +61,8 @@ public class ChildrenInjectorTest {
         context.addModelsForPackage(MODELS_PACKAGE_NAME);
         context.registerInjectActivateService(new ChildrenInjector());
         context.registerInjectActivateService(new ChildInjector());
-        context.load().json(ChildInjectorTest.MODELS_RESOURCES_FOLDER, ChildInjectorTest.ROOT_JCR_PATH);
-        context.request().setResource(context.resourceResolver().getResource(ChildInjectorTest.ROOT_PAGE_CONTENT_PATH));
+        context.load().json(ChildInjectorTest.MODELS_RESOURCES_FOLDER, TestConstants.ROOT_RESOURCE);
+        context.request().setResource(context.resourceResolver().getResource(TestConstants.ROOT_PAGE_CONTENT));
     }
 
     /* -----
@@ -137,7 +138,7 @@ public class ChildrenInjectorTest {
 
     @Test
     public void shouldInjectByLoopbackPath() {
-        context.currentResource(ChildInjectorTest.ROOT_PAGE_CONTENT_PATH + "/list");
+        context.currentResource(TestConstants.ROOT_PAGE_CONTENT + "/list");
         shouldInjectByLoopbackPath(context.request());
         shouldInjectByLoopbackPath(context.request().getResource());
     }
@@ -162,7 +163,7 @@ public class ChildrenInjectorTest {
 
     @Test
     public void shouldProcessNestedChildren() {
-        context.currentResource(ChildInjectorTest.ROOT_PAGE_CONTENT_PATH + "/list");
+        context.currentResource(TestConstants.ROOT_PAGE_CONTENT + "/list");
         shouldProcessNestedChildren(context.request());
         shouldProcessNestedChildren(context.request().getResource());
     }

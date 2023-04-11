@@ -636,7 +636,7 @@ public class XmlContextHelper implements XmlUtility {
             return;
         }
         Element graniteDataNode = getOrAddChildElement(element,
-            DialogConstants.NN_GRANITE_DATA);
+            CoreConstants.NN_GRANITE_DATA);
         data.entrySet().stream()
             .filter(entry -> StringUtils.isNotBlank(entry.getKey()))
             .forEach(entry -> graniteDataNode.setAttribute(entry.getKey(), entry.getValue()));

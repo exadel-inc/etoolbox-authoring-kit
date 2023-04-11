@@ -39,15 +39,15 @@ public class RadioGroupHandler extends OptionProviderHandler implements Handler 
     @Override
     public void accept(Source source, Target target) {
         RadioGroup radioGroup = source.adaptTo(RadioGroup.class);
-        if (hasProvidedOptions(radioGroup.buttonProvider(), source)) {
-            appendOptionProvider(radioGroup.buttonProvider(), target, source);
+        if (hasProvidedOptions(radioGroup.buttonProvider())) {
+            appendOptionProvider(radioGroup.buttonProvider(), target);
             return;
         }
         if (ArrayUtils.isNotEmpty(radioGroup.buttons())) {
             Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
             Arrays.stream(radioGroup.buttons()).forEach(button -> appendOption(button, button.value(), items));
         }
-        appendDataSource(radioGroup.datasource(), target);
+        appendDataSourceData(radioGroup.datasource(), target);
     }
 
 }

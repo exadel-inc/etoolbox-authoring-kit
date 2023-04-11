@@ -129,7 +129,7 @@ public class StringUtil {
             .filter(Objects::nonNull)
             .map(conversion)
             .map(s ->
-                s.startsWith(DialogConstants.ARRAY_OPENING) && s.endsWith(DialogConstants.ARRAY_CLOSING)
+                s.startsWith(CoreConstants.ARRAY_OPENING) && s.endsWith(CoreConstants.ARRAY_CLOSING)
                     ? ESCAPE_STRING + s
                     : s)
             .collect(Collectors.joining(CoreConstants.SEPARATOR_COMMA));
@@ -165,7 +165,7 @@ public class StringUtil {
             return new HashSet<>();
         }
         return new LinkedHashSet<>(Arrays.asList(StringUtils
-            .strip(value, DialogConstants.ARRAY_OPENING + DialogConstants.ARRAY_CLOSING)
+            .strip(value, CoreConstants.ARRAY_OPENING + CoreConstants.ARRAY_CLOSING)
             .split(SPLITTING_PATTERN)));
     }
 
@@ -179,7 +179,7 @@ public class StringUtil {
             return new ArrayList<>();
         }
         return Arrays.asList(StringUtils
-            .strip(value, DialogConstants.ARRAY_OPENING + DialogConstants.ARRAY_CLOSING)
+            .strip(value, CoreConstants.ARRAY_OPENING + CoreConstants.ARRAY_CLOSING)
             .split(SPLITTING_PATTERN));
     }
 

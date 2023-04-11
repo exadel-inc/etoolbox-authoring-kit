@@ -27,8 +27,6 @@ public class DialogConstants {
     public static final String DOUBLE_QUOTE = "\"";
     public static final String NEGATION = "!";
     public static final String WILDCARD = "*";
-    public static final String ARRAY_OPENING = "[";
-    public static final String ARRAY_CLOSING = "]";
 
     public static final String SEPARATOR_DOT = ".";
     public static final String SEPARATOR_SEMICOLON = ";";
@@ -44,12 +42,10 @@ public class DialogConstants {
     public static final String NN_CONFIG = "config";
     public static final String NN_CONTENT = "content";
     public static final String NN_CUI = "cui";
-    public static final String NN_DATASOURCE = "datasource";
     public static final String NN_DIALOG_FULL_SCREEN = "dialogFullScreen";
     public static final String NN_DROP_TARGETS = "cq:dropTargets";
     public static final String NN_EDIT = "edit";
     public static final String NN_FORM_PARAMETERS = "cq:formParameters";
-    public static final String NN_GRANITE_DATA = "granite:data";
     public static final String NN_HTML_PASTE_RULES = "htmlPasteRules";
     public static final String NN_HTML_RULES = "htmlRules";
     public static final String NN_ICONS = "icons";
@@ -116,7 +112,6 @@ public class DialogConstants {
     public static final String PN_EDITOR_TYPE = "editorType";
     public static final String PN_EXTERNAL_STYLESHEETS = "externalStyleSheets";
     public static final String PN_FALLBACK_BLOCK_TAG = "fallbackBlockTag";
-    public static final String PN_FALLBACK_PATH = "fallbackPath";
     public static final String PN_FEATURES = "features";
     public static final String PN_FILE_REFERENCE_PARAMETER = "fileReferenceParameter";
     public static final String PN_GROUPS = "groups";
@@ -127,7 +122,6 @@ public class DialogConstants {
     public static final String PN_MAX_UNDO_STEPS = "maxUndoSteps";
     public static final String PN_MIN_DATE = "minDate";
     public static final String PN_MODE = "mode";
-    public static final String PN_NAME = "name";
     public static final String PN_PADDING = "padding";
     public static final String PN_PRIMARY_TYPE = "jcr:primaryType";
     public static final String PN_PROPERTY_NAME = "propertyName";
@@ -154,6 +148,8 @@ public class DialogConstants {
 
     public static final String VALUE_ALL = "all";
     public static final String VALUE_NONE = "none";
+
+    public static final String METHOD_TO_STRING = "toString";
 
     /**
      * Default (instantiation-preventing) constructor

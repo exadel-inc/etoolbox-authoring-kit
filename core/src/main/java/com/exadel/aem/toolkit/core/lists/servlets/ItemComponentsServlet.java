@@ -45,6 +45,8 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 /**
  * Provides the collection of AEM resources that will represent Exadel Toolbox Lists items. This collection will be displayed
  * in a Granite UI {@code Select} widget
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  */
 @Component(
     service = Servlet.class,

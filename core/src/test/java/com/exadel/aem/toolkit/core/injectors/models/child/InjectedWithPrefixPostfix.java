@@ -24,6 +24,8 @@ import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.Child;
+import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.TestConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
 @Model(
@@ -70,7 +72,10 @@ public class InjectedWithPrefixPostfix implements InjectedWithSelection {
 
     @Model(adaptables = {SlingHttpServletRequest.class, Resource.class})
     interface PrefixedPostfixedValueSupplier extends ValueSupplier {
-        @Child(name = ROOT_PATH + CHILD_PATH, prefix = PREFIX, postfix = POSTFIX)
+        @Child(
+            name = TestConstants.ROOT_PAGE_CONTENT + CoreConstants.SEPARATOR_SLASH + CHILD_PATH,
+            prefix = PREFIX,
+            postfix = POSTFIX)
         SimpleListItem getValue();
     }
 }

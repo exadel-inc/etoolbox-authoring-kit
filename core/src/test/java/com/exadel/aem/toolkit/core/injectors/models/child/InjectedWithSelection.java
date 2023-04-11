@@ -23,7 +23,6 @@ import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
 public interface InjectedWithSelection {
 
-    String ROOT_PATH = "/content/jcr:content/";
     String PREFIX = "prefix_";
     String POSTFIX = "_postfix";
 

@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import javax.annotation.Nullable;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +46,9 @@ public class ListHelperTest {
 
     private static final String SIMPLE_LIST_PATH = "/content/etoolbox-lists/simpleList";
     private static final String CUSTOM_LIST_PATH = "/content/etoolbox-lists/customList";
+
+    private static final String TEST_RESOURCE_PATH = "/content/test";
+    private static final String LIST_ITEM_PATH = "list/listItem";
 
     @Rule
     public AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
@@ -153,10 +157,12 @@ public class ListHelperTest {
         listItems.put("first", "firstValue");
         listItems.put("second", "secondValue");
 
-        Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", listItems);
+        Page listPage = ListHelper.createList(context.resourceResolver(), TEST_RESOURCE_PATH, listItems);
 
         assertNotNull(listPage);
         Resource list = listPage.getContentResource("list");
+        assertNotNull(list);
+        assertNotNull(list.getChildren());
 
         Resource firstListItem = IterableUtils.get(list.getChildren(), 0);
         assertEquals("first", firstListItem.getValueMap().get(JcrConstants.JCR_TITLE, StringUtils.EMPTY));
@@ -169,9 +175,10 @@ public class ListHelperTest {
 
     @Test
     public void shouldCreateListWithoutItemsIfPassedResourceCollectionIsEmpty() throws WCMException {
-        Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.emptyList());
-
+        Page listPage = ListHelper.createList(context.resourceResolver(), TEST_RESOURCE_PATH, Collections.emptyList());
         assertNotNull(listPage);
+        assertNotNull(listPage.getContentResource());
+
         Resource list = listPage.getContentResource().getChild(CoreConstants.NN_LIST);
         assertNotNull(list);
         assertFalse(list.hasChildren());
@@ -184,11 +191,13 @@ public class ListHelperTest {
         properties.put(CoreConstants.PN_VALUE, "firstValue");
         Resource resource = context.create().resource("/testpath", properties);
 
-        context.create().resource("/content/test");
-        Page list = ListHelper.createResourceList(context.resourceResolver(), "/content/test", Collections.singleton(resource));
+        context.create().resource(TEST_RESOURCE_PATH);
+        Page list = ListHelper.createResourceList(context.resourceResolver(), TEST_RESOURCE_PATH, Collections.singleton(resource));
 
         assertNotNull(list);
-        Resource listItem = list.getContentResource("list/listItem");
+        Resource listItem = list.getContentResource(LIST_ITEM_PATH);
+        assertNotNull(listItem);
+
         assertEquals("first", listItem.getValueMap().get(JcrConstants.JCR_TITLE, StringUtils.EMPTY));
         assertEquals("firstValue", listItem.getValueMap().get(CoreConstants.PN_VALUE, StringUtils.EMPTY));
     }
@@ -197,10 +206,12 @@ public class ListHelperTest {
     public void shouldCreateListBasedOnSimpleListItem() throws WCMException {
         SimpleListItem simpleListItem = new SimpleListItemImpl("first", "firstValue");
 
-        Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.singletonList(simpleListItem));
-
+        Page listPage = ListHelper.createList(context.resourceResolver(), TEST_RESOURCE_PATH, Collections.singletonList(simpleListItem));
         assertNotNull(listPage);
-        Resource listItem = listPage.getContentResource("list/listItem");
+
+        Resource listItem = listPage.getContentResource(LIST_ITEM_PATH);
+        assertNotNull(listItem);
+
         assertEquals(simpleListItem.getTitle(), listItem.getValueMap().get(JcrConstants.JCR_TITLE, StringUtils.EMPTY));
         assertEquals(simpleListItem.getValue(), listItem.getValueMap().get(CoreConstants.PN_VALUE, StringUtils.EMPTY));
     }
@@ -209,10 +220,12 @@ public class ListHelperTest {
     public void shouldCreateListBasedOnArbitraryModel() throws WCMException {
         ItemModel itemModel = new ItemModel("someValue", false);
 
-        Page listPage = ListHelper.createList(context.resourceResolver(), "/content/test", Collections.singletonList(itemModel));
-
+        Page listPage = ListHelper.createList(context.resourceResolver(), TEST_RESOURCE_PATH, Collections.singletonList(itemModel));
         assertNotNull(listPage);
-        Resource listItem = listPage.getContentResource("list/listItem");
+
+        Resource listItem = listPage.getContentResource(LIST_ITEM_PATH);
+        assertNotNull(listItem);
+
         assertEquals(3, listItem.getValueMap().size());
         assertEquals("etoolbox-authoring-kit/lists/components/content/listItem", listItem.getResourceType());
         assertEquals(itemModel.textValue, listItem.getValueMap().get("textValue", StringUtils.EMPTY));
@@ -234,11 +247,12 @@ public class ListHelperTest {
         public ItemModel() {
         }
 
-        public ItemModel(String textValue, boolean booleanValue) {
+        public ItemModel(@Nullable String textValue, boolean booleanValue) {
             this.textValue = textValue;
             this.booleanValue = booleanValue;
         }
 
+        @Nullable
         public String getTextValue() {
             return textValue;
         }
@@ -270,7 +284,6 @@ public class ListHelperTest {
         }
     }
 
-    @Model(adaptables = Resource.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
     private static class SimpleListItemImpl implements SimpleListItem {
 
         private final String title;

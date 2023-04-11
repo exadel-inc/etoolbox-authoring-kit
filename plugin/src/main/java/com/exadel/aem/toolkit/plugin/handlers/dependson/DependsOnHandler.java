@@ -73,7 +73,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
         valueMap.put(DialogConstants.PN_DEPENDS_ON, escapedQuery);
         valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, value.action());
         valueMap.putAll(buildParamsMap(value, 0));
-        target.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA).attributes(valueMap);
+        target.getOrCreateTarget(CoreConstants.NN_GRANITE_DATA).attributes(valueMap);
     }
 
     /**
@@ -110,7 +110,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
                 .map(dependsOn -> DependsOnHandler.buildParamsMap(dependsOn, counter.merge(dependsOn.action(), 1, Integer::sum) - 1))
                 .forEach(valueMap::putAll);
 
-        target.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA).attributes(valueMap);
+        target.getOrCreateTarget(CoreConstants.NN_GRANITE_DATA).attributes(valueMap);
     }
 
     /**
@@ -162,7 +162,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
         if (value.lazy()) {
             valueMap.put(DialogConstants.PN_DEPENDS_ON_REFLAZY, StringUtils.EMPTY);
         }
-        target.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA).attributes(valueMap);
+        target.getOrCreateTarget(CoreConstants.NN_GRANITE_DATA).attributes(valueMap);
     }
 
     /**
@@ -174,7 +174,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
         String result = StringUtils.replace(
             value, DialogConstants.SEPARATOR_SEMICOLON,
             "\\\\" + DialogConstants.SEPARATOR_SEMICOLON);
-        for (String bracket : new String[] {DialogConstants.ARRAY_OPENING, DialogConstants.ARRAY_CLOSING}) {
+        for (String bracket : new String[] {CoreConstants.ARRAY_OPENING, CoreConstants.ARRAY_CLOSING}) {
             result = StringUtils.replace(result, bracket, "\\" + bracket);
         }
         return result;

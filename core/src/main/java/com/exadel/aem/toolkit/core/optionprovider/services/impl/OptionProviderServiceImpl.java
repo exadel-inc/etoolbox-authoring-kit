@@ -20,12 +20,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -36,13 +34,17 @@ import org.osgi.service.component.annotations.Component;
 import com.day.cq.commons.jcr.JcrConstants;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.optionprovider.OptionProviderConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
-import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.OptionSourceResolver;
+import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.OptionSourceResolvers;
 import com.exadel.aem.toolkit.core.optionprovider.utils.PatternUtil;
+import com.exadel.aem.toolkit.core.optionprovider.utils.ResourceTypeUtil;
 
 /**
  * Implements {@link OptionProviderService} to prepare option sets for Granite-compliant custom data sources used in
  * Granite UI widgets
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  */
 @Component(service = OptionProviderService.class)
 public class OptionProviderServiceImpl implements OptionProviderService {
@@ -59,16 +61,24 @@ public class OptionProviderServiceImpl implements OptionProviderService {
         // Parse user-specified datasource settings from the request and/or underlying "datasource" resource,
         OptionSourceParameters parameters = OptionSourceParameters.forRequest(request);
 
-        // For each of the paths try retrieve a list of options
-        for (PathParameters pathParameters : parameters.getPathParameters()) {
-            OptionSourceResolutionResult resolutionResult = OptionSourceResolver.resolve(request, pathParameters);
-            if (resolutionResult == null || resolutionResult.getDataResource() instanceof NonExistingResource) {
+        // For each of the paths, except for the fallback path, try to retrieve a list of options
+        PathParameters fallbackPathParameters = null;
+        for (PathParameters pathParametersInstance : parameters.getPathParameters()) {
+            if (pathParametersInstance.isFallback()) {
+                fallbackPathParameters = pathParametersInstance;
                 continue;
             }
-            options.addAll(getOptions(resolutionResult.getDataResource(), resolutionResult.getPathParameters()));
+            Resource dataResource = OptionSourceResolvers.resolve(request, pathParametersInstance);
+            options.addAll(getOptions(dataResource, pathParametersInstance));
         }
 
-        // Transform the resulting collection to sortable list and sort it as optioned by user
+        // Now process the fallback path in case there are still no options
+        if (options.isEmpty() && fallbackPathParameters != null) {
+            Resource dataResource = OptionSourceResolvers.resolve(request, fallbackPathParameters);
+            options.addAll(getOptions(dataResource, fallbackPathParameters));
+        }
+
+        // Transform the resulting collection to a sortable list and sort it as optioned by the user
         result = new ArrayList<>(options);
         if (parameters.isSorted()) {
             result.sort(Option.COMPARATOR);
@@ -83,7 +93,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
             parameters.getAppendedOptions(),
             options));
 
-        // Remove options that are specified in "exclude" parameter
+        // Remove options that are specified in the "exclude" parameter
         removeExcludedOptions(result, parameters.getExcludedOptions());
 
         // Set "selected" flag to appropriate option(s) if "selected value" parameter is specified
@@ -96,22 +106,25 @@ public class OptionProviderServiceImpl implements OptionProviderService {
 
         // Render the resulting collection
         return result.stream()
-            .map(Option::toValueMapEntry)
+            .map(Option::toDataSourceEntry)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 
     /**
-     * Called from {@link OptionProviderServiceImpl#getOptions(SlingHttpServletRequest)} to extract a list of {@link
-     * Option} items from the particular datasource
-     * @param dataSource {@code Resource} instance representing selected datasource
+     * Called from {@link OptionProviderServiceImpl#getOptions(SlingHttpServletRequest)} to extract a list of
+     * {@link Option} items from the particular datasource
+     * @param dataSource A nullable {@code Resource} instance representing selected datasource
      * @param parameters Path-related user settings that came with the request
-     * @return List of {@link Option} objects, or an empty list
+     * @return A non-null list of {@link Option} objects; might be empty
      */
     private List<Option> getOptions(Resource dataSource, PathParameters parameters) {
-        final String defaultValueMember = !OptionSourceResolver.isTagCollection(dataSource)
+        if (dataSource == null || dataSource instanceof NonExistingResource) {
+            return Collections.emptyList();
+        }
+        final String defaultValueMember = !ResourceTypeUtil.isTagCollection(dataSource)
             ? CoreConstants.PN_VALUE
-            : CoreConstants.PARAMETER_ID;
+            : OptionProviderConstants.PARAMETER_ID;
         return StreamSupport.stream(dataSource.getChildren().spliterator(), false)
             .filter(child -> !child.getName().equals(JcrConstants.JCR_CONTENT)) // jcr:content nodes are excluded
             .map(child -> getOption(child, parameters, defaultValueMember))
@@ -136,30 +149,26 @@ public class OptionProviderServiceImpl implements OptionProviderService {
             .attributes(parameters.getAttributes())
             .textTransform(parameters.getTextTransform())
             .valueTransform(parameters.getValueTransform())
-            .uniqueByName(resource.getValueMap().containsKey(CoreConstants.PARAMETER_NAME))
+            .uniqueByName(resource.getValueMap().containsKey(OptionProviderConstants.PARAMETER_NAME))
             .build();
     }
 
     /**
      * Generates a list of user-specified extra options that are outside the normal JCR structure
-     * @param resourceResolver {@code ResourceResolver} instance to create "virtual" datasource entry resource
-     * @param optionStrings    Array of strings representing extra options
-     * @param skip             List of the [already existing] options to omit in the extra options collection
-     * @return List of "virtual" datasource items resources that can be merged to the original resource list
+     * @param resourceResolver {@code ResourceResolver} instance to create a "virtual" datasource entry resource
+     * @param options          A collection of name-value pairs representing extra options
+     * @param skip             A list of the [already existing] options to omit in the extra options collection
+     * @return A list of "virtual" datasource items resources that can be merged into the original resource list
      */
     private static List<Option> getExtraOptions(ResourceResolver resourceResolver,
-                                                String[] optionStrings,
+                                                List<Pair<String, String>> options,
                                                 Set<Option> skip) {
-        if (optionStrings == null) {
+        if (options == null) {
             return Collections.emptyList();
         }
-        return Stream.of(optionStrings)
-            .map(option -> option.split(OptionSourceParameters.KEV_VALUE_SEPARATOR_PATTERN, 2))
-            .filter(parts -> ArrayUtils.getLength(parts) == 2 && StringUtils.isNotBlank(parts[0]))
-            .map(parts -> Pair.of(
-                parts[0].trim().replaceAll(OptionSourceParameters.INLINE_COLON_PATTERN, CoreConstants.SEPARATOR_COLON),
-                parts[1].trim().replaceAll(OptionSourceParameters.INLINE_COLON_PATTERN, CoreConstants.SEPARATOR_COLON)))
-            .filter(partsPair -> skip.stream().noneMatch(opt -> partsPair.getRight().equals(opt.getValue())))
+        return options
+            .stream()
+            .filter(pair -> skip.stream().noneMatch(skipped -> pair.getRight().equals(skipped.getValue())))
             .map(partsPair -> Option.builder()
                 .resourceResolver(resourceResolver)
                 .text(partsPair.getLeft())
@@ -174,8 +183,8 @@ public class OptionProviderServiceImpl implements OptionProviderService {
      * @param options        Collection of {@code Option} objects to test
      * @param excludeStrings Value of the user-specified {@code exclude} setting
      */
-    private static void removeExcludedOptions(List<Option> options, String[] excludeStrings) {
-        if (CollectionUtils.isEmpty(options) || ArrayUtils.isEmpty(excludeStrings)) {
+    private static void removeExcludedOptions(List<Option> options, List<String> excludeStrings) {
+        if (CollectionUtils.isEmpty(options) || CollectionUtils.isEmpty(excludeStrings)) {
             return;
         }
         List<Option> excludedOptions = options

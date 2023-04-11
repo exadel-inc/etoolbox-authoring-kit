@@ -80,5 +80,4 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
     public RequestAttribute getManagedAnnotation(AnnotatedElement element) {
         return element.getDeclaredAnnotation(RequestAttribute.class);
     }
-
 }
