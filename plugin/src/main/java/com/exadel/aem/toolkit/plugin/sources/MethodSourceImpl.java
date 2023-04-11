@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 /**
  * Implements {@link Source} to expose the metadata that is specific for the underlying class method
  */
-public class MethodSourceImpl extends MemberSourceImpl {
+class MethodSourceImpl extends MemberSourceImpl {
 
     private final Method method;
     private String name;
