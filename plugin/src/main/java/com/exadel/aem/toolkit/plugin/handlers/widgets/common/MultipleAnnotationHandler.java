@@ -77,7 +77,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
             target.getOrCreateTarget(DialogConstants.NN_FIELD).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
             target.attribute(DialogConstants.PN_COMPOSITE, true);
         }
-        target.getAttributes().remove(DialogConstants.PN_NAME);
+        target.getAttributes().remove(CoreConstants.PN_NAME);
         target.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.MULTIFIELD);
 
         // Since this targetFacade has just "emerged" as a multifield, we need to check if there are multifield bound
@@ -151,18 +151,18 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         Target itemsSubresource = target.getTarget(DialogConstants.NN_ITEMS);
         itemsSubresource.getChildren().forEach(child -> {
             String modifiedName = StringUtils.removeStart(
-                child.getAttributes().get(DialogConstants.PN_NAME),
+                child.getAttributes().get(CoreConstants.PN_NAME),
                 DialogConstants.RELATIVE_PATH_PREFIX);
-            child.attribute(DialogConstants.PN_NAME, modifiedName);
+            child.attribute(CoreConstants.PN_NAME, modifiedName);
         });
         // Append the existing "items" subresource to the newly created "field" subresource
         fieldSubresource.getChildren().add(itemsSubresource);
         target.getChildren().remove(itemsSubresource);
         // Move "name" property of the passed target to the "field" subresource
         transferProperties(
-                target,
-                fieldSubresource,
-                ImmutableMap.of(CoreConstants.SEPARATOR_AT + DialogConstants.PN_NAME, PropertyTransferPolicy.MOVE_TO_NESTED_NODE));
+            target,
+            fieldSubresource,
+            ImmutableMap.of(CoreConstants.SEPARATOR_AT + CoreConstants.PN_NAME, PropertyTransferPolicy.MOVE_TO_NESTED_NODE));
     }
 
     /**
@@ -190,8 +190,8 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         Target nestedMultifieldFieldSubresource = nestedMultifield.getTarget(DialogConstants.NN_FIELD);
         String nestedMultifieldFieldName = StringUtils.defaultString(nestedMultifieldFieldSubresource.getAttributes().get(DialogConstants.PN_NAME));
 
-        fieldSubresource.attribute(DialogConstants.PN_NAME, nestedMultifieldFieldName);
-        nestedMultifieldFieldSubresource.getAttributes().put(DialogConstants.PN_NAME, nestedMultifieldFieldName + POSTFIX_NESTED);
+        fieldSubresource.attribute(CoreConstants.PN_NAME, nestedMultifieldFieldName);
+        nestedMultifieldFieldSubresource.getAttributes().put(CoreConstants.PN_NAME, nestedMultifieldFieldName + POSTFIX_NESTED);
         target.getChildren().add(fieldSubresource);
     }
 
@@ -219,7 +219,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         Arrays.stream(source.adaptTo(Property[].class))
             .forEach(property -> transferPolicies.put(CoreConstants.SEPARATOR_AT + property.name(), PropertyTransferPolicy.LEAVE_IN_MULTIFIELD));
         // However, we need to override policies for some properties that have been stored in a loop above
-        transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_NAME, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
+        transferPolicies.put(CoreConstants.SEPARATOR_AT + CoreConstants.PN_NAME, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
         transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_REQUIRED, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
         transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_WRAPPER_CLASS, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
         // Some attribute values are expected to be moved or copied though have set to "skipped" above
@@ -230,8 +230,8 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
         transferPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.WILDCARD, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
         // granite:data must stay on multifield level because it's deeply interrelated with DependsOn. We most likely need
         // to manipulate multifield in a whole, rather than a widget withing multifield.
-        transferPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.NN_GRANITE_DATA, PropertyTransferPolicy.LEAVE_IN_MULTIFIELD);
-        // While all child nodes will move to child node "field" of multifield
+        transferPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + CoreConstants.NN_GRANITE_DATA, PropertyTransferPolicy.LEAVE_IN_MULTIFIELD);
+        // While all child nodes will move to the child node "field" of multifield
         transferPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.WILDCARD, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
 
         return transferPolicies;

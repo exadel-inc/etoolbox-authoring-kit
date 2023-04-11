@@ -23,6 +23,7 @@ import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
 import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
@@ -46,8 +47,8 @@ public class MultiFieldHandler extends ContainerHandler implements Handler {
     @Override
     public void accept(Source source, Target target) {
         // Modify attributes of the target for multifield mode
-        String name = target.getAttributes().get(DialogConstants.PN_NAME);
-        target.getAttributes().remove(DialogConstants.PN_NAME);
+        String name = target.getAttributes().get(CoreConstants.PN_NAME);
+        target.getAttributes().remove(CoreConstants.PN_NAME);
 
         // Get the filtered members' collection for the current container; early return if the collection is empty
         List<Source> members = getAvailableForContainer(source, target);
@@ -76,7 +77,7 @@ public class MultiFieldHandler extends ContainerHandler implements Handler {
     private void placeMultiple(Source source, List<Source> multiFieldEntries, Target target, String name) {
         target.attribute(DialogConstants.PN_COMPOSITE, true);
         Target multifieldContainerElement = target.getOrCreateTarget(DialogConstants.NN_FIELD)
-            .attribute(DialogConstants.PN_NAME, name)
+            .attribute(CoreConstants.PN_NAME, name)
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
         populateSingleSectionContainer(source, multiFieldEntries, multifieldContainerElement);
     }

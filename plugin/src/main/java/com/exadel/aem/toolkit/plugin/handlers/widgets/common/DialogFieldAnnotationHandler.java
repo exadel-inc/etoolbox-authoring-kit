@@ -62,7 +62,7 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
         name = mergeWithPrefix(prefix, name)
             + target.getNamePostfix()
             + slingSuffix;
-        target.attribute(DialogConstants.PN_NAME, name);
+        target.attribute(CoreConstants.PN_NAME, name);
     }
 
     /**

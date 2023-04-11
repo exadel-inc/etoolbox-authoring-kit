@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.common.collect.ImmutableMap;
 
-import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.writers.PackageWriter;
 
 class VersionInfoRenderingUtil {
@@ -48,7 +48,7 @@ class VersionInfoRenderingUtil {
             List<String> lines = Files.readAllLines(infoFilePath);
             return lines.size() >= 3
                 ? ImmutableMap.of(
-                DialogConstants.PN_NAME, lines.get(0),
+                CoreConstants.PN_NAME, lines.get(0),
                 PROPERTY_VERSION, lines.get(1),
                 TestConstants.PROPERTY_TIMESTAMP, lines.get(2))
                 : Collections.emptyMap();
