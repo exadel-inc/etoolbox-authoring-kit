@@ -19,6 +19,7 @@ import org.junit.Test;
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_WIDGETS;
 
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.cases.AttributesAnnotation;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.common.cases.OptionProviderAnnotation;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.cases.PropertiesAnnotation;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
@@ -39,5 +40,10 @@ public class WidgetsMetaTest {
     @Test
     public void testCustomProperties() {
         pluginContext.test(PropertiesAnnotation.class, RESOURCE_FOLDER_WIDGETS, "customProperties");
+    }
+
+    @Test
+    public void testOptionProvider() {
+        pluginContext.test(OptionProviderAnnotation.class, RESOURCE_FOLDER_WIDGETS, "optionSource");
     }
 }
