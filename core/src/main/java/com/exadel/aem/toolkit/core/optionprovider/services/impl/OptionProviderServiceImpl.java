@@ -144,24 +144,20 @@ public class OptionProviderServiceImpl implements OptionProviderService {
 
     /**
      * Generates a list of user-specified extra options that are outside the normal JCR structure
-     * @param resourceResolver {@code ResourceResolver} instance to create "virtual" datasource entry resource
-     * @param optionStrings    Array of strings representing extra options
-     * @param skip             List of the [already existing] options to omit in the extra options collection
-     * @return List of "virtual" datasource items resources that can be merged to the original resource list
+     * @param resourceResolver {@code ResourceResolver} instance to create a "virtual" datasource entry resource
+     * @param options          A collection of name-value pairs representing extra options
+     * @param skip             A list of the [already existing] options to omit in the extra options collection
+     * @return A list of "virtual" datasource items resources that can be merged into the original resource list
      */
     private static List<Option> getExtraOptions(ResourceResolver resourceResolver,
-                                                String[] optionStrings,
+                                                List<Pair<String, String>> options,
                                                 Set<Option> skip) {
-        if (optionStrings == null) {
+        if (options == null) {
             return Collections.emptyList();
         }
-        return Stream.of(optionStrings)
-            .map(option -> option.split(OptionSourceParameters.KEV_VALUE_SEPARATOR_PATTERN, 2))
-            .filter(parts -> ArrayUtils.getLength(parts) == 2 && StringUtils.isNotBlank(parts[0]))
-            .map(parts -> Pair.of(
-                parts[0].trim().replaceAll(OptionSourceParameters.INLINE_COLON_PATTERN, CoreConstants.SEPARATOR_COLON),
-                parts[1].trim().replaceAll(OptionSourceParameters.INLINE_COLON_PATTERN, CoreConstants.SEPARATOR_COLON)))
-            .filter(partsPair -> skip.stream().noneMatch(opt -> partsPair.getRight().equals(opt.getValue())))
+        return options
+            .stream()
+            .filter(pair -> skip.stream().noneMatch(skipped -> pair.getRight().equals(skipped.getValue())))
             .map(partsPair -> Option.builder()
                 .resourceResolver(resourceResolver)
                 .text(partsPair.getLeft())
@@ -176,8 +172,8 @@ public class OptionProviderServiceImpl implements OptionProviderService {
      * @param options        Collection of {@code Option} objects to test
      * @param excludeStrings Value of the user-specified {@code exclude} setting
      */
-    private static void removeExcludedOptions(List<Option> options, String[] excludeStrings) {
-        if (CollectionUtils.isEmpty(options) || ArrayUtils.isEmpty(excludeStrings)) {
+    private static void removeExcludedOptions(List<Option> options, List<String> excludeStrings) {
+        if (CollectionUtils.isEmpty(options) || CollectionUtils.isEmpty(excludeStrings)) {
             return;
         }
         List<Option> excludedOptions = options
