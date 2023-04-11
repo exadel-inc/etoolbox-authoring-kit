@@ -20,12 +20,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -36,9 +34,11 @@ import org.osgi.service.component.annotations.Component;
 import com.day.cq.commons.jcr.JcrConstants;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.optionprovider.OptionProviderConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
-import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.OptionSourceResolver;
+import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.OptionSourceResolvers;
 import com.exadel.aem.toolkit.core.optionprovider.utils.PatternUtil;
+import com.exadel.aem.toolkit.core.optionprovider.utils.ResourceTypeUtil;
 
 /**
  * Implements {@link OptionProviderService} to prepare option sets for Granite-compliant custom data sources used in
@@ -61,16 +61,24 @@ public class OptionProviderServiceImpl implements OptionProviderService {
         // Parse user-specified datasource settings from the request and/or underlying "datasource" resource,
         OptionSourceParameters parameters = OptionSourceParameters.forRequest(request);
 
-        // For each of the paths try retrieve a list of options
-        for (PathParameters pathParameters : parameters.getPathParameters()) {
-            OptionSourceResolutionResult resolutionResult = OptionSourceResolver.resolve(request, pathParameters);
-            if (resolutionResult == null || resolutionResult.getDataResource() instanceof NonExistingResource) {
+        // For each of the paths, except for the fallback path, try to retrieve a list of options
+        PathParameters fallbackPathParameters = null;
+        for (PathParameters pathParametersInstance : parameters.getPathParameters()) {
+            if (pathParametersInstance.isFallback()) {
+                fallbackPathParameters = pathParametersInstance;
                 continue;
             }
-            options.addAll(getOptions(resolutionResult.getDataResource(), resolutionResult.getPathParameters()));
+            Resource dataResource = OptionSourceResolvers.resolve(request, pathParametersInstance);
+            options.addAll(getOptions(dataResource, pathParametersInstance));
         }
 
-        // Transform the resulting collection to sortable list and sort it as optioned by user
+        // Now process the fallback path in case there are still no options
+        if (options.isEmpty() && fallbackPathParameters != null) {
+            Resource dataResource = OptionSourceResolvers.resolve(request, fallbackPathParameters);
+            options.addAll(getOptions(dataResource, fallbackPathParameters));
+        }
+
+        // Transform the resulting collection to a sortable list and sort it as optioned by the user
         result = new ArrayList<>(options);
         if (parameters.isSorted()) {
             result.sort(Option.COMPARATOR);
@@ -85,7 +93,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
             parameters.getAppendedOptions(),
             options));
 
-        // Remove options that are specified in "exclude" parameter
+        // Remove options that are specified in the "exclude" parameter
         removeExcludedOptions(result, parameters.getExcludedOptions());
 
         // Set "selected" flag to appropriate option(s) if "selected value" parameter is specified
@@ -98,22 +106,25 @@ public class OptionProviderServiceImpl implements OptionProviderService {
 
         // Render the resulting collection
         return result.stream()
-            .map(Option::toValueMapEntry)
+            .map(Option::toDataSourceEntry)
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 
     /**
-     * Called from {@link OptionProviderServiceImpl#getOptions(SlingHttpServletRequest)} to extract a list of {@link
-     * Option} items from the particular datasource
-     * @param dataSource {@code Resource} instance representing selected datasource
+     * Called from {@link OptionProviderServiceImpl#getOptions(SlingHttpServletRequest)} to extract a list of
+     * {@link Option} items from the particular datasource
+     * @param dataSource A nullable {@code Resource} instance representing selected datasource
      * @param parameters Path-related user settings that came with the request
-     * @return List of {@link Option} objects, or an empty list
+     * @return A non-null list of {@link Option} objects; might be empty
      */
     private List<Option> getOptions(Resource dataSource, PathParameters parameters) {
-        final String defaultValueMember = !OptionSourceResolver.isTagCollection(dataSource)
+        if (dataSource == null || dataSource instanceof NonExistingResource) {
+            return Collections.emptyList();
+        }
+        final String defaultValueMember = !ResourceTypeUtil.isTagCollection(dataSource)
             ? CoreConstants.PN_VALUE
-            : CoreConstants.PARAMETER_ID;
+            : OptionProviderConstants.PARAMETER_ID;
         return StreamSupport.stream(dataSource.getChildren().spliterator(), false)
             .filter(child -> !child.getName().equals(JcrConstants.JCR_CONTENT)) // jcr:content nodes are excluded
             .map(child -> getOption(child, parameters, defaultValueMember))
@@ -138,7 +149,7 @@ public class OptionProviderServiceImpl implements OptionProviderService {
             .attributes(parameters.getAttributes())
             .textTransform(parameters.getTextTransform())
             .valueTransform(parameters.getValueTransform())
-            .uniqueByName(resource.getValueMap().containsKey(CoreConstants.PARAMETER_NAME))
+            .uniqueByName(resource.getValueMap().containsKey(OptionProviderConstants.PARAMETER_NAME))
             .build();
     }
 
