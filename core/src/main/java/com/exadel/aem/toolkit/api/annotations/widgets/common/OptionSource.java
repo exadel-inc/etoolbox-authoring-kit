@@ -20,23 +20,38 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.markers._Default;
 
 /**
- * Represents a single option source that can be defined for an {@link OptionProvider}. An option source points to
- * an option storage, such as a JCR path, and specifies the way to render the data from this particular storage
+ * Represents a single option source that can be defined for an {@link OptionProvider}. An option source points to an
+ * option supplier, such as a JCR node, an HTTP endpoint, or a Java enumeration, and specifies the way to render the
+ * data
  */
 @Retention(RetentionPolicy.RUNTIME)
 public @interface OptionSource {
 
     /**
-     * Used to specify the precise address the options can be retrieved from, such as a JCR path
+     * Specifies an address from which the options can be retrieved. The address can be, e.g., a JCR path, an HTTP
+     * endpoint, or a fully qualified name of a Java class. One is expected to specify this or
+     * {@link OptionSource#enumeration()}. If both are specified, only {@code value} is used. If none is specified, an
+     * exception is thrown
      * @return String value
      */
     String value() default "";
 
     /**
-     * Used to specify the fallback address the options can be retrieved from when the main source ({@link OptionSource#value()})
-     * is not valid or unreachable
-     * @return Optional string value
+     * Specifies a Java class that will be used as the source of options. The class can be an Enum or a collection of
+     * constants. One is expected to specify either this or {@link OptionSource#value()}. If both are specified, only
+     * {@code value} is used. If none is specified, an exception is thrown
+     * @return {@link Class} value
      */
+    Class<?> enumeration() default _Default.class;
+
+    /**
+     * Sets the fallback address. From this address, the options can be retrieved when the source (determined by
+     * {@link OptionSource#value()} or {@link OptionSource#enumeration()}) is not valid or unreachable
+     * @return Optional string value
+     * @deprecated This property is deprecated and will be removed in a version after 2.3.0. Please use
+     * {@link OptionSource#isFallback()}
+     */
+    @Deprecated
     String fallback() default "";
 
     /**
@@ -54,8 +69,8 @@ public @interface OptionSource {
     String valueMember() default "";
 
     /**
-     * If set, specifies one or more names of attributes of the underlying option resource (such as a JCR node)
-     * that are to be rendered as the selectable option's attributes
+     * If set, specifies one or more names of attributes of the underlying option resource (such as a JCR node) that are
+     * to be rendered as the selectable option's attributes
      * @return String value, or an array of strings
      */
     String[] attributeMembers() default {};
@@ -67,28 +82,23 @@ public @interface OptionSource {
     String[] attributes() default {};
 
     /**
-     * If set, specifies the way to transform option text as it is coming from a storage before rendering in UI
+     * If set, specifies the way to transform option text before rendering in UI
      * @return String value
      * @see com.exadel.aem.toolkit.api.annotations.meta.StringTransformation
      */
     StringTransformation textTransform() default StringTransformation.NONE;
 
     /**
-     * If set, specifies the way to transform option value as it is coming from a storage before rendering in UI
+     * If set, specifies the way to transform option value before rendering in UI
      * @return String value
      * @see com.exadel.aem.toolkit.api.annotations.meta.StringTransformation
      */
     StringTransformation valueTransform() default StringTransformation.NONE;
 
     /**
-     * If set, specifies an enum class the options can be transformed from.
-     * @return {@link Class} value
+     * If set to {@code true}, specifies that the current {@link OptionSource} is to be used as the fallback within the
+     * current {@link OptionProvider}. This property does not have an effect if there is only one option source set
+     * @return True or false
      */
-    Class<?> classValue() default _Default.class;
-
-    /**
-     * If set, specifies a fallback enum class the options can be transformed from.
-     * @return {@link Class} value
-     */
-    Class<?> fallbackClass() default _Default.class;
+    boolean isFallback() default false;
 }
