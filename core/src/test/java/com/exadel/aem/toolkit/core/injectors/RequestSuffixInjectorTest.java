@@ -23,9 +23,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.TestConstants;
 import com.exadel.aem.toolkit.core.injectors.models.requestproperty.Resources;
 
 public class RequestSuffixInjectorTest extends RequestPropertyInjectorTestBase {
+
     private static final String DEFAULT_SUFFIX = "/content/jcr:content/foo";
 
     /* -----------
@@ -35,7 +37,9 @@ public class RequestSuffixInjectorTest extends RequestPropertyInjectorTestBase {
     @Before
     public void beforeTest() {
         super.beforeTest();
-        context.load().json("/com/exadel/aem/toolkit/core/injectors/suffixInjector.json", "/content");
+        context.load().json(
+            "/com/exadel/aem/toolkit/core/injectors/suffixInjector.json",
+            TestConstants.ROOT_RESOURCE);
     }
 
     @Override

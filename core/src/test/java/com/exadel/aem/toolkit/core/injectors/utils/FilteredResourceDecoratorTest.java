@@ -26,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.TestConstants;
 import com.exadel.aem.toolkit.core.injectors.ChildInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.models.child.InjectedWithSelection;
 
@@ -36,7 +37,7 @@ public class FilteredResourceDecoratorTest {
 
     @Before
     public void beforeTest() {
-        context.load().json(ChildInjectorTest.MODELS_RESOURCES_FOLDER, ChildInjectorTest.ROOT_JCR_PATH);
+        context.load().json(ChildInjectorTest.MODELS_RESOURCES_FOLDER, TestConstants.ROOT_RESOURCE);
         context.currentResource("/content/jcr:content/list/list_item_4");
     }
 
