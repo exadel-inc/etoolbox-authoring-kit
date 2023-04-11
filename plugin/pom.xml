@@ -164,10 +164,5 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.core</artifactId>
-            <scope>compile</scope>
-        </dependency>
     </dependencies>
 </project>
