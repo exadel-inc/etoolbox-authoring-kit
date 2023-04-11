@@ -13,9 +13,6 @@
  */
 package com.exadel.aem.toolkit.core;
 
-import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.ConstantClassOptionSourceResolverTest;
-import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.EnumOptionSourceResolverTest;
-
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -36,6 +33,10 @@ import com.exadel.aem.toolkit.core.lists.servlets.ListsServletTest;
 import com.exadel.aem.toolkit.core.lists.utils.ListHelperTest;
 import com.exadel.aem.toolkit.core.lists.utils.ListPageUtilTest;
 import com.exadel.aem.toolkit.core.lists.utils.ListResourceUtilTest;
+import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.OptionProviderConstantsTest;
+import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.OptionProviderEnumsTest;
+import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.OptionProviderHttpTest;
+import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.OptionProviderInlineOptionsTest;
 import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.OptionProviderTest;
 import com.exadel.aem.toolkit.core.policymanagement.filters.TopLevelPolicyFilterTest;
 
@@ -64,8 +65,10 @@ import com.exadel.aem.toolkit.core.policymanagement.filters.TopLevelPolicyFilter
     FilteredResourceDecoratorTest.class,
 
     OptionProviderTest.class,
-    EnumOptionSourceResolverTest.class,
-    ConstantClassOptionSourceResolverTest.class,
+    OptionProviderHttpTest.class,
+    OptionProviderEnumsTest.class,
+    OptionProviderConstantsTest.class,
+    OptionProviderInlineOptionsTest.class,
 
     TopLevelPolicyFilterTest.class
 })
