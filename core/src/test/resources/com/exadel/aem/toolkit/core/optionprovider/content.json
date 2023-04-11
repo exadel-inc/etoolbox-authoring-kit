@@ -9,6 +9,17 @@
     "prepend": "None:none",
     "append": "More:prefix\\:more"
   },
+  "otherDatasource": {
+    "jcr:primaryType": "nt:unstructured",
+    "datasource": {
+      "jcr:primaryType": "nt:unstructured",
+      "sling:resourceType": "apps/etoolbox-authoring-kit/datasources/option-provider",
+      "path": "[{\"name\":\"Other option 1\", \"value\":1, \"attr\":\"one\"}, {\"name\":\"Other option 2\", \"value\":2, \"attr\":\"two\"}]",
+      "textMember": "name",
+      "valueMember": "value",
+      "attributeMembers": ["attr"]
+    }
+  },
   "optionsPathHolder": {
     "jcr:primaryType": "nt:unstructured",
     "moreOptionsPath": "/content/moreOptions"
@@ -53,6 +64,31 @@
           "text": "another excluded option",
           "value": "value6"
         }
+      }
+    }
+  },
+  "tags": {
+    "jcr:primaryType": "nt:folder",
+    "colors": {
+      "jcr:primaryType": "cq:Tag",
+      "jcr:title": "Colors",
+      "red": {
+        "jcr:primaryType": "cq:Tag",
+        "jcr:title": "Red",
+        "value": "#FF0000",
+        "sling:resourceType": "cq/tagging/components/tag"
+      },
+      "green": {
+        "jcr:primaryType": "cq:Tag",
+        "jcr:title": "Green",
+        "value": "#00FF00",
+        "sling:resourceType": "cq/tagging/components/tag"
+      },
+      "blue": {
+        "jcr:primaryType": "cq:Tag",
+        "jcr:title": "Blue",
+        "value": "#0000FF",
+        "sling:resourceType": "cq/tagging/components/tag"
       }
     }
   }

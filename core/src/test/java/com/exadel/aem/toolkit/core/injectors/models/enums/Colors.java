@@ -15,13 +15,13 @@ package com.exadel.aem.toolkit.core.injectors.models.enums;
 
 public enum Colors {
 
-    RED("#FF0000"),
-    ORANGE("#FFA500"),
-    YELLOW("#FFFF00"),
-    GREEN("#00FF00"),
-    BLUE("#0000FF"),
-    INDIGO("#4B0082"),
-    VIOLET("#7F00FF");
+    RED(ColorConstants.VALUE_RED),
+    ORANGE(ColorConstants.VALUE_ORANGE),
+    YELLOW(ColorConstants.VALUE_YELLOW),
+    GREEN(ColorConstants.VALUE_GREEN),
+    BLUE(ColorConstants.VALUE_BLUE),
+    INDIGO(ColorConstants.VALUE_INDIGO),
+    VIOLET(ColorConstants.VALUE_VIOLET);
 
     public final String hexValue;
     private final int intValue;
