@@ -27,7 +27,8 @@ import com.adobe.granite.ui.components.ds.ValueMapResource;
 import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
- * Represents a Sling synthetic resource intended to be processed as a Granite datasource option with optional custom attributes
+ * Represents a Sling synthetic resource intended to be processed as a Granite datasource option with optional custom
+ * attributes
  */
 class OptionResource extends ValueMapResource {
 
@@ -36,8 +37,8 @@ class OptionResource extends ValueMapResource {
     /**
      * Creates a new synthetic Sling resource intended to be processed as a Granite datasource
      * @param resourceResolver {@code ResourceResolver} associated with this synthetic resource
-     * @param valueMap         {@code Map<String, Object>} decorated to a {@code ValueMap} that represents
-     *                         mandatory attributes of this resource, namely <i>text</i> and <i>value</i>
+     * @param valueMap         {@code Map<String, Object>} decorated to a {@code ValueMap} that represents mandatory
+     *                         attributes of this resource, namely <i>text</i> and <i>value</i>
      * @param customAttributes {@code Map<String, Object>} that represents custom attributes of this datasource option,
      *                         can be null or empty
      */

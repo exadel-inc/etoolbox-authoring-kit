@@ -13,7 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.optionprovider.utils;
 
-import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,20 +26,41 @@ import com.exadel.aem.toolkit.core.CoreConstants;
  */
 public class PatternUtil {
 
+    /**
+     * Default (instantiation-preventing) constructor
+     */
     private PatternUtil() {
     }
 
+    /**
+     * Gets whether the given string represents a pattern
+     * @param value A nullable string value
+     * @return True or false
+     */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isPattern(String value) {
         return StringUtils.startsWith(value, CoreConstants.WILDCARD) || StringUtils.endsWith(value, CoreConstants.WILDCARD);
     }
 
-    public static boolean isMatch(String value, String[] patterns) {
+    /**
+     * Gets whether the given string matches at least one of the provided patterns
+     * @param value    A nullable string value
+     * @param patterns A nullable collection of patterns
+     * @return True or false
+     */
+    public static boolean isMatch(String value, List<String> patterns) {
         if (patterns == null) {
             return false;
         }
-        return Arrays.stream(patterns).anyMatch(pattern -> isMatch(value, pattern));
+        return patterns.stream().anyMatch(pattern -> isMatch(value, pattern));
     }
 
+    /**
+     * Gets whether the given string matches the provided pattern
+     * @param value   A nullable string value
+     * @param pattern A nullable string pattern
+     * @return True or false
+     */
     public static boolean isMatch(String value, String pattern) {
         if (StringUtils.isAnyEmpty(value, pattern)) {
             return false;
@@ -56,6 +77,12 @@ public class PatternUtil {
         return StringUtils.equals(value, pattern);
     }
 
+    /**
+     * Removes the provided pattern fragment from the original string
+     * @param value   A nullable string value from which the pattern is to be removed
+     * @param pattern A nullable string pattern
+     * @return String value
+     */
     public static String strip(String value, String pattern) {
         if (StringUtils.startsWith(pattern, CoreConstants.WILDCARD) && StringUtils.endsWith(pattern, CoreConstants.WILDCARD)) {
             return StringUtils.removeAll(value, pattern.substring(1, pattern.length() - 1));
