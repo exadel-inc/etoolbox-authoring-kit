@@ -65,6 +65,9 @@ public class PatternUtil {
         if (StringUtils.isAnyEmpty(value, pattern)) {
             return false;
         }
+        if (CoreConstants.WILDCARD.equals(pattern)) {
+            return true;
+        }
         if (StringUtils.startsWith(pattern, CoreConstants.WILDCARD) && StringUtils.endsWith(pattern, CoreConstants.WILDCARD)) {
             return StringUtils.contains(value, pattern.substring(1, pattern.length() - 1));
         }
@@ -84,8 +87,11 @@ public class PatternUtil {
      * @return String value
      */
     public static String strip(String value, String pattern) {
+        if (StringUtils.equals(pattern, CoreConstants.WILDCARD)) {
+            return StringUtils.EMPTY;
+        }
         if (StringUtils.startsWith(pattern, CoreConstants.WILDCARD) && StringUtils.endsWith(pattern, CoreConstants.WILDCARD)) {
-            return StringUtils.removeAll(value, pattern.substring(1, pattern.length() - 1));
+            return StringUtils.remove(value, pattern.substring(1, pattern.length() - 1));
         }
         if (StringUtils.startsWith(pattern, CoreConstants.WILDCARD)) {
             return StringUtils.removeEnd(value, pattern.substring(1));
