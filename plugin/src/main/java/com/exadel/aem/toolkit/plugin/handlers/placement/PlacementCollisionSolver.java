@@ -80,7 +80,6 @@ class PlacementCollisionSolver {
     public static void checkForCollisions(List<Source> sources) {
         List<String> distinctNames = sources
             .stream()
-            .map(Source::getName)
             .map(NamingUtil::stripGetterPrefix)
             .distinct()
             .collect(Collectors.toList());
@@ -326,7 +325,7 @@ class PlacementCollisionSolver {
     private static LinkedList<Source> getMembersWithSameName(List<Source> sources, String name, Predicate<Source> filter) {
         return sources
             .stream()
-            .filter(source -> StringUtils.equals(NamingUtil.stripGetterPrefix(source.getName()), name))
+            .filter(source -> StringUtils.equals(NamingUtil.stripGetterPrefix(source), name))
             .filter(source -> filter == null || filter.test(source))
             .map(source -> source.adaptTo(MemberSource.class))
             .collect(Collectors.toCollection(LinkedList::new));

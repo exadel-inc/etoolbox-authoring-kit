@@ -45,7 +45,7 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
         }
         String name = StringUtils.defaultIfEmpty(
             getNameByDialogFieldProperty(dialogField),
-            NamingUtil.stripGetterPrefix(source.getName()));
+            NamingUtil.stripGetterPrefix(source));
         String slingSuffix = getSlingSuffixByDialogFieldProperty(dialogField);
 
         String prefix = target.getNamePrefix();

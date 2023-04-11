@@ -83,12 +83,12 @@
                         cq:levelUp="Level up value">
                         <granite:data jcr:primaryType="nt:unstructured" cq:custom="Non-overridden value"/>
                     </testCustomAnnotationAutoDefault>
-                    <testAutoOrder jcr:primaryType="nt:unstructured"
+                    <getTestAutoOrder jcr:primaryType="nt:unstructured"
                                    customAutoOrder1="customAutoOrder1"
                                    customAutoOrder2="customAutoOrder2"
                                    customAutoOrder3="customAutoOrder3"
                                    sling:resourceType="test"/>
-                    <testOrder jcr:primaryType="nt:unstructured"
+                    <getTestOrder jcr:primaryType="nt:unstructured"
                                customHandler0="customHandler0"
                                customHandler1="customHandler1"
                                customHandler2="customHandler2"

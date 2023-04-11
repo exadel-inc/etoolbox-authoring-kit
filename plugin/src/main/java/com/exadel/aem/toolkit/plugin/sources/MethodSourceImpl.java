@@ -70,6 +70,9 @@ class MethodSourceImpl extends MemberSourceImpl {
         return method != null ? method.getDeclaringClass() : null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setDeclaringClass(Class<?> value) {
         this.declaringClass = value;
