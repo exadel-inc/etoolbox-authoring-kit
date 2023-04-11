@@ -107,6 +107,10 @@ class Option {
         return resource != null && !(resource instanceof NonExistingResource);
     }
 
+    String getName() {
+        return getCustomAttribute(CoreConstants.PARAMETER_NAME, StringTransformation.NONE);
+    }
+
     /**
      * Gets the name part of the option entry
      * @return String value
@@ -293,6 +297,11 @@ class Option {
 
         Builder uniqueByName(boolean value) {
             option.uniqueByName = value;
+            return this;
+        }
+
+        Builder uniqueByName(boolean value) {
+            dataSourceOption.uniqueByName = value;
             return this;
         }
 
