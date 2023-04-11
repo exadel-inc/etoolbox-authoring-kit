@@ -14,15 +14,14 @@
 package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.collections4.CollectionUtils;
@@ -33,33 +32,29 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.adapter.AdapterManager;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.factory.ModelFactory;
-import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.Children;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
- * Injects into a Sling model a collection of resources or secondary models that are derived from resources according to
- * the type of the underlying array or the parameter type of the underlying collection
+ * Provides injecting into a Sling model a collection of resources or secondary models that are derived from resources
+ * according to the type of the underlying array or else the parameter type of the underlying collection
  * @see Children
- * @see Injector
+ * @see BaseInjector
  */
-@Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
-)
-public class ChildrenInjector implements Injector {
+@Component(
+    service = Injector.class,
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING)
+public class ChildrenInjector extends BaseInjector<Children> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ChildrenInjector.class);
-
-    public static final String NAME = "eak-children-resource-injector";
+    public static final String NAME = "eak-child-resources-injector";
 
     private static final Predicate<Resource> DEFAULT_FILTER = resource -> true;
 
@@ -81,54 +76,40 @@ public class ChildrenInjector implements Injector {
     }
 
     /**
-     * Attempts to inject the collection of values into the given adaptable
-     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param name             Name of the Java class member to inject the value into
-     * @param type             Type of receiving Java class member
-     * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
-     *                         annotation objects
-     * @param callbackRegistry {@link DisposalCallbackRegistry} object
-     * @return Collection of {@code Resource} resources or adapted objects if successful. Otherwise, null is returned
+     * {@inheritDoc}
      */
-    @CheckForNull
     @Override
-    public Object getValue(
-        @Nonnull Object adaptable,
-        String name,
-        @Nonnull Type type,
-        @Nonnull AnnotatedElement element,
-        @Nonnull DisposalCallbackRegistry callbackRegistry) {
+    Children getManagedAnnotation(AnnotatedElement element) {
+        return element.getDeclaredAnnotation(Children.class);
+    }
 
-        Children annotation = element.getDeclaredAnnotation(Children.class);
-        if (annotation == null) {
-            return null;
-        }
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object getValue(Object adaptable, String name, Type type, Children annotation) {
 
         Resource adaptableResource = AdaptationUtil.getResource(adaptable);
         if (adaptableResource == null) {
             return null;
         }
 
-        if (!TypeUtil.isValidCollection(type) && !TypeUtil.isValidArray(type)) {
+        if (!TypeUtil.isSupportedCollectionOrArray(type, true)) {
             return null;
         }
 
-        String resourcePath = StringUtils.defaultIfBlank(annotation.name(), name);
-        Resource currentResource = adaptableResource.getChild(resourcePath);
+        String targetResourcePath = StringUtils.defaultIfBlank(annotation.name(), name);
+        Resource currentResource = adaptableResource.getChild(targetResourcePath);
         if (currentResource == null) {
             return null;
         }
 
         List<Object> children = getFilteredInjectables(adaptable, currentResource, type, annotation);
         if (CollectionUtils.isEmpty(children)) {
-            LOG.debug("Failed to inject child resources for the name \"{}\"", resourcePath);
             return null;
         }
 
-        if (type instanceof Class<?> && ((Class<?>) type).isArray()) {
-            return toArray(children, (Class<?>) type);
-        }
-        return children;
+        return CastUtil.toType(children, type);
     }
 
     /**
@@ -164,9 +145,9 @@ public class ChildrenInjector implements Injector {
      * @return List of adapted objects
      */
     private List<Object> getAdaptedObjects(Object source, List<Resource> childResources, Type type, Children settingsHolder) {
-        final Class<?> actualType = TypeUtil.extractComponentType(type);
+        final Class<?> actualType = TypeUtil.getElementType(type);
         if (actualType == null) {
-            return null;
+            return Collections.emptyList();
         }
         return childResources.stream()
             .map(resource -> InstantiationUtil.getFilteredResource(resource, settingsHolder.prefix(), settingsHolder.postfix()))
@@ -199,35 +180,19 @@ public class ChildrenInjector implements Injector {
     /**
      * Retrieves combined resource predicate that originates from the {@link Children} annotation {@code filter}
      * parameter
-     * @param settingsHolder {@code Children} annotation object containing the adaptation settings
+     * @param annotation {@code Children} annotation object containing the adaptation settings
      * @return {@code List} of initialized predicate functions
      */
-    private static Predicate<Resource> getResourceFilter(Children settingsHolder) {
-        if (ArrayUtils.isEmpty(settingsHolder.filters())) {
+    private static Predicate<Resource> getResourceFilter(Children annotation) {
+        if (ArrayUtils.isEmpty(annotation.filters())) {
             return DEFAULT_FILTER;
         }
-        return Arrays.stream(settingsHolder.filters())
+        return Arrays.stream(annotation.filters())
             .filter(cls -> ClassUtils.isAssignable(cls, Predicate.class))
             .map(InstantiationUtil::getObjectInstance)
             .filter(Objects::nonNull)
             .map(filter -> (Predicate<Resource>) filter)
             .reduce(Predicate::and)
             .orElse(DEFAULT_FILTER);
-    }
-
-    /**
-     * Converts the provided parametrized list of objects into the array of the same parameter type
-     * @param values {@code List} instance
-     * @param type   {@code Class} reference that specifies the type of list entries
-     * @param <T>    Type of entry
-     * @return Array of objects
-     */
-    @SuppressWarnings("unchecked")
-    private static <T> T[] toArray(List<T> values, Class<?> type) {
-        T[] result = (T[]) Array.newInstance(type.getComponentType(), values.size());
-        for (int i = 0; i < values.size(); i++) {
-            result[i] = values.get(i);
-        }
-        return result;
     }
 }

@@ -15,38 +15,32 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.request.RequestParameterMap;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestParam;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
- * Injects into a Sling model the value of a HTTP request parameter (multiple parameters) obtained
+ * Provides injecting into a Sling model the value of an HTTP request parameter (multiple parameters) obtained
  * via a {@code SlingHttpServletRequest} object
  * @see RequestParam
- * @see Injector
+ * @see BaseInjector
  */
-@Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
-)
-public class RequestParamInjector implements Injector {
-
-    private static final Logger LOG = LoggerFactory.getLogger(RequestParamInjector.class);
+@Component(
+    service = Injector.class,
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING)
+public class RequestParamInjector extends BaseInjector<RequestParam> {
 
     public static final String NAME = "eak-request-parameter-injector";
 
@@ -62,77 +56,71 @@ public class RequestParamInjector implements Injector {
     }
 
     /**
-     * Attempts to inject a value into the given adaptable
-     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param name             Name of the Java class member to inject the value into
-     * @param type             Type of receiving Java class member
-     * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
-     *                         annotation objects
-     * @param callbackRegistry {@link DisposalCallbackRegistry} object
-     * @return The value to inject, or null in case injection is not possible
-     * @see Injector
+     * {@inheritDoc}
+     */
+    @Override
+    public RequestParam getManagedAnnotation(AnnotatedElement element) {
+        return element.getDeclaredAnnotation(RequestParam.class);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public Object getValue(
-        @Nonnull Object adaptable,
+        Object adaptable,
         String name,
-        @Nonnull Type type,
-        @Nonnull AnnotatedElement element,
-        @Nonnull DisposalCallbackRegistry callbackRegistry) {
-
-        RequestParam annotation = element.getDeclaredAnnotation(RequestParam.class);
-        if (annotation == null) {
-            return null;
-        }
+        Type type,
+        RequestParam annotation) {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
             return null;
         }
+        return getValue(request, annotation.name().isEmpty() ? name : annotation.name(), type);
+    }
 
-        String paramName = annotation.name().isEmpty() ? name : annotation.name();
+    /**
+     * Extracts a parameter value from the given {@link SlingHttpServletRequest} object and casts it to the given type
+     * @param request A {@code SlingHttpServletRequest} instance
+     * @param name    Name of the parameter
+     * @param type    Type of the returned value
+     * @return A nullable value
+     */
+    Object getValue(SlingHttpServletRequest request, String name, Type type) {
 
-        if (TypeUtil.isValidObjectType(type, String.class)) {
-            return request.getParameter(paramName);
-
-        } else if (TypeUtil.isValidArray(type, String.class)) {
-            return getFilteredRequestParameters(request, paramName)
-                .map(RequestParameter::getString)
-                .toArray(String[]::new);
-
-        } else if (TypeUtil.isValidCollection(type, String.class)) {
-            return getFilteredRequestParameters(request, paramName)
-                .map(RequestParameter::getString)
-                .collect(Collectors.toList());
-
-        } else if (TypeUtil.isValidObjectType(type, RequestParameter.class)) {
-            return request.getRequestParameter(paramName);
-
-        } else if (TypeUtil.isValidCollection(type, RequestParameter.class)) {
+        if (RequestParameter.class.equals(type) || Object.class.equals(type)) {
+            return request.getRequestParameter(name);
+        } else if (TypeUtil.isSupportedCollectionOfType(type, RequestParameter.class, false)) {
             return request.getRequestParameterList();
-
-        } else if (TypeUtil.isValidArray(type, RequestParameter.class)) {
-            return request.getRequestParameters(paramName);
-
-        } else if (TypeUtil.isValidObjectType(type, RequestParameterMap.class)) {
+        } else if (TypeUtil.isArrayOfType(type, RequestParameter.class)) {
+            return request.getRequestParameters(name);
+        } else if (RequestParameterMap.class.equals(type)) {
             return request.getRequestParameterMap();
         }
 
-        LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
+        Class<?> elementType = TypeUtil.getElementType(type);
+        if (ClassUtils.isPrimitiveOrWrapper(elementType) || ClassUtils.isAssignable(elementType, String.class)) {
+            return CastUtil.toType(getRequestParameterValues(request, name), type);
+        }
+
         return null;
     }
 
     /**
-     * Retrieves the stream of {@link RequestParameter} objects extracted from the current Sling request filtered with
-     * the given parameter name
+     * Retrieves query parameter(-s) by the given name extracted from the current Sling request
      * @param request {@code SlingHttpServletRequest} instance
      * @param name    The parameter name to filter the request parameters with
-     * @return {@code Stream} object containing matched request parameters
+     * @return A non-null string array (can be empty)
      */
-    private Stream<RequestParameter> getFilteredRequestParameters(SlingHttpServletRequest request, String name) {
+    private String[] getRequestParameterValues(SlingHttpServletRequest request, String name) {
         return request
             .getRequestParameterList()
             .stream()
-            .filter(requestParameter -> StringUtils.equals(name, requestParameter.getName()));
+            .filter(requestParameter -> StringUtils.equals(name, requestParameter.getName()))
+            .map(RequestParameter::getString)
+            .filter(StringUtils::isNotEmpty)
+            .toArray(String[]::new);
     }
+
 }

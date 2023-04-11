@@ -1,10 +1,10 @@
 <!--
 layout: content
-title: Enhancing AEM Components with advanced Injectors
-navTitle: Injectors
+title: Injectors
 seoTitle: Injectors - Exadel Authoring Kit
 order: 4
 -->
+## Enhancing AEM Components' back-end with advanced Injectors
 
 [Injectors](https://sling.apache.org/documentation/bundles/models.html#custom-injectors-1) are a powerful feature of
 Apache Sling that is massively used across modern AEM projects. Injectors pass data directly to the Java classes that
@@ -13,7 +13,7 @@ back AEM components. This reduces boilerplate code and simplifies authoring as w
 Exadel Toolbox Authoring Kit (*ToolKit*) offers a number of Injectors you can use in your projects: both bound to other
 ToolKit features and independent.
 
-## Injector for EToolbox Lists
+### Injector for EToolbox Lists
 
 You can use it to inject the content of an EToolbox List directly into your Sling model. This injector can be used with
 either a field, a method, or a constructor argument. You can retrieve either a *Collection* / *List* of list items or a
@@ -63,7 +63,7 @@ public class SampleModel {
 }
 ```
 
-## Injector for a child (or relative) resource
+### Injector for a child (or relative) resource
 
 it is often needed to inject a relative resource (by its path) or a derived Sling model into the current model. Usually,
 this is achieved through such annotations as *@ChildResource* or *@ChildResourceWithRequest*. However both solutions
@@ -158,7 +158,7 @@ The same principle applies to the *postfix* property.
 Note: the `@Child` annotation can be used with either a field, a method, or a constructor argument. When using with a
 constructor, use the notation like `(@Child @Named SomeModel argument)` and annotate the constructor itself with `@Inject`.
 
-## Injector for a list of child resources
+### Injector for a list of child resources
 
 The `@Children` injector follows much the same pattern as the `@Child` annotation. The differences are:
 
@@ -220,14 +220,14 @@ Note: the `@Children` annotation can be used with either a field, a method, or a
 constructor, write it like `(@Children @Named("path") List<ListItemModel> argument)` or
 else `(@Children(name = "path") @Named List<ListItemModel> argument)` and also annotate the constructor itself with `@Inject`.
 
-## Injector for request parameters
+### Injector for request parameters
 
 The `@RequestParam` annotation is used to inject a request parameter. The annotated member can be of type *String* or *Object*, then a value coerced to string is injected. Else, the parameter can be of type *RequestParameter* (including a list or an array of that type) or *RequestParameterMap* so that the corresponding objects obtained via the *SlingHttpServletRequest* could be injected.
 
 Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
 constructor, use the notation like `(@RequestParam @Named String argument)` and annotate the constructor itself with `@Inject`.
 
-## Injector for request selectors
+### Injector for request selectors
 
 The `@RequestSelectors` annotation can be used to inject Sling request selectors. If the annotated member is of type *
 String* or *Object*, the "whole" selector string is injected. But if the annotated member represents an array or a list
@@ -253,16 +253,54 @@ public class SampleModel {
 Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
 constructor, use the notation like `(@RequestSelectors @Named String argument)` and annotate the constructor itself with `@Inject`.
 
-## Injector for request suffix
+### Injector for request suffix
 
 The `@RequestSuffix` is used to inject a Sling request suffix. If the annotated member is of type *String* or *Object*, the string value of suffix is injected. If the annotated member is of type *Resource*, the injector will inject the corresponding JCR resource.
 
 Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
 constructor, write it like `(@RequestSuffix @Named String argument)` and annotate the constructor itself with `@Inject`.
 
-## Injector for I18n
+### Injector for request attributes
 
-The `@I18N` annotation can be used to inject either the OOTB `I18n` object or a particular internationalized value. Therefore, it is legitimate to use this annotation with an *I18n*-typed or a *String*-typed class member (and also with an *Object*-typed member which is then considered a string).
+The `@RequestAttribute` is an advanced variant of the Sling models API annotation sharing the same name. Same as its Sling API prototype, it allows to a assign a value of the request's attribute to a Java class member. It is more universal and "forgiving" as it comes to value types, though.
+
+With EAK Authoring Kit's `@RequestAttrbiute`, you can
+- Inject attribute values of any reference or primitive type. Boxed types are cast as needed;
+- Inject arrays and `List`-s / `Set`-s. If the attribute value is of an array type, it can be injected into either an array-typed or `List`/`Set`-typed class member. Similarly, a collection can be injected into either an array, a `List`. or a `Set`;
+- Inject into a Java class member of a "widening" numeric type (e.g. an `int` value into a `long`-typed or `double`-typed field, etc.);
+- Inject an implementation of an interface or an abstract class into a Java class member typed as the ancestor class / interface.
+
+A usual case for `@RequestAttribute` is processing data passed via `data-sly-use` like in the following sample:
+```html
+<sly data-sly-use.model0="${'com.acme.project.MyModel' @ foo='Hello World', bar=42}"></sly>
+<sly data-sly-use.model1="${'com.acme.project.MyModel' @ foo='Hello World', bar=[42, 43]}"></sly>
+```
+Both instructions would work well with a model designed like the following:
+```java
+@Model(adaptables = SlingHttpServletRequest.class)
+public class MyModel {
+
+    @RequestAttribute
+    private CharSequence foo; // injects "Hello World" in both cases
+
+    @RequestAttribute(name = "foo")
+    private String foo2; // injects "Hello World" in both cases
+
+    @RequestAttrbute
+    private int bar; // injects 42 in the first case, 0 in the second case
+
+    @RequestAttrbute(name = "bar")
+    private long[] barArray; // injects {42L} in the first case, {42L, 43L} in the second case
+
+    @RequestAttrbute(name = "bar")
+    private List<Integer> barList; // injects Arrays.asList(42L) in the first case, Arrays.asList(42L, 43L) in the second case
+}
+```
+Thus, `@RequestAttribute` makes integration with HTL more straightforward as it massively eliminates the need to guess what exact value type is being passed into the Sling model under the hood.
+
+### Injector for I18n
+
+The `@I18N` annotation can be used to inject either the OOTB `I18n` object or a particular internationalized value. Therefore, it is legitimate to use this annotation with an *I18n*-typed or a *String*-typed class member (plus with an *Object*-typed member which is then considered a string).
 
 The behavior of *I18N* depends on the current locale. By default, the locale is guessed from the path of the page the current resource belongs to, or else the *jcr:language* property of that page. That is, a resource with the path like `/content/site/us/en/myPage/jcr:content/resource` or `/content/site/us-en/myPage/jcr:content/resource` will be considered belonging to the *en_US* locale.
 

@@ -30,34 +30,27 @@ import org.apache.commons.lang3.ClassUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.i18n.ResourceBundleProvider;
-import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.component.annotations.ReferenceCardinality;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import com.day.cq.i18n.I18n;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.I18N;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
-import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
-import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 
 /**
- * Injects into a Sling model an {@link com.day.cq.i18n.I18n} object that corresponds to the current locale, or else an
- * internationalized string value
+ * Provides injecting into a Sling model an {@link com.day.cq.i18n.I18n} object that corresponds to the current locale,
+ * or else an internationalized string value
  * @see I18N
- * @see Injector
+ * @see BaseInjector
  */
-@Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
-)
-public class I18nInjector implements Injector {
-
-    private static final Logger LOG = LoggerFactory.getLogger(I18nInjector.class);
+@Component(
+    service = Injector.class,
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING)
+public class I18nInjector extends BaseInjector<I18N> {
 
     public static final String NAME = "eak-etoolbox-i18n-injector";
 
@@ -78,30 +71,18 @@ public class I18nInjector implements Injector {
     }
 
     /**
-     * Attempts to inject an {@code I18n} object or an internationalized string into the current adaptable
-     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param name             Name of the Java class member to inject the value into
-     * @param type             Type of receiving Java class member
-     * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
-     *                         annotation objects
-     * @param callbackRegistry {@link DisposalCallbackRegistry} object
-     * @return The value to inject, or null in case injection is not possible
-     * @see Injector
-     * @see ListHelper
+     * {@inheritDoc}
      */
     @Override
-    public Object getValue(
-        @Nonnull Object adaptable,
-        String name,
-        @Nonnull Type type,
-        @Nonnull AnnotatedElement element,
-        @Nonnull DisposalCallbackRegistry callbackRegistry) {
+    public I18N getManagedAnnotation(AnnotatedElement element) {
+        return element.getDeclaredAnnotation(I18N.class);
+    }
 
-        I18N annotation = element.getDeclaredAnnotation(I18N.class);
-        if (annotation == null) {
-            return null;
-        }
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Object getValue(Object adaptable, String name, Type type, I18N annotation) {
         String value = StringUtils.defaultIfEmpty(annotation.value(), name);
 
         Function<Object, Locale> localeDetector = InstantiationUtil.getObjectInstance(annotation.localeDetector());
@@ -113,11 +94,10 @@ public class I18nInjector implements Injector {
 
         if (isI18nType(type)) {
             return i18n;
-        } else if (TypeUtil.isValidObjectType(type, String.class)) {
+        } else if (String.class.equals(type)) {
             return i18n.get(value);
         }
 
-        LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
         return null;
     }
 

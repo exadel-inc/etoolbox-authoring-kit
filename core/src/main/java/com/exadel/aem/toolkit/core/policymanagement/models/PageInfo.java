@@ -20,7 +20,8 @@ import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 
 /**
  * Represents an AEM page resource that is used to determine templates' policies (designs) for the top level containers
- * <p><u>Note</u>: This class is not a part of the public API</p>
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  */
 @Model(adaptables = Resource.class)
 public class PageInfo {

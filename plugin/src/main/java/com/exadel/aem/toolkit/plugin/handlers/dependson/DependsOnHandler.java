@@ -30,6 +30,7 @@ import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRefTypes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
@@ -40,9 +41,7 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
  */
 public class DependsOnHandler implements BiConsumer<Source, Target> {
 
-    static final String EMPTY_VALUES_EXCEPTION_MESSAGE = "Non-empty string values required for DependsOn params";
-
-    private static final String TERM_SEPARATOR = "-";
+    static final String EMPTY_VALUES_EXCEPTION_MESSAGE = "Non-empty string values are required for DependsOn params";
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
@@ -74,7 +73,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
         valueMap.put(DialogConstants.PN_DEPENDS_ON, escapedQuery);
         valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, value.action());
         valueMap.putAll(buildParamsMap(value, 0));
-        target.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA).attributes(valueMap);
+        target.getOrCreateTarget(CoreConstants.NN_GRANITE_DATA).attributes(valueMap);
     }
 
     /**
@@ -111,7 +110,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
                 .map(dependsOn -> DependsOnHandler.buildParamsMap(dependsOn, counter.merge(dependsOn.action(), 1, Integer::sum) - 1))
                 .forEach(valueMap::putAll);
 
-        target.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA).attributes(valueMap);
+        target.getOrCreateTarget(CoreConstants.NN_GRANITE_DATA).attributes(valueMap);
     }
 
     /**
@@ -126,10 +125,13 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
     private static Map<String, String> buildParamsMap(DependsOn dependsOn, int index) {
         Map<String, String> valueMap = new HashMap<>();
         for (DependsOnParam param : dependsOn.params()) {
-            String paramName =
-                    StringUtils.joinWith(TERM_SEPARATOR, DialogConstants.PN_DEPENDS_ON, dependsOn.action(), param.name());
+            String paramName = StringUtils.joinWith(
+                CoreConstants.SEPARATOR_HYPHEN,
+                DialogConstants.PN_DEPENDS_ON,
+                dependsOn.action(),
+                param.name());
             if (index > 0) {
-                paramName = StringUtils.joinWith(TERM_SEPARATOR, paramName, index);
+                paramName = StringUtils.joinWith(CoreConstants.SEPARATOR_HYPHEN, paramName, index);
             }
             valueMap.put(paramName, param.value());
         }
@@ -160,11 +162,11 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
         if (value.lazy()) {
             valueMap.put(DialogConstants.PN_DEPENDS_ON_REFLAZY, StringUtils.EMPTY);
         }
-        target.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA).attributes(valueMap);
+        target.getOrCreateTarget(CoreConstants.NN_GRANITE_DATA).attributes(valueMap);
     }
 
     /**
-     * Escape characters given a string
+     * Escape characters in the given string
      * @param value The string to process
      * @return The string with escaped values
      * */
@@ -172,7 +174,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
         String result = StringUtils.replace(
             value, DialogConstants.SEPARATOR_SEMICOLON,
             "\\\\" + DialogConstants.SEPARATOR_SEMICOLON);
-        for (String bracket : new String[] {DialogConstants.ARRAY_OPENING, DialogConstants.ARRAY_CLOSING}) {
+        for (String bracket : new String[] {CoreConstants.ARRAY_OPENING, CoreConstants.ARRAY_CLOSING}) {
             result = StringUtils.replace(result, bracket, "\\" + bracket);
         }
         return result;

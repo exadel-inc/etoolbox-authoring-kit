@@ -15,6 +15,7 @@ package com.exadel.aem.toolkit.api.annotations.editconfig;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
@@ -26,6 +27,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
  * See <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/components-basics.html#main-pars_title_9_pnfkfl_refd_">
  *     AEM Components documentation</a>
  */
+@Target({})
 @Retention(RetentionPolicy.RUNTIME)
 @AnnotationRendering(properties = "all")
 public @interface InplaceEditingConfig {

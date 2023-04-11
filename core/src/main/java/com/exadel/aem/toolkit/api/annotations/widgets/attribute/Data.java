@@ -13,9 +13,12 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.attribute;
 
+import java.lang.annotation.Target;
+
 /**
  * Represents a name-value string pair used to populate {@link Attribute#data()} array
  */
+@Target({})
 public @interface Data {
 
     /**

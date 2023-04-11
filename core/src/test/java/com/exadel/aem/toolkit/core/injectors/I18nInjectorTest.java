@@ -15,110 +15,126 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import java.util.Locale;
 
+import org.apache.sling.api.adapter.Adaptable;
 import org.apache.sling.i18n.ResourceBundleProvider;
 import org.apache.sling.testing.mock.sling.MockResourceBundle;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
-import com.exadel.aem.toolkit.core.injectors.models.ITestModelI18n;
-import com.exadel.aem.toolkit.core.injectors.models.TestModelI18n;
-
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import com.exadel.aem.toolkit.core.injectors.models.i18n.I18nInterface;
+import com.exadel.aem.toolkit.core.injectors.models.i18n.Objects;
+import com.exadel.aem.toolkit.core.injectors.models.i18n.Strings;
+
 public class I18nInjectorTest {
+
+    private static final String MODELS_PACKAGE_NAME = "com.exadel.aem.toolkit.core.injectors.models.i18n";
 
     private static final String SOURCE_STRING = "Hello world";
     private static final String TRANSLATED_STRING = "Ciao mondo";
+
+    private static final String SOURCE_FIELD_NAME = "value";
+    private static final String TRANSLATED_FIELD_NAME = "valore";
 
     private static final Locale LOCALE_IT = new Locale("it", "it");
 
     @Rule
     public final AemContext context = new AemContext();
 
-    private TestModelI18n testModel;
+    /* -----------
+       Preparation
+       ----------- */
 
     @Before
     public void beforeTest() {
         context.registerInjectActivateService(new I18nInjector());
-        context.addModelsForClasses(TestModelI18n.class, ITestModelI18n.class);
+        context.addModelsForPackage(MODELS_PACKAGE_NAME);
 
         ResourceBundleProvider resourceBundleProvider = context.getService(ResourceBundleProvider.class);
         assert resourceBundleProvider != null;
         MockResourceBundle resourceBundle = (MockResourceBundle) resourceBundleProvider.getResourceBundle(LOCALE_IT);
         resourceBundle.put(SOURCE_STRING, TRANSLATED_STRING);
-        resourceBundle.put("helloWorld", "ciaoMondo");
+        resourceBundle.put(SOURCE_FIELD_NAME, TRANSLATED_FIELD_NAME);
 
         context.load().json("/com/exadel/aem/toolkit/core/injectors/i18nInjector.json", "/content/site/it-it");
         context.request().setResource(context.resourceResolver().getResource("/content/site/it-it/page/jcr:content/resource"));
-
-        testModel = context.request().adaptTo(TestModelI18n.class);
     }
+
+    /* -----
+       Tests
+       ----- */
 
     @Test
     public void shouldInjectI18nObject() {
+        shouldInjectI18nObject(context.request());
+        shouldInjectI18nObject(context.request().getResource());
+    }
+
+    private void shouldInjectI18nObject(Adaptable adaptable) {
+        Objects model = adaptable.adaptTo(Objects.class);
+        assertNotNull(model);
+
         // Matched by the Page#getLanguage() value
-        assertNotNull(testModel.getI18n());
-        assertEquals(TRANSLATED_STRING, testModel.getI18n().get(SOURCE_STRING));
+        assertNotNull(model.getI18n());
+        assertEquals(TRANSLATED_STRING, model.getI18n().get(SOURCE_STRING));
+
+        // Matched by the Page#getLanguage() value; injected via constructor
+        assertNotNull(model.getConstructorI18n());
+        assertEquals(TRANSLATED_STRING, model.getConstructorI18n().get(SOURCE_STRING));
 
         // Matched by the explicitly set locale
-        assertNotNull(testModel.getI18nLocale());
-        assertEquals(TRANSLATED_STRING, testModel.getI18nLocale().get(SOURCE_STRING));
+        assertNotNull(model.getI18nLocale());
+        assertEquals(TRANSLATED_STRING, model.getI18nLocale().get(SOURCE_STRING));
 
         // Matched by the custom locale detector
-        assertNotNull(testModel.getI18nDetector());
-        assertEquals(TRANSLATED_STRING, testModel.getI18nDetector().get(SOURCE_STRING));
+        assertNotNull(model.getI18nDetector());
+        assertEquals(TRANSLATED_STRING, model.getI18nDetector().get(SOURCE_STRING));
 
         // Matched by the native routine
-        assertNotNull(testModel.getI18nNative());
-        assertEquals(SOURCE_STRING, testModel.getI18nNative().get(SOURCE_STRING));
+        assertNotNull(model.getI18nNative());
+        assertEquals(SOURCE_STRING, model.getI18nNative().get(SOURCE_STRING));
     }
 
     @Test
-    public void shouldInjectI18nStringByFieldName() {
+    public void shouldInjectI18nString() {
+        shouldInjectI18nString(context.request());
+        shouldInjectI18nString(context.request().getResource());
+    }
+
+    private void shouldInjectI18nString(Adaptable adaptable) {
+        Strings model = adaptable.adaptTo(Strings.class);
+        assertNotNull(model);
+
         // Matched by the Page#getLanguage() value
-        assertEquals("ciaoMondo", testModel.getHelloWorld());
-    }
+        assertEquals(TRANSLATED_FIELD_NAME, model.getValue());
 
-    @Test
-    public void shouldInjectI18nStringByValue() {
         // Matched by the explicitly set locale
-        assertEquals(TRANSLATED_STRING, testModel.getHelloWorldLocale());
+        assertEquals(TRANSLATED_STRING, model.getValueByLocale());
 
         // Matched by the custom locale detector
-        assertNotNull(testModel.getI18nDetector());
-        assertEquals(TRANSLATED_STRING, testModel.getHelloWorldDetector());
+        assertNotNull(model.getValueByDetector());
+        assertEquals(TRANSLATED_STRING, model.getValueByDetector());
 
         // Matched by the native routine
-        assertEquals(SOURCE_STRING, testModel.getHelloWorldNative());
+        assertEquals(SOURCE_STRING, model.getValueByNativeDetector());
     }
 
     @Test
-    public void shouldInjectConstructorArguments() {
-        assertNotNull(testModel.getI18nConstructor());
-        assertEquals(TRANSLATED_STRING, testModel.getI18nConstructor().get(SOURCE_STRING));
+    public void shouldInjectViaInterfaceMethod() {
+        shouldInjectViaInterfaceMethod(context.request());
+        shouldInjectViaInterfaceMethod(context.request().getResource());
     }
 
-    @Test
-    public void shouldInjectViaMethod() {
-        ITestModelI18n testModel = context.request().adaptTo(ITestModelI18n.class);
-        assertNotNull(testModel);
+    private void shouldInjectViaInterfaceMethod(Adaptable adaptable) {
+        I18nInterface model = adaptable.adaptTo(I18nInterface.class);
+        assertNotNull(model);
 
-        assertNotNull(testModel.getI18n());
-        assertEquals(TRANSLATED_STRING, testModel.getI18n().get(SOURCE_STRING));
-
-        assertEquals("ciaoMondo", testModel.getHelloWorld());
-
-        assertEquals(TRANSLATED_STRING, testModel.getHelloWorldNamed());
-    }
-
-    @Test
-    public void shouldInjectInResourceAdaptable() {
-        TestModelI18n testModel = context.request().getResource().adaptTo(TestModelI18n.class);
-        assertNotNull(testModel);
-        assertNotNull(testModel.getI18n());
-        assertEquals(TRANSLATED_STRING, testModel.getI18n().get(SOURCE_STRING));
+        assertNotNull(model.getI18n());
+        assertEquals(TRANSLATED_STRING, model.getI18n().get(SOURCE_STRING));
+        assertEquals(TRANSLATED_FIELD_NAME, model.getValue());
+        assertEquals(TRANSLATED_STRING, model.getNamedValue());
     }
 }

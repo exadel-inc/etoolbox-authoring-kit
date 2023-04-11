@@ -17,10 +17,10 @@ import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -59,7 +59,7 @@ public class PluginContextRenderingRule extends PluginContextRule {
         }
         test(component,
             subfolderName,
-            StringUtils.uncapitalize(RegExUtils.removePattern(component.getSimpleName(), SUFFIX_PATTERN)));
+            StringUtils.uncapitalize(StringUtils.removePattern(component.getSimpleName(), SUFFIX_PATTERN)));
     }
 
     public void test(Class<?> component, String... pathElements) {
@@ -111,5 +111,9 @@ public class PluginContextRenderingRule extends PluginContextRule {
                     e.getMessage().contains(message));
             }
         }
+    }
+
+    public Map<String, String> getPackageVersionInfo() {
+        return VersionInfoRenderingUtil.getVersionInfo(fileSystem);
     }
 }

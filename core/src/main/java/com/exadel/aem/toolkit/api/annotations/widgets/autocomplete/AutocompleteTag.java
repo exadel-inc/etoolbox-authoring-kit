@@ -15,6 +15,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.autocomplete;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
@@ -23,6 +24,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 /**
  * Used to set up {@link Autocomplete#values()} property
  */
+@Target({})
 @Retention(RetentionPolicy.RUNTIME)
 @ResourceType(ResourceTypes.AUTOCOMPLETE_TAG)
 @AnnotationRendering(properties = "all")
