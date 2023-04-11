@@ -24,7 +24,7 @@ import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService
  * @see OptionSourceParameters
  * @see OptionProviderService
  */
-class PathParameters {
+public class PathParameters {
     private String path;
     private String fallbackPath;
 
@@ -46,7 +46,7 @@ class PathParameters {
      * Gets the user-specified {@code path} setting
      * @return String value
      */
-    String getPath() {
+    public String getPath() {
         return path;
     }
 
@@ -54,7 +54,7 @@ class PathParameters {
      * Gets the user-specified {@code fallbackPath} setting
      * @return String value
      */
-    String getFallbackPath() {
+    public String getFallbackPath() {
         return fallbackPath;
     }
 
@@ -62,7 +62,7 @@ class PathParameters {
      * Gets the user-specified {@code textMember} setting
      * @return String value
      */
-    String getTextMember() {
+    public String getTextMember() {
         return textMember;
     }
 
@@ -70,7 +70,7 @@ class PathParameters {
      * Gets the user-specified {@code valueMember} setting
      * @return String value
      */
-    String getValueMember() {
+    public String getValueMember() {
         return valueMember;
     }
 
@@ -78,7 +78,7 @@ class PathParameters {
      * Gets the user-specified {@code attributes} setting parsed into a string array
      * @return Array of strings
      */
-    String[] getAttributes() {
+    public String[] getAttributes() {
         return attributes;
     }
 
@@ -86,7 +86,7 @@ class PathParameters {
      * Gets the user-specified {@code attributeMembers} setting parsed into a string array
      * @return Array of strings
      */
-    String[] getAttributeMembers() {
+    public String[] getAttributeMembers() {
         return attributeMembers;
     }
 
@@ -94,7 +94,7 @@ class PathParameters {
      * Gets the user-specified {@code textTransform} setting
      * @return String value
      */
-    StringTransformation getTextTransform() {
+    public StringTransformation getTextTransform() {
         return textTransform;
     }
 
@@ -102,15 +102,28 @@ class PathParameters {
      * Gets the user-specified {@code valueTransform} setting
      * @return String value
      */
-    StringTransformation getValueTransform() {
+    public StringTransformation getValueTransform() {
         return valueTransform;
+    }
+
+    public PathParameters modify(String textMember, String valueMember) {
+        return builder()
+            .path(this.path)
+            .fallbackPath(this.fallbackPath, null)
+            .textMember(textMember, null)
+            .valueMember(valueMember, null)
+            .attributes(this.attributes, null)
+            .attributeMembers(attributeMembers, null)
+            .textTransform(textTransform)
+            .valueTransform(valueTransform)
+            .build();
     }
 
     /**
      * Gets a builder for a new {@link PathParameters} instance
      * @return {@code DataSourcePathParameter} object
      */
-    static Builder builder() {
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -118,53 +131,53 @@ class PathParameters {
      * Implements the builder pattern for the {@link PathParameters}
      */
     @SuppressWarnings("MissingJavadocMethod")
-    static class Builder {
+    public static class Builder {
         private final PathParameters optionSourcePathParameters = new PathParameters();
 
         private Builder() {
         }
 
-        Builder path(String value) {
+        public Builder path(String value) {
             optionSourcePathParameters.path = value;
             return this;
         }
 
-        Builder fallbackPath(String value, String defaultValue) {
+        public Builder fallbackPath(String value, String defaultValue) {
             optionSourcePathParameters.fallbackPath = StringUtils.defaultIfBlank(value, defaultValue);
             return this;
         }
 
-        Builder textMember(String value, String defaultValue) {
+        public Builder textMember(String value, String defaultValue) {
             optionSourcePathParameters.textMember = StringUtils.defaultIfBlank(value, defaultValue);
             return this;
         }
 
-        Builder valueMember(String value, String defaultValue) {
+        public Builder valueMember(String value, String defaultValue) {
             optionSourcePathParameters.valueMember = StringUtils.defaultIfBlank(value, defaultValue);
             return this;
         }
 
-        Builder attributeMembers(String[] value, String[] defaultValue) {
+        public Builder attributeMembers(String[] value, String[] defaultValue) {
             optionSourcePathParameters.attributeMembers = ArrayUtils.isNotEmpty(value) ? value : defaultValue;
             return this;
         }
 
-        Builder attributes(String[] value, String[] defaultValue) {
+        public Builder attributes(String[] value, String[] defaultValue) {
             optionSourcePathParameters.attributes = ArrayUtils.isNotEmpty(value) ? value : defaultValue;
             return this;
         }
 
-        Builder textTransform(StringTransformation value) {
+        public Builder textTransform(StringTransformation value) {
             optionSourcePathParameters.textTransform = value;
             return this;
         }
 
-        Builder valueTransform(StringTransformation value) {
+        public Builder valueTransform(StringTransformation value) {
             optionSourcePathParameters.valueTransform = value;
             return this;
         }
 
-        PathParameters build() {
+        public PathParameters build() {
             return optionSourcePathParameters;
         }
     }

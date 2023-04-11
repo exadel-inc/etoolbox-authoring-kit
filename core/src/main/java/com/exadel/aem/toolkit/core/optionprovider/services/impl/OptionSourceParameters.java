@@ -76,7 +76,7 @@ public class OptionSourceParameters {
      * Gets the collection of user-defined settings specific for a datasource path
      * @return List of {@link PathParameters} objects
      */
-    List<PathParameters> getPathParameters() {
+    public List<PathParameters> getPathParameters() {
         return pathParameters;
     }
 
@@ -84,7 +84,7 @@ public class OptionSourceParameters {
      * Gets the user-specified {@code append} setting value
      * @return Array of strings, or null
      */
-    String[] getAppendedOptions() {
+    public String[] getAppendedOptions() {
         return appendOptions;
     }
 
@@ -92,7 +92,7 @@ public class OptionSourceParameters {
      * Gets the user-specified {@code prepend} setting value
      * @return Array of strings, or null
      */
-    String[] getPrependedOptions() {
+    public String[] getPrependedOptions() {
         return prependOptions;
     }
 
@@ -100,7 +100,7 @@ public class OptionSourceParameters {
      * Gets the user-specified {@code exclude} setting value
      * @return Array of strings, or null
      */
-    String[] getExcludedOptions() {
+    public String[] getExcludedOptions() {
         return excludeOptions;
     }
 
@@ -116,7 +116,7 @@ public class OptionSourceParameters {
      * Gets whether alphabetical sorting of options will be performed
      * @return True or false
      */
-    boolean isSorted() {
+    public boolean isSorted() {
         return sorted;
     }
 
@@ -125,7 +125,7 @@ public class OptionSourceParameters {
      * @param request {@code SlingHttpServletRequest} instance
      * @return {@code RequestParameters} object
      */
-    static OptionSourceParameters forRequest(SlingHttpServletRequest request) {
+    public static OptionSourceParameters forRequest(SlingHttpServletRequest request) {
         final OptionSourceParameters result = new OptionSourceParameters();
         final ValueMap repository = getParameterRepository(request);
 

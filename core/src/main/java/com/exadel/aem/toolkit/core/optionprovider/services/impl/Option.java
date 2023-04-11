@@ -59,6 +59,8 @@ class Option {
     private StringTransformation textTransform;
     private StringTransformation valueTransform;
 
+    private boolean uniqueByName;
+
     /**
      * Default (instantiation-restricting) constructor
      */
@@ -100,6 +102,10 @@ class Option {
      */
     private static boolean isValid(Resource resource) {
         return resource != null && !(resource instanceof NonExistingResource);
+    }
+
+    String getName() {
+        return getCustomAttribute(CoreConstants.PARAMETER_NAME, StringTransformation.NONE);
     }
 
     /**
@@ -278,6 +284,11 @@ class Option {
             return this;
         }
 
+        Builder uniqueByName(boolean value) {
+            dataSourceOption.uniqueByName = value;
+            return this;
+        }
+
         Option build() {
             if (StringUtils.isBlank(dataSourceOption.textMember) && StringUtils.isEmpty(dataSourceOption.text)) {
                 dataSourceOption.textMember = JcrConstants.JCR_TITLE;
@@ -302,7 +313,9 @@ class Option {
      */
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof Option && StringUtils.equals(getValue(), ((Option) obj).getValue());
+        return obj instanceof Option
+            && (!uniqueByName || (StringUtils.equals(getName(), ((Option) obj).getName())))
+            && StringUtils.equals(getValue(), ((Option) obj).getValue());
     }
 
     /**
@@ -311,7 +324,7 @@ class Option {
      */
     @Override
     public int hashCode() {
-        return Objects.hashCode(getValue());
+        return uniqueByName ? Objects.hash(getName(), getValue()) : Objects.hashCode(getValue());
     }
 
     /**

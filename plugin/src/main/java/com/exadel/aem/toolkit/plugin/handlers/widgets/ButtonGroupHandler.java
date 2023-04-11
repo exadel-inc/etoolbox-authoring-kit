@@ -38,8 +38,8 @@ public class ButtonGroupHandler extends OptionProviderHandler implements Handler
     @Override
     public void accept(Source source, Target target) {
         ButtonGroup buttonGroup = source.adaptTo(ButtonGroup.class);
-        if (hasProvidedOptions(buttonGroup.itemProvider())) {
-            appendOptionProvider(buttonGroup.itemProvider(), target);
+        if (hasProvidedOptions(buttonGroup.itemProvider(), source)) {
+            appendOptionProvider(buttonGroup.itemProvider(), target, source);
             return;
         }
         if (ArrayUtils.isNotEmpty(buttonGroup.items())) {

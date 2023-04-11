@@ -11,68 +11,77 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.optionprovider.services.impl;
+package com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.tagging.TagConstants;
 
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
+import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionSourceResolutionResult;
+import com.exadel.aem.toolkit.core.optionprovider.services.impl.PathParameters;
 
 /**
- * Contains methods for resolving provided URIs (representing either JCR paths or HTTP endpoints) to option data sources
+ * Contains methods for resolving provided URIs (representing either JCR paths, HTTP endpoints or class name) to option data sources
  * @see OptionProviderService
  */
-interface OptionSourceResolver {
+public interface OptionSourceResolver {
     OptionSourceResolver HTTP_RESOLVER = new HttpOptionSourceResolver();
     OptionSourceResolver JCR_RESOLVER = new JcrOptionSourceResolver();
+    OptionSourceResolver CLASS_RESOLVER = new ClassOptionSourceResolver();
+    Pattern CLASS_NAME = Pattern.compile("\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*(\\.\\p{javaJavaIdentifierStart}\\p{javaJavaIdentifierPart}*)*");
 
     /**
-     * Called by {@link OptionSourceResolver#resolve(SlingHttpServletRequest, String, String)} to retrieve a {@link
-     * Resource} object representing the option datasource. Depending on the implementation, this method either
-     * retrieves a JCR entry or gets an HTTP response and converts it into a virtual resource
+     * Called by {@link OptionSourceResolver#resolve(SlingHttpServletRequest, PathParameters)} to retrieve a {@link
+     * Resource} object representing the option datasource
      * @param request Current {@code SlingHttpServletRequest}
      * @param uri     Either a JCR path to the {@code Resource} that represents a datasource or contains a link to the
      *                actual datasource, or else an HTTP endpoint containing the datasource data in JSON format
      * @return {@code Resource} instance, or null
      */
-    Resource resolve(SlingHttpServletRequest request, String uri);
+    OptionSourceResolutionResult resolve(SlingHttpServletRequest request, PathParameters pathParameters, String uri);
 
     /**
-     * Tries to retrieve a {@code Resource} instance based on user-provided URI: either a JCR path or an HTTP endpoint.
-     * First, the {@code path} value is considered. If there's not a valid option source, the value of {@code
-     * fallbackPath} is considered in turn
-     * @param request     Current {@code SlingHttpServletRequest}
-     * @param uri         Either a JCR path to the {@code Resource} that represents a datasource or contains a link to
-     *                    the actual datasource, or else an HTTP endpoint containing the datasource data in JSON format
-     * @param fallbackUri Either a JCR path to the {@code Resource} that represents a datasource or contains a link to
-     *                    the actual datasource, or else an HTTP endpoint containing the datasource data in JSON format
-     * @return {@code Resource} instance, or null
+     * Static method compatible with business logic and testing logic. Depending on
+     * @param pathParameters {@link PathParameters} it constructs the needed {@link OptionSourceResolver} realization
+     *                       and uses
+     * @param request        {@link SlingHttpServletRequest} to build and to
+     * @return {@link Resource}
      */
-    static Resource resolve(SlingHttpServletRequest request, String uri, String fallbackUri) {
-        OptionSourceResolver predefinedResolver = (OptionSourceResolver) request.getAttribute(OptionSourceResolver.class.getName());
+    static OptionSourceResolutionResult resolve(SlingHttpServletRequest request, PathParameters pathParameters) {
+        OptionSourceResolver predefinedResolver =
+            (OptionSourceResolver) request.getAttribute(OptionSourceResolver.class.getName());
         OptionSourceResolver effectiveResolver = ObjectUtils.firstNonNull(
             predefinedResolver,
-            isUrl(uri) ? HTTP_RESOLVER : JCR_RESOLVER);
+            getResolver(pathParameters.getPath()));
 
-        Resource result = effectiveResolver.resolve(request, uri);
+        OptionSourceResolutionResult result = effectiveResolver.resolve(
+            request,
+            pathParameters,
+            pathParameters.getPath());
+
         if (result != null) {
             return result;
         }
 
         effectiveResolver = ObjectUtils.firstNonNull(
             predefinedResolver,
-            isUrl(fallbackUri) ? HTTP_RESOLVER : JCR_RESOLVER);
-        return effectiveResolver.resolve(request, fallbackUri);
+            getResolver(pathParameters.getFallbackPath()));
+
+        return effectiveResolver.resolve(request, pathParameters, pathParameters.getFallbackPath());
     }
+
+
 
     /**
      * Gets whether the current datasource path is a path to a tags folder
@@ -92,6 +101,16 @@ interface OptionSourceResolver {
         }
     }
 
+    static OptionSourceResolver getResolver(String uri) {
+        if (isClassName(uri)) {
+            return CLASS_RESOLVER;
+        }
+        if (isUrl(uri)) {
+            return HTTP_RESOLVER;
+        }
+        return JCR_RESOLVER;
+    }
+
     /**
      * Checks if the provided string can be considered a URL by trying to parse it into a {@code URL} object
      * @param value the URL string
@@ -104,5 +123,14 @@ interface OptionSourceResolver {
         } catch (MalformedURLException e) {
             return false;
         }
+    }
+
+    /**
+     * Checks if the provided string is a class name. Supports nested classes as well.
+     * @param value A class name string
+     * @return True or false
+     */
+    static boolean isClassName(String value) {
+        return StringUtils.isNotBlank(value) && CLASS_NAME.matcher(value).matches();
     }
 }

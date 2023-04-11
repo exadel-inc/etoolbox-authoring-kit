@@ -48,6 +48,8 @@ public class CoreConstants {
     public static final String SELF_PATH = SEPARATOR_DOT;
     public static final String PARENT_PATH = "..";
 
+    public static final String WILDCARD = "*";
+
     /**
      * Default (instantiation-restricting) constructor
      */

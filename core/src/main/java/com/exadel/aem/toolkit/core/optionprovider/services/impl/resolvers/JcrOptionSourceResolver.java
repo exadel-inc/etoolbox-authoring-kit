@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.optionprovider.services.impl;
+package com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -19,6 +19,8 @@ import org.apache.sling.api.resource.NonExistingResource;
 import org.apache.sling.api.resource.Resource;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionSourceResolutionResult;
+import com.exadel.aem.toolkit.core.optionprovider.services.impl.PathParameters;
 
 /**
  * Implements {@link OptionSourceResolver} to provide resolving JCR paths to option data sources
@@ -32,48 +34,53 @@ class JcrOptionSourceResolver implements OptionSourceResolver {
      * <p>Both direct and <i>referenced</i> paths are supported. For instance, if a user-provided setting
      * contains the {@code @} symbol, this is considered to be a <u>reference</u> to a <i>foreign</i> node and its
      * attribute in which the actual path to datasource is authored (say, via a dialog path picker)
+     * @param request represents {@link SlingHttpServletRequest}
+     * @param uri is {@link String} jcr address
+     * @return {@link Resource}
      */
     @Override
-    public Resource resolve(SlingHttpServletRequest request, String uri) {
+    public OptionSourceResolutionResult resolve(SlingHttpServletRequest request, PathParameters pathParameters, String uri) {
         if (StringUtils.isBlank(uri)) {
             return null;
         }
         // Path containing "@" is considered path-and-attribute and is further parsed at the second method's overload
         if (uri.contains(CoreConstants.SEPARATOR_AT)) {
-            return resolvePath(request,
+            return resolvePath(
+                request,
+                pathParameters,
                 StringUtils.substringBefore(uri, CoreConstants.SEPARATOR_AT),
                 StringUtils.substringAfter(uri, CoreConstants.SEPARATOR_AT));
         }
 
-        Resource result;
+        Resource dataSource;
         if (uri.startsWith(CoreConstants.SEPARATOR_SLASH)) {
             // Path starting with "/" is considered absolute, so it is resolved directly  via ResourceResolver
-            result = request.getResourceResolver().resolve(uri);
+            dataSource = request.getResourceResolver().resolve(uri);
         } else {
             // For a non-absolute path, we must resolve *target* content resource
             // (whilst the current resource is rather the Granite node of the component's structure under /apps)
             // the target resource path is passed via request suffix
-            result = resolvePathViaRequestSuffix(request, uri);
+            dataSource = resolvePathViaRequestSuffix(request, uri);
         }
 
-        // Early return in case result is not resolvable
-        if (result == null || result instanceof NonExistingResource) {
+        // Early return in case dataSource is not resolvable
+        if (dataSource == null || dataSource instanceof NonExistingResource) {
             return null;
         }
 
         // Return tag root
-        if (OptionSourceResolver.isTagCollection(result)) {
-            return result;
+        if (OptionSourceResolver.isTagCollection(dataSource)) {
+            return new OptionSourceResolutionResult(dataSource, pathParameters);
         }
 
         // If this is an ACS List -like structure, return the jcr:content/list subnode as datasource root
-        Resource listingChild = result.getResourceResolver().getResource(result, PATH_JCR_CONTENT_LIST);
+        Resource listingChild = dataSource.getResourceResolver().getResource(dataSource, PATH_JCR_CONTENT_LIST);
         if (listingChild != null) {
-            return listingChild;
+            return new OptionSourceResolutionResult(listingChild, pathParameters);
         }
 
         // Otherwise, return the retrieved Resource as is
-        return result;
+        return new OptionSourceResolutionResult(dataSource, pathParameters);
     }
 
     /**
@@ -86,7 +93,11 @@ class JcrOptionSourceResolver implements OptionSourceResolver {
      * @param referenceAttribute Name of the attribute that exposes a user-authored path to the actual datasource
      * @return {@code Resource} instance, or null
      */
-    private Resource resolvePath(SlingHttpServletRequest request, String referencePath, String referenceAttribute) {
+    private OptionSourceResolutionResult resolvePath(
+        SlingHttpServletRequest request,
+        PathParameters pathParameters,
+        String referencePath,
+        String referenceAttribute) {
         Resource contentResource = referencePath.startsWith(CoreConstants.SEPARATOR_SLASH)
             ? request.getResourceResolver().resolve(referencePath)
             : resolvePathViaRequestSuffix(request, referencePath);
@@ -97,7 +108,7 @@ class JcrOptionSourceResolver implements OptionSourceResolver {
         if (StringUtils.isBlank(contentResourceAttributeValue)) {
             return null;
         }
-        return resolve(request, contentResourceAttributeValue);
+        return resolve(request, pathParameters, contentResourceAttributeValue);
     }
 
     /**
