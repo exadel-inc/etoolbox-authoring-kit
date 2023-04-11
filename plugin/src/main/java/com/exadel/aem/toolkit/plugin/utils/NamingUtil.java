@@ -124,9 +124,8 @@ public class NamingUtil {
 
     /**
      * Retrieves the member name that matches the given {@code Source}. If the source reflects a Java method,
-     * the {@code get...} prefix is stripped. Otherwise, the name is returned as is @param source {@code Source}
-     * object reporting the name.
-     * @param source Source used to get source name and check source type
+     * the {@code get...} prefix is stripped. Otherwise, the name is returned as is
+     * @param source {@link Source} object used to get the name and type of the Java class member
      * @return String value
      */
     public static String stripGetterPrefix(Source source) {
