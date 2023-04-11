@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.exadel.aem.toolkit.core.TestConstants;
 import com.exadel.aem.toolkit.core.injectors.models.enums.Colors;
 import com.exadel.aem.toolkit.core.injectors.models.enums.EnumArrays;
 import com.exadel.aem.toolkit.core.injectors.models.enums.EnumArraysViaCustomAccessor;
@@ -40,7 +41,7 @@ public class EnumValueInjectorTest {
         context.addModelsForClasses(MODELS_PACKAGE_NAME);
         context.registerInjectActivateService(new EnumValueInjector());
         context.registerInjectActivateService(new DelegateInjector(null));
-        context.load().json("/com/exadel/aem/toolkit/core/injectors/enumInjector.json", "/content");
+        context.load().json("/com/exadel/aem/toolkit/core/injectors/enumInjector.json", TestConstants.ROOT_RESOURCE);
         context.request().setResource(context.resourceResolver().getResource("/content/jcr:content/resource"));
     }
 
