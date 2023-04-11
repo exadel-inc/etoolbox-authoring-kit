@@ -43,6 +43,8 @@ import com.exadel.aem.toolkit.core.optionprovider.utils.PatternUtil;
 /**
  * Implements {@link OptionProviderService} to prepare option sets for Granite-compliant custom data sources used in
  * Granite UI widgets
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  */
 @Component(service = OptionProviderService.class)
 public class OptionProviderServiceImpl implements OptionProviderService {

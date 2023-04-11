@@ -47,6 +47,8 @@ import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService
  * in Granite UI setup or passed in an HTTP request as query arguments. Datasource options are rendered from either
  * a node tree, an Exadel Toolbox List / ACS List -like node structure ({@code [...]/node/jcr:content/list/[items]}),
  * or a tag folder
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  */
 @Component(
     service = Servlet.class,

@@ -45,8 +45,6 @@ import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
 /**
  * Contains methods for manipulation with List Resource
- * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
- * code</p>
  */
 class ListResourceUtil {
 

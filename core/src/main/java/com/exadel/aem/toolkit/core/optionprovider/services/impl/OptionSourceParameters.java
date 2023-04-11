@@ -38,6 +38,8 @@ import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService
 
 /**
  * Parses and serves user-specified settings for arranging a datasource for the current request
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  * @see OptionProviderService
  */
 public class OptionSourceParameters {
