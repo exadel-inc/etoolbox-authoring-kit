@@ -268,7 +268,7 @@ public class AttributeHelper<T, V> {
        ------------- */
 
     /**
-     * Retrieves an {@link AttributeHelper.Builder} aimed at creating helper object for manipulation with XML elements.
+     * Retrieves an {@link AttributeHelper.Builder} aimed at creating a helper object for manipulation with XML elements.
      * This is mainly to be used with notation such as {@code AttributeSettingHelper.forXmlTarget().forAnnotationProperty(...)}
      * @return {@link AttributeHelper.Builder} instance
      */

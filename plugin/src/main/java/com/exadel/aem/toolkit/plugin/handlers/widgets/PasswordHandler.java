@@ -50,7 +50,7 @@ public class PasswordHandler implements Handler {
             source.adaptTo(DialogField.class).name(),
             source.getName()));
         String retypeNamePart = NamingUtil.getValidFieldName(password.retype());
-        // We deliberately use "targetName + postfix" ligament to minimize probability of "targetName" occurring
+        // We deliberately use "targetName + postfix" ligament to minimize the probability of "targetName" occurring
         // in the complete field name more than once
         String retypeName = targetNameAttribute.replace(
             targetNamePart + target.getNamePostfix(),

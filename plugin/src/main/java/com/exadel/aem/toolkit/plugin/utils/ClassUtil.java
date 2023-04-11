@@ -51,7 +51,7 @@ public class ClassUtil {
     }
 
     /**
-     * Gets whether the given {@code Class} conforms to one of the provided reverences that represent package names
+     * Gets whether the given {@code Class} conforms to one of the provided references that represent package names
      * @param targetClass The class to check
      * @param references Zero or more string values; non-blank strings are expected
      * @return True or false
