@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +32,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -42,14 +44,13 @@ import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionSourceResolutionResult;
 import com.exadel.aem.toolkit.core.optionprovider.services.impl.PathParameters;
+import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
 /**
- * Implements {@link OptionSourceResolver} to facilitate extracting option datasources from HTTP endpoints
+ * Implements {@link OptionSourceResolver} to facilitate extracting option data sources from HTTP endpoints
  */
 class HttpOptionSourceResolver implements OptionSourceResolver {
 
@@ -61,7 +62,10 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
         + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36";
     private static final int HTTP_TIMEOUT = 10_000;
 
-    private HttpClient httpClient;
+    private static final String EXCEPTION_NO_RESPONSE = "Could not get a response from {}";
+    private static final String EXCEPTION_JSON = "Could not read or navigate the JSON tree";
+
+    private HttpClientWrapper httpClient;
 
     /**
      * Default constructor
@@ -74,21 +78,33 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
      * @param httpClient {@code HttpClient} instance
      */
     HttpOptionSourceResolver(HttpClient httpClient) {
-        this.httpClient = httpClient;
+        this.httpClient = new HttpClientWrapper(httpClient);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public OptionSourceResolutionResult resolve(SlingHttpServletRequest request, PathParameters pathParameters, String path) {
-        String internalPath = getInternalPath(path);
-        String url = StringUtils.removeEnd(path, internalPath);
+    public Resource resolve(SlingHttpServletRequest request, PathParameters params) {
+        String internalPath = getInternalPath(params.getPath());
+        String url = StringUtils.removeEnd(params.getPath(), internalPath);
         String content = getResponseContent(url);
         JsonNode jsonNode = parseJson(content, internalPath);
-        return jsonNode != null
-            ? new OptionSourceResolutionResult(createResource(request, jsonNode), pathParameters)
-            : null;
+        return jsonNode != null ? createResource(request, jsonNode) : null;
+    }
+
+    /**
+     * Extracts the path to the target node within the JSON structure from the URL. This path can be specified if the
+     * option datasource does not begin from the "root" of the JSON structure
+     * @param url The URL of the endpoint serving JSON data
+     * @return String value; can be an empty string if additional traversing is not needed
+     */
+    private static String getInternalPath(String url) {
+        Matcher matcher = INTERNAL_PATH_PATTERN.matcher(url);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return StringUtils.EMPTY;
     }
 
     /**
@@ -104,23 +120,16 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
             .setSocketTimeout(HTTP_TIMEOUT)
             .build();
 
-        HttpClient effectiveHttpClient = httpClient != null
-            ? httpClient
-            : HttpClientBuilder
-                .create()
-                .setDefaultRequestConfig(requestConfig)
-                .build();
-
         HttpGet httpGet = new HttpGet(url);
         httpGet.setHeader(HttpHeaders.USER_AGENT, HTTP_USER_AGENT);
         httpGet.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
         HttpResponse httpResponse = null;
 
-        try {
-            httpResponse = effectiveHttpClient.execute(httpGet);
+        try (HttpClientWrapper http = getCloseableHttpClient(requestConfig)) {
+            httpResponse = http.getClient().execute(httpGet);
             return EntityUtils.toString(httpResponse.getEntity());
         } catch (IOException e) {
-            LOG.error("Could not get a response from {}", url, e);
+            LOG.error(EXCEPTION_NO_RESPONSE, url, e);
         } finally {
             if (httpResponse != null) {
                 EntityUtils.consumeQuietly(httpResponse.getEntity());
@@ -131,17 +140,17 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
     }
 
     /**
-     * Extracts the path to the target node within the JSON structure from the URL. This path can be specified if the
-     * option datasource does not begin from the "root" of the JSON structure
-     * @param url The URL of the endpoint serving JSON data
-     * @return String value; can be an empty string if additional traversing is not needed
+     * Provides a wrapper over an {@link HttpClient} eligible for use in the {@code try-with-resources} pattern. This
+     * routine may use an HTTP client directly assigned to the current class (e.g., in a test case) or else construct a
+     * new one based on the given config
+     * @param requestConfig Describes the parameters of the HTTP client if created anew
+     * @return A {@link Closeable} object
      */
-    private static String getInternalPath(String url) {
-        Matcher matcher = INTERNAL_PATH_PATTERN.matcher(url);
-        if (matcher.find()) {
-            return matcher.group(1);
+    private HttpClientWrapper getCloseableHttpClient(RequestConfig requestConfig) {
+        if (httpClient == null) {
+            return new HttpClientWrapper(HttpClientBuilder.create().setDefaultRequestConfig(requestConfig).build());
         }
-        return StringUtils.EMPTY;
+        return httpClient;
     }
 
     /**
@@ -166,7 +175,7 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
             }
             return jsonNode;
         } catch (IOException e) {
-            LOG.error("Could not read or navigate the JSON tree", e);
+            LOG.error(EXCEPTION_JSON, e);
         }
         return null;
     }
@@ -203,8 +212,8 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
     }
 
     /**
-     * Called by {@link HttpOptionSourceResolver#createResource(SlingHttpServletRequest, JsonNode)} to convert a particular
-     * {@link JsonNode} into a {@code ValueMap} containing all the keys and values contained in the node
+     * Called by {@link HttpOptionSourceResolver#createResource(SlingHttpServletRequest, JsonNode)} to convert a
+     * particular {@link JsonNode} into a {@code ValueMap} containing all the keys and values contained in the node
      * @param jsonNode {@link JsonNode} object containing values for the value map
      * @return {@link ValueMap} object
      */
@@ -213,5 +222,44 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
             .stream(Spliterators.spliteratorUnknownSize(jsonNode.fields(), Spliterator.ORDERED), false)
             .collect(Collectors.toMap(Map.Entry::getKey, field -> field.getValue().asText()));
         return new ValueMapDecorator(sourceMap);
+    }
+
+    /* ---------------
+       Service classes
+       --------------- */
+
+    /**
+     * Decorates an instance {@link HttpClient} to make sure it can be used in the {@code try-with-resources} pattern
+     */
+    private static class HttpClientWrapper implements Closeable {
+
+        private final HttpClient client;
+
+        /**
+         * Default constructor
+         * @param client A {@code HttpClient} instance
+         */
+        HttpClientWrapper(HttpClient client) {
+            this.client = client;
+        }
+
+        /**
+         * Retrieves the {@code HttpClient} associated with this instance
+         * @return A {@code HttpClient} object
+         */
+        public HttpClient getClient() {
+            return client;
+        }
+
+        /**
+         * Closes the wrapped {@code HttpClient} if possible
+         * @throws IOException if the underlying stream can not be properly closed
+         */
+        @Override
+        public void close() throws IOException {
+            if (client instanceof CloseableHttpClient) {
+                ((CloseableHttpClient) client).close();
+            }
+        }
     }
 }
