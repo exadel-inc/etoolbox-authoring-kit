@@ -15,6 +15,8 @@ package com.exadel.aem.toolkit.core;
 
 /**
  * Contains constant values used across the core module
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  */
 public class CoreConstants {
     public static final String NN_ITEM = "item";
