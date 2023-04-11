@@ -39,6 +39,7 @@ import com.adobe.granite.ui.components.ds.SimpleDataSource;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
 
 /**
@@ -62,11 +63,6 @@ public class OptionProviderServlet extends SlingSafeMethodsServlet {
 
     private static final String QUERY_KEY_OUTPUT = "output";
     private static final String QUERY_VALUE_JSON = "json";
-
-    private static final String ATTRIBUTE_TEXT = "text";
-    private static final String ATTRIBUTE_VALUE = "value";
-
-    private static final String NODE_GRANITE_DATA = "granite:data";
 
     @Reference
     private transient OptionProviderService optionProvider;
@@ -144,13 +140,13 @@ public class OptionProviderServlet extends SlingSafeMethodsServlet {
      * @throws JSONException in case of a JSON format violation
      */
     private static void writeResourceAttributes(JSONWriter writer, Resource entry) throws JSONException {
-        writer.key(ATTRIBUTE_TEXT).value(entry.getValueMap().get(ATTRIBUTE_TEXT, String.class));
-        writer.key(ATTRIBUTE_VALUE).value(entry.getValueMap().get(ATTRIBUTE_VALUE, String.class));
-        Resource graniteData = entry.getChild(NODE_GRANITE_DATA);
+        writer.key(CoreConstants.PN_TEXT).value(entry.getValueMap().get(CoreConstants.PN_TEXT, String.class));
+        writer.key(CoreConstants.PN_VALUE).value(entry.getValueMap().get(CoreConstants.PN_VALUE, String.class));
+        Resource graniteData = entry.getChild(CoreConstants.NN_GRANITE_DATA);
         if (graniteData == null) {
             return;
         }
-        writer.key(NODE_GRANITE_DATA).object();
+        writer.key(CoreConstants.NN_GRANITE_DATA).object();
         for (String attribute : graniteData.getValueMap().keySet()) {
             writer.key(attribute).value(graniteData.getValueMap().get(attribute, String.class));
         }

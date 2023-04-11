@@ -24,12 +24,12 @@ import org.apache.sling.api.wrappers.ValueMapDecorator;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
+
 /**
  * Represents a Sling synthetic resource intended to be processed as a Granite datasource option with optional custom attributes
  */
 class OptionResource extends ValueMapResource {
-
-    private static final String NN_GRANITE_DATA = "granite:data";
 
     private Resource graniteDataChild;
 
@@ -47,7 +47,7 @@ class OptionResource extends ValueMapResource {
         super(resourceResolver, new ResourceMetadata(), JcrConstants.NT_UNSTRUCTURED, valueMap);
         if (MapUtils.isNotEmpty(customAttributes)) {
             this.graniteDataChild = new ValueMapResource(getResourceResolver(),
-                NN_GRANITE_DATA,
+                CoreConstants.NN_GRANITE_DATA,
                 JcrConstants.NT_UNSTRUCTURED,
                 new ValueMapDecorator(customAttributes));
         }
@@ -60,7 +60,7 @@ class OptionResource extends ValueMapResource {
      */
     @Override
     public Resource getChild(String relPath) {
-        if (NN_GRANITE_DATA.equals(relPath) && graniteDataChild != null) {
+        if (CoreConstants.NN_GRANITE_DATA.equals(relPath)) {
             return graniteDataChild;
         }
         return super.getChild(relPath);
