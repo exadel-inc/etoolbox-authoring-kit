@@ -65,6 +65,7 @@ class PageFacility extends OpenAiFacility {
     private static final String TERMINATOR_SPACE_QUOTE = " \"";
 
     private static final int ABSTRACT_WORDS_LIMIT = 20;
+    private static final String STAGE_IMAGES = "images";
 
     private final ImportService importService;
     private final List<Stage> stages;
@@ -104,7 +105,7 @@ class PageFacility extends OpenAiFacility {
                 broker -> !broker.getImagePromptMembers().isEmpty(),
                 this::createImagePrompts),
             new Stage(
-                "images",
+                STAGE_IMAGES,
                 "Creating images",
                 broker -> !broker.getImageMembers().isEmpty(),
                 this::createImages)
@@ -146,6 +147,9 @@ class PageFacility extends OpenAiFacility {
 
         if (currentStage == null || StringUtils.isAnyBlank(currentPath, currentPrompt)) {
             return Solution.from(args).withMessage(HttpStatus.SC_BAD_REQUEST, EXCEPTION_INVALID_REQUEST);
+        }
+        if (!currentStage.getId().equals(STAGE_IMAGES)) {
+            args.put(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_CHAT_MODEL);
         }
 
         try {
@@ -279,7 +283,7 @@ class PageFacility extends OpenAiFacility {
         createStringValues(
             broker,
             args,
-            "Create a prompt for an image generator on the following topic. Must contain up to " + ABSTRACT_WORDS_LIMIT + " words",
+            "Create a prompt for the DALL-E image generator to create a photorealistic high quality image on the following topic",
             PageFacilityBroker::getImagePromptMembers,
             value -> ObjectConversionUtil.toJson(CoreConstants.PN_PROMPT, value));
     }

@@ -22,6 +22,8 @@ import com.exadel.aem.toolkit.core.utils.HttpClientFactory;
 public @interface OpenAiServiceConfig {
 
     String DEFAULT_COMPLETION_MODEL = "text-davinci-003";
+    String DEFAULT_CHAT_MODEL = "gpt-3.5-turbo";
+
     String DEFAULT_IMAGE_SIZE = "512x512";
     String DEFAULT_EDIT_MODEL = "text-davinci-edit-001";
     double DEFAULT_TEMPERATURE = 0.8d;
@@ -32,6 +34,9 @@ public @interface OpenAiServiceConfig {
 
     @AttributeDefinition(name = "Authorization Token")
     String token();
+
+    @AttributeDefinition(name = "Chat Endpoint")
+    String chatEndpoint() default "https://api.openai.com/v1/chat/completions";
 
     @AttributeDefinition(name = "Completions Endpoint")
     String completionsEndpoint() default "https://api.openai.com/v1/completions";

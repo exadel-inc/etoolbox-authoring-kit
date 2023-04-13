@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -70,10 +71,13 @@ public class OpenAiService implements AssistantService {
     private static final Logger LOG = LoggerFactory.getLogger(OpenAiService.class);
 
     private static final String PN_CHOICES = "choices";
+    private static final String PN_CONTENT = "content";
     private static final String PN_DATA = "data";
     private static final String PN_ERROR = "error";
     private static final String PN_FINISH = "finish_reason";
     private static final String PN_INPUT = "input";
+    private static final String PN_MESSAGES = "messages";
+    private static final String PN_ROLE = "role";
     private static final String PN_URL = "url";
 
     private static final String VALUE_LENGTH = "length";
@@ -87,6 +91,7 @@ public class OpenAiService implements AssistantService {
     private static final String EXCEPTION_REQUEST_FAILED = "OpenAI service request failed";
     private static final String EXCEPTION_COULD_NOT_COMPLETE_ASYNC = "Could not complete request";
     private static final String EXCEPTION_TIMEOUT = "Connection to {} timed out";
+    private static final String ROLE_USER = "user";
 
     static {
         URL logoUrl = OpenAiService.class.getClassLoader().getResource(LOGO_RESOURCE);
@@ -200,8 +205,12 @@ public class OpenAiService implements AssistantService {
     }
 
     private Solution execute(String endpoint, ValueMap args, Function<ValueMap, String> payloadFactory) {
+        String effectiveEndpoint = OpenAiServiceConfig.DEFAULT_CHAT_MODEL.equals(args.get(OpenAiConstants.PN_MODEL, String.class))
+            ? config.chatEndpoint()
+            : endpoint;
+
         String payload = payloadFactory.apply(args);
-        HttpPost request = new HttpPost(endpoint);
+        HttpPost request = new HttpPost(effectiveEndpoint);
         request.setHeader(HttpHeaders.AUTHORIZATION, HTTP_HEADER_BEARER + config.token());
         request.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
         request.setEntity(new StringEntity(payload, StandardCharsets.UTF_8));
@@ -217,7 +226,7 @@ public class OpenAiService implements AssistantService {
                 EntityUtils.consume(response.getEntity());
                 return solution;
             } catch (ConnectTimeoutException | SocketTimeoutException e) {
-                LOG.warn(EXCEPTION_TIMEOUT, endpoint);
+                LOG.warn(EXCEPTION_TIMEOUT, effectiveEndpoint);
                 lastExceptionStatus = HttpStatus.SC_REQUEST_TIMEOUT;
                 lastExceptionMessage = e.getMessage();
             } catch (IOException e) {
@@ -236,13 +245,30 @@ public class OpenAiService implements AssistantService {
     }
 
     private String getCompletionRequestPayload(ValueMap args) {
-        String prompt = args.get(CoreConstants.PN_PROMPT, StringUtils.EMPTY);
-        if (!prompt.endsWith(CoreConstants.SEPARATOR_COLON)) {
+        boolean isChat = OpenAiServiceConfig.DEFAULT_CHAT_MODEL.equals(args.get(OpenAiConstants.PN_MODEL, String.class));
+        return isChat
+            ? getChatRequestPayload(args)
+            : getInstructRequestPayload(args);
+    }
+
+    private String getChatRequestPayload(ValueMap args) {
+        String prompt = args.get(CoreConstants.PN_PROMPT, String.class);
+        if (!StringUtils.endsWith(prompt, CoreConstants.SEPARATOR_COLON)) {
+            prompt += CoreConstants.SEPARATOR_COLON;
+        }
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(OpenAiConstants.PN_MODEL, args.get(OpenAiConstants.PN_MODEL, config.completionModel()));
+        properties.put(PN_MESSAGES, getChatPrompt(prompt + StringUtils.SPACE + args.get(CoreConstants.PN_TEXT)));
+        return ObjectConversionUtil.toJson(properties);
+    }
+    private String getInstructRequestPayload(ValueMap args) {
+        String prompt = args.get(CoreConstants.PN_PROMPT, String.class);
+        if (!StringUtils.endsWith(prompt, CoreConstants.SEPARATOR_COLON)) {
             prompt += CoreConstants.SEPARATOR_COLON;
         }
         Map<String, Object> properties = new HashMap<>();
         properties.put(CoreConstants.PN_PROMPT, prompt + StringUtils.SPACE + args.get(CoreConstants.PN_TEXT));
-        properties.put(OpenAiConstants.PN_MODEL, args.get(OpenAiConstants.PN_MODEL, config.completionModel()));
+        properties.put(OpenAiConstants.PN_MODEL, args.get(OpenAiConstants.PN_MODEL, String.class));
         properties.put(OpenAiConstants.PN_MAX_TOKENS, args.get(OpenAiConstants.PN_MAX_TOKENS, config.textLength()));
         properties.put(OpenAiConstants.PN_TEMPERATURE, args.get(OpenAiConstants.PN_TEMPERATURE, config.temperature()));
         properties.put(OpenAiConstants.PN_CHOICES_COUNT, args.get(OpenAiConstants.PN_CHOICES_COUNT, config.choices()));
@@ -296,8 +322,24 @@ public class OpenAiService implements AssistantService {
                     .orElse(StringUtils.EMPTY)
                     .equals(VALUE_LENGTH);
                 options.add(text.asText() + (isCutOff ? CoreConstants.ELLIPSIS : StringUtils.EMPTY));
+            } else if (nextElement.has(CoreConstants.PN_MESSAGE)) {
+                JsonNode messageNode = nextElement.get(CoreConstants.PN_MESSAGE);
+                if (messageNode.has(PN_CONTENT)) {
+                    options.add(messageNode.get(PN_CONTENT).asText());
+                }
             }
         }
         return Solution.from(args).withOptions(options);
+    }
+
+    /* ---------------
+       Utility methods
+       --------------- */
+
+    private static List<Map<String, String>> getChatPrompt(String prompt) {
+        Map<String, String> content = new LinkedHashMap<>();
+        content.put(PN_ROLE, ROLE_USER);
+        content.put(PN_CONTENT, prompt);
+        return Collections.singletonList(content);
     }
 }
