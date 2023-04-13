@@ -29,7 +29,7 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
-                        <Import-Package>javax.inject;javax.annotation;version=0.0.0,*;resolution:=optional</Import-Package>
+                        <Import-Package>org.apache.sling.api.resource;version="[2.3,3)",javax.inject;javax.annotation;version=0.0.0,*;resolution:=optional</Import-Package>
                         <Sling-Model-Packages>com.exadel.aem.toolkit.core.lists.models,com.exadel.aem.toolkit.core.authoring.models,com.exadel.aem.toolkit.core.policymanagement.models</Sling-Model-Packages>
                         <Export-Package>com.exadel.aem.toolkit.api.*,com.exadel.aem.toolkit.core.*</Export-Package>
                     </instructions>
