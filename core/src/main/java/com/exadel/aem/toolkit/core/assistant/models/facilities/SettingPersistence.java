@@ -15,6 +15,11 @@ package com.exadel.aem.toolkit.core.assistant.models.facilities;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+/**
+ * Represents a kind of setting persistence in frames of a user session (should it be saved for future uses, can a
+ * default be used instead, etc.)
+ * @see Setting
+ */
 public enum SettingPersistence {
 
     DEFAULT, REQUIRED, TRANSIENT;

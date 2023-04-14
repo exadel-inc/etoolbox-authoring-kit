@@ -28,18 +28,33 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 
+/**
+ * Implements the functional interface to accumulate facilities that represent services coming from different vendors
+ * into functional groups
+ * <p><u>Note:</u> this class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
+ */
 public class FacilityCollector implements Collector<Facility, List<Facility>, List<Facility>> {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Supplier<List<Facility>> supplier() {
         return ArrayList::new;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BiConsumer<List<Facility>, Facility> accumulator() {
         return this::place;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public BinaryOperator<List<Facility>> combiner() {
         return (list1, list2) -> {
@@ -48,16 +63,29 @@ public class FacilityCollector implements Collector<Facility, List<Facility>, Li
         };
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Function<List<Facility>, List<Facility>> finisher() {
         return Collections::unmodifiableList;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Set<Characteristics> characteristics() {
         return new HashSet<>(Collections.singletonList(Characteristics.UNORDERED));
     }
 
+    /**
+     * Called internally to either add the given {@link Facility} to the upper-level list of facilities or merge it into
+     * another facility as a vendor-specific variant
+     * @param list      The {@code List} of {@code Facility} objects in which to accommodate the {@code candidate}
+     *                  Cannot be null.
+     * @param candidate The {@code Facility} object that wqe need to place into the List. Cannot be null.
+     */
     private void place(List<Facility> list, Facility candidate) {
         Facility existing = list.stream().filter(f -> isAdjacentById(f, candidate)).findFirst().orElse(null);
         if (existing != null) {
@@ -73,6 +101,14 @@ public class FacilityCollector implements Collector<Facility, List<Facility>, Li
         }
     }
 
+    /**
+     * This method checks if two provided facilities can be merged into one complex facility because are adjacent by
+     * their IDs
+     * @param first  The first facility to check. Cannot be null.
+     * @param second The second facility to check. Cannot be null.
+     * @return True or false
+     * @throws NullPointerException if either of the arguments is null.
+     */
     private static boolean isAdjacentById(Facility first, Facility second) {
         boolean isSimilarStructure = StringUtils.countMatches(first.getId(), CoreConstants.SEPARATOR_DOT) ==
             StringUtils.countMatches(second.getId(), CoreConstants.SEPARATOR_DOT);

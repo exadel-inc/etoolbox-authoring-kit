@@ -28,16 +28,26 @@ class CombinedFacility implements Facility {
     private final String id;
     private final List<Facility> variants;
 
+    /**
+     * Constructs a new {@link CombinedFacility} instance based on the given {@code Facility}
+     * @param other {@code Facility} instance. Must not be null, otherwise a NullPointerException will be thrown
+     */
     CombinedFacility(Facility other) {
         this.id = StringUtils.substringBeforeLast(other.getId(), CoreConstants.SEPARATOR_DOT);
         this.variants = new ArrayList<>(other instanceof SimpleFacility ? Collections.singletonList(other) : other.getVariants());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getId() {
         return id;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getTitle() {
         return variants
@@ -48,6 +58,9 @@ class CombinedFacility implements Facility {
             .orElse(getId());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getIcon() {
         return variants
@@ -58,6 +71,9 @@ class CombinedFacility implements Facility {
             .orElse(StringUtils.EMPTY);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int getRanking() {
         return variants
@@ -67,11 +83,17 @@ class CombinedFacility implements Facility {
             .orElse(0);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public List<Facility> getVariants() {
         return variants;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Solution execute(SlingHttpServletRequest request) {
         return Solution.empty();

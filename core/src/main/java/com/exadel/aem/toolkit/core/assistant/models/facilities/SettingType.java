@@ -15,6 +15,10 @@ package com.exadel.aem.toolkit.core.assistant.models.facilities;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+/**
+ * Represents the type of setting managed by a {@link Facility}
+ * @see Setting
+ */
 public enum SettingType {
     STRING, INTEGER, DOUBLE;
 

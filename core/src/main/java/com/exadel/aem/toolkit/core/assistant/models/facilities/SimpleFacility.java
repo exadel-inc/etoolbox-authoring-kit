@@ -26,6 +26,10 @@ import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+/**
+ * Represents a facility that does not have variants
+ * @see Facility
+ */
 public abstract class SimpleFacility implements Facility {
 
     protected static final String ICON_IMAGE_ADD = "imageAdd";
@@ -35,24 +39,42 @@ public abstract class SimpleFacility implements Facility {
 
     protected static final String EXCEPTION_INVALID_REQUEST = "Invalid request";
 
+    /**
+     * Default constructor
+     */
     protected SimpleFacility() {
     }
 
+    /**
+     * Retrieves the name of the vendor 9a built-in or a 3rd-party service that provides this facility
+     */
     @SuppressWarnings("unused") // Used to render JSON output
     public String getVendorName() {
         return null;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @JsonIgnore
     @Override
     public final List<Facility> getVariants() {
         return Collections.emptyList();
     }
 
+    /**
+     * Returns a list of {@link Setting}s for this facility
+     * @return A non-null {@code List} instance; can be empty
+     */
     public List<Setting> getSettings() {
         return Collections.emptyList();
     }
 
+    /**
+     * Extracts from the provided request the arguments for the execution of this facility
+     * @param request {@link SlingHttpServletRequest} instance
+     * @return {@link ValueMap} containing the arguments
+     */
     protected static ValueMap getArguments(SlingHttpServletRequest request) {
         RequestParameterMap parameters = request.getRequestParameterMap();
         Map<String, Object> result = new HashMap<>();

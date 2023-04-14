@@ -14,20 +14,36 @@
 
 package com.exadel.aem.toolkit.core.assistant.models.facilities;
 
+/**
+ * Represents an option available for a {@link Setting}
+ */
 public class Option {
 
     private final String id;
     private final String title;
 
+    /**
+     * Constructs a new option
+     * @param id    Identifier of the option
+     * @param title Title of the option
+     */
     Option(String id, String title) {
         this.id = id;
         this.title = title;
     }
 
+    /**
+     * Retrieves the identifier of the option
+     * @return String value; a non-null string is expected
+     */
     public String getId() {
         return id;
     }
 
+    /**
+     * Retrieves the title of the option
+     * @return String value; a non-null string is expected
+     */
     public String getTitle() {
         return title;
     }
