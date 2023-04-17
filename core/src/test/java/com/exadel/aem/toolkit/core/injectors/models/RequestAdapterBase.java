@@ -26,6 +26,7 @@ import com.exadel.aem.toolkit.core.injectors.RequestProperty;
 public abstract class RequestAdapterBase<T> {
 
     @RequestProperty(name = CoreConstants.PN_VALUE)
+    // Note: this value is not used in models for {@code EToolboxListInjector}
     private Object objectValue;
 
     private final T constructorValue;

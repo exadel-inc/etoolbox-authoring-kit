@@ -31,8 +31,9 @@ import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
  * <p>Injects values of the same types that {@link ListHelper} can produce. An array/collection of items can consist of
  * {@link Resource}s, {@link SimpleListItem}s, or else arbitrary list items as soon as they are backed by a
  * resource-adapted (not request-adapted) Sling model.
- * <p>If the annotated member is of type {@code Collection}, {@code List}, {@code Map}, or else an
- * array of items, the collection of list entries is injected. Otherwise, nothing is injected.</p>
+ * <p>If the annotated member is of type {@code Collection} or {@code List}, or else an array of items, the collection
+ * of list entries is injected. If the member is of type {@code Object}, the list or resources is injected. A map is
+ * injected into a map-typed member. Otherwise, nothing is injected.</p>
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
@@ -47,7 +48,7 @@ public @interface EToolboxList {
     String value();
 
     /**
-     * Specifies the key attribute in a resource that identifies an item in the list. This setting is applicable only to
+     * Specifies the key attribute in a resource that identifies an item in the list. This setting applies only to
      * Java class members of the {@code Map<String, T>} type
      * @return Optional non-blank string
      */

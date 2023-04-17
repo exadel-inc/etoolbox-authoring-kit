@@ -27,6 +27,7 @@ import com.day.cq.commons.jcr.JcrConstants;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import com.exadel.aem.toolkit.core.injectors.models.lists.CustomListItem;
 import com.exadel.aem.toolkit.core.injectors.models.lists.CustomListItems;
@@ -95,6 +96,10 @@ public class EToolboxListInjectorTest {
         ComparisonHelper.assertCollectionsEqual(
             expectedList,
             model.getValueSupplier().getValue(),
+            EToolboxListInjectorTest::assertResourcesEqual);
+        ComparisonHelper.assertCollectionsEqual(
+            expectedList,
+            (List<?>) model.getObjectValue(),
             EToolboxListInjectorTest::assertResourcesEqual);
     }
 
@@ -255,8 +260,9 @@ public class EToolboxListInjectorTest {
        Service methods
        --------------- */
 
-    private static void assertResourcesEqual(Resource expected, Resource actual) {
-        assertEquals(expected.getValueMap(), actual.getValueMap());
+    private static void assertResourcesEqual(Resource expected, Object actual) {
+        assertTrue(actual instanceof Resource);
+        assertEquals(expected.getValueMap(), ((Resource) actual).getValueMap());
     }
 
     private static void assertSimpleListItemsEqual(SimpleListItem expected, SimpleListItem actual) {

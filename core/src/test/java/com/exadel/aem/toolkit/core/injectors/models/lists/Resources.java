@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -42,6 +43,9 @@ public class Resources extends RequestAdapterBase<List<Resource>> {
     @EToolboxList(EToolboxListInjectorTest.SIMPLE_LIST_PATH)
     private Resource[] arrayValue;
 
+    @EToolboxList(EToolboxListInjectorTest.SIMPLE_LIST_PATH)
+    private Object objectValue;
+
     @Self
     private Supplier supplier;
 
@@ -53,6 +57,12 @@ public class Resources extends RequestAdapterBase<List<Resource>> {
     @Override
     public List<Resource> getValue() {
         return (List<Resource>) value;
+    }
+
+    @Nullable
+    @Override
+    public Object getObjectValue() {
+        return objectValue;
     }
 
     public Resource[] getArrayValue() {

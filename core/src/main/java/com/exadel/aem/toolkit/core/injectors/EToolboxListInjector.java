@@ -82,6 +82,9 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
         if (List.class.equals(rawType) || Collection.class.equals(rawType)) {
             return getList(resourceResolver, annotation.value(), type);
 
+        } else if (Object.class.equals(rawType)) {
+            return getList(resourceResolver, annotation.value(), type);
+
         } else if (Set.class.equals(rawType)) {
             return new LinkedHashSet<>(getList(resourceResolver, annotation.value(), type));
 
@@ -105,7 +108,7 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
      * returned
      */
     private List<?> getList(ResourceResolver resourceResolver, String path, Type type) {
-        return TypeUtil.isSupportedCollectionOfType(type, Resource.class, false)
+        return Object.class.equals(type) || TypeUtil.isSupportedCollectionOfType(type, Resource.class, false)
             ? ListHelper.getResourceList(resourceResolver, path)
             : ListHelper.getList(resourceResolver, path, getTypeArgument(type, 0));
     }
