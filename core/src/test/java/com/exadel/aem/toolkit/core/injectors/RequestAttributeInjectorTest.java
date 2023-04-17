@@ -16,6 +16,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.injectors.models.RequestAdapterBase;
 import com.exadel.aem.toolkit.core.injectors.models.requestproperty.Booleans;
 import com.exadel.aem.toolkit.core.injectors.models.requestproperty.CalendarArrays;
@@ -52,9 +53,9 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
     @Override
     void prepareRequest(MockSlingHttpServletRequest request, Object payload) {
         if (payload != null) {
-            request.setAttribute(ATTRIBUTE_VALUE, payload);
+            request.setAttribute(CoreConstants.PN_VALUE, payload);
         } else {
-            request.removeAttribute(ATTRIBUTE_VALUE);
+            request.removeAttribute(CoreConstants.PN_VALUE);
         }
     }
 

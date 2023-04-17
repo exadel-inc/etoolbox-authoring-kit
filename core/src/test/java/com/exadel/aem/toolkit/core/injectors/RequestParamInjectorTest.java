@@ -26,6 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.injectors.models.RequestAdapterBase;
 import com.exadel.aem.toolkit.core.injectors.models.requestproperty.RequestParams;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
@@ -49,14 +50,14 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
         }
         if (payload.getClass().isArray()) {
             for (int i = 0; i < Array.getLength(payload); i++) {
-                request.addRequestParameter(ATTRIBUTE_VALUE, Array.get(payload, i).toString());
+                request.addRequestParameter(CoreConstants.PN_VALUE, Array.get(payload, i).toString());
             }
         } else if (TypeUtil.isSupportedCollection(payload.getClass(), false)) {
             for (Object next : (Collection<?>) payload) {
-                request.addRequestParameter(ATTRIBUTE_VALUE, next.toString());
+                request.addRequestParameter(CoreConstants.PN_VALUE, next.toString());
             }
         } else {
-            request.addRequestParameter(ATTRIBUTE_VALUE, payload.toString());
+            request.addRequestParameter(CoreConstants.PN_VALUE, payload.toString());
         }
     }
 
@@ -148,8 +149,8 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
     @Test
     public void shouldInjectRequestParameterObjects() {
         context.request().setParameterMap(Collections.emptyMap());
-        context.request().addRequestParameter(ATTRIBUTE_VALUE, EXPECTED_STRING_ARRAY[0]);
-        context.request().addRequestParameter(ATTRIBUTE_VALUE, EXPECTED_STRING_ARRAY[1]);
+        context.request().addRequestParameter(CoreConstants.PN_VALUE, EXPECTED_STRING_ARRAY[0]);
+        context.request().addRequestParameter(CoreConstants.PN_VALUE, EXPECTED_STRING_ARRAY[1]);
         RequestParams model = context.request().adaptTo(RequestParams.class);
         assertNotNull(model);
 
@@ -169,7 +170,7 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
 
         assertNotNull(model.getValueSupplier().getValue());
         RequestParameterMap requestParametersViaInterface = model.getValueSupplier().getValue();
-        assertEquals(EXPECTED_STRING_ARRAY.length,  requestParametersViaInterface.get(ATTRIBUTE_VALUE).length);
+        assertEquals(EXPECTED_STRING_ARRAY.length,  requestParametersViaInterface.get(CoreConstants.PN_VALUE).length);
     }
 
     @Test

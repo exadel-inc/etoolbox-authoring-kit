@@ -58,8 +58,6 @@ abstract class RequestPropertyInjectorTestBase {
         Doubles.class, DoubleArrays.class, DoubleCollections.class,
         Booleans.class, BooleanArrays.class, BooleanCollections.class);
 
-    static final String ATTRIBUTE_VALUE = "value";
-
     private static final String MODELS_PACKAGE_NAME = "com.exadel.aem.toolkit.core.injectors.models.requestproperty";
 
     private static final String EXPECTED_STRING = "Hello World";
