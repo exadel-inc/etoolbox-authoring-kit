@@ -21,7 +21,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.adapter.SlingAdaptable;
+import org.apache.sling.api.resource.AbstractResource;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceMetadata;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -37,7 +37,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
  * Represents a {@link Resource} properties and children of which are filtered against the provided {@code prefix}
  * and/or {@code postfix}
  */
-class FilteredResourceDecorator extends SlingAdaptable implements Resource {
+class FilteredResourceDecorator extends AbstractResource {
 
     private final Resource base;
     private final String prefix;
