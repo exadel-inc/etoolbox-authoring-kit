@@ -14,6 +14,7 @@
 package com.exadel.aem.toolkit.core.injectors.models.requestproperty;
 
 import java.util.List;
+import java.util.Set;
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -38,6 +39,9 @@ public class RequestParams {
     @RequestProperty(name = CoreConstants.PN_VALUE)
     private List<RequestParameter> collectionValue;
 
+    @RequestProperty(name = CoreConstants.PN_VALUE)
+    private Set<RequestParameter> setValue;
+
     @Self
     private Supplier supplier;
 
@@ -56,6 +60,11 @@ public class RequestParams {
     @Nullable
     public List<RequestParameter> getCollectionValue() {
         return collectionValue;
+    }
+
+    @Nullable
+    public Set<RequestParameter> getSetValue() {
+        return setValue;
     }
 
     public RequestParameter[] getConstructorValue() {

@@ -156,12 +156,16 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
         assertNotNull(model.getValue());
         assertEquals(EXPECTED_STRING_ARRAY[0], model.getValue().getString());
 
-        assertEquals(EXPECTED_STRING_ARRAY.length,  model.getConstructorValue().length);
-        assertEquals(EXPECTED_STRING_ARRAY[0], model.getConstructorValue()[0].getString());
-
         assertNotNull(model.getCollectionValue());
         assertEquals(EXPECTED_STRING_ARRAY.length, model.getCollectionValue().size());
         assertEquals(EXPECTED_STRING_ARRAY[0], model.getCollectionValue().get(0).getString());
+
+        assertNotNull(model.getSetValue());
+        assertEquals(EXPECTED_STRING_ARRAY.length, model.getSetValue().size());
+        assertEquals(EXPECTED_STRING_ARRAY[0], model.getSetValue().iterator().next().getString());
+
+        assertEquals(EXPECTED_STRING_ARRAY.length,  model.getConstructorValue().length);
+        assertEquals(EXPECTED_STRING_ARRAY[0], model.getConstructorValue()[0].getString());
 
         assertNotNull(model.getValueSupplier().getValue());
         RequestParameterMap requestParametersViaInterface = model.getValueSupplier().getValue();

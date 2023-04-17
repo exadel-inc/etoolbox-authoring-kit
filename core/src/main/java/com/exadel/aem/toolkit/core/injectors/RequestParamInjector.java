@@ -88,13 +88,12 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
      * @return A nullable value
      */
     Object getValue(SlingHttpServletRequest request, String name, Type type) {
-
         if (RequestParameter.class.equals(type) || Object.class.equals(type)) {
             return request.getRequestParameter(name);
-        } else if (TypeUtil.isSupportedCollectionOfType(type, RequestParameter.class, false)) {
-            return request.getRequestParameterList();
         } else if (TypeUtil.isArrayOfType(type, RequestParameter.class)) {
             return request.getRequestParameters(name);
+        } else if (TypeUtil.isSupportedCollectionOfType(type, RequestParameter.class, false)) {
+            return CastUtil.toType(request.getRequestParameterList(), type);
         } else if (RequestParameterMap.class.equals(type)) {
             return request.getRequestParameterMap();
         }
