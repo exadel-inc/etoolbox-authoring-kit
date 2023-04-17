@@ -34,10 +34,13 @@ import com.exadel.aem.toolkit.core.injectors.models.child.InjectedWithSelection;
 @Model(
     adaptables = {SlingHttpServletRequest.class, Resource.class},
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
-public class InjectedWithPrefix {
+public class InjectedWithPrefix implements ObjectValueHolder {
 
     @Children(name = Constants.CHILDREN_PATH, prefix = InjectedWithSelection.PREFIX)
     private List<ExtendedListItem> value;
+
+    @Children(name = Constants.CHILDREN_PATH, prefix = InjectedWithSelection.PREFIX)
+    private Object objectValue;
 
     private final List<Resource> valueFromConstructor;
 
@@ -54,6 +57,11 @@ public class InjectedWithPrefix {
         return value != null
             ? value.stream().filter(item -> StringUtils.isNotEmpty(item.getTitle())).collect(Collectors.toList())
             : Collections.emptyList();
+    }
+
+    @Override
+    public Object getRawObjectValue() {
+        return objectValue;
     }
 
     public List<Resource> getValueFromConstructor() {

@@ -51,6 +51,11 @@ public class InjectedByLoopbackPath {
         return value;
     }
 
+    @Nullable
+    public Object getObjectValue() {
+        return objectValue;
+    }
+
     public Collection<Resource> getValueFromConstructor() {
         return valueFromConstructor;
     }

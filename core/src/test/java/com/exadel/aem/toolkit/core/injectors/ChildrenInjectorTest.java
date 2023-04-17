@@ -79,26 +79,32 @@ public class ChildrenInjectorTest {
         InjectedByMemberName model = adaptable.adaptTo(InjectedByMemberName.class);
         assertNotNull(model);
 
-        assertNotNull(model.getList());
+        assertNotNull(model.getValue());
         assertTrue(CollectionUtils.isEqualCollection(
             EXPECTED_VALUE_SEQUENCE,
-            model.getList().stream().map(SimpleListItem::getValue).collect(Collectors.toList())));
+            model.getValue().stream().map(SimpleListItem::getValue).collect(Collectors.toList())));
 
-        assertNotNull(model.getListFromConstructor());
+        assertNotNull(model.getObjectValue());
         ComparisonHelper.assertCollectionsEqual(
-            model.getList(),
-            model.getListFromConstructor(),
+            model.getValue(),
+            (List<?>) model.getObjectValue(),
             ChildrenInjectorTest::assertTitleAndValueEqual);
 
         assertNotNull(model.getSupplier());
         assertNotNull(model.getSupplier().getList());
         ComparisonHelper.assertCollectionsEqual(
-            model.getList(),
+            model.getValue(),
             model.getSupplier().getList(),
             (first, second) -> {
                 assertEquals(first.getTitle(), second.getTitle());
                 assertEquals(first.getValue(), second.getValue());
             });
+
+        assertNotNull(model.getValueFromConstructor());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            model.getValueFromConstructor(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
     }
 
     @Test
@@ -116,10 +122,16 @@ public class ChildrenInjectorTest {
             EXPECTED_VALUE_SEQUENCE,
             model.getValue().stream().map(SimpleListItem::getValue).collect(Collectors.toList())));
 
-        assertNotNull(model.getValueFromConstructor());
+        assertNotNull(model.getObjectValue());
         ComparisonHelper.assertCollectionsEqual(
             model.getValue(),
-            model.getValueFromConstructor(),
+            (List<?>) model.getObjectValue(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
+
+        assertNotNull(model.getArrayValue());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            model.getArrayValue(),
             ChildrenInjectorTest::assertTitleAndValueEqual);
 
         assertNotNull(model.getSupplier());
@@ -129,11 +141,35 @@ public class ChildrenInjectorTest {
             model.getSupplier().getValue(),
             ChildrenInjectorTest::assertTitleAndValueEqual);
 
-        assertNotNull(model.getArrayValue());
+        assertNotNull(model.getValueFromConstructor());
         ComparisonHelper.assertCollectionsEqual(
             model.getValue(),
-            model.getArrayValue(),
+            model.getValueFromConstructor(),
             ChildrenInjectorTest::assertTitleAndValueEqual);
+    }
+
+    @Test
+    public void shouldInjectSingularValues() {
+        shouldInjectSingularValues(context.request());
+        shouldInjectSingularValues(context.request().getResource());
+    }
+
+    private void shouldInjectSingularValues(Adaptable adaptable) {
+        InjectedByPath model = adaptable.adaptTo(InjectedByPath.class);
+        assertNotNull(model);
+        assertNotNull(model.getValue());
+
+        assertNotNull(model.getSingularItem());
+        assertEquals(model.getValue().iterator().next().getTitle(), model.getSingularItem().getTitle());
+        assertEquals(model.getValue().iterator().next().getValue(), model.getSingularItem().getValue());
+
+        assertNotNull(model.getSingularResource());
+        assertEquals(
+            model.getValue().iterator().next().getTitle(),
+            model.getSingularResource().getValueMap().get(JcrConstants.JCR_TITLE));
+        assertEquals(
+            model.getValue().iterator().next().getValue(),
+            model.getSingularResource().getValueMap().get(CoreConstants.PN_VALUE));
     }
 
     @Test
@@ -152,13 +188,17 @@ public class ChildrenInjectorTest {
             EXPECTED_VALUE_SEQUENCE,
             model.getValue().stream().map(SimpleListItem::getValue).collect(Collectors.toList())));
 
+        assertNotNull(model.getObjectValue());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            (List<?>) model.getObjectValue(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
+
         assertNotNull(model.getValueFromConstructor());
         ComparisonHelper.assertCollectionsEqual(
             model.getValue(),
             model.getValueFromConstructor(),
             ChildrenInjectorTest::assertTitleAndValueEqual);
-
-
     }
 
     @Test
@@ -197,6 +237,12 @@ public class ChildrenInjectorTest {
             ChildInjectorTest.NESTED_RESOURCE_VALUE,
             Objects.requireNonNull(model.getValue().get(0).getNestedViaChildResource()).getNestedValue());
 
+        assertNotNull(model.getCastObjectValue());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            model.getCastObjectValue(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
+
         assertNotNull(model.getValueFromConstructor());
         ComparisonHelper.assertCollectionsEqual(
             model.getValue(),
@@ -219,6 +265,12 @@ public class ChildrenInjectorTest {
             Arrays.asList("value3_alt", "value4_alt"),
             model.getValue().stream().map(SimpleListItem::getValue).collect(Collectors.toList())));
 
+        assertNotNull(model.getCastObjectValue());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            model.getCastObjectValue(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
+
         assertNotNull(model.getValueFromConstructor());
         ComparisonHelper.assertCollectionsEqual(
             model.getValue(),
@@ -240,6 +292,13 @@ public class ChildrenInjectorTest {
         assertEquals(1, model.getValue().size());
         assertEquals("alt_key4_alt", model.getValue().get(0).getTitle());
         assertEquals("alt_value4_alt", model.getValue().get(0).getValue());
+
+        assertNotNull(model.getCastObjectValue());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            model.getCastObjectValue(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
+
 
         assertNotNull(model.getValueFromConstructor());
         ComparisonHelper.assertCollectionsEqual(
@@ -285,9 +344,10 @@ public class ChildrenInjectorTest {
        Service methods
        --------------- */
 
-    private static void assertTitleAndValueEqual(SimpleListItem item, Resource resource) {
-        assertEquals(item.getTitle(), resource.getValueMap().get(JcrConstants.JCR_TITLE, String.class));
-        assertEquals(item.getValue(), resource.getValueMap().get(CoreConstants.PN_VALUE, String.class));
+    private static void assertTitleAndValueEqual(SimpleListItem item, Object resource) {
+        assertTrue(resource instanceof Resource);
+        assertEquals(item.getTitle(), ((Resource) resource).getValueMap().get(JcrConstants.JCR_TITLE, String.class));
+        assertEquals(item.getValue(), ((Resource) resource).getValueMap().get(CoreConstants.PN_VALUE, String.class));
     }
 
     private static void assertTitleAndValueEqual(ExtendedListItem.Nested item, Resource resource) {

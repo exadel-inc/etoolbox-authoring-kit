@@ -34,10 +34,13 @@ import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 @Model(
     adaptables = {SlingHttpServletRequest.class, Resource.class},
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
-public class InjectedWithPostfix {
+public class InjectedWithPostfix implements ObjectValueHolder {
 
     @Children(name = Constants.CHILDREN_PATH, postfix = InjectedWithSelection.POSTFIX)
     private List<SimpleListItem> value;
+
+    @Children(name = Constants.CHILDREN_PATH, postfix = InjectedWithSelection.POSTFIX)
+    private Object objectValue;
 
     private final List<Resource> valueFromConstructor;
 
@@ -54,6 +57,11 @@ public class InjectedWithPostfix {
         return value != null
             ? value.stream().filter(item -> StringUtils.isNotEmpty(item.getTitle())).collect(Collectors.toList())
             : Collections.emptyList();
+    }
+
+    @Override
+    public Object getRawObjectValue() {
+        return objectValue;
     }
 
     public List<Resource> getValueFromConstructor() {

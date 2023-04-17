@@ -42,8 +42,10 @@ import com.exadel.aem.toolkit.core.injectors.filters.NonNullFilter;
  * <p>Also you can provide one or more references to classes serving as filters for the children/related resources.
  * These classes must implement {@link Predicate}. (See, e.g., {@link NonNullFilter}).
  * <p>The underlying Java class member must be an array or else {@link java.util.Collection}, {@link List} or
- * {@link java.util.Set}. A member of array/collection must be of type {@link Resource} or else a class
- * that is adaptable from {@code Resource} or {@link SlingHttpServletRequest}. Otherwise, nothing is injected
+ * {@link java.util.Set}. A member of array/collection must be of type {@link Resource} or else a class that is
+ * adaptable from {@code Resource} or {@link SlingHttpServletRequest}. If the annotated member is a singular
+ * {@code Resource} type or else a singular Sling model type, the first child of a non-empty children collection is
+ * injected. Otherwise, nothing is injected
  * @see Child
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})

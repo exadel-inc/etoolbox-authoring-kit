@@ -94,7 +94,7 @@ public class ChildrenInjector extends BaseInjector<Children> {
             return null;
         }
 
-        if (!TypeUtil.isSupportedCollectionOrArray(type, true)) {
+        if (!isSupportedCollectionOrElseSingularType(type) && !Object.class.equals(type)) {
             return null;
         }
 
@@ -145,13 +145,14 @@ public class ChildrenInjector extends BaseInjector<Children> {
      * @return List of adapted objects
      */
     private List<Object> getAdaptedObjects(Object source, List<Resource> childResources, Type type, Children settingsHolder) {
-        final Class<?> actualType = TypeUtil.getElementType(type);
+        Class<?> actualType = Object.class.equals(type)
+            ? Resource.class
+            : getElementTypeOrStandaloneType(type);
         if (actualType == null) {
             return Collections.emptyList();
         }
         return childResources.stream()
             .map(resource -> InstantiationUtil.getFilteredResource(resource, settingsHolder.prefix(), settingsHolder.postfix()))
-            .filter(resource -> !resource.getValueMap().isEmpty())
             .map(resource -> getAdaptedObject(source, resource, actualType))
             .filter(Objects::nonNull)
             .collect(Collectors.toList());
@@ -194,5 +195,32 @@ public class ChildrenInjector extends BaseInjector<Children> {
             .map(filter -> (Predicate<Resource>) filter)
             .reduce(Predicate::and)
             .orElse(DEFAULT_FILTER);
+    }
+
+    /**
+     * Gets whether the given {@code type} matches the following criteria: it is an array, or a parametrized object of
+     * one of the types: {@code Collection}, {@code List}, or {@code Set}, or otherwise a non-collection type
+     * @param value Type of the adaptation
+     * @return True or false
+     */
+    private static boolean isSupportedCollectionOrElseSingularType(Type value) {
+        if (TypeUtil.isSupportedCollectionOrArray(value, true)) {
+            return true;
+        }
+        return value instanceof Class<?> && !((Class<?>) value).isArray();
+    }
+
+    /**
+     * Attempts to retrieve an element type if the provided value represents a supported collection. Otherwise, returns
+     * the given type itself
+     * @param value Type of the adaptation
+     * @return A nullable {@code Class} object
+     */
+    private static Class<?> getElementTypeOrStandaloneType(Type value) {
+        Class<?> result = TypeUtil.getElementType(value);
+        if (result != null) {
+            return result;
+        }
+        return value instanceof Class<?> ? (Class<?>) value : null;
     }
 }

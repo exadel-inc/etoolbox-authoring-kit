@@ -35,19 +35,27 @@ public class InjectedByMemberName {
     @Children
     private List<SimpleListItem> list;
 
+    @Children(name = "list")
+    private Object objectValue;
+
     @Self
     private ValueSupplier supplier;
 
-    private final List<Resource> listFromConstructor;
+    private final List<Resource> valueFromConstructor;
 
     @Inject
-    public InjectedByMemberName(@Children @Named(Constants.CHILDREN_NAME) List<Resource> list) {
-        listFromConstructor = list;
+    public InjectedByMemberName(@Children @Named(Constants.CHILDREN_NAME) List<Resource> value) {
+        valueFromConstructor = value;
     }
 
     @Nullable
-    public List<SimpleListItem> getList() {
+    public List<SimpleListItem> getValue() {
         return list;
+    }
+
+    @Nullable
+    public Object getObjectValue() {
+        return objectValue;
     }
 
     @Nullable
@@ -55,8 +63,8 @@ public class InjectedByMemberName {
         return supplier;
     }
 
-    public List<Resource> getListFromConstructor() {
-        return listFromConstructor;
+    public List<Resource> getValueFromConstructor() {
+        return valueFromConstructor;
     }
 
     @Model(adaptables = {SlingHttpServletRequest.class, Resource.class})

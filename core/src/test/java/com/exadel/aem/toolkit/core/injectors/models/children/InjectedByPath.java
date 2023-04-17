@@ -37,11 +37,17 @@ public class InjectedByPath {
     @Children(name = Constants.CHILDREN_PATH)
     private Collection<SimpleListItem> value;
 
+    @Children(name = Constants.CHILDREN_PATH)
+    private Object objectValue;
+
     @Children(name = Constants.CHILDREN_NAME)
     private SimpleListItem[] arrayValue;
 
     @Children(name = Constants.CHILDREN_NAME)
-    private SimpleListItem singularValue;
+    private SimpleListItem singularItem;
+
+    @Children(name = Constants.CHILDREN_NAME)
+    private Resource singularResource;
 
     @Self
     private ValueSupplier supplier;
@@ -58,13 +64,28 @@ public class InjectedByPath {
         return value;
     }
 
-    public Set<Resource> getValueFromConstructor() {
-        return valueFromConstructor;
+    @Nullable
+    public Object getObjectValue() {
+        return objectValue;
     }
 
     @Nullable
     public SimpleListItem[] getArrayValue() {
         return arrayValue;
+    }
+
+    @Nullable
+    public SimpleListItem getSingularItem() {
+        return singularItem;
+    }
+
+    @Nullable
+    public Resource getSingularResource() {
+        return singularResource;
+    }
+
+    public Set<Resource> getValueFromConstructor() {
+        return valueFromConstructor;
     }
 
     @Nullable
