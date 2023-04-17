@@ -32,10 +32,11 @@ import com.exadel.aem.toolkit.core.injectors.ChildInjector;
  * "{@code ..}" to traverse to a parent resource. Use "{@code ./}" to refer to the current resource itself.
  * <p>You can choose to use only a subset of properties of the given resource by specifying their common {@code prefix}
  * and/or {@code postfix}.</p>
- * <p>The type of the annotated Java class member is expected to be {@link Resource} or a
- * class adaptable from {@code Resource} or else {@link SlingHttpServletRequest}. If an array, a {@code Collection},
- * {@code List}, or {@code Set} is specified instead of a simple type, an array/collection consisting of just one member
- * is injected. Otherwise, nothing is injected
+ * <p>The type of the annotated Java class member is expected to be {@link Resource} or else a
+ * class adaptable from {@code Resource} or {@link SlingHttpServletRequest} (such are Sling model classes).</p>
+ * <p>If an array, a {@code Collection}, {@code List}, or {@code Set} is specified instead of a simple type, an
+ * array/collection consisting of just one member is injected. If the annotated member is of type {@code Object}, a
+ * resource is injected. Otherwise, nothing is injected
  * @see Children
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})

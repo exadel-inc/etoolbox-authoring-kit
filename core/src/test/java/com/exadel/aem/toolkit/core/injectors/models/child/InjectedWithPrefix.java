@@ -38,6 +38,9 @@ public class InjectedWithPrefix implements InjectedWithSelection {
     @Child(name = CHILD_PATH, prefix = PREFIX)
     private SimpleListItem value;
 
+    @Child(name = CHILD_PATH, prefix = PREFIX)
+    private Object objectValue;
+
     @Self
     private PrefixedValueSupplier supplier;
 
@@ -55,6 +58,12 @@ public class InjectedWithPrefix implements InjectedWithSelection {
     @Nullable
     public SimpleListItem getValue() {
         return value;
+    }
+
+    @Override
+    @Nullable
+    public Object getObjectValue() {
+        return objectValue;
     }
 
     @Override

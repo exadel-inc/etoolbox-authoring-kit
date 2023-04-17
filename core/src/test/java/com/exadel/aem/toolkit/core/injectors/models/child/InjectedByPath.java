@@ -33,15 +33,19 @@ import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
     defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public class InjectedByPath {
 
-    private static final String DEFAULT_CHILD_PATH = "defaultChild";
+    static final String NN_CHILD = "defaultChild";
+    private static final String CHILD_PATH = "list/list_item_1";
 
-    @Child(name = "list/list_item_1")
+    @Child(name = CHILD_PATH)
     private SimpleListItem value;
 
-    @Child(name = DEFAULT_CHILD_PATH)
+    @Child(name = CHILD_PATH)
+    private Object objectValue;
+
+    @Child(name = NN_CHILD)
     private List<SimpleListItem> singularCollection;
 
-    @Child(name = DEFAULT_CHILD_PATH)
+    @Child(name = NN_CHILD)
     private SimpleListItem[] singularArray;
 
     @Child(name = CoreConstants.RELATIVE_PATH_PREFIX)
@@ -63,6 +67,11 @@ public class InjectedByPath {
     @Nullable
     public SimpleListItem getValue() {
         return value;
+    }
+
+    @Nullable
+    public Object getObjectValue() {
+        return objectValue;
     }
 
     @Nullable

@@ -28,6 +28,7 @@ import com.day.cq.commons.jcr.JcrConstants;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.TestConstants;
@@ -102,6 +103,12 @@ public class ChildInjectorTest {
             EXPECTED_RESOURCE_TYPE,
             model.getDefaultChildFromConstructor().getValueMap().get(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY));
 
+        assertTrue(model.getDefaultObject() instanceof Resource);
+        assertEquals(
+            EXPECTED_RESOURCE_TYPE,
+            ((Resource) model.getDefaultObject()).getValueMap().get(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY));
+
+
         assertNotNull(model.getSupplier());
         assertEquals(
             model.getDefaultChild().getTitle(),
@@ -124,6 +131,14 @@ public class ChildInjectorTest {
         assertNotNull(model.getValue());
         assertEquals("key1", model.getValue().getTitle());
         assertEquals("value1", model.getValue().getValue());
+
+        assertNotNull(model.getObjectValue());
+        assertEquals(
+            model.getValue().getTitle(),
+            ((Resource) model.getObjectValue()).getValueMap().get(JcrConstants.JCR_TITLE));
+        assertEquals(
+            model.getValue().getValue(),
+            ((Resource) model.getObjectValue()).getValueMap().get(CoreConstants.PN_VALUE));
 
         assertNotNull(model.getSingularCollectionValue());
         assertEquals(STANDALONE_ITEM_TITLE, model.getSingularCollectionValue().get(0).getTitle());
@@ -183,6 +198,15 @@ public class ChildInjectorTest {
             model.getValue().getValue(),
             model.getValueFromConstructor().getValueMap().get(CoreConstants.PN_VALUE));
 
+        assertNotNull(model.getObjectValue());
+        assertEquals(
+            model.getValue().getTitle(),
+            ((Resource) model.getObjectValue()).getValueMap().get(JcrConstants.JCR_TITLE));
+        assertEquals(
+            model.getValue().getValue(),
+            ((Resource) model.getObjectValue()).getValueMap().get(CoreConstants.PN_VALUE));
+
+
         assertNotNull(model.getSupplier());
         assertEquals(
             model.getValue().getTitle(),
@@ -227,6 +251,14 @@ public class ChildInjectorTest {
             model.getValue().getValue(),
             model.getValueFromConstructor().getValueMap().get(CoreConstants.PN_VALUE));
 
+        assertNotNull(model.getObjectValue());
+        assertEquals(
+            model.getValue().getTitle(),
+            ((Resource) model.getObjectValue()).getValueMap().get(JcrConstants.JCR_TITLE));
+        assertEquals(
+            model.getValue().getValue(),
+            ((Resource) model.getObjectValue()).getValueMap().get(CoreConstants.PN_VALUE));
+
         assertNotNull(model.getSupplier());
         assertEquals(
             model.getValue().getTitle(),
@@ -270,6 +302,14 @@ public class ChildInjectorTest {
         assertEquals(
             model.getValue().getValue(),
             model.getValueFromConstructor().getValueMap().get(CoreConstants.PN_VALUE));
+
+        assertNotNull(model.getObjectValue());
+        assertEquals(
+            model.getValue().getTitle(),
+            ((Resource) model.getObjectValue()).getValueMap().get(JcrConstants.JCR_TITLE));
+        assertEquals(
+            model.getValue().getValue(),
+            ((Resource) model.getObjectValue()).getValueMap().get(CoreConstants.PN_VALUE));
 
         assertNotNull(model.getSupplier());
         assertEquals(

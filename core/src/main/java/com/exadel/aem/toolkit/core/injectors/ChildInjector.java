@@ -97,7 +97,7 @@ public class ChildInjector extends BaseInjector<Child> {
         if (elementType == null) {
             elementType = (Class<?>) type;
         }
-        if (Resource.class.equals(elementType)) {
+        if (Resource.class.equals(elementType) || Object.class.equals(elementType)) {
             return CastUtil.toType(preparedResource, type);
         } else if (elementType != null) {
             if (adaptable instanceof SlingHttpServletRequest && TypeUtil.isSlingRequestAdapter(modelFactory, elementType)) {

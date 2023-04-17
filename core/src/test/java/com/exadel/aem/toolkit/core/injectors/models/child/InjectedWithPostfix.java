@@ -38,6 +38,9 @@ public class InjectedWithPostfix implements InjectedWithSelection {
     @Child(name = CHILD_PATH, postfix = POSTFIX)
     private SimpleListItem value;
 
+    @Child(name = CHILD_PATH, postfix = POSTFIX)
+    private Object objectValue;
+
     @Self
     private PostfixedValueSupplier supplier;
 
@@ -54,6 +57,12 @@ public class InjectedWithPostfix implements InjectedWithSelection {
     @Nullable
     public SimpleListItem getValue() {
         return value;
+    }
+
+    @Override
+    @Nullable
+    public Object getObjectValue() {
+        return objectValue;
     }
 
     public Resource getValueFromConstructor() {

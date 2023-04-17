@@ -36,6 +36,9 @@ public class InjectedByLoopbackPath {
     @Children(name = CoreConstants.RELATIVE_PATH_PREFIX)
     private List<ExtendedListItem> value;
 
+    @Children(name = CoreConstants.RELATIVE_PATH_PREFIX)
+    private Object objectValue;
+
     private final Collection<Resource> valueFromConstructor;
 
     @Inject

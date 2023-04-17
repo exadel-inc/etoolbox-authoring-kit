@@ -39,8 +39,11 @@ public class InjectedByMemberName {
 
     private final Resource defaultChildFromConstructor;
 
+    @Child(name = InjectedByPath.NN_CHILD)
+    private Object defaultObject;
+
     @Inject
-    public InjectedByMemberName(@Child @Named("defaultChild") Resource defaultChild) {
+    public InjectedByMemberName(@Child @Named(InjectedByPath.NN_CHILD) Resource defaultChild) {
         defaultChildFromConstructor = defaultChild;
     }
 
@@ -51,6 +54,11 @@ public class InjectedByMemberName {
 
     public Resource getDefaultChildFromConstructor() {
         return defaultChildFromConstructor;
+    }
+
+    @Nullable
+    public Object getDefaultObject() {
+        return defaultObject;
     }
 
     @Nullable

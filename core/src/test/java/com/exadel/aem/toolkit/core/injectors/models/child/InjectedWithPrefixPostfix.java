@@ -38,6 +38,9 @@ public class InjectedWithPrefixPostfix implements InjectedWithSelection {
     private SimpleListItem value;
 
     @Child(name = CHILD_PATH, prefix = PREFIX, postfix = POSTFIX)
+    private Object objectValue;
+
+    @Child(name = CHILD_PATH, prefix = PREFIX, postfix = POSTFIX)
     private ExtendedListItem extended;
 
     @Self
@@ -55,12 +58,18 @@ public class InjectedWithPrefixPostfix implements InjectedWithSelection {
         return value;
     }
 
+    @Override
+    @Nullable
+    public Object getObjectValue() {
+        return objectValue;
+    }
+
     public Resource getValueFromConstructor() {
         return valueFromConstructor;
     }
 
-    @Nullable
     @Override
+    @Nullable
     public ExtendedListItem getExtendedValue() {
         return extended;
     }

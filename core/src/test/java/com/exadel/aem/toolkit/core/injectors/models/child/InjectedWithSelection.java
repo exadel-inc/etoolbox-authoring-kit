@@ -29,6 +29,9 @@ public interface InjectedWithSelection {
     @Nullable
     SimpleListItem getValue();
 
+    @Nullable
+    Object getObjectValue();
+
     Resource getValueFromConstructor();
 
     @Nullable
