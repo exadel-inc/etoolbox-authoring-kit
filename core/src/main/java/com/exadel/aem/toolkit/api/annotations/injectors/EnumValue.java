@@ -32,10 +32,10 @@ import com.exadel.aem.toolkit.core.injectors.EnumValueInjector;
  * <p>The annotated Java class member is expected to be an enum type. It can also be an array, a {@link Collection},
  * a {@link List}, or a {@link Set} of enum constants.</p>
  * <p>The source value for an enum constant is extracted from the current resource's {@code ValueMap} in the same
- * manner that the injector for the standard @{@link ValueMapValue} would do. The value map value taken in the string
+ * manner that the injector for the standard {@link ValueMapValue} would do. The value map value taken in the string
  * form is compared to enum constants' {@code name()} values, then to the return values of enum constants'
- * {@code toString()} methods. It can also be compared to the return value of a specified arbitrary enum method/field.
- * The comparison is case-insensitive</p>
+ * {@code toString()} methods. It can also be compared to the return value of a specified arbitrary enum method or a
+ * public enum field. The comparison is case-insensitive</p>
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
@@ -51,9 +51,9 @@ public @interface EnumValue {
     String name() default "";
 
     /**
-     * Used to specify the name of an enum object member (a method or a field) used to match an enum constant to a
-     * string-typed value map value. If set, it overrides the default behavior when the matching enum constant is
-     * searched by the value of the {@code name()} method and then the return value of the {@code toString()} method
+     * Used to specify the name of an enum object member (a method or a public field) used to match an enum constant to
+     * a string-typed value map value. If set, it overrides the default behavior when the matching enum constant is
+     * selected by the value of the {@code name()} method and then the return value of the {@code toString()} method
      * @return Optional non-blank string
      */
     String valueMember() default "";
