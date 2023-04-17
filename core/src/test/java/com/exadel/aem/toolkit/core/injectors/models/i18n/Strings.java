@@ -23,6 +23,7 @@ import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.I18N;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.injectors.i18n.NativeLocaleDetector;
 
 @Model(
@@ -35,6 +36,9 @@ public class Strings {
 
     @I18N
     private String value;
+
+    @I18N(value = CoreConstants.PN_VALUE)
+    private Object objectValue;
 
     private final String constructorValue;
 
@@ -57,6 +61,11 @@ public class Strings {
     @Nullable
     public String getValue() {
         return value;
+    }
+
+    @Nullable
+    public Object getObjectValue() {
+        return objectValue;
     }
 
     @Nullable

@@ -110,6 +110,7 @@ public class I18nInjectorTest {
 
         // Matched by the Page#getLanguage() value
         assertEquals(TRANSLATED_FIELD_NAME, model.getValue());
+        assertEquals(TRANSLATED_FIELD_NAME, model.getObjectValue());
 
         // Matched by the explicitly set locale
         assertEquals(TRANSLATED_STRING, model.getValueByLocale());

@@ -94,7 +94,7 @@ public class I18nInjector extends BaseInjector<I18N> {
 
         if (isI18nType(type)) {
             return i18n;
-        } else if (String.class.equals(type)) {
+        } else if (String.class.equals(type) || Object.class.equals(type)) {
             return i18n.get(value);
         }
 
