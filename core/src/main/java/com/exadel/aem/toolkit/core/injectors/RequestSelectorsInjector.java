@@ -25,6 +25,7 @@ import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestSelectors;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
 
@@ -87,7 +88,11 @@ public class RequestSelectorsInjector extends BaseInjector<RequestSelectors> {
         String[] selectors = request.getRequestPathInfo().getSelectors();
         if (ArrayUtils.isEmpty(selectors)) {
             return null;
-        } else if (ArrayUtils.getLength(selectors) == 1) {
+        }
+        if (String.class.equals(type) || Object.class.equals(type)) {
+            return String.join(CoreConstants.SEPARATOR_DOT, selectors);
+        }
+        if (ArrayUtils.getLength(selectors) == 1) {
             return CastUtil.toType(selectors[0], type);
         }
         return CastUtil.toType(Arrays.asList(selectors), type);

@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -79,7 +80,7 @@ abstract class RequestPropertyInjectorTestBase {
     private static final float EXPECTED_FLOAT = 42.1f;
     private static final double EXPECTED_DOUBLE = 42.1d;
     private static final double[] EXPECTED_DOUBLE_ARRAY = {42.1d, 43.1d, 44.1d};
-    private static final List<Double> EXPECTED_DOUBLE_LIST = Arrays.asList(42.1d, 43.1d, 44.1d);
+    static final List<Double> EXPECTED_DOUBLE_LIST = Arrays.asList(42.1d, 43.1d, 44.1d);
 
     private static final boolean[] EXPECTED_BOOLEAN_ARRAY = {true, true, false};
     private static final List<Boolean> EXPECTED_BOOLEAN_LIST = Arrays.asList(true, true, false);
@@ -221,7 +222,8 @@ abstract class RequestPropertyInjectorTestBase {
             EXPECTED_LONG_ARRAY,
             EXPECTED_LONG_LIST,
             EXPECTED_DOUBLE_ARRAY,
-            EXPECTED_DOUBLE_LIST)) {
+            EXPECTED_DOUBLE_LIST,
+            EXPECTED_DOUBLE_LIST.stream().map(String::valueOf).collect(Collectors.toList()))) {
 
             prepareRequest(context.request(), payload);
             IntegerArrays model = context.request().adaptTo(IntegerArrays.class);

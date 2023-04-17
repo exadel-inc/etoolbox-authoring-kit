@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.injectors.models.RequestAdapterBase;
+import com.exadel.aem.toolkit.core.injectors.models.requestproperty.Strings;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBase {
@@ -57,12 +58,12 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
 
     @Test
     public void shouldInjectStringArray() {
-        super.shouldInjectStringArray(RequestSelectorsInjectorTest::assertIterablesEqual);
+        super.shouldInjectStringArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
     }
 
     @Test
     public void shouldInjectStringCollection() {
-        super.shouldInjectStringCollection(RequestSelectorsInjectorTest::assertIterablesEqual);
+        super.shouldInjectStringCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
     }
 
     @Test
@@ -72,12 +73,12 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
 
     @Test
     public void shouldInjectIntegerArray() {
-        super.shouldInjectIntegerArray(RequestSelectorsInjectorTest::assertIterablesEqual);
+        super.shouldInjectIntegerArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
     }
 
     @Test
     public void shouldInjectIntegerCollection() {
-        super.shouldInjectIntegerCollection(RequestSelectorsInjectorTest::assertIterablesEqual);
+        super.shouldInjectIntegerCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
     }
 
     @Test
@@ -87,12 +88,12 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
 
     @Test
     public void shouldInjectLongArray() {
-        super.shouldInjectLongArray(RequestSelectorsInjectorTest::assertIterablesEqual);
+        super.shouldInjectLongArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
     }
 
     @Test
     public void shouldInjectLongCollection() {
-        super.shouldInjectLongCollection(RequestSelectorsInjectorTest::assertIterablesEqual);
+        super.shouldInjectLongCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
     }
 
     @Test
@@ -102,12 +103,25 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
 
     @Test
     public void shouldInjectBooleanArray() {
-        super.shouldInjectBooleanArray(RequestSelectorsInjectorTest::assertIterablesEqual);
+        super.shouldInjectBooleanArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
     }
 
     @Test
     public void shouldInjectBooleanCollection() {
-        super.shouldInjectBooleanCollection(RequestSelectorsInjectorTest::assertIterablesEqual);
+        super.shouldInjectBooleanCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
+    }
+
+    @Test
+    public void shouldInjectWholeSelectorString() {
+        prepareRequest(context.request(), EXPECTED_STRING_ARRAY);
+        Strings model = context.request().adaptTo(Strings.class);
+        assertNotNull(model);
+        assertEquals("Hello.World", model.getValue());
+
+        prepareRequest(context.request(), EXPECTED_DOUBLE_LIST);
+        model = context.request().adaptTo(Strings.class);
+        assertNotNull(model);
+        assertEquals("42.43.44", model.getValue());
     }
 
     @Test
@@ -119,22 +133,18 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
        Service methods
        --------------- */
 
-    private static void assertIterablesEqual(RequestAdapterBase<?> model, Object payload) {
-        assertNotNull(model.getObjectValue());
-        assertEquals(toInlineIteration(payload), toInlineIteration(model.getObjectValue()));
-    }
-
     private static void assertStringifiedValuesEqual(RequestAdapterBase<?> model, Object payload) {
         assertEquals(
             String.valueOf(model.getObjectValue()),
             String.valueOf(payload).replaceAll(FRACTIONAL_PART_PATTERN, StringUtils.EMPTY));
     }
 
-    private static String toSelectorString(Object payload) {
-        return toInlineIteration(payload).replace(CoreConstants.SEPARATOR_COMMA, CoreConstants.SEPARATOR_DOT);
+    private static void assertStringifiedCollectionsEqual(RequestAdapterBase<?> model, Object payload) {
+        assertNotNull(model.getObjectValue());
+        assertEquals(toSelectorString(payload), model.getObjectValue());
     }
 
-    private static String toInlineIteration(Object value) {
+    private static String toSelectorString(Object value) {
         if (value == null) {
             return StringUtils.EMPTY;
         }
@@ -145,8 +155,8 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
             result = StringUtils.join((Iterable<?>) value, CoreConstants.SEPARATOR_COMMA);
         }
         return StringUtils.strip(result, ARRAY_BRACKETS)
-            .replace(SEPARATOR_COMMA_SPACE, CoreConstants.SEPARATOR_COMMA)
-            .replaceAll(FRACTIONAL_PART_PATTERN, StringUtils.EMPTY);
-
+            .replaceAll(FRACTIONAL_PART_PATTERN, StringUtils.EMPTY)
+            .replace(SEPARATOR_COMMA_SPACE, CoreConstants.SEPARATOR_DOT)
+            .replace(CoreConstants.SEPARATOR_COMMA, CoreConstants.SEPARATOR_DOT);
     }
 }
