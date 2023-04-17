@@ -15,6 +15,7 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import javax.annotation.Nonnull;
 
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -85,13 +86,15 @@ public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
      */
     Object getValue(SlingHttpServletRequest request, Type type) {
         if (Resource.class.equals(type)
-            || Object.class.equals(type)
             || TypeUtil.isSupportedCollectionOrArrayOfType(type, Resource.class, true)) {
-            return CastUtil.toType(request.getRequestPathInfo().getSuffixResource(), type);
+            Resource suffixResource = request.getRequestPathInfo().getSuffixResource();
+            return CastUtil.toType(suffixResource, type);
         }
-        if (String.class.equals(type)
-            || TypeUtil.isSupportedCollectionOrArrayOfType(type, String.class, true)) {
-            return CastUtil.toType(request.getRequestPathInfo().getSuffix(), type);
+        for (Class<?> allowedClass : Arrays.asList(String.class, Object.class)) {
+            if (allowedClass.equals(type)
+                || TypeUtil.isSupportedCollectionOrArrayOfType(type, allowedClass, true)) {
+                return CastUtil.toType(request.getRequestPathInfo().getSuffix(), type);
+            }
         }
         return null;
     }

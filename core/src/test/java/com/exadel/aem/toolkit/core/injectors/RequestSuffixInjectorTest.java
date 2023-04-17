@@ -20,7 +20,6 @@ import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.TestConstants;
@@ -58,7 +57,9 @@ public class RequestSuffixInjectorTest extends RequestPropertyInjectorTestBase {
 
     @Test
     public void shouldInjectString() {
-        super.shouldInjectString(model -> assertNull(model.getObjectValue()));
+        super.shouldInjectString(model -> assertEquals(
+            context.request().getRequestPathInfo().getSuffix(),
+            model.getObjectValue()));
     }
 
     @Test
