@@ -39,9 +39,8 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
     private static final String[] STRINGIFIED_FLOAT_ARRAY = new String[] {"-42.1", "43.2d", "NaN", "44"};
     private static final List<String> STRINGIFIED_FLOAT_COLLECTION = Arrays.asList(STRINGIFIED_FLOAT_ARRAY);
 
-    private static final int[] EXPECTED_INT_ARRAY = new int[] {-42, 43, 0, 44};
-    private static final Integer[] EXPECTED_INTEGER_ARRAY = new Integer[] {-42, 43, null, 44};
-    private static final List<Integer> EXPECTED_INTEGER_COLLECTION = Arrays.asList(-42, 43, null, 44);
+    private static final Integer[] EXPECTED_INTEGER_ARRAY = new Integer[] {-42, 43, 0, 44};
+    private static final List<Integer> EXPECTED_INTEGER_COLLECTION = Arrays.asList(EXPECTED_INTEGER_ARRAY);
 
     /* -----------
        Preparation
@@ -96,6 +95,11 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
     }
 
     @Test
+    public void shouldInjectUnparseableIntegerCollection() {
+        super.shouldInjectUnparseableIntegerCollection();
+    }
+
+    @Test
     public void shouldInjectLong() {
         super.shouldInjectLong(RequestAttributeInjectorTest::assertStringifiedObjectValueEquals);
     }
@@ -111,6 +115,11 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
     }
 
     @Test
+    public void shouldInjectUnparseableLongCollection() {
+        super.shouldInjectUnparseableLongCollection();
+    }
+
+    @Test
     public void shouldInjectDouble() {
         super.shouldInjectDouble(RequestAttributeInjectorTest::assertStringifiedObjectValueEquals);
     }
@@ -123,6 +132,11 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
     @Test
     public void shouldInjectDoubleCollection() {
         super.shouldInjectDoubleCollection();
+    }
+
+    @Test
+    public void shouldInjectUnparseableDoubleCollection() {
+        super.shouldInjectUnparseableDoubleCollection();
     }
 
     @Test
@@ -202,7 +216,7 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
         for (Class<? extends RequestAdapterBase<? extends Number>> modelClass : Arrays.asList(Integers.class, Longs.class, Doubles.class)) {
             RequestAdapterBase<? extends Number> model = context.request().adaptTo(modelClass);
             assertNotNull(model);
-            assertEquals(EXPECTED_INT_ARRAY[0], model.getValue().intValue());
+            assertEquals((int) EXPECTED_INTEGER_ARRAY[0], model.getValue().intValue());
         }
         prepareRequest(context.request(), Boolean.TRUE.toString());
         RequestAdapterBase<Boolean> model = context.request().adaptTo(Booleans.class);
@@ -221,10 +235,8 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
             Number[] values = model.getValue();
             Number[] constructorValues = model.getConstructorValue();
             for (int i = 0; i < values.length; i++) {
-                assertEquals(EXPECTED_INT_ARRAY[i], values[i].intValue());
-                assertEquals(
-                    EXPECTED_INTEGER_ARRAY[i],
-                    constructorValues[i] != null ? constructorValues[i].intValue() : null);
+                assertEquals((int) EXPECTED_INTEGER_ARRAY[i], values[i].intValue());
+                assertEquals((int) EXPECTED_INTEGER_ARRAY[i], constructorValues[i].intValue());
             }
         }
     }

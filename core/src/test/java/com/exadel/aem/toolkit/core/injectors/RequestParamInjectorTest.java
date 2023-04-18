@@ -102,6 +102,11 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
     }
 
     @Test
+    public void shouldInjectUnparseableIntegerCollection() {
+        super.shouldInjectUnparseableIntegerCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+    }
+
+    @Test
     public void shouldInjectLong() {
         super.shouldInjectLong(RequestParamInjectorTest::assertObjectValueEquals);
     }
@@ -117,6 +122,11 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
     }
 
     @Test
+    public void shouldInjectUnparseableLongCollection() {
+        super.shouldInjectUnparseableLongCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+    }
+
+    @Test
     public void shouldInjectDouble() {
         super.shouldInjectDouble(RequestParamInjectorTest::assertObjectValueEquals);
     }
@@ -129,6 +139,11 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
     @Test
     public void shouldInjectDoubleCollection() {
         super.shouldInjectDoubleCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+    }
+
+    @Test
+    public void shouldInjectUnparseableDoubleCollection() {
+        super.shouldInjectUnparseableDoubleCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
     }
 
     @Test

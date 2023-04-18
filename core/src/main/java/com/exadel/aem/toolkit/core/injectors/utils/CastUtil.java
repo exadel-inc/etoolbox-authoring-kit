@@ -49,8 +49,8 @@ public class CastUtil {
 
     /**
      * Attempts to cast the given value to the provided {@code Type}. Designed for use with Sling injectors
-     * @param value     An arbitrary value
-     * @param type      A {@link Type} reference; usually reflects the type of Java class member
+     * @param value An arbitrary value
+     * @param type  A {@link Type} reference; usually reflects the type of Java class member
      * @return Transformed value; returns null in case type casting is not possible
      */
     public static Object toType(Object value, Type type) {
@@ -293,12 +293,16 @@ public class CastUtil {
 
     /**
      * Retrieves the default value for the given Java type by creating an empty array of that type. The return value is
-     * going to be {@code 0} for the numeric fields, {@code false} for the booleans fields, and {@code null} for the
-     * reference types
+     * going to be {@code 0} for the numeric fields (incl. boxed fields), {@code false} for the booleans (incl. boxed
+     * ones), and {@code null} for the reference types
      * @param type The type of the field
      * @return The default value for the type
      */
     private static Object getDefaultValue(Type type) {
-        return Array.get(Array.newInstance((Class<?>) type, 1), 0);
+        Class<?> elementaryType = ClassUtils.wrapperToPrimitive((Class<?>) type);
+        if (elementaryType == null) {
+            elementaryType = (Class<?>) type;
+        }
+        return Array.get(Array.newInstance(elementaryType, 1), 0);
     }
 }

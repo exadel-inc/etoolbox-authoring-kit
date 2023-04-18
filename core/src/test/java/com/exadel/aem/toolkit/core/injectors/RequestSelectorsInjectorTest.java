@@ -82,6 +82,11 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
     }
 
     @Test
+    public void shouldInjectUnparseableIntegerCollection() {
+        super.shouldInjectUnparseableIntegerCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
+    }
+
+    @Test
     public void shouldInjectLong() {
         super.shouldInjectLong(RequestSelectorsInjectorTest::assertStringifiedValuesEqual);
     }
@@ -94,6 +99,11 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
     @Test
     public void shouldInjectLongCollection() {
         super.shouldInjectLongCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
+    }
+
+    @Test
+    public void shouldInjectUnparseableLongCollection() {
+        super.shouldInjectUnparseableLongCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
     }
 
     @Test
