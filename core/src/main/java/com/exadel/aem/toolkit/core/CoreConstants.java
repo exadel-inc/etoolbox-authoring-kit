@@ -53,6 +53,7 @@ public class CoreConstants {
 
     public static final String ARRAY_OPENING = "[";
     public static final String ARRAY_CLOSING = "]";
+    public static final String EQUALITY_SIGN = "=";
     public static final String WILDCARD = "*";
 
     /**
