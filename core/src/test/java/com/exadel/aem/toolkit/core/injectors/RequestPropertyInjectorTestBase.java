@@ -76,6 +76,8 @@ abstract class RequestPropertyInjectorTestBase {
     private static final List<Long> EXPECTED_LONG_LIST = Arrays.asList(42L, 43L, 44L);
 
     private static final float EXPECTED_FLOAT = 42.1f;
+    private static final String EXPECTED_FLOAT_STRING = "42.1f";
+
     private static final double EXPECTED_DOUBLE = 42.1d;
     private static final double[] EXPECTED_DOUBLE_ARRAY = {42.1d, 43.1d, 44.1d};
     static final List<Double> EXPECTED_DOUBLE_LIST = Arrays.asList(42.1d, 43.1d, 44.1d);
@@ -193,6 +195,7 @@ abstract class RequestPropertyInjectorTestBase {
             EXPECTED_INTEGER,
             EXPECTED_LONG,
             EXPECTED_FLOAT,
+            EXPECTED_FLOAT_STRING ,
             EXPECTED_DOUBLE)) {
 
             prepareRequest(context.request(), payload);
@@ -285,6 +288,7 @@ abstract class RequestPropertyInjectorTestBase {
             EXPECTED_INTEGER,
             EXPECTED_LONG,
             EXPECTED_FLOAT,
+            EXPECTED_FLOAT_STRING,
             EXPECTED_DOUBLE)) {
 
             prepareRequest(context.request(), payload);
@@ -379,6 +383,7 @@ abstract class RequestPropertyInjectorTestBase {
             EXPECTED_INTEGER,
             EXPECTED_LONG,
             EXPECTED_FLOAT,
+            EXPECTED_FLOAT_STRING,
             EXPECTED_DOUBLE)) {
 
             double delta = getDelta(payload);

@@ -9,6 +9,8 @@ import java.util.Optional;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest;
 import org.junit.Test;
 import static org.junit.Assert.assertArrayEquals;
@@ -80,7 +82,7 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
 
     @Test
     public void shouldInjectInteger() {
-        super.shouldInjectInteger();
+        super.shouldInjectInteger(RequestAttributeInjectorTest::assertStringifiedObjectValueEquals);
     }
 
     @Test
@@ -95,7 +97,7 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
 
     @Test
     public void shouldInjectLong() {
-        super.shouldInjectLong();
+        super.shouldInjectLong(RequestAttributeInjectorTest::assertStringifiedObjectValueEquals);
     }
 
     @Test
@@ -110,7 +112,7 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
 
     @Test
     public void shouldInjectDouble() {
-        super.shouldInjectDouble();
+        super.shouldInjectDouble(RequestAttributeInjectorTest::assertStringifiedObjectValueEquals);
     }
 
     @Test
@@ -257,5 +259,18 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
         assertNotNull(context.request().adaptTo(Calendars.class));
         assertNotNull(context.request().adaptTo(CalendarArrays.class));
         assertNotNull(context.request().adaptTo(CalendarCollections.class));
+    }
+
+    /* ---------------
+       Service methods
+       --------------- */
+
+    private static void assertStringifiedObjectValueEquals(RequestAdapterBase<?> model, Object payload) {
+        assertNotNull(model.getObjectValue());
+        if (ClassUtils.isPrimitiveOrWrapper(model.getObjectValue().getClass()) && payload instanceof String) {
+            assertEquals(NumberUtils.createNumber(payload.toString()), model.getObjectValue());
+        } else {
+            assertEquals(payload, model.getObjectValue());
+        }
     }
 }
