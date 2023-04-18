@@ -34,6 +34,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
+import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
@@ -172,11 +173,10 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
      * */
     private static String escapeValue(String value) {
         String result = StringUtils.replace(
-            value, DialogConstants.SEPARATOR_SEMICOLON,
+            value,
+            DialogConstants.SEPARATOR_SEMICOLON,
             "\\\\" + DialogConstants.SEPARATOR_SEMICOLON);
-        for (String bracket : new String[] {CoreConstants.ARRAY_OPENING, CoreConstants.ARRAY_CLOSING}) {
-            result = StringUtils.replace(result, bracket, "\\" + bracket);
-        }
+        result = StringUtil.escapeArray(result);
         return result;
     }
 }

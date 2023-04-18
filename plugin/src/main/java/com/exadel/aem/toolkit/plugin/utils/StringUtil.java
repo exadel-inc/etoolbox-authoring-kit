@@ -183,4 +183,21 @@ public class StringUtil {
             .split(SPLITTING_PATTERN));
     }
 
+    /* ---------------
+       Utility methods
+       --------------- */
+
+    /**
+     * Escapes inline Javascript/JSON array markers ({@code [...]}) so that they can be preserved in, e.g., XML markup.
+     * The processing is null-safe
+     * @param value The string to escape
+     * @return The modified string
+     */
+    public static String escapeArray(String value) {
+        String result = value;
+        for (String bracket : new String[]{CoreConstants.ARRAY_OPENING, CoreConstants.ARRAY_CLOSING}) {
+            result = StringUtils.replace(result, bracket, "\\" + bracket);
+        }
+        return result;
+    }
 }

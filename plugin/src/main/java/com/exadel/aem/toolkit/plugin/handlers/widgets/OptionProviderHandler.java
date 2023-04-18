@@ -320,7 +320,7 @@ abstract class OptionProviderHandler {
             }
             arrayNode.add(objectNode);
         }
-        return arrayNode.toString();
+        return StringUtil.escapeArray(arrayNode.toString());
     }
 
     /**
@@ -375,7 +375,7 @@ abstract class OptionProviderHandler {
                     StringUtils.defaultIfEmpty(optionSource.valueMember(), CoreConstants.PN_VALUE),
                     entry.getValue()))
             .forEach(arrayNode::add);
-        return arrayNode.toString();
+        return StringUtil.escapeArray(arrayNode.toString());
     }
 
     /**
@@ -429,7 +429,7 @@ abstract class OptionProviderHandler {
                     optionSource.valueMember(),
                     pair.getValue()))
             .forEach(arrayNode::add);
-        return arrayNode.toString();
+        return StringUtil.escapeArray(arrayNode.toString());
     }
 
     /**
