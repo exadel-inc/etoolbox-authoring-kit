@@ -16,6 +16,8 @@ package com.exadel.aem.toolkit.core.injectors.models.lists;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -42,6 +44,9 @@ public class SimpleListItems extends RequestAdapterBase<List<SimpleListItem>> {
     @EToolboxList(EToolboxListInjectorTest.SIMPLE_LIST_PATH)
     private SimpleListItem[] arrayValue;
 
+    @EToolboxList(EToolboxListInjectorTest.SIMPLE_LIST_PATH)
+    private Set<SimpleListItem> setValue;
+
     @Self
     private Supplier supplier;
 
@@ -57,6 +62,11 @@ public class SimpleListItems extends RequestAdapterBase<List<SimpleListItem>> {
 
     public SimpleListItem[] getArrayValue() {
         return arrayValue;
+    }
+
+    @Nullable
+    public Set<SimpleListItem> getSetValue() {
+        return setValue;
     }
 
     @Override

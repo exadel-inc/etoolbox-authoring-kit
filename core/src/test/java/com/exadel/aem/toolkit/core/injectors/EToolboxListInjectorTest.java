@@ -126,6 +126,10 @@ public class EToolboxListInjectorTest {
             EToolboxListInjectorTest::assertSimpleListItemsEqual);
         ComparisonHelper.assertCollectionsEqual(
             expectedList,
+            model.getSetValue(),
+            EToolboxListInjectorTest::assertSimpleListItemsEqual);
+        ComparisonHelper.assertCollectionsEqual(
+            expectedList,
             model.getConstructorValue(),
             EToolboxListInjectorTest::assertSimpleListItemsEqual);
         ComparisonHelper.assertCollectionsEqual(
