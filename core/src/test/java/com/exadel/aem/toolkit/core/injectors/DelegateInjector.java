@@ -87,6 +87,14 @@ public class DelegateInjector implements Injector {
                 type);
         }
 
+        if (delegate instanceof EnumValueInjector) {
+            return ((EnumValueInjector) delegate).getValue(
+                adaptable,
+                effectiveName,
+                StringUtils.EMPTY,
+                type);
+        }
+
         return null;
     }
 }

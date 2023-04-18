@@ -39,8 +39,9 @@ public class EnumValueInjectorTest {
     @Before
     public void beforeTest() {
         context.addModelsForClasses(MODELS_PACKAGE_NAME);
-        context.registerInjectActivateService(new EnumValueInjector());
-        context.registerInjectActivateService(new DelegateInjector(null));
+        EnumValueInjector enumValueInjector = new EnumValueInjector();
+        context.registerInjectActivateService(enumValueInjector);
+        context.registerInjectActivateService(new DelegateInjector(enumValueInjector));
         context.load().json("/com/exadel/aem/toolkit/core/injectors/enumInjector.json", TestConstants.ROOT_RESOURCE);
         context.request().setResource(context.resourceResolver().getResource("/content/jcr:content/resource"));
     }
@@ -55,6 +56,7 @@ public class EnumValueInjectorTest {
         Enums model = adaptable.adaptTo(Enums.class);
         assertNotNull(model);
         assertEquals(EXPECTED_COLOR, model.getValue());
+        assertEquals(EXPECTED_COLOR.name(), model.getObjectValue());
         assertEquals(EXPECTED_COLOR, model.getValueSupplier().getValue());
         assertEquals(EXPECTED_COLOR, model.getConstructorValue());
     }
@@ -69,6 +71,7 @@ public class EnumValueInjectorTest {
         EnumArrays model = adaptable.adaptTo(EnumArrays.class);
         assertNotNull(model);
         assertArrayEquals(EXPECTED_COLOR_ARRAY, model.getValue());
+        assertEquals(EXPECTED_COLOR.name(), model.getObjectValue());
         assertArrayEquals(EXPECTED_COLOR_ARRAY, model.getValueSupplier().getValue());
         assertArrayEquals(EXPECTED_COLOR_ARRAY, model.getConstructorValue());
     }
@@ -83,6 +86,7 @@ public class EnumValueInjectorTest {
         EnumCollections model = adaptable.adaptTo(EnumCollections.class);
         assertNotNull(model);
         assertNotNull(model.getValue());
+        assertEquals(EXPECTED_COLOR.name(), model.getObjectValue());
         assertTrue(CollectionUtils.isEqualCollection(EXPECTED_COLOR_COLLECTION, model.getValue()));
         assertNotNull(model.getValueSupplier().getValue());
         assertTrue(CollectionUtils.isEqualCollection(EXPECTED_COLOR_COLLECTION, model.getValueSupplier().getValue()));

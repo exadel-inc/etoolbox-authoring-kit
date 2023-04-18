@@ -23,6 +23,8 @@ import java.util.function.BiFunction;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.wrappers.DeepReadValueMapDecorator;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
@@ -67,29 +69,43 @@ public class EnumValueInjector extends BaseInjector<EnumValue> {
      */
     @Override
     Object getValue(Object adaptable, String name, Type type, EnumValue annotation) {
+        String effectiveName = StringUtils.defaultIfEmpty(annotation.name(), name);
+        String valueMember = annotation.valueMember();
+        return getValue(adaptable, effectiveName, valueMember, type);
+    }
 
+    /**
+     * Attempts to extract an enum value from the given {@code adaptable}, which is usually a
+     * {@code SlingHttpServletRequest} or a {@code Resource}. If the provided {@code type} is an enum type, we try to
+     * pick up an appropriate enum constant
+     * @param adaptable   A {@link SlingHttpServletRequest} or a {@link Resource} instance
+     * @param name        Name of the parameter
+     * @param valueMember Name of the enum's method or public field that we use for finding a match
+     * @param type        Type of the returned value
+     * @return A nullable value
+     */
+    Object getValue(Object adaptable, String name, String valueMember, Type type) {
         Class<?> componentType = null;
         if (TypeUtil.isSupportedCollectionOrArrayOfType(type, Class::isEnum, true)) {
             componentType = TypeUtil.getElementType(type);
         } else if (type instanceof Class && ((Class<?>) type).isEnum()) {
             componentType = (Class<?>) type;
-        }
-        if (componentType == null) {
-            return null;
+        } else if (Object.class.equals(type)) {
+            componentType = Object.class;
         }
 
         DeepReadValueMapDecorator valueMap = new DeepReadValueMapDecorator(
             AdaptationUtil.getResource(adaptable),
             AdaptationUtil.getValueMap(adaptable));
-        String effectiveName = StringUtils.defaultIfEmpty(annotation.name(), name);
 
-        Object valueMapValue = valueMap.get(effectiveName);
-        if (valueMapValue == null) {
-            return null;
+        Object valueMapValue = valueMap.get(name);
+        if (valueMapValue == null || Object.class.equals(componentType)) {
+            return valueMapValue;
         }
-        BiFunction<Object, Type, Object> converter = annotation.valueMember().isEmpty()
+
+        BiFunction<Object, Type, Object> converter = valueMember.isEmpty()
             ? EnumValueInjector::getEnumValue
-            : (value, t) -> getEnumValue(value, t, annotation.valueMember());
+            : (value, t) -> getEnumValue(value, t, valueMember);
 
         return CastUtil.toType(valueMapValue, type, converter);
     }
