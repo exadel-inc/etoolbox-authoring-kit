@@ -29,7 +29,8 @@ import com.exadel.aem.toolkit.core.injectors.RequestSelectorsInjector;
 /**
  * Used on a field, a method, or a method parameter of a Sling model to inject Sling request selectors.
  * <p>If the annotated Java class member is of type {@code String} or {@code Object}, the selector string is injected.
- * Otherwise, the annotated member can be a string of any primitive type or a boxed variant. Each selector is then
+ * Otherwise, the annotated member can be a string or one of the following primitive types: {@code boolean},
+ * {@code int}, {@code double}. Boxed variants of the said primitives are are supported as well. Each selector is then
  * considered a string and parsed to the target type.</p>
  * <p>The annotated member can represent an array, or else a {@link Collection}, a {@link List}, or a {@link Set}.
  * Selectors are then injected into the collection one by one.</p>

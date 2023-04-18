@@ -28,13 +28,15 @@ import com.exadel.aem.toolkit.core.injectors.RequestAttributeInjector;
 /**
  * Used on a field, a method, or a method parameter of a Sling model to inject the value of an arbitrary request
  * attribute.
- * <p>The annotated member can be of an arbitrary object type or primitive type. It can also be an array, or else a
- * {@link Collection}, a {@link List} or a {@code Set} of arbitrary object types/primitives.</p>
- * <p>While injecting type coercion is performed. A numeric value can be cast to a widening type ({@code byte -> int},
- * {@code int -> long}, {@code long -> double}, etc.) and also boxed/unboxed if needed. A provided string is parsed into
- * a numeric or boolean if the receiving member has this type. Similarly, an object type can be cast to an ancestor class or
- * an interface. If the injectable member is a collection/array, and the injected value is singular, a singleton
- * collection/array is created</p>
+ * <p>The annotated member can be of an arbitrary object type or one of the following primitive types: {@code boolean},
+ * {@code int}, {@code double}. Boxed variants of the said primitives are are supported as well.</p>
+ * <p>The annotated member can also be an array, or else a {@link Collection}, a {@link List} or a {@code Set} of
+ * the named types.</p>
+ * <p>While injecting, type coercion is performed when necessary. A numeric value can be cast to a widening type
+ * ({@code byte -> int}, {@code int -> long}, {@code long -> double}, etc.). It is also boxed/unboxed if needed. A
+ * provided string is parsed into a numeric or boolean if the receiving member has this type. Similarly, an object type
+ * can be cast to an ancestor class or an interface. If the injectable member is a collection/array, and the injected
+ * value is singular, a singleton collection/array is created</p>
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
