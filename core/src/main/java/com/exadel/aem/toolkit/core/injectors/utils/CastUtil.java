@@ -39,6 +39,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 public class CastUtil {
 
     private static final String SIGN_DOUBLE = "d";
+    private static final String SIGN_FLOAT = "f";
 
     /**
      * Default (instantiation-restricting) constructor
@@ -193,7 +194,9 @@ public class CastUtil {
         Object effectiveValue = value;
         if (value instanceof String && NumberUtils.isCreatable(value.toString())) {
             String stringifiedValue = value.toString();
-            if (stringifiedValue.contains(CoreConstants.SEPARATOR_DOT) && !stringifiedValue.endsWith(SIGN_DOUBLE)) {
+            if (stringifiedValue.contains(CoreConstants.SEPARATOR_DOT)
+                && !stringifiedValue.endsWith(SIGN_FLOAT)
+                && !stringifiedValue.endsWith(SIGN_DOUBLE)) {
                 stringifiedValue += SIGN_DOUBLE;
             }
             effectiveValue = NumberUtils.createNumber(stringifiedValue);
