@@ -55,8 +55,15 @@
             rteTemplates.assistant_dropdown = rteTemplates.assistant_dropdown || this.populateDropdown;
         },
 
-        getOptions: function () {
-            return ns.Assistant.getFacilities();
+        getOptions: async function () {
+            const allFacilities = await ns.Assistant.getFacilities();
+            let facilityFilter = $(`[name="${this.sourceField}"]`).attr('data-eak-assistant-filter');
+            if (typeof facilityFilter === 'string' || facilityFilter instanceof String) {
+                facilityFilter = new RegExp(facilityFilter);
+            } else if (!facilityFilter) {
+                facilityFilter = /^text\./i;
+            }
+            return (allFacilities || []).filter(f => facilityFilter.test(f.id));
         },
 
         updateState: function (selfDef) {
