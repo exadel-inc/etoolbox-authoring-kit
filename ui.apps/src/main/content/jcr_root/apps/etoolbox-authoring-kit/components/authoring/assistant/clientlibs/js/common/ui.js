@@ -14,6 +14,7 @@
 (function (ns) {
     'use strict';
 
+    const ATTR_ALLOW_EMPTY = 'data-eak-assistant-allow-empty-payload';
     const ATTR_VARIANTS = 'data-eak-assistant-variants';
     const ATTR_VARIANT = 'data-eak-assistant-variant';
 
@@ -31,10 +32,12 @@
         ATTR_ACTION: 'data-eak-assistant-action',
         ATTR_ACTION_PARAMS: 'data-eak-assistant-action-params',
         ATTR_ASSISTANT_MODE: 'data-eak-assistant-mode',
+        ATTR_FILTER: 'data-eak-assistant-filter',
         ATTR_SOURCE: 'data-eak-assistant-source',
         ATTR_SOURCE_REF: 'data-eak-assistant-source-ref',
         ATTR_SOURCE_SETTING_REF: 'data-eak-assistant-source-setting',
         ATTR_TARGET: 'data-eak-assistant-target',
+        ATTR_TITLE: 'data-title',
 
         DATA_KEY_ACTION_PARAMS: 'eak-assistant-action-params',
         DATA_KEY_SETUP: 'eak-assistant-setup',
@@ -52,21 +55,27 @@
                 : $field.find(`[${this.ATTR_SOURCE}]`).val();
 
             const button = new Coral.AnchorButton();
-            button.set({
-                icon: 'assistant',
-                iconSize: 'S',
-                disabled: !fieldValue
-            });
 
+            let allowEmptyPayload = false;
             const facilityList = new Coral.ButtonList();
+            let facilityFilter = $field.attr(this.ATTR_FILTER) || options.facilityFilter;
+            if (typeof facilityFilter === 'string' || facilityFilter instanceof String) {
+                facilityFilter = new RegExp(facilityFilter);
+            } else if (!facilityFilter) {
+                facilityFilter = /^text\./i;
+            }
             for (const facility of facilities) {
-                if (!facility.id.startsWith(options.facilityPrefix || 'text.')) {
+                if (!facilityFilter.test(facility.id)) {
                     continue;
                 }
                 const flatVariants = facility.variants ? facility.variants : [facility];
                 const variantsJson = JSON.stringify(flatVariants.map((variant) => this.getAssistantFacilityVariantData(variant)));
                 const newButton = this.initAssistantFacilityUi(facility, { variantIdAttribute: 'data-eak-assistant-variant' });
                 newButton.setAttribute(ATTR_VARIANTS, variantsJson);
+                if (facility.properties && facility.properties.allowEmptyPayload) {
+                    newButton.setAttribute(ATTR_ALLOW_EMPTY, true);
+                    allowEmptyPayload = true
+                }
                 facilityList.items.add(newButton);
                 facilityList.classList.add(this.CLS_FACILITY_LIST);
             }
@@ -77,6 +86,12 @@
                 target: button,
             });
             popover.content.appendChild(facilityList);
+
+            button.set({
+                icon: 'assistant',
+                iconSize: 'S',
+                disabled: !allowEmptyPayload && !fieldValue
+            });
 
             attachEventHandlers($field);
 
@@ -107,6 +122,7 @@
             return new Coral.ButtonList.Item().set({
                 icon: facility.icon,
                 value: facility.id,
+                title: facility.title,
                 content: {
                     innerHTML: contentHtml
                 }
@@ -171,7 +187,9 @@
         const dialogSetup = {
             sourceField: getSettingsSourceFieldName($fieldWrapper),
             settings: {
-                text: getValue($valueSource)
+                text: getValue($valueSource),
+                title: $button.attr('title') || $masterButton.attr('title'),
+                allowEmpty: !!($button.attr(ATTR_ALLOW_EMPTY) || $masterButton.attr(ATTR_ALLOW_EMPTY))
             },
             variants: JSON.parse($masterButton.attr(ATTR_VARIANTS)),
             selectedVariantId: $button.attr(ATTR_VARIANT),
