@@ -15,10 +15,12 @@ package com.exadel.aem.toolkit.core.assistant.services.openai;
 
 class OpenAiConstants {
 
+    static final String PN_BEST_OF = "best_of";
     static final String PN_CHOICES_COUNT = "n";
     static final String PN_INSTRUCTION = "instruction";
     static final String PN_MAX_TOKENS = "max_tokens";
     static final String PN_MODEL = "model";
+    static final String NO_CACHE = "nocache";
     static final String PN_TEMPERATURE = "temperature";
 
     private OpenAiConstants() {
