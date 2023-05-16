@@ -45,6 +45,11 @@ class ShortenFacility extends OpenAiFacility {
     }
 
     @Override
+    public int getRanking() {
+        return 300;
+    }
+
+    @Override
     public List<Setting> getSettings() {
         return EDIT_SETTINGS;
     }

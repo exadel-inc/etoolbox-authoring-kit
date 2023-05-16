@@ -57,6 +57,11 @@ class RephraseFacility extends OpenAiFacility {
     }
 
     @Override
+    public int getRanking() {
+        return 100;
+    }
+
+    @Override
     public List<Setting> getSettings() {
         return REPHRASE_SETTINGS;
     }
