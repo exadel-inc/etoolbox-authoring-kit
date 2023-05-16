@@ -26,7 +26,11 @@
                     innerHTML: 'Design an idea for the page'
                 },
                 content: {
-                    innerHTML: `<textarea is="coral-textarea" name="prompt" class="coral-Form-field foundation-layout-util-resizable-none coral3-Textfield coral3-Textfield--multiline" placeholder="E.g.: AI is the future of content authoring" rows="20" data-eak-assistant-source></textarea>
+                    innerHTML: `<textarea is="coral-textarea"
+                                          name="prompt"
+                                          class="coral-Form-field foundation-layout-util-resizable-none coral3-Textfield coral3-Textfield--multiline foundation-layout-util-maximized-alt"
+                                          placeholder="E.g.: AI is the future of content authoring"
+                                          data-eak-assistant-source></textarea>
                                 <notifications class="visible-on-error"></notifications>
                                 <coral-wait size="M" class="visible-on-loading"></coral-wait>`
                 },
