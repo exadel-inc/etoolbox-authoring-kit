@@ -27,7 +27,7 @@ import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 
 abstract class WritesonicFacility extends SimpleFacility {
 
-    private static final Setting V1_ENGINE = Setting
+    static final Setting V1_ENGINE = Setting
         .builder()
         .id(WritesonicConstants.PN_ENGINE)
         .title("Engine")
@@ -36,7 +36,7 @@ abstract class WritesonicFacility extends SimpleFacility {
         .defaultValue(WritesonicServiceConfig.DEFAULT_ENGINE)
         .build();
 
-    private static final Setting V2_ENGINE = Setting
+    static final Setting V2_ENGINE = Setting
         .builder()
         .id(WritesonicConstants.PN_ENGINE)
         .title("Engine")
@@ -47,7 +47,7 @@ abstract class WritesonicFacility extends SimpleFacility {
         .defaultValue(WritesonicServiceConfig.DEFAULT_ENGINE)
         .build();
 
-    private static final Setting LANGUAGE = Setting
+    static final Setting.Builder LANGUAGE_SETTING_BUILDER = Setting
         .builder()
         .id(WritesonicConstants.PN_LANGUAGE)
         .title("Language")
@@ -75,10 +75,9 @@ abstract class WritesonicFacility extends SimpleFacility {
         .option("sv", "Slovenian")
         .option("fi", "Finnish")
         .option("et", "Estonian")
-        .defaultValue(WritesonicServiceConfig.DEFAULT_LANGUAGE)
-        .build();
+        .defaultValue(WritesonicServiceConfig.DEFAULT_LANGUAGE);
 
-    private static final Setting TONE = Setting
+    static final Setting TONE = Setting
         .builder()
         .id(WritesonicConstants.PN_TONE)
         .title("Tone of Voice")
@@ -94,14 +93,14 @@ abstract class WritesonicFacility extends SimpleFacility {
         .defaultValue(WritesonicServiceConfig.DEFAULT_TONE)
         .build();
 
-    static final List<Setting> CONTENT_V1_SETTINGS = Arrays.asList(
+    private static final List<Setting> CONTENT_V1_SETTINGS = Arrays.asList(
         V1_ENGINE,
-        LANGUAGE,
+        LANGUAGE_SETTING_BUILDER.build(),
         TONE);
 
-    static final List<Setting> CONTENT_V2_SETTINGS = Arrays.asList(
+    private static final List<Setting> CONTENT_V2_SETTINGS = Arrays.asList(
         V2_ENGINE,
-        LANGUAGE,
+        LANGUAGE_SETTING_BUILDER.build(),
         TONE);
 
     private static final String EXCEPTION_API_KEY_MISSING = "API key is missing";

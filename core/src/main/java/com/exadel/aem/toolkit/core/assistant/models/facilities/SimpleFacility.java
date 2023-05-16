@@ -35,6 +35,7 @@ public abstract class SimpleFacility implements Facility {
     protected static final String ICON_IMAGE_ADD = "imageAdd";
     protected static final String ICON_TEXT_ADD = "textAdd";
     protected static final String ICON_TEXT_EDIT = "textEdit";
+    protected static final String ICON_TEXT_PASTE = "pasteText";
     protected static final String ICON_TEXT_REMOVE = "textExclude";
 
     protected static final String EXCEPTION_INVALID_REQUEST = "Invalid request";

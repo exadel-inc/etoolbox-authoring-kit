@@ -118,6 +118,7 @@ public class OpenAiService implements AssistantService {
         if (facilities == null) {
             facilities = Arrays.asList(
                 new ExpandFacility(this),
+                new TranslateFacility(this),
                 new ShortenFacility(this),
                 new RephraseFacility(this),
                 new CorrectFacility(this),
