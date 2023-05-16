@@ -180,9 +180,11 @@ public class WritesonicService implements AssistantService {
     private String getContentRequestPayload(String payloadKey, ValueMap args) {
         String effectiveText = args.get(CoreConstants.PN_TEXT, StringUtils.EMPTY);
         String effectiveTone = args.get(WritesonicConstants.PN_TONE, config.tone());
-        Map<String, String> payload = new HashMap<>();
+        int effectiveOptionsCount = args.get(WritesonicConstants.PN_OPTIONS_COUNT, config.DEFAULT_TEXTS_COUNT);
+        Map<String, Object> payload = new HashMap<>();
         payload.put(payloadKey, effectiveText);
         payload.put(WritesonicConstants.PN_TONE, effectiveTone);
+        payload.put(WritesonicConstants.PN_OPTIONS_COUNT, effectiveOptionsCount);
         return ObjectConversionUtil.toJson(payload);
     }
 

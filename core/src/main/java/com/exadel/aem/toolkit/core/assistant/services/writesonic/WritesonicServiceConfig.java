@@ -22,9 +22,10 @@ import com.exadel.aem.toolkit.core.utils.HttpClientFactory;
 @ObjectClassDefinition(name = "EToolbox Authoring Kit - Assistant: Writesonic Integration")
 public @interface WritesonicServiceConfig {
 
-    String DEFAULT_ENGINE = "economy";
+    String DEFAULT_ENGINE = "good";
     String DEFAULT_LANGUAGE = "en";
     String DEFAULT_TONE = "professional";
+    int DEFAULT_TEXTS_COUNT = 5;
 
     String DEFAULT_IMAGE_SIZE = "512x512";
     int DEFAULT_IMAGES_COUNT = 3;
