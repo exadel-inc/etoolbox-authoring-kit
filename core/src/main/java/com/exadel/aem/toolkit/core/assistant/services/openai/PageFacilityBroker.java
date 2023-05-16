@@ -32,6 +32,7 @@ import javax.annotation.Nonnull;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.AbstractResourceVisitor;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.PersistenceException;
@@ -51,11 +52,11 @@ class PageFacilityBroker {
 
     private static final String NN_METADATA = "eakAssistantMetadata";
     private static final String PN_METADATA_MEMBER = "eak-assistant-%s-member";
-
     private static final String NODE_APPS = "/apps/";
     private static final String NODE_CQ_DIALOG = "/cq:dialog";
     private static final String NODE_GRANITE_DATA = "granite:data";
 
+    private static final String KEY_FINDINGS = "findings";
     private static final String KEY_IMAGE = "image";
     private static final String KEY_IMAGE_PROMPT = "imagePrompt";
     private static final String KEY_QUOTE= "quote";
@@ -73,7 +74,7 @@ class PageFacilityBroker {
     private static final String EXCEPTION_COULD_NOT_MODIFY = "Could not retrieve a modifiable resource at \"%s\"";
     private static final String EXCEPTION_INVALID_ADDRESS = "Invalid property address";
 
-    private ResourceResolver resourceResolver;
+    private SlingHttpServletRequest request;
     private Resource pageContentResource;
     private final Map<String, Set<String>> mappings;
 
@@ -91,8 +92,12 @@ class PageFacilityBroker {
         return pageContentResource != null;
     }
 
+    public SlingHttpServletRequest getRequest() {
+        return request;
+    }
+
     public ResourceResolver getResourceResolver() {
-        return resourceResolver;
+        return request.getResourceResolver();
     }
 
     // Summary
@@ -145,6 +150,9 @@ class PageFacilityBroker {
         return getMembers(KEY_QUOTE);
     }
 
+    public Set<String> getFindingsMembers() {
+        return getMembers(KEY_FINDINGS);
+    }
 
     // Images
 
@@ -174,7 +182,7 @@ class PageFacilityBroker {
         Resource metadataResource = pageContentResource.getChild(NN_METADATA);
         if (metadataResource != null && !skipExisting) {
             ValueMap metadataValueMap = metadataResource.getValueMap();
-            Stream.of(KEY_SUMMARY, KEY_TITLE, KEY_SUBTITLE, KEY_TEXT, KEY_QUOTE, KEY_IMAGE_PROMPT, KEY_IMAGE)
+            Stream.of(KEY_SUMMARY, KEY_TITLE, KEY_SUBTITLE, KEY_TEXT, KEY_QUOTE, KEY_IMAGE_PROMPT, KEY_IMAGE, KEY_FINDINGS)
                 .forEach(key -> putIfNotNull(key, metadataValueMap.get(key + METADATA_KEY_POSTFIX, String[].class)));
             detachedSummary = metadataValueMap.get(KEY_SUMMARY, String.class);
         } else {
@@ -203,8 +211,8 @@ class PageFacilityBroker {
         }
         metadataProperties.put(JcrConstants.JCR_PRIMARYTYPE, JcrConstants.NT_UNSTRUCTURED);
         try {
-            resourceResolver.create(pageContentResource, NN_METADATA, metadataProperties);
-            resourceResolver.commit();
+            getResourceResolver().create(pageContentResource, NN_METADATA, metadataProperties);
+            getResourceResolver().commit();
         } catch (PersistenceException e) {
             throw new AssistantException(e);
         }
@@ -236,8 +244,8 @@ class PageFacilityBroker {
             return;
         }
         try {
-            resourceResolver.delete(metadataResource);
-            resourceResolver.commit();
+            getResourceResolver().delete(metadataResource);
+            getResourceResolver().commit();
         } catch (PersistenceException e) {
             throw new AssistantException(e);
         }
@@ -263,7 +271,7 @@ class PageFacilityBroker {
         }
         String nodeAddress = StringUtils.substringBeforeLast(address, CoreConstants.SEPARATOR_SLASH);
         String property = StringUtils.substringAfterLast(address, CoreConstants.SEPARATOR_SLASH);
-        Resource resource = resourceResolver.getResource(nodeAddress);
+        Resource resource = getResourceResolver().getResource(nodeAddress);
         if (resource != null) {
             return resource.getValueMap().get(property, String.class);
         }
@@ -291,7 +299,7 @@ class PageFacilityBroker {
         }
         String nodeAddress = StringUtils.substringBeforeLast(address, CoreConstants.SEPARATOR_SLASH);
         String property = StringUtils.substringAfterLast(address, CoreConstants.SEPARATOR_SLASH);
-        Resource resource = resourceResolver.getResource(nodeAddress);
+        Resource resource = getResourceResolver().getResource(nodeAddress);
         ModifiableValueMap modifiableValueMap = resource != null ? resource.adaptTo(ModifiableValueMap.class) : null;
         if (modifiableValueMap == null) {
             String pageContentResourcePath = Optional.ofNullable(pageContentResource).map(Resource::getPath).orElse(StringUtils.EMPTY);
@@ -306,7 +314,7 @@ class PageFacilityBroker {
 
     private void commit() throws AssistantException {
         try {
-            resourceResolver.commit();
+            getResourceResolver().commit();
         } catch (PersistenceException e) {
             throw new AssistantException(e);
         }
@@ -317,12 +325,12 @@ class PageFacilityBroker {
        --------------- */
 
     public static PageFacilityBroker getInstance(
-        ResourceResolver resourceResolver,
+        SlingHttpServletRequest request,
         Resource pageResource,
         boolean skipExistingMetadata) throws AssistantException {
 
         PageFacilityBroker result = new PageFacilityBroker();
-        result.resourceResolver = resourceResolver;
+        result.request = request;
         result.pageContentResource = pageResource != null ? pageResource.getChild(JcrConstants.JCR_CONTENT) : null;
         result.readMetadata(skipExistingMetadata);
         if (result.pageContentResource.getChild(NN_METADATA) == null || skipExistingMetadata) {
@@ -346,7 +354,7 @@ class PageFacilityBroker {
                 resourceType = NODE_APPS + resourceType;
             }
             resourceType += NODE_CQ_DIALOG;
-            Resource componentDialogResource = resourceResolver.getResource(resourceType);
+            Resource componentDialogResource = getResourceResolver().getResource(resourceType);
             if (componentDialogResource != null) {
                 new ComponentDialogVisitor(resource.getPath()).accept(componentDialogResource);
             }
@@ -365,7 +373,7 @@ class PageFacilityBroker {
             if (!NODE_GRANITE_DATA.equals(resource.getName())) {
                 return;
             }
-            Stream.of(KEY_TITLE, KEY_SUBTITLE, KEY_SUMMARY, KEY_TEXT, KEY_QUOTE, KEY_IMAGE)
+            Stream.of(KEY_TITLE, KEY_SUBTITLE, KEY_SUMMARY, KEY_TEXT, KEY_QUOTE, KEY_IMAGE, KEY_FINDINGS)
                 .forEach(key -> storeMember(resource, key));
         }
 

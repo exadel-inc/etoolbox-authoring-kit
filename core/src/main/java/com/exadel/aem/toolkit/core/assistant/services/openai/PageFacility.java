@@ -36,13 +36,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.api.wrappers.SlingHttpServletRequestWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.assistant.models.facilities.Facility;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 import com.exadel.aem.toolkit.core.assistant.services.AssistantException;
 import com.exadel.aem.toolkit.core.assistant.services.ImportService;
+import com.exadel.aem.toolkit.core.assistant.utils.VersionableValueMap;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 import com.exadel.aem.toolkit.core.utils.ThrowingBiConsumer;
 
@@ -108,7 +111,12 @@ class PageFacility extends OpenAiFacility {
                 STAGE_IMAGES,
                 "Creating images",
                 broker -> !broker.getImageMembers().isEmpty(),
-                this::createImages)
+                this::createImages),
+            new Stage(
+                "findings",
+                "Creating the conclusion",
+                broker -> !broker.getFindingsMembers().isEmpty(),
+                this::createFindings)
         );
     }
 
@@ -148,13 +156,14 @@ class PageFacility extends OpenAiFacility {
         if (currentStage == null || StringUtils.isAnyBlank(currentPath, currentPrompt)) {
             return Solution.from(args).withMessage(HttpStatus.SC_BAD_REQUEST, EXCEPTION_INVALID_REQUEST);
         }
-        if (!currentStage.getId().equals(STAGE_IMAGES)) {
-            args.put(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_CHAT_MODEL);
-        }
+        args.putIfAbsent(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_COMPLETION_MODEL);
+//        if (!currentStage.getId().equals(STAGE_IMAGES)) {
+//            args.put(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_CHAT_MODEL);
+//        }
 
         try {
             PageFacilityBroker pageBroker = PageFacilityBroker.getInstance(
-                request.getResourceResolver(),
+                request,
                 request.getResourceResolver().getResource(currentPath),
                 currentStage.equals(stages.get(0)));
             if (!pageBroker.isValid()) {
@@ -187,9 +196,9 @@ class PageFacility extends OpenAiFacility {
         Map<String, String> continuation = new HashMap<>();
         continuation.put(PN_STAGE, nextStage.getId());
         continuation.put(CoreConstants.PN_MESSAGE, nextStage.getStatusMessage());
-        Map<String, Object> fullResponse = Collections.singletonMap(PN_NEXT, continuation);
+        Map<String, Object> responseContent = Collections.singletonMap(PN_NEXT, continuation);
 
-        return Solution.from(args).withValueMap(fullResponse);
+        return Solution.from(args).withValueMap(responseContent);
     }
 
     private Stage findNextStage(Stage currentStage, PageFacilityBroker pageBroker) {
@@ -265,7 +274,8 @@ class PageFacility extends OpenAiFacility {
             args,
             ExpandFacility.PROMPT,
             PageFacilityBroker::getTextMembers,
-            PageFacility::stripUnfinishedPhrase);
+            PageFacility::stripUnfinishedPhrase,
+            false);
     }
 
     private void createQuotes(PageFacilityBroker broker, ValueMap args) throws AssistantException {
@@ -274,67 +284,36 @@ class PageFacility extends OpenAiFacility {
             args,
             null,
             PageFacilityBroker::getQuoteMembers,
-            StringUtils::trim);
+            StringUtils::trim,
+            false);
     }
+
     private void createImagePrompts(PageFacilityBroker broker, ValueMap args) throws AssistantException {
+        String promptText = "Create a prompt for the DALL-E image generator to create an image on the following topic: \"" +
+            args.get(CoreConstants.PN_TEXT) +
+            "\". The prompt must specify an arbitrary type of framing, an arbitrary shoot context, " +
+            "an arbitrary type of lighting, and an arbitrary usage context. Example: \"A close up studio " +
+            "photographic portrait of a robot, soft lighting, a photo from Life Magazine\". " +
+            "The result must not exceed 400 characters.";
         createStringValues(
             broker,
             args,
-            "Create a prompt for the DALL-E image generator to create a photorealistic high quality image on the following topic",
+            promptText,
             PageFacilityBroker::getImagePromptMembers,
-            value -> ObjectConversionUtil.toJson(CoreConstants.PN_PROMPT, value));
+            value -> ObjectConversionUtil.toJson(CoreConstants.PN_PROMPT, value),
+            false);
     }
 
-    private void createStringValues(
-        PageFacilityBroker broker,
-        ValueMap args,
-        String prompt,
-        Function<PageFacilityBroker, Collection<String>> memberCollectionFactory,
-        UnaryOperator<String> valueFactory) throws AssistantException {
-
-        Collection<String> members = memberCollectionFactory.apply(broker);
-        Iterator<String> memberIterator = members.iterator();
-        List<String> summaryPhrases = getSummaryPhrases(broker.getSummary(), members);
-
-        List<Solution> solutions;
-        if (prompt != null) {
-            List<ValueMap> tasks = new ArrayList<>();
-            for (String phrase : summaryPhrases) {
-                ValueMap newTask = new ArgumentsVersion(args)
-                    .put(PN_SOURCE, memberIterator.next())
-                    .put(CoreConstants.PN_PROMPT, prompt)
-                    .put(CoreConstants.PN_TEXT, phrase)
-                    .put(OpenAiConstants.PN_CHOICES_COUNT, 1)
-                    .get();
-                tasks.add(newTask);
-            }
-            solutions = getService().executeCompletion(tasks);
-        } else {
-            solutions = new ArrayList<>();
-            for (String phrase : summaryPhrases) {
-                if (memberIterator.hasNext()) {
-                    ValueMap newTask = new ArgumentsVersion(args)
-                        .put(PN_SOURCE, memberIterator.next())
-                        .get();
-                    solutions.add(Solution.from(newTask).withMessage(phrase));
-                }
-            }
-        }
-
-        Map<String, String> membersToValues = new HashMap<>();
-        Map<String, String> voidedMembers = getMapOfEmptyValues(members);
-
-        for (Solution solution : solutions) {
-            if (!solution.isSuccess()) {
-                continue;
-            }
-            String currentMember = String.valueOf(solution.getArgs().get(PN_SOURCE));
-            String currentValue = valueFactory.apply(solution.asText());
-            membersToValues.put(currentMember, currentValue);
-            voidedMembers.remove(currentMember);
-        }
-        membersToValues.putAll(voidedMembers);
-        broker.commitValues(membersToValues);
+    private void createFindings(PageFacilityBroker broker, ValueMap args) throws AssistantException {
+        String promptText = "Formulate 2 findings (no more than 12 words each) suitable for a conclusion " +
+            "of an article from the following text";
+        createStringValues(
+            broker,
+            args,
+            promptText,
+            PageFacilityBroker::getFindingsMembers,
+            value -> StringUtils.removePattern(value, "(?m)^\\s*\\d+\\.\\s*"),
+            true);
     }
 
     private void createImages(PageFacilityBroker broker, ValueMap args) throws AssistantException {
@@ -352,11 +331,10 @@ class PageFacility extends OpenAiFacility {
                 continue;
             }
             String imageMember = imageMembersIterator.next();
-            ValueMap newTask = new ArgumentsVersion(args)
+            ValueMap newTask = new VersionableValueMap(args)
                 .put(PN_SOURCE, imageMember)
                 .put(CoreConstants.PN_PROMPT, prompt)
-                .put(OpenAiConstants.PN_CHOICES_COUNT, 1)
-                .get();
+                .put(OpenAiConstants.PN_CHOICES_COUNT, 1);
             tasks.add(newTask);
         }
 
@@ -373,16 +351,128 @@ class PageFacility extends OpenAiFacility {
             String currentMember = String.valueOf(solution.getArgs().get(PN_SOURCE));
             downloadTasks.put(currentUrl, currentMember);
         }
-        Map<String, String> urlsToDamAddresses = importService.downloadAssets(broker.getResourceResolver(), downloadTasks);
-        for (Map.Entry<String, String> urlToDamAddress : urlsToDamAddresses.entrySet()) {
+        Facility batchImportFacility = importService.getFacility("image.util.batch-import");
+        if (batchImportFacility == null) {
+            return;
+        }
+
+        Solution solution = batchImportFacility.execute(new SlingHttpServletRequestWrapper(broker.getRequest()) {
+            @Override
+            public Object getAttribute(String name) {
+                if ("targets".equals(name)) {
+                    return downloadTasks;
+                }
+                return super.getAttribute(name);
+            }
+        });
+        for (Map.Entry<String, Object> urlToDamAddress : solution.asMap().entrySet()) {
             String currentMember = downloadTasks.get(urlToDamAddress.getKey());
-            membersToDamUrls.put(currentMember, urlToDamAddress.getValue());
+            membersToDamUrls.put(currentMember, String.valueOf(urlToDamAddress.getValue()));
             voidedMembers.remove(currentMember);
         }
         membersToDamUrls.putAll(voidedMembers);
         broker.commitValues(membersToDamUrls);
     }
 
+    /* -----------------------
+       Genetic string routines
+       ----------------------- */
+
+    private void createStringValues(
+        PageFacilityBroker broker,
+        ValueMap args,
+        String prompt,
+        Function<PageFacilityBroker, Collection<String>> memberCollectionFactory,
+        UnaryOperator<String> valueFactory,
+        boolean parallel) throws AssistantException {
+
+        Collection<String> members = memberCollectionFactory.apply(broker);
+        Iterator<String> memberIterator = members.iterator();
+        List<String> summaryPhrases = getSummaryPhrases(broker.getSummary(), members, parallel);
+
+        List<Solution> solutions = prompt != null
+            ? retrieveSolutions(args, prompt, memberIterator, summaryPhrases, parallel)
+            : retrieveSolutions(args, memberIterator, summaryPhrases);
+        if (parallel) {
+            storeStringValuesInParallel(broker, valueFactory, members, solutions);
+        } else {
+            storeStringValues(broker, valueFactory, members, solutions);
+        }
+    }
+
+    private List<Solution> retrieveSolutions(
+        ValueMap args,
+        String prompt,
+        Iterator<String> memberIterator,
+        List<String> summaryPhrases,
+        boolean parallel) {
+
+        List<ValueMap> tasks = new ArrayList<>();
+        for (String phrase : summaryPhrases) {
+            ValueMap newTask = new VersionableValueMap(args)
+                .put(CoreConstants.PN_PROMPT, prompt)
+                .put(CoreConstants.PN_TEXT, phrase)
+                .put(OpenAiConstants.PN_CHOICES_COUNT, 1);
+            if (!parallel) {
+                newTask.put(PN_SOURCE, memberIterator.next());
+            }
+            tasks.add(newTask);
+        }
+        return getService().executeCompletion(tasks);
+    }
+
+    private List<Solution> retrieveSolutions(
+        ValueMap args,
+        Iterator<String> memberIterator,
+        List<String> summaryPhrases) {
+
+        List<Solution> solutions = new ArrayList<>();
+        for (String phrase : summaryPhrases) {
+            if (memberIterator.hasNext()) {
+                ValueMap newTask = new VersionableValueMap(args)
+                    .put(PN_SOURCE, memberIterator.next());
+                solutions.add(Solution.from(newTask).withMessage(phrase));
+            }
+        }
+        return solutions;
+    }
+
+    private void storeStringValuesInParallel(
+        PageFacilityBroker broker,
+        UnaryOperator<String> valueFactory,
+        Collection<String> members,
+        Collection<Solution> solutions) throws AssistantException {
+
+        StringBuilder commonText = new StringBuilder();
+        solutions.forEach(s -> commonText.append(StringUtils.strip(s.asText(), " \r\n.")).append(".\n"));
+        Map<String, String> membersToValues = new HashMap<>();
+        for (String member : members) {
+            membersToValues.put(member, valueFactory.apply(commonText.toString()));
+        }
+        broker.commitValues(membersToValues);
+    }
+
+    private void storeStringValues(
+        PageFacilityBroker broker,
+        UnaryOperator<String> valueFactory,
+        Collection<String> members,
+        Collection<Solution> solutions) throws AssistantException {
+
+        Map<String, String> membersToValues = new HashMap<>();
+        Map<String, String> voidedMembers = getMapOfEmptyValues(members);
+
+        for (Solution solution : solutions) {
+            if (!solution.isSuccess()) {
+                continue;
+            }
+            String currentMember = String.valueOf(solution.getArgs().get(PN_SOURCE));
+            String currentValue = valueFactory.apply(solution.asText());
+            membersToValues.put(currentMember, currentValue);
+            voidedMembers.remove(currentMember);
+        }
+        membersToValues.putAll(voidedMembers);
+        broker.commitValues(membersToValues);
+    }
 
     /* ---------------
        Utility methods
@@ -396,10 +486,13 @@ class PageFacility extends OpenAiFacility {
         }
     }
 
-    private static List<String> getSummaryPhrases(String summary, Collection<String> members) {
+    private static List<String> getSummaryPhrases(String summary, Collection<String> members, boolean unlimited) {
         List<String> summaryPhrases = PATTERN_SPLIT_BY_NEWLINE
             .splitAsStream(summary)
             .collect(Collectors.toList());
+        if (unlimited) {
+            return summaryPhrases;
+        }
         int limit = Math.min(members.size(), summaryPhrases.size());
         return summaryPhrases.subList(0, limit);
     }
