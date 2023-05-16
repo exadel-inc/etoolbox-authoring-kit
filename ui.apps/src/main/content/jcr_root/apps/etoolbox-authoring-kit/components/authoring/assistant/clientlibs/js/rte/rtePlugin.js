@@ -28,6 +28,8 @@
 
         buttonUi: null,
 
+        currentSelection: null,
+
         getFeatures: function () {
             return [FEATURE];
         },
@@ -72,6 +74,7 @@
         },
 
         execute: async function (id, value, params) {
+            this.currentSelection = this.hasSelection() ? this.getSelectionRange() : null;
             const dialogSetup = {
                 callerDialog: this.buttonUi.$ui.closest('coral-dialog'),
                 sourceField: this.sourceField,
@@ -81,10 +84,15 @@
                 variants: params.variants,
                 selectedVariantId: value,
                 acceptDelegate: (text) => {
-                    if (!this.hasSelection()) {
+                    if (!this.currentSelection) {
                         this.editorKernel.relayCmd('clear');
+                    } else {
+                        const bookmark = RTE.Selection.bookmarkFromProcessingSelection(
+                            this.editorKernel.editContext,
+                            this.currentSelection);
+                        RTE.Selection.selectBookmark(this.editorKernel.editContext, bookmark);
                     }
-                    this.editorKernel.relayCmd('inserthtml', text);
+                    this.editorKernel.relayCmd('inserthtml', RTE.Utils.htmlEncode(text));
                 }
             };
             ns.Assistant.openRequestDialog(dialogSetup);
@@ -119,8 +127,12 @@
         },
 
         hasSelection: function () {
-            const range = RTE.Selection.createProcessingSelection(this.editorKernel.editContext);
+            const range = this.getSelectionRange();
             return range && range.endOffset > range.startOffset;
+        },
+
+        getSelectionRange: function () {
+            return RTE.Selection.createProcessingSelection(this.editorKernel.editContext);
         },
 
         getSelectedText: function () {
