@@ -24,6 +24,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
 class JsonStringSolution extends Solution {
@@ -39,7 +40,7 @@ class JsonStringSolution extends Solution {
 
     @Override
     public String asText() {
-        return StringUtils.EMPTY;
+        return key + CoreConstants.OPERATOR_EQUALS + content;
     }
 
     @Override
@@ -72,5 +73,10 @@ class JsonStringSolution extends Solution {
             result.setAll((ObjectNode) parsedNestedJson);
         }
         return result.toString();
+    }
+
+    @Override
+    public Map<String, Object> asMap() {
+        return Collections.singletonMap(key, content);
     }
 }

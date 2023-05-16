@@ -35,4 +35,9 @@ class JsonValueMapSolution extends Solution {
     public String asJson() {
         return asJson(values);
     }
+
+    @Override
+    public Map<String, Object> asMap() {
+        return values;
+    }
 }

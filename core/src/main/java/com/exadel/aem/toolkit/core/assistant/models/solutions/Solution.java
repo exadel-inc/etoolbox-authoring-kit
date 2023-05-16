@@ -61,6 +61,8 @@ public abstract class Solution {
 
     public abstract String asJson();
 
+    public abstract Map<String, Object> asMap();
+
     String asJson(Map<String, Object> values) {
         Map<String, Object> effectiveValues = new HashMap<>(values);
         if (MapUtils.isNotEmpty(args)) {

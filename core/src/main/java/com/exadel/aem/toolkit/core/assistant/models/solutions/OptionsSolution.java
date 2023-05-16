@@ -49,9 +49,14 @@ class OptionsSolution extends Solution {
 
     @Override
     public String asJson() {
-        Map<String, Object> details = new HashMap<>();
-        details.put(CoreConstants.PN_OPTIONS, options);
-        details.put(PN_HAS_MORE, continuous);
-        return asJson(details);
+        return asJson(asMap());
+    }
+
+    @Override
+    public Map<String, Object> asMap() {
+        Map<String, Object> result = new HashMap<>();
+        result.put(CoreConstants.PN_OPTIONS, options);
+        result.put(PN_HAS_MORE, continuous);
+        return result;
     }
 }
