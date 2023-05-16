@@ -67,4 +67,7 @@ public @interface OpenAiServiceConfig {
 
     @AttributeDefinition(name = "Connection Timeout (ms)")
     int timeout() default HttpClientFactory.DEFAULT_TIMEOUT;
+
+    @AttributeDefinition(name = "Connection Attempts")
+    int connectionAttempts() default HttpClientFactory.DEFAULT_ATTEMPTS_COUNT;
 }

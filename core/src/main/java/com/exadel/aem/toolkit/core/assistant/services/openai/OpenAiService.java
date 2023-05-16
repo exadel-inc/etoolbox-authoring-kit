@@ -218,7 +218,7 @@ public class OpenAiService implements AssistantService {
 
         int lastExceptionStatus = HttpStatus.SC_INTERNAL_SERVER_ERROR;
         String lastExceptionMessage = null;
-        for (int attempt = 0; attempt < HttpClientFactory.DEFAULT_ATTEMPTS_COUNT; attempt++) {
+        for (int attempt = 0; attempt < config.connectionAttempts(); attempt++) {
             try (
                 CloseableHttpClient client = HttpClientFactory.newClient(config.timeout());
                 CloseableHttpResponse response = client.execute(request)
