@@ -56,7 +56,7 @@
             $callerDialog,
             {
                 header: {
-                    innerHTML: `Settings for "${getSourceFieldLabel(setup.sourceField)}"`
+                    innerHTML: `Settings for "${$callerDialog.attr(ns.Assistant.ATTR_TITLE)}"`
                 },
                 content: {
                     innerHTML: dialogContent

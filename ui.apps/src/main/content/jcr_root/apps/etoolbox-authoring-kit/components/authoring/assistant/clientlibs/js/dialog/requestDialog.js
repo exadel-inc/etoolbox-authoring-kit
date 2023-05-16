@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function (ns) {
+(function (ns, editor) {
     'use strict';
 
     const SELECTOR_DIALOG = 'coral-dialog';
@@ -140,13 +140,19 @@
 
         const command = selectedFacilityVariant?.id;
         const text = (setup.settings && setup.settings.text) || '';
+        const allowEmptyText = setup.settings && setup.settings.allowEmpty;
 
-        if (!command || !text) {
+        if (!command || (!text && !allowEmptyText)) {
             return;
         }
 
         ns.Assistant.setLoadingState($dialog, 'Processing request');
-        $dialog.find('coral-dialog-header').html(getHeaderText(command, text));
+
+        const headerText = getHeaderText(setup.settings.title || command);
+        const headerTextWithExtract = headerText + (text.trim().length ? ` <span class="citation">${text.trim()}</span>` : '');
+
+        $dialog.attr(ns.Assistant.ATTR_TITLE, headerText);
+        $dialog.find('coral-dialog-header').html(headerTextWithExtract);
 
         const effectiveSettings = Object.assign(
             {},
@@ -176,10 +182,11 @@
         const setup = $dialog.data(ns.Assistant.DATA_KEY_SETUP);
 
         const command = setup.command || setup.variants[0].id;
+        const effectiveSettings = Object.assign(settingsObject, { pagePath: editor.page && editor.page.path });
         const effectiveSetup = Object.assign(
             {},
             setup,
-            { command: command, settings: settingsObject });
+            { command: command, settings: effectiveSettings });
 
         const serviceLink = ns.Assistant.getServiceLink(effectiveSetup);
 
@@ -194,6 +201,11 @@
             .then((res) => res.json())
             .then((json) => populateOptionList($dialog, json))
             .then(() => ns.Assistant.unsetLoadingState($dialog))
+            .then(() => {
+                if ($dialog.find('options button').length === 1) {
+                    $dialog.find('options button').get(0).click();
+                }
+            })
             .catch((err) => ns.Assistant.setErrorState($dialog, err));
     }
 
@@ -202,11 +214,10 @@
             || facilityVariant.requiredSettings.some((name) => !settingsObject[name]);
     }
 
-    function getHeaderText(command, text) {
-        let commandTitle = command.includes('.') ? command.split('.').slice(0, -1) : [command];
+    function getHeaderText(title) {
+        let commandTitle = /(\w+\.)+\w+/.test(title) ? title.split('.').slice(0, -1) : [title];
         commandTitle = commandTitle.slice(-1)[0];
-        commandTitle = commandTitle.substring(0, 1).toUpperCase() + commandTitle.substring(1).toLowerCase();
-        return `${commandTitle} <span class="citation">${text}</span>`;
+        return commandTitle.substring(0, 1).toUpperCase() + commandTitle.substring(1).toLowerCase();
     }
 
     async function populateOptionList($dialog, solution) {
@@ -334,4 +345,4 @@
         startRequest($dialog);
     }
 
-})(window.eak = window.eak || {});
+})(window.eak = window.eak || {}, Granite.author);
