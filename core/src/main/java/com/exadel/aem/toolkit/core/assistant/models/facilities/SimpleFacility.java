@@ -63,6 +63,15 @@ public abstract class SimpleFacility implements Facility {
     }
 
     /**
+     * Retrieves an optional set of properties (or else, "flags") that may affect the display and interaction with the
+     * current {@code Facility} in the UI
+     * @return An optional map with string-typed keys and arbitrary values
+     */
+    public Map<String, Object> getProperties() {
+        return Collections.emptyMap();
+    }
+
+    /**
      * Returns a list of {@link Setting}s for this facility
      * @return A non-null {@code List} instance; can be empty
      */
