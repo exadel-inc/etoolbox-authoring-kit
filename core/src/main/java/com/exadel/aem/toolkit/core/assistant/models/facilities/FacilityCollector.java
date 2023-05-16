@@ -68,7 +68,10 @@ public class FacilityCollector implements Collector<Facility, List<Facility>, Li
      */
     @Override
     public Function<List<Facility>, List<Facility>> finisher() {
-        return Collections::unmodifiableList;
+        return list -> {
+            list.sort(FacilityCollector::compareFacilities);
+            return list;
+        };
     }
 
     /**
@@ -119,5 +122,13 @@ public class FacilityCollector implements Collector<Facility, List<Facility>, Li
         }
         return StringUtils.startsWith(first.getId(), second.getId() + CoreConstants.SEPARATOR_DOT)
             || StringUtils.startsWith(second.getId(), first.getId() + CoreConstants.SEPARATOR_DOT);
+    }
+
+    private static int compareFacilities(Facility first, Facility second) {
+        int sortByRanking = first.getRanking() - second.getRanking();
+        if (sortByRanking != 0) {
+            return sortByRanking;
+        }
+        return StringUtils.compare(first.getTitle(), second.getTitle());
     }
 }

@@ -194,15 +194,6 @@ public class AssistantServlet extends SlingAllMethodsServlet {
             .filter(AssistantService::isEnabled)
             .flatMap(service -> service.getFacilities().stream())
             .filter(filter)
-            .sorted(AssistantServlet::compareFacilities)
             .collect(FACILITY_COLLECTOR);
-    }
-
-    private static int compareFacilities(Facility first, Facility second) {
-        int sortByRanking = first.getRanking() - second.getRanking();
-        if (sortByRanking != 0) {
-            return sortByRanking;
-        }
-        return StringUtils.compare(first.getTitle(), second.getTitle());
     }
 }
