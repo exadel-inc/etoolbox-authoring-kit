@@ -70,6 +70,7 @@ public class PixabayService implements AssistantService {
 
     private static final String LOGO_RESOURCE = "assistant/logo-pixabay";
     private static final String LOGO;
+    private static final int MAX_PROMPT_LENGTH = 100;
 
     static {
         URL logoUrl = WritesonicService.class.getClassLoader().getResource(LOGO_RESOURCE);
@@ -148,7 +149,7 @@ public class PixabayService implements AssistantService {
             if (StringUtils.isBlank(prompt)) {
                 return Solution.from(args).withMessage(EXCEPTION_EMPTY_PROMPT);
             }
-            String encodedPrompt = prompt;
+            String encodedPrompt = truncate(prompt);
             try {
                 encodedPrompt = URLEncoder.encode(prompt, StandardCharsets.UTF_8.name());
             } catch (UnsupportedEncodingException ignored) {
@@ -204,5 +205,11 @@ public class PixabayService implements AssistantService {
             }
             return Solution.from(args).withOptions(options);
         }
+    }
+    private static String truncate(String value) {
+        if (StringUtils.length(value) < MAX_PROMPT_LENGTH) {
+            return value;
+        }
+        return StringUtils.substringBeforeLast(StringUtils.truncate(value, MAX_PROMPT_LENGTH), StringUtils.SPACE);
     }
 }
