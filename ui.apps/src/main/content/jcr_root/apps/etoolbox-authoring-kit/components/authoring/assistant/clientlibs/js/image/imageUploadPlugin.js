@@ -34,7 +34,7 @@
             }
 
             const $promptWrapper = $(`<div class="eak-assistant-prompt-wrapper"></div>`);
-            const textField = new Coral.Textfield();
+            const textField = new Coral.Textarea();
             textField.set({
                 placeholder: 'Image description to use with the generator service',
                 value: ns.Assistant.getSettings(imageUploadName)['prompt'] || ''
@@ -48,7 +48,7 @@
             const $imageUploadWrapper = $imageUpload.wrap('<div class="full-width"/>').parent();
             $imageUploadWrapper.append($promptWrapper);
 
-            await ns.Assistant.initAssistantUi($imageUploadWrapper, { facilityPrefix: 'image.', buttonTarget: $promptWrapper });
+            await ns.Assistant.initAssistantUi($imageUploadWrapper, { facilityFilter: /^image\./, buttonTarget: $promptWrapper });
         });
     });
 
