@@ -20,6 +20,7 @@ import org.apache.sling.api.resource.ValueMap;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Setting;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
+import com.exadel.aem.toolkit.core.assistant.utils.VersionableValueMap;
 
 class ExpandFacility extends OpenAiFacility {
 
@@ -51,7 +52,9 @@ class ExpandFacility extends OpenAiFacility {
 
     @Override
     public Solution execute(ValueMap args) {
-        ArgumentsVersion newArgs = new ArgumentsVersion(args).putIfMissing(CoreConstants.PN_PROMPT, PROMPT);
-        return getService().executeCompletion(newArgs.get());
+        ValueMap newArgs = new VersionableValueMap(args)
+            .putIfMissing(CoreConstants.PN_PROMPT, PROMPT)
+            .putIfMissing(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_COMPLETION_MODEL);
+        return getService().executeCompletion(newArgs);
     }
 }

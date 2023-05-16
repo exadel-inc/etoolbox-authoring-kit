@@ -211,12 +211,11 @@ class PageFacility extends OpenAiFacility {
         PageFacilityBroker broker,
         ValueMap args) throws AssistantException {
         int phrasesCount = Math.max(broker.getTextMembers().size(), 1);
-        ValueMap task = new ArgumentsVersion(args)
+        ValueMap task = new VersionableValueMap(args)
             .put(
                 CoreConstants.PN_PROMPT,
                 String.format("Generate as many as %d ideas for an article on the following topic", phrasesCount))
-            .put(OpenAiConstants.PN_CHOICES_COUNT, 1)
-            .get();
+            .put(OpenAiConstants.PN_CHOICES_COUNT, 1);
         Solution solution = getService().executeCompletion(task);
 
         String solutionText = solution.isSuccess() ? solution.asText() : StringUtils.EMPTY;
@@ -236,11 +235,10 @@ class PageFacility extends OpenAiFacility {
     private void createTitles(PageFacilityBroker broker, ValueMap args) throws AssistantException {
         String summary = broker.getSummary();
         String normalizedSummary = normalizeSummary(summary);
-        ValueMap task = new ArgumentsVersion(args)
+        ValueMap task = new VersionableValueMap(args)
             .put(CoreConstants.PN_PROMPT, "Create a title for the following text")
             .put(CoreConstants.PN_TEXT, normalizedSummary)
-            .put(OpenAiConstants.PN_CHOICES_COUNT, 1)
-            .get();
+            .put(OpenAiConstants.PN_CHOICES_COUNT, 1);
         Solution solution = getService().executeCompletion(task);
         if (solution.isSuccess()) {
             broker.setTitle(StringUtils.strip(solution.asText(), TERMINATOR_SPACE_QUOTE));
@@ -250,11 +248,10 @@ class PageFacility extends OpenAiFacility {
     private void createSubtitles(PageFacilityBroker broker, ValueMap args) throws AssistantException {
         String summary = broker.getSummary();
         String normalizedSummary = normalizeSummary(summary);
-        ValueMap task = new ArgumentsVersion(args)
+        ValueMap task = new VersionableValueMap(args)
             .put(CoreConstants.PN_PROMPT, "Summarize the following text in " + ABSTRACT_WORDS_LIMIT + " words")
             .put(CoreConstants.PN_TEXT, normalizedSummary)
-            .put(OpenAiConstants.PN_CHOICES_COUNT, 1)
-            .get();
+            .put(OpenAiConstants.PN_CHOICES_COUNT, 1);
         Solution solution = getService().executeCompletion(task);
         if (solution.isSuccess()) {
             String text = solution.asText();

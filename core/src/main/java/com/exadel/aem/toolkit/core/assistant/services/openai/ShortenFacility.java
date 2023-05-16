@@ -19,6 +19,7 @@ import org.apache.sling.api.resource.ValueMap;
 
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Setting;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
+import com.exadel.aem.toolkit.core.assistant.utils.VersionableValueMap;
 
 class ShortenFacility extends OpenAiFacility {
 
@@ -50,7 +51,9 @@ class ShortenFacility extends OpenAiFacility {
 
     @Override
     public Solution execute(ValueMap args) {
-        ArgumentsVersion newArgs = new ArgumentsVersion(args).putIfMissing(OpenAiConstants.PN_INSTRUCTION, INSTRUCTION);
-        return getService().executeEdit(newArgs.get());
+        ValueMap newArgs = new VersionableValueMap(args)
+            .putIfMissing(OpenAiConstants.PN_INSTRUCTION, INSTRUCTION)
+            .putIfMissing(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_EDIT_MODEL);
+        return getService().executeEdit(newArgs);
     }
 }

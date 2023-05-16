@@ -21,7 +21,7 @@ import org.apache.sling.api.resource.ValueMap;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Setting;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.SettingPersistence;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
-import com.exadel.aem.toolkit.core.assistant.utils.ArgumentsVersion;
+import com.exadel.aem.toolkit.core.assistant.utils.VersionableValueMap;
 
 class TranslateFacility extends OpenAiFacility {
 
@@ -100,9 +100,9 @@ class TranslateFacility extends OpenAiFacility {
     @Override
     public Solution execute(ValueMap args) {
         String instruction = "Translate this text into " + args.get(PROPERTY_LANGUAGE, DEFAULT_TRANSLATION);
-        ArgumentsVersion newArgs = new ArgumentsVersion(args)
+        ValueMap newArgs = new VersionableValueMap(args)
             .put(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_CHAT_MODEL)
             .put(OpenAiConstants.PN_INSTRUCTION, instruction);
-        return getService().executeEdit(newArgs.get());
+        return getService().executeEdit(newArgs);
     }
 }

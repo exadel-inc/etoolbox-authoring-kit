@@ -21,7 +21,7 @@ import org.apache.sling.api.resource.ValueMap;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Setting;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.SettingPersistence;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
-import com.exadel.aem.toolkit.core.assistant.utils.ArgumentsVersion;
+import com.exadel.aem.toolkit.core.assistant.utils.VersionableValueMap;
 
 class TranslateFacility extends WritesonicFacility {
 
@@ -68,10 +68,9 @@ class TranslateFacility extends WritesonicFacility {
 
     @Override
     Solution execute(ValueMap args) {
-        ValueMap newArgs = new ArgumentsVersion(args)
+        ValueMap newArgs = new VersionableValueMap(args)
             .put(WritesonicConstants.PN_OPTIONS_COUNT, 2)
-            .put(WritesonicConstants.PN_ENGINE, "business")
-            .get();
+            .put(WritesonicConstants.PN_ENGINE, "business");
         return getService().executeContentChange("content-rephrase","content_to_rephrase", newArgs);
     }
 }

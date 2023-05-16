@@ -23,6 +23,7 @@ import com.exadel.aem.toolkit.core.assistant.models.facilities.Setting;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.SettingPersistence;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.SettingType;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
+import com.exadel.aem.toolkit.core.assistant.utils.VersionableValueMap;
 
 class ProduceImageFacility extends OpenAiFacility {
 
@@ -70,7 +71,6 @@ class ProduceImageFacility extends OpenAiFacility {
 
     @Override
     public Solution execute(ValueMap args) {
-        return getService().executeImageGeneration(args);
+        return getService().executeImageGeneration(new VersionableValueMap(args).put(OpenAiConstants.NO_CACHE, true));
     }
-
 }

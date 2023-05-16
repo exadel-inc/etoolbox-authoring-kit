@@ -21,6 +21,7 @@ import org.apache.sling.api.resource.ValueMap;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Setting;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.SettingPersistence;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
+import com.exadel.aem.toolkit.core.assistant.utils.VersionableValueMap;
 
 class RephraseFacility extends OpenAiFacility {
 
@@ -62,7 +63,9 @@ class RephraseFacility extends OpenAiFacility {
 
     @Override
     public Solution execute(ValueMap args) {
-        ArgumentsVersion newArgs = new ArgumentsVersion(args).putIfMissing(OpenAiConstants.PN_INSTRUCTION, DEFAULT_INSTRUCTION);
-        return getService().executeEdit(newArgs.get());
+        ValueMap newArgs = new VersionableValueMap(args)
+            .putIfMissing(OpenAiConstants.PN_INSTRUCTION, DEFAULT_INSTRUCTION)
+            .putIfMissing(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_EDIT_MODEL);
+        return getService().executeEdit(newArgs);
     }
 }

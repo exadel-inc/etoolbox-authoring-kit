@@ -15,7 +15,6 @@ package com.exadel.aem.toolkit.core.assistant.models.facilities;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +22,9 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.request.RequestParameterMap;
 import org.apache.sling.api.resource.ValueMap;
-import org.apache.sling.api.wrappers.ValueMapDecorator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import com.exadel.aem.toolkit.core.assistant.utils.VersionableValueMap;
 
 /**
  * Represents a facility that does not have variants
@@ -87,7 +87,7 @@ public abstract class SimpleFacility implements Facility {
      */
     protected static ValueMap getArguments(SlingHttpServletRequest request) {
         RequestParameterMap parameters = request.getRequestParameterMap();
-        Map<String, Object> result = new HashMap<>();
+        VersionableValueMap result = new VersionableValueMap();
         for (Map.Entry<String, RequestParameter[]> entry : parameters.entrySet()) {
             RequestParameter[] values = entry.getValue();
             if (values == null) {
@@ -99,6 +99,6 @@ public abstract class SimpleFacility implements Facility {
                 result.put(entry.getKey(), Arrays.stream(values).map(RequestParameter::getString).toArray(String[]::new));
             }
         }
-        return new ValueMapDecorator(result);
+        return result;
     }
 }
