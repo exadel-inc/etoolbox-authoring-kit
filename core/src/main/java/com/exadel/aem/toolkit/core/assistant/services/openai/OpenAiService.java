@@ -123,6 +123,7 @@ public class OpenAiService implements AssistantService {
                 new RephraseFacility(this),
                 new TargetingFacility(this),
                 new CorrectFacility(this),
+                new TaggingFacility(this),
                 new ProduceImageFacility(this),
                 new PageFacility(this, (ImportService) importService));
         }
