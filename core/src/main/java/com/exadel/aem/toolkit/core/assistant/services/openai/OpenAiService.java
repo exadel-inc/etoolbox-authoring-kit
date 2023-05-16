@@ -121,6 +121,7 @@ public class OpenAiService implements AssistantService {
                 new TranslateFacility(this),
                 new ShortenFacility(this),
                 new RephraseFacility(this),
+                new TargetingFacility(this),
                 new CorrectFacility(this),
                 new ProduceImageFacility(this),
                 new PageFacility(this, (ImportService) importService));
