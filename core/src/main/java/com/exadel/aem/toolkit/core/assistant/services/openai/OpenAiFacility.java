@@ -18,6 +18,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
@@ -84,10 +85,16 @@ abstract class OpenAiFacility extends SimpleFacility {
 
     @Override
     public Solution execute(SlingHttpServletRequest request) {
+        ValueMap args = getArguments(request);
+        boolean isCacheable = service.getConfig().caching()
+            && !args.get(OpenAiConstants.NO_CACHE, false);
+
+        if (isCacheable) {
+            args.put(ResourceResolver.class.getName(), request.getResourceResolver());
+        }
         if (StringUtils.isBlank(service.getConfig().token())) {
             return Solution.from(EXCEPTION_TOKEN_MISSING);
         }
-        ValueMap args = getArguments(request);
         if (StringUtils.isBlank(args.get(CoreConstants.PN_TEXT, String.class))) {
             return Solution.from(EXCEPTION_INVALID_REQUEST);
         }

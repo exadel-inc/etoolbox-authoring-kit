@@ -32,6 +32,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.io.IOUtils;
@@ -45,6 +47,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -60,7 +63,6 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Facility;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 import com.exadel.aem.toolkit.core.assistant.services.AssistantService;
-import com.exadel.aem.toolkit.core.assistant.services.ImportService;
 import com.exadel.aem.toolkit.core.utils.ExecutorFactory;
 import com.exadel.aem.toolkit.core.utils.HttpClientFactory;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
@@ -84,15 +86,18 @@ public class OpenAiService implements AssistantService {
 
     private static final String HTTP_HEADER_BEARER = "Bearer ";
 
-    private static final String VENDOR_NAME = "OpenAI";
-    private static final String LOGO_RESOURCE = "assistant/logo-openai";
-    private static final String LOGO;
-
-    private static final String EXCEPTION_REQUEST_FAILED = "OpenAI service request failed";
+    private static final String EXCEPTION_REQUEST_FAILED = "OpenAI service request to {} failed";
     private static final String EXCEPTION_COULD_NOT_COMPLETE_ASYNC = "Could not complete request";
-    private static final String EXCEPTION_TIMEOUT = "Connection to {} timed out";
+    private static final String EXCEPTION_TIMEOUT = "Connection to {} timed out after {} ms";
     private static final String ROLE_USER = "user";
 
+    private static final String PATTERN_LEADING_NON_ALPHABETIC = "^\\W+";
+    private static final String PATTERN_LEADING_TAG = "^<\\w+>";
+
+    private static final String VENDOR_NAME = "OpenAI";
+
+    private static final String LOGO_RESOURCE = "assistant/logo-openai";
+    private static final String LOGO;
     static {
         URL logoUrl = OpenAiService.class.getClassLoader().getResource(LOGO_RESOURCE);
         String logo = null;
@@ -105,6 +110,7 @@ public class OpenAiService implements AssistantService {
     }
     @Reference(target = "(component.name=com.exadel.aem.toolkit.core.assistant.services.ImportService)")
     private AssistantService importService;
+
 
     private OpenAiServiceConfig config;
     private ExecutorService threadPoolExecutor;
@@ -125,7 +131,7 @@ public class OpenAiService implements AssistantService {
                 new CorrectFacility(this),
                 new TaggingFacility(this),
                 new ProduceImageFacility(this),
-                new PageFacility(this, (ImportService) importService));
+                new PageFacility(this, importService));
         }
         this.threadPoolExecutor = ExecutorFactory.newCachedThreadPoolExecutor();
     }
@@ -201,7 +207,7 @@ public class OpenAiService implements AssistantService {
                 LOG.warn(EXCEPTION_COULD_NOT_COMPLETE_ASYNC, e);
                 Thread.currentThread().interrupt();
             } catch (TimeoutException | ExecutionException e) {
-                LOG.warn(EXCEPTION_COULD_NOT_COMPLETE_ASYNC, e);
+                LOG.warn(EXCEPTION_COULD_NOT_COMPLETE_ASYNC + " due to timeout(-s)", e);
             }
         }
         return result;
@@ -212,11 +218,23 @@ public class OpenAiService implements AssistantService {
             ? config.chatEndpoint()
             : endpoint;
 
-        String payload = payloadFactory.apply(args);
+        String requestPayload = payloadFactory.apply(args);
+
+        LOG.debug("Sending to {} message {}", effectiveEndpoint, requestPayload);
+
+        boolean useCache = !args.get(OpenAiConstants.NO_CACHE, false)
+            && args.get(ResourceResolver.class.getName()) != null;
+        Solution cachedSolution = useCache
+            ? CacheUtil.getSolution(args.get(ResourceResolver.class.getName(), ResourceResolver.class), args)
+            : null;
+        if (cachedSolution != null) {
+            return cachedSolution;
+        }
+
         HttpPost request = new HttpPost(effectiveEndpoint);
         request.setHeader(HttpHeaders.AUTHORIZATION, HTTP_HEADER_BEARER + config.token());
         request.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_JSON.getMimeType());
-        request.setEntity(new StringEntity(payload, StandardCharsets.UTF_8));
+        request.setEntity(new StringEntity(requestPayload, StandardCharsets.UTF_8));
 
         int lastExceptionStatus = HttpStatus.SC_INTERNAL_SERVER_ERROR;
         String lastExceptionMessage = null;
@@ -225,15 +243,21 @@ public class OpenAiService implements AssistantService {
                 CloseableHttpClient client = HttpClientFactory.newClient(config.timeout());
                 CloseableHttpResponse response = client.execute(request)
             ) {
-                Solution solution = parseOpenAiResponse(response, args);
+                String responseContent = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
+                Solution solution = parseOpenAiResponse(responseContent, effectiveEndpoint, args);
+                if (solution.isSuccess() && useCache) {
+                    CacheUtil.saveSolution(
+                        args.get(ResourceResolver.class.getName(), ResourceResolver.class),
+                        solution);
+                }
                 EntityUtils.consume(response.getEntity());
                 return solution;
             } catch (ConnectTimeoutException | SocketTimeoutException e) {
-                LOG.warn(EXCEPTION_TIMEOUT, effectiveEndpoint);
+                LOG.warn(EXCEPTION_TIMEOUT, effectiveEndpoint, config.timeout());
                 lastExceptionStatus = HttpStatus.SC_REQUEST_TIMEOUT;
                 lastExceptionMessage = e.getMessage();
             } catch (IOException e) {
-                LOG.error(EXCEPTION_REQUEST_FAILED, e);
+                LOG.error(EXCEPTION_REQUEST_FAILED, effectiveEndpoint, e);
                 lastExceptionStatus = HttpStatus.SC_BAD_GATEWAY;
                 lastExceptionMessage = e.getMessage();
             }
@@ -251,20 +275,10 @@ public class OpenAiService implements AssistantService {
         boolean isChat = OpenAiServiceConfig.DEFAULT_CHAT_MODEL.equals(args.get(OpenAiConstants.PN_MODEL, String.class));
         return isChat
             ? getChatRequestPayload(args)
-            : getInstructRequestPayload(args);
+            : getInstructCompletionRequestPayload(args);
     }
 
-    private String getChatRequestPayload(ValueMap args) {
-        String prompt = args.get(CoreConstants.PN_PROMPT, String.class);
-        if (!StringUtils.endsWith(prompt, CoreConstants.SEPARATOR_COLON)) {
-            prompt += CoreConstants.SEPARATOR_COLON;
-        }
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(OpenAiConstants.PN_MODEL, args.get(OpenAiConstants.PN_MODEL, config.completionModel()));
-        properties.put(PN_MESSAGES, getChatPrompt(prompt + StringUtils.SPACE + args.get(CoreConstants.PN_TEXT)));
-        return ObjectConversionUtil.toJson(properties);
-    }
-    private String getInstructRequestPayload(ValueMap args) {
+    private String getInstructCompletionRequestPayload(ValueMap args) {
         String prompt = args.get(CoreConstants.PN_PROMPT, String.class);
         if (!StringUtils.endsWith(prompt, CoreConstants.SEPARATOR_COLON)) {
             prompt += CoreConstants.SEPARATOR_COLON;
@@ -279,6 +293,13 @@ public class OpenAiService implements AssistantService {
     }
 
     private String getEditRequestPayload(ValueMap args) {
+        boolean isChat = OpenAiServiceConfig.DEFAULT_CHAT_MODEL.equals(args.get(OpenAiConstants.PN_MODEL, String.class));
+        return isChat
+            ? getChatRequestPayload(args)
+            : getInstructEditRequestPayload(args);
+    }
+
+    private String getInstructEditRequestPayload(ValueMap args) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(OpenAiConstants.PN_INSTRUCTION, args.get(OpenAiConstants.PN_INSTRUCTION, StringUtils.EMPTY));
         properties.put(OpenAiConstants.PN_MODEL, args.get(OpenAiConstants.PN_MODEL, config.editModel()));
@@ -288,24 +309,58 @@ public class OpenAiService implements AssistantService {
         return ObjectConversionUtil.toJson(properties);
     }
 
+    private String getChatRequestPayload(ValueMap args) {
+        String instruction = args.get(OpenAiConstants.PN_INSTRUCTION, StringUtils.EMPTY);
+        if (!StringUtils.endsWith(instruction, CoreConstants.SEPARATOR_COLON)) {
+            instruction += CoreConstants.SEPARATOR_COLON;
+        }
+        Map<String, Object> properties = new HashMap<>();
+        properties.put(OpenAiConstants.PN_MODEL, args.get(OpenAiConstants.PN_MODEL, String.class));
+        properties.put(PN_MESSAGES, getChatPrompt(instruction + StringUtils.SPACE + args.get(CoreConstants.PN_TEXT)));
+        return ObjectConversionUtil.toJson(properties);
+
+    }
+
     private String getImageGenerationPayload(ValueMap args) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(CoreConstants.PN_PROMPT, args.get(CoreConstants.PN_TEXT));
+        String effectivePrompt = args.get(CoreConstants.PN_PROMPT, args.get(CoreConstants.PN_TEXT, StringUtils.EMPTY));
+        properties.put(CoreConstants.PN_PROMPT, effectivePrompt);
         properties.put(CoreConstants.PN_SIZE, args.getOrDefault(CoreConstants.PN_SIZE, config.imageSize()));
         properties.put(OpenAiConstants.PN_CHOICES_COUNT, args.get(OpenAiConstants.PN_CHOICES_COUNT, config.choices()));
         return ObjectConversionUtil.toJson(properties);
     }
 
-    private static Solution parseOpenAiResponse(CloseableHttpResponse response, Map<String, Object> args) throws IOException {
-        JsonNode jsonNode = ObjectConversionUtil.toNodeTree(response.getEntity().getContent());
+    private static Solution parseOpenAiResponse(
+        String content,
+        String endpoint,
+        Map<String, Object> args) throws IOException {
+
+        JsonNode jsonNode = ObjectConversionUtil.toNodeTree(content);
+
+        String inlinedArgs = args
+            .entrySet()
+            .stream()
+            .map(entry -> entry.getKey()
+                + "="
+                + StringUtils.truncate(String.valueOf(entry.getValue()), 50)
+                + (StringUtils.length(String.valueOf(entry.getValue())) > 50 ? "..." : StringUtils.EMPTY))
+            .collect(Collectors.joining(CoreConstants.SEPARATOR_COMMA));
+        LOG.debug("Received from {} message {}. Request was {}", endpoint, jsonNode, inlinedArgs);
+
         JsonNode errorNode = jsonNode.get(PN_ERROR);
         if (errorNode != null) {
-            String exceptionMessage = errorNode.get(CoreConstants.PN_MESSAGE) != null ? errorNode.get(CoreConstants.PN_MESSAGE).asText() : errorNode.asText();
+            String exceptionMessage = errorNode.get(CoreConstants.PN_MESSAGE) != null
+                ? errorNode.get(CoreConstants.PN_MESSAGE).asText()
+                : errorNode.asText();
             return Solution.from(args).withMessage(HttpStatus.SC_BAD_REQUEST, exceptionMessage);
         }
         JsonNode choices = ObjectUtils.firstNonNull(
             jsonNode.get(PN_CHOICES),
             jsonNode.get(PN_DATA));
+        return  parseOpenAiResponse(choices, args);
+    }
+
+    private static Solution parseOpenAiResponse(JsonNode choices, Map<String, Object> args) {
         if (choices == null) {
             return Solution.from(args).empty();
         }
@@ -316,6 +371,7 @@ public class OpenAiService implements AssistantService {
             if (nextElement.hasNonNull(PN_URL)) {
                 Optional.of(nextElement.get(PN_URL))
                     .map(JsonNode::asText)
+                    .map(OpenAiService::sanitizeTextOutput)
                     .filter(StringUtils::isNotEmpty)
                     .ifPresent(options::add);
             } else if (nextElement.hasNonNull(CoreConstants.PN_TEXT)) {
@@ -324,7 +380,8 @@ public class OpenAiService implements AssistantService {
                     .map(JsonNode::asText)
                     .orElse(StringUtils.EMPTY)
                     .equals(VALUE_LENGTH);
-                options.add(text.asText() + (isCutOff ? CoreConstants.ELLIPSIS : StringUtils.EMPTY));
+                options.add(sanitizeTextOutput(text.asText())
+                    + (isCutOff ? CoreConstants.ELLIPSIS : StringUtils.EMPTY));
             } else if (nextElement.has(CoreConstants.PN_MESSAGE)) {
                 JsonNode messageNode = nextElement.get(CoreConstants.PN_MESSAGE);
                 if (messageNode.has(PN_CONTENT)) {
@@ -344,5 +401,13 @@ public class OpenAiService implements AssistantService {
         content.put(PN_ROLE, ROLE_USER);
         content.put(PN_CONTENT, prompt);
         return Collections.singletonList(content);
+    }
+
+    private static String sanitizeTextOutput(String value) {
+        String result = StringUtils.trim(value);
+        if (Pattern.compile(PATTERN_LEADING_TAG).matcher(result).find()) {
+            return result;
+        }
+        return StringUtils.removePattern(result, PATTERN_LEADING_NON_ALPHABETIC);
     }
 }

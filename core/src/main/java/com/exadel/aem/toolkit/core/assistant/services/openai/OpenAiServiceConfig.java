@@ -70,4 +70,7 @@ public @interface OpenAiServiceConfig {
 
     @AttributeDefinition(name = "Connection Attempts")
     int connectionAttempts() default HttpClientFactory.DEFAULT_ATTEMPTS_COUNT;
+
+    @AttributeDefinition(name = "Response Caching")
+    boolean caching() default false;
 }
