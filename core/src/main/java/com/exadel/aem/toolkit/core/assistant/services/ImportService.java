@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.httpclient.ConnectTimeoutException;
+import org.apache.commons.lang.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -70,6 +71,10 @@ public class ImportService implements AssistantService {
     private static final String QUERY_PARAMETER_FROM = "from";
     private static final String QUERY_PARAMETER_TO = "to";
 
+    private static final int RANDOM_LENGTH = 8;
+    private static final int RANDOM_START_CHARCODE = 48;
+    private static final int RANDOM_END_CHARCODE = 122;
+
     private static final String EXCEPTION_COULD_NOT_IMPORT = "Could not import asset from \"%s\" to \"%s\"";
     private static final String EXCEPTION_COULD_NOT_COMPLETE_ASYNC = "Could not complete download";
     private static final String EXCEPTION_INVALID_CONTENT = "Content is missing or invalid";
@@ -104,24 +109,32 @@ public class ImportService implements AssistantService {
         return facilities;
     }
 
+    @SuppressWarnings("java:S3398") // All "download" methods are kept together for better readability
     private Map<String, Object> downloadAssets(
         ResourceResolver resourceResolver,
-        Map<String, String> targets) throws AssistantException {
+        Map<?, ?> targets) throws AssistantException {
 
         if (MapUtils.isEmpty(targets)) {
             return Collections.emptyMap();
         }
         Map<String, Object> result = new HashMap<>();
         if (targets.size() == 1) {
-            Map.Entry<String, String> nextTarget = targets.entrySet().iterator().next();
+            Map.Entry<?, ?> nextTarget = targets.entrySet().iterator().next();
             result.put(
-                nextTarget.getKey(),
-                downloadAsset(resourceResolver, nextTarget.getKey(), nextTarget.getValue()).getDestination());
+                String.valueOf(nextTarget.getKey()),
+                downloadAsset(
+                    resourceResolver,
+                    String.valueOf(nextTarget.getKey()),
+                    String.valueOf(nextTarget.getValue()))
+                    .getDestination());
             return result;
         }
         List<CompletableFuture<DownloadAssetResult>> tasks = new ArrayList<>();
-        for (Map.Entry<String, String> nextDestination : targets.entrySet()) {
-            tasks.add(downloadAssetAsync(resourceResolver, nextDestination.getKey(), nextDestination.getValue()));
+        for (Map.Entry<?, ?> nextDestination : targets.entrySet()) {
+            tasks.add(downloadAssetAsync(
+                resourceResolver,
+                String.valueOf(nextDestination.getKey()),
+                String.valueOf(nextDestination.getValue())));
         }
         CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0])).join();
         for (CompletableFuture<DownloadAssetResult> task : tasks) {
@@ -160,11 +173,9 @@ public class ImportService implements AssistantService {
     }
 
     private DownloadAssetResult downloadAsset(ResourceResolver resourceResolver, String url, String destination) throws AssistantException {
-        String damUrl = toDamUrl(destination);
+        String damAddress = getDamAddress(resourceResolver, destination);
         try {
-            DownloadAssetResult result = downloadAsset(url, entity -> store(resourceResolver, entity, damUrl));
-            result.setDestination(damUrl);
-            return result;
+            return downloadAsset(url, damAddress, entity -> store(resourceResolver, entity, damAddress));
         } catch (IOException e) {
             String exceptionMessage = String.format(EXCEPTION_COULD_NOT_IMPORT, url, destination);
             throw new AssistantException(exceptionMessage, e);
@@ -173,6 +184,7 @@ public class ImportService implements AssistantService {
 
     private DownloadAssetResult downloadAsset(
         String url,
+        String destination,
         ThrowingConsumer<HttpEntity, IOException> storage) throws IOException {
 
         HttpGet request = new HttpGet(url);
@@ -192,7 +204,7 @@ public class ImportService implements AssistantService {
                 storage.accept(entity);
                 String mimeType = getMimeType(entity);
                 EntityUtils.consume(entity);
-                return new DownloadAssetResult(url, mimeType);
+                return new DownloadAssetResult(url, mimeType, destination);
             } catch (ConnectTimeoutException | SocketTimeoutException e) {
                 LOG.warn(EXCEPTION_TIMEOUT, url);
             }
@@ -224,19 +236,35 @@ public class ImportService implements AssistantService {
             .orElse(ImageUploadConstants.DEFAULT_MIME_TYPE);
     }
 
-    private static String toDamUrl(String destination) {
-        if (StringUtils.isEmpty(destination) || StringUtils.startsWithIgnoreCase(destination, "/content/dam/")) {
-            return decodeSilently(destination);
+    private static String getDamAddress(ResourceResolver resourceResolver, String destination) {
+        String decoded = decodeSilently(destination);
+        if (StringUtils.isEmpty(decoded) || StringUtils.startsWithIgnoreCase(decoded, "/content/dam/")) {
+            return getUniqueDamAddress(resourceResolver, decoded);
         }
         List<String> pathChunks = Pattern.compile(CoreConstants.SEPARATOR_SLASH)
-            .splitAsStream(decodeSilently(destination))
+            .splitAsStream(decoded)
             .filter(StringUtils::isNotEmpty)
             .collect(Collectors.toCollection(ArrayList::new));
         if ("content".equals(pathChunks.get(0))) {
             pathChunks.remove(0);
         }
         pathChunks.addAll(0, Arrays.asList("content", "dam", "eak-assistant"));
-        return CoreConstants.SEPARATOR_SLASH + String.join(CoreConstants.SEPARATOR_SLASH, pathChunks);
+        return getUniqueDamAddress(
+            resourceResolver,
+            CoreConstants.SEPARATOR_SLASH + String.join(CoreConstants.SEPARATOR_SLASH, pathChunks));
+    }
+
+    private static String getUniqueDamAddress(ResourceResolver resourceResolver, String destination) {
+        String unique = destination;
+        while (resourceResolver.getResource(unique) != null) {
+            String mainPart = Pattern.compile("-\\w+$").matcher(unique).find()
+                ? StringUtils.substringBeforeLast(unique, CoreConstants.SEPARATOR_HYPHEN)
+                : unique;
+            unique = mainPart
+                + CoreConstants.SEPARATOR_HYPHEN
+                + RandomStringUtils.random(RANDOM_LENGTH, RANDOM_START_CHARCODE, RANDOM_END_CHARCODE, true, true);
+        }
+        return unique;
     }
 
     private static String decodeSilently(String value) {
@@ -263,15 +291,19 @@ public class ImportService implements AssistantService {
         public Solution execute(SlingHttpServletRequest request) {
             ValueMap args = getArguments(request);
             String url = args.get(QUERY_PARAMETER_FROM, StringUtils.EMPTY);
-            String destination = toDamUrl(args.get(QUERY_PARAMETER_TO, StringUtils.EMPTY));
+            String destination = args.get(QUERY_PARAMETER_TO, StringUtils.EMPTY);
             if (StringUtils.isAnyEmpty(url, destination)) {
                 return Solution.from(args).withMessage(HttpStatus.SC_BAD_REQUEST, EXCEPTION_MISSING_PARAMS);
             }
+            String damAddress = getDamAddress(request.getResourceResolver(), destination);
             try {
-                DownloadAssetResult result = downloadAsset(url, entity -> store(request.getResourceResolver(), entity, destination));
+                DownloadAssetResult result = downloadAsset(
+                    url,
+                    damAddress,
+                    entity -> store(request.getResourceResolver(), entity, damAddress));
                 Map<String, Object> solutionValueMap = new HashMap<>();
                 solutionValueMap.put(CoreConstants.PN_TYPE, result.getMimeType());
-                solutionValueMap.put(CoreConstants.PN_PATH, destination);
+                solutionValueMap.put(CoreConstants.PN_PATH, damAddress);
                 return Solution.from(args).withValueMap(solutionValueMap);
             } catch (IOException e) {
                 String exceptionMessage = String.format(EXCEPTION_COULD_NOT_IMPORT, url, destination);
@@ -298,11 +330,12 @@ public class ImportService implements AssistantService {
         @Override
         public Solution execute(SlingHttpServletRequest request) {
             try {
+                Map<String, Object> downloadedResults = downloadAssets(
+                    request.getResourceResolver(),
+                    (Map<?, ?>) request.getAttribute("targets"));
                 return Solution
                     .from(getArguments(request))
-                    .withValueMap(downloadAssets(
-                        request.getResourceResolver(),
-                        (Map<String, String>) request.getAttribute("targets")));
+                    .withValueMap(downloadedResults);
             } catch (AssistantException e) {
                 LOG.error("Could not implement batch job", e);
             }
@@ -315,27 +348,24 @@ public class ImportService implements AssistantService {
     private static class DownloadAssetResult {
         private final String source;
         private final String mimeType;
+        private final String destination;
 
-        private String destination;
-        public DownloadAssetResult(String source, String mimeType) {
+        public DownloadAssetResult(String source, String mimeType, String destination) {
             this.source = source;
             this.mimeType = mimeType;
+            this.destination = destination;
         }
 
         public String getSource() {
             return source;
         }
 
-        public String getDestination() {
-            return destination;
-        }
-
-        public void setDestination(String destination) {
-            this.destination = destination;
-        }
-
         public String getMimeType() {
             return mimeType;
+        }
+
+        public String getDestination() {
+            return destination;
         }
     }
 }
