@@ -59,6 +59,7 @@ class CacheUtil {
 
     private static final String PATTERN_NON_ALPHANUMERIC = "\\W+";
     private static final String PATTERN_NON_ALPHANUMERIC_LEADING_TRAILING = "(^\\W+)|(\\W+$)";
+    private static final Pattern PATTERN_SPACES = Pattern.compile("\\s+");
 
     private CacheUtil() {
     }
@@ -195,7 +196,7 @@ class CacheUtil {
             return StringUtils.EMPTY;
         }
         StringBuilder result = new StringBuilder();
-        List<String> chunks = Pattern.compile("\\s+")
+        List<String> chunks = PATTERN_SPACES
             .splitAsStream(source)
             .collect(Collectors.toList());
         for (String chunk : chunks) {
