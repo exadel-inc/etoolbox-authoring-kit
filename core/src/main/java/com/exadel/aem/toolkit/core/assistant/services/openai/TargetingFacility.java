@@ -30,14 +30,15 @@ class TargetingFacility extends OpenAiFacility {
 
     private static final String PROMPT_PREFIX = "Rephrase the following text to make it sound ";
     private static final String DEFAULT_AUDIENCE = "Business people";
+    private static final String DEFAULT_TARGET = "accurate, convincing and business-like";
     private static final Map<String, String> AUDIENCES;
     private static final Setting PROMPT_SETTING;
     private static final List<Setting> PROFILE_SETTINGS;
     static {
 
         AUDIENCES = new LinkedHashMap<>();
-        AUDIENCES.put(DEFAULT_AUDIENCE, "accurate, convincing and business-like");
-        AUDIENCES.put("Young adults", "a Zoomer's blog post");
+        AUDIENCES.put(DEFAULT_AUDIENCE, DEFAULT_TARGET);
+        AUDIENCES.put("Young adults", "like a Zoomer's blog post addressed at young adults in their late teens and early twenties");
         AUDIENCES.put("Elderly people", "an article from a magazine addressed at elderly people");
         AUDIENCES.put("Customers from East Asia", " most suitable for customers from East Asia");
         AUDIENCES.put("Customers from South America", " most suitable for customers from South America");
@@ -89,7 +90,7 @@ class TargetingFacility extends OpenAiFacility {
     public Solution execute(ValueMap args) {
         String prompt = args.get(CoreConstants.PN_PROMPT, DEFAULT_AUDIENCE);
         ValueMap newArgs = new VersionableValueMap(args)
-            .put(CoreConstants.PN_PROMPT, PROMPT_PREFIX + prompt + CoreConstants.SEPARATOR_COLON)
+            .put(CoreConstants.PN_PROMPT, PROMPT_PREFIX + AUDIENCES.getOrDefault(prompt, DEFAULT_TARGET) + CoreConstants.SEPARATOR_COLON)
             .putIfMissing(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_COMPLETION_MODEL);
         return getService().executeCompletion(newArgs);
     }
