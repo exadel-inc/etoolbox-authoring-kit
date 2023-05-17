@@ -32,6 +32,7 @@ public class CoreConstants {
     public static final String PARAMETER_NAME = "@name";
 
     public static final String PN_APPEND = "append";
+    public static final String PN_COMMAND = "cmd";
     public static final String PN_ITEM_RESOURCE_TYPE = "itemResourceType";
     public static final String PN_LIMIT = "limit";
     public static final String PN_LIST_ITEM = "listItem";

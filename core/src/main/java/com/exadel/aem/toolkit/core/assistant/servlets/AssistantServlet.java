@@ -61,7 +61,6 @@ import com.exadel.aem.toolkit.core.utils.ThrowingBiConsumer;
 public class AssistantServlet extends SlingAllMethodsServlet {
     private static final Logger LOG = LoggerFactory.getLogger(AssistantServlet.class);
 
-    private static final String QUERY_PARAMETER_COMMAND = "cmd";
     private static final String QUERY_PARAMETER_FILTER = "filter";
 
     private static final String OPERATION_FACILITIES = "facilities";
@@ -146,7 +145,7 @@ public class AssistantServlet extends SlingAllMethodsServlet {
         SlingHttpServletResponse response)
         throws IOException {
 
-        String command = Optional.ofNullable(request.getRequestParameter(QUERY_PARAMETER_COMMAND))
+        String command = Optional.ofNullable(request.getRequestParameter(CoreConstants.PN_COMMAND))
             .map(RequestParameter::getString)
             .orElse(null);
 
