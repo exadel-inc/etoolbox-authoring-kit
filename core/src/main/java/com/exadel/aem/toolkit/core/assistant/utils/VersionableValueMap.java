@@ -34,7 +34,7 @@ public class VersionableValueMap extends ValueMapDecorator {
      * @param base A no-null {@code Map} instance
      */
     public VersionableValueMap(Map<String, Object> base) {
-        super(base);
+        super(new HashMap<>(base));
     }
 
     @Nonnull
@@ -54,7 +54,8 @@ public class VersionableValueMap extends ValueMapDecorator {
     }
 
     @Nonnull
-    public VersionableValueMap newVersion() {
-        return new VersionableValueMap(this);
+    public VersionableValueMap remove(String key) {
+        super.remove(key);
+        return this;
     }
 }

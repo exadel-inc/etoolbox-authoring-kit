@@ -15,7 +15,6 @@ package com.exadel.aem.toolkit.core.utils;
 
 import java.beans.Transient;
 import java.io.IOException;
-import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
@@ -32,6 +31,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
+import com.fasterxml.jackson.databind.node.MissingNode;
+import com.fasterxml.jackson.databind.node.NullNode;
 
 public class ObjectConversionUtil {
     private static final Logger LOG = LoggerFactory.getLogger(ObjectConversionUtil.class);
@@ -85,21 +86,21 @@ public class ObjectConversionUtil {
         return OBJECT_MAPPER.readTree(value);
     }
 
+    public static JsonNode toNodeTree(Object value) {
+        return OBJECT_MAPPER.valueToTree(value);
+    }
+
     public static Optional<JsonNode> toOptionalNodeTree(String value) {
         try {
-            return Optional.of(OBJECT_MAPPER.readTree(value));
+            Optional<JsonNode> result = Optional.of(OBJECT_MAPPER.readTree(value));
+            if (result.get() instanceof MissingNode || result.get() instanceof NullNode) {
+                return Optional.empty();
+            }
+            return result;
         } catch (IOException e) {
             LOG.error("Could not deserialize JSON", e);
             return Optional.empty();
         }
-    }
-
-    public static JsonNode toNodeTree(InputStream input) throws IOException {
-        return OBJECT_MAPPER.readTree(input);
-    }
-
-    public static JsonNode toNodeTree(Object value) {
-        return OBJECT_MAPPER.valueToTree(value);
     }
 
     public static boolean isJson(String value) {

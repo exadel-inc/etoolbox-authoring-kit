@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.SlingHttpServletRequestWrapper;
 import org.slf4j.Logger;
@@ -44,7 +45,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Facility;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 import com.exadel.aem.toolkit.core.assistant.services.AssistantException;
-import com.exadel.aem.toolkit.core.assistant.services.ImportService;
+import com.exadel.aem.toolkit.core.assistant.services.AssistantService;
 import com.exadel.aem.toolkit.core.assistant.utils.VersionableValueMap;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 import com.exadel.aem.toolkit.core.utils.ThrowingBiConsumer;
@@ -70,10 +71,10 @@ class PageFacility extends OpenAiFacility {
     private static final int ABSTRACT_WORDS_LIMIT = 20;
     private static final String STAGE_IMAGES = "images";
 
-    private final ImportService importService;
+    private final AssistantService importService;
     private final List<Stage> stages;
 
-    public PageFacility(OpenAiService openAiService, ImportService importService) {
+    public PageFacility(OpenAiService openAiService, AssistantService importService) {
         super(openAiService);
         this.importService = importService;
         stages = Arrays.asList(
@@ -145,6 +146,9 @@ class PageFacility extends OpenAiFacility {
             return Solution.from(EXCEPTION_TOKEN_MISSING);
         }
         ValueMap args = getArguments(request);
+        if (getService().getConfig().caching()) {
+            args.put(ResourceResolver.class.getName(), request.getResourceResolver());
+        }
         String currentPath = decodeSilently(args.get(CoreConstants.PN_PATH, StringUtils.EMPTY));
         String currentPrompt = args.get(CoreConstants.PN_TEXT, String.class);
         Stage currentStage = stages
@@ -157,9 +161,6 @@ class PageFacility extends OpenAiFacility {
             return Solution.from(args).withMessage(HttpStatus.SC_BAD_REQUEST, EXCEPTION_INVALID_REQUEST);
         }
         args.putIfAbsent(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_COMPLETION_MODEL);
-//        if (!currentStage.getId().equals(STAGE_IMAGES)) {
-//            args.put(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_CHAT_MODEL);
-//        }
 
         try {
             PageFacilityBroker pageBroker = PageFacilityBroker.getInstance(
@@ -225,9 +226,10 @@ class PageFacility extends OpenAiFacility {
                 CoreConstants.PN_PROMPT,
                 String.format("Generate as many as %d ideas for an article on the following topic", phrasesCount))
             .put(OpenAiConstants.PN_CHOICES_COUNT, 1);
-        Solution solution = getService().executeCompletion(task);
 
+        Solution solution = getService().executeCompletion(task);
         String solutionText = solution.isSuccess() ? solution.asText() : StringUtils.EMPTY;
+
         List<String> summaryPoints = PATTERN_SPLIT_BY_NEWLINE.splitAsStream(solutionText)
             .map(String::trim)
             .map(point -> StringUtils.removePattern(point, PATTERN_LEADING_NUMBER))
@@ -334,7 +336,8 @@ class PageFacility extends OpenAiFacility {
             ValueMap newTask = new VersionableValueMap(args)
                 .put(PN_SOURCE, imageMember)
                 .put(CoreConstants.PN_PROMPT, prompt)
-                .put(OpenAiConstants.PN_CHOICES_COUNT, 1);
+                .put(OpenAiConstants.PN_CHOICES_COUNT, 1)
+                .remove(CoreConstants.PN_TEXT);
             tasks.add(newTask);
         }
 
@@ -384,17 +387,17 @@ class PageFacility extends OpenAiFacility {
         String prompt,
         Function<PageFacilityBroker, Collection<String>> memberCollectionFactory,
         UnaryOperator<String> valueFactory,
-        boolean parallel) throws AssistantException {
+        boolean batch) throws AssistantException {
 
         Collection<String> members = memberCollectionFactory.apply(broker);
         Iterator<String> memberIterator = members.iterator();
-        List<String> summaryPhrases = getSummaryPhrases(broker.getSummary(), members, parallel);
+        List<String> summaryPhrases = getSummaryPhrases(broker.getSummary(), members, batch);
 
         List<Solution> solutions = prompt != null
-            ? retrieveSolutions(args, prompt, memberIterator, summaryPhrases, parallel)
+            ? retrieveSolutions(args, prompt, memberIterator, summaryPhrases, batch)
             : retrieveSolutions(args, memberIterator, summaryPhrases);
-        if (parallel) {
-            storeStringValuesInParallel(broker, valueFactory, members, solutions);
+        if (batch) {
+            storeStringValuesInBatch(broker, valueFactory, members, solutions);
         } else {
             storeStringValues(broker, valueFactory, members, solutions);
         }
@@ -405,7 +408,7 @@ class PageFacility extends OpenAiFacility {
         String prompt,
         Iterator<String> memberIterator,
         List<String> summaryPhrases,
-        boolean parallel) {
+        boolean batch) {
 
         List<ValueMap> tasks = new ArrayList<>();
         for (String phrase : summaryPhrases) {
@@ -413,7 +416,7 @@ class PageFacility extends OpenAiFacility {
                 .put(CoreConstants.PN_PROMPT, prompt)
                 .put(CoreConstants.PN_TEXT, phrase)
                 .put(OpenAiConstants.PN_CHOICES_COUNT, 1);
-            if (!parallel) {
+            if (!batch) {
                 newTask.put(PN_SOURCE, memberIterator.next());
             }
             tasks.add(newTask);
@@ -437,7 +440,7 @@ class PageFacility extends OpenAiFacility {
         return solutions;
     }
 
-    private void storeStringValuesInParallel(
+    private void storeStringValuesInBatch(
         PageFacilityBroker broker,
         UnaryOperator<String> valueFactory,
         Collection<String> members,
