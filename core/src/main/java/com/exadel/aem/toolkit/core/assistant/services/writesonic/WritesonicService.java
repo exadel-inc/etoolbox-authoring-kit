@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.Header;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -61,9 +62,14 @@ public class WritesonicService implements AssistantService {
     private static final String PN_DETAIL = "detail";
     private static final String PN_ENDPOINT = "endpoint";
     private static final String PN_MESSAGE = "msg";
+
+    private static final String OPENING_TAG_TITLE = "<title>";
+    private static final String CLOSING_TAG_TITLE = "</title>";
+
     private static final String VENDOR_NAME = "Writesonic";
     private static final String LOGO_RESOURCE = "assistant/logo-writesonic";
     private static final String LOGO;
+
     static {
         URL logoUrl = WritesonicService.class.getClassLoader().getResource(LOGO_RESOURCE);
         String logo = null;
@@ -180,7 +186,7 @@ public class WritesonicService implements AssistantService {
     private String getContentRequestPayload(String payloadKey, ValueMap args) {
         String effectiveText = args.get(CoreConstants.PN_TEXT, StringUtils.EMPTY);
         String effectiveTone = args.get(WritesonicConstants.PN_TONE, config.tone());
-        int effectiveOptionsCount = args.get(WritesonicConstants.PN_OPTIONS_COUNT, config.DEFAULT_TEXTS_COUNT);
+        int effectiveOptionsCount = args.get(WritesonicConstants.PN_OPTIONS_COUNT, WritesonicServiceConfig.DEFAULT_TEXTS_COUNT);
         Map<String, Object> payload = new HashMap<>();
         payload.put(payloadKey, effectiveText);
         payload.put(WritesonicConstants.PN_TONE, effectiveTone);
@@ -205,8 +211,11 @@ public class WritesonicService implements AssistantService {
 
     private static Solution parseWritesonicResponse(Map<String, Object> args, CloseableHttpResponse response) throws IOException {
         int statusCode = response.getStatusLine().getStatusCode();
+        String contentType = Optional.ofNullable(response.getLastHeader(HttpHeaders.CONTENT_TYPE))
+            .map(Header::getValue)
+            .orElse(StringUtils.EMPTY);
         String responsePayload = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-        if (statusCode == HttpStatus.SC_OK) {
+        if (statusCode == HttpStatus.SC_OK && ContentType.APPLICATION_JSON.getMimeType().equals(contentType)) {
             Solution.Builder solutionBuilder = Solution.from(args);
             if (responsePayload.startsWith("[")) {
                 return solutionBuilder.withJsonContent(CoreConstants.PN_OPTIONS, responsePayload);
@@ -214,24 +223,30 @@ public class WritesonicService implements AssistantService {
                 return solutionBuilder.withJsonContent(responsePayload.replace("\"images\"", "\"options\""));
             }
         }
-        String exceptionMessage = extractExceptionMessage(responsePayload);
+        String exceptionMessage = extractExceptionMessage(responsePayload, contentType);
         return StringUtils.isNotBlank(exceptionMessage)
             ? Solution.from(args).withMessage(HttpStatus.SC_BAD_REQUEST, exceptionMessage)
             : Solution.from(args).withMessage(HttpStatus.SC_BAD_REQUEST, "Failure: " + response.getStatusLine());
     }
 
-    private static String extractExceptionMessage(String value) {
-        Optional<JsonNode> root = ObjectConversionUtil.toOptionalNodeTree(value);
-        if (!root.isPresent()) {
-            return value;
+    private static String extractExceptionMessage(String value, String contentType) {
+        if (ContentType.APPLICATION_JSON.getMimeType().equals(contentType)) {
+            Optional<JsonNode> root = ObjectConversionUtil.toOptionalNodeTree(value);
+            if (!root.isPresent()) {
+                return value;
+            }
+            JsonNode detail = root.get().get(PN_DETAIL);
+            if (detail == null) {
+                return root.get().asText();
+            }
+            JsonNode detailEntry = detail.isArray() ? detail.get(0) : detail;
+            JsonNode message = detailEntry.get(PN_MESSAGE);
+            return message != null ? message.asText() : detailEntry.asText();
         }
-        JsonNode detail = root.get().get(PN_DETAIL);
-        if (detail == null) {
-            return root.get().asText();
+        if (StringUtils.contains(value, OPENING_TAG_TITLE)) {
+            return StringUtils.substringBetween(value, OPENING_TAG_TITLE, CLOSING_TAG_TITLE);
         }
-        JsonNode detailEntry = detail.isArray() ? detail.get(0) : detail;
-        JsonNode message = detailEntry.get(PN_MESSAGE);
-        return message != null ? message.asText() : detailEntry.asText();
+        return StringUtils.EMPTY;
     }
 
     static int getEndpointVersion(String endpoint) {
