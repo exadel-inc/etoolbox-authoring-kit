@@ -29,7 +29,6 @@ public class PluginRuntimeUtil {
         API_MODULE_TARGET
     );
 
-
     private PluginRuntimeUtil() {
     }
 

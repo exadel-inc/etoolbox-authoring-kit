@@ -21,11 +21,15 @@ import org.junit.runners.Suite.SuiteClasses;
 import com.exadel.aem.toolkit.it.base.PackageSuite;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntimeUtil;
 
+/**
+ * Shortcut class for running all available test cases in a batch
+ */
 @RunWith(PackageSuite.class)
 @SuiteClasses({
     LoginTest.class,
     AllowedChildrenTest.class
 })
+@SuppressWarnings("java:S2187")
 public class AllTests {
     @BeforeClass
     public static void setUp() {
