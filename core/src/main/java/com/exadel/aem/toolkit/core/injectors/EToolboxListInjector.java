@@ -352,6 +352,27 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
         }
 
         /**
+         * Retrieves the string representation of the given object provided it cannot return a proper value from its own
+         * {@code .toString()} method
+         * @param value An arbitrary object, typically an item in the collection
+         * @return String value, non-null
+         */
+        private String toString(Object value) {
+            StringBuilder result = new StringBuilder();
+            for (Method method : getInstanceMethods()) {
+                Object invocationResult = getInvocationResult(method, value);
+                if (invocationResult != null) {
+                    result
+                        .append(result.length() > 0 ? CoreConstants.SEPARATOR_COMMA : StringUtils.EMPTY)
+                        .append(method.getName())
+                        .append(CoreConstants.EQUALITY_SIGN)
+                        .append(invocationResult);
+                }
+            }
+            return result.toString();
+        }
+
+        /**
          * Creates a hash code for the given object provided it cannot return a proper hash code itself
          * @param value An arbitrary object, typically an item in the collection
          * @return Integer value
@@ -381,27 +402,6 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
         }
 
         /**
-         * Retrieves the string representation of the given object provided it cannot return a proper value from its own
-         * {@code .toString()} method
-         * @param value An arbitrary object, typically an item in the collection
-         * @return String value, non-null
-         */
-        private String toString(Object value) {
-            StringBuilder result = new StringBuilder();
-            for (Method method : getInstanceMethods()) {
-                Object invocationResult = getInvocationResult(method, value);
-                if (invocationResult != null) {
-                    result
-                        .append(result.length() > 0 ? CoreConstants.SEPARATOR_COMMA : StringUtils.EMPTY)
-                        .append(method.getName())
-                        .append(CoreConstants.EQUALITY_SIGN)
-                        .append(invocationResult);
-                }
-            }
-            return result.toString();
-        }
-
-        /**
          * Retrieves a list of own public instance methods that an item of the current set has
          * @return A non-null {@code List} instance; can be empty
          */
@@ -417,7 +417,8 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
 
         /**
          * Invokes the given {@link Method} on the provided object. Handles possible exceptions internally
-         * @param method {@code Method} instance $
+         * @param method {@code Method} instance
+         * @param value  The object the method belongs to
          * @return A nullable value
          */
         private static Object getInvocationResult(Method method, Object value) {
