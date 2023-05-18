@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Content-Package-Id: it-tests:etoolbox-authoring-kit-test
+Content-Package-Roots: /conf/etoolbox-authoring-kit-test
+Content-Package-Type: content
+

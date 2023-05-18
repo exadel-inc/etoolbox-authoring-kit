@@ -113,8 +113,8 @@ public class StringUtil {
     }
 
     /**
-     * Turns a collection of arbitrary values into a JCR-compliant attribute value string. Every member of the
-     * collection is converted with the provided routine before being written to the resulting string
+     * Converts a collection of arbitrary values into a JCR-compliant attribute value string. Every member of the
+     * collection is processed with the provided routine before being written to the resulting string
      * @param value      The array to convert
      * @param valueType  {@code Class<?>} reference representing the underlying collection type
      * @param conversion {@code Function<Object, String>} to convert every passed collection member before storing
@@ -184,7 +184,7 @@ public class StringUtil {
     }
 
     /* ---------------
-       Utility methods
+       Service methods
        --------------- */
 
     /**

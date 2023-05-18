@@ -64,8 +64,9 @@
         <module>core</module>
         <module>ui.apps</module>
         <module>ui.content</module>
-        <module>all</module>
         <module>plugin</module>
+        <module>it.tests</module>
+        <module>all</module>
     </modules>
 
     <properties>
@@ -190,6 +191,11 @@
                         <source>${project.build.jdkSpec}</source>
                         <target>${project.build.jdkSpec}</target>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -460,9 +466,15 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
+                <groupId>com.codeborne</groupId>
+                <artifactId>selenide</artifactId>
+                <version>6.14.1</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
-                <version>30.0-jre</version>
+                <version>31.0.1-jre</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -518,6 +530,12 @@
                 <artifactId>commons-lang3</artifactId>
                 <version>3.12.0</version>
                 <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>4.5.13</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
