@@ -43,13 +43,14 @@ import com.exadel.aem.toolkit.core.policymanagement.models.PageInfo;
  * Implements {@link Filter} in order to plug in the rendering flow of an AEM page in Touch UI edit mode for adding a
  * utility JavaScript method ({@code aekApplyTopLevelPolicy}). this method is involved in defining policies for
  * top-level page containers
- * <p><u>Note</u>: This class is not a part of the public API</p>
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  */
 
 @org.osgi.service.component.annotations.Component(
     property = {
         Constants.SERVICE_RANKING + ":Integer=" + Integer.MIN_VALUE,
-        EngineConstants.SLING_FILTER_SCOPE + "=" + EngineConstants.FILTER_SCOPE_COMPONENT,
+        EngineConstants.SLING_FILTER_SCOPE + CoreConstants.EQUALITY_SIGN + EngineConstants.FILTER_SCOPE_COMPONENT,
         "sling.filter.resourceTypes=cq/gui/components/siteadmin/admin/page/winmode",
         EngineConstants.SLING_FILTER_PATTERN + "=/mnt/overlay/wcm/core/content/editor/jcr:content"
     }

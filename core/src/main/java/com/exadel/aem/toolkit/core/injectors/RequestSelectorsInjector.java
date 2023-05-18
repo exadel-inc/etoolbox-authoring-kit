@@ -18,31 +18,27 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import javax.annotation.Nonnull;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestSelectors;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
-import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
 
 /**
- * Injects into a Sling model the value of the {@code selectors} property of the {@link SlingHttpServletRequest}
+ * Provides injecting into a Sling model the value of the {@code selectors} property of the {@link SlingHttpServletRequest}
  * obtained via {@link org.apache.sling.api.request.RequestPathInfo}
  * @see RequestSelectors
- * @see Injector
+ * @see BaseInjector
  */
-@Component(service = Injector.class,
-    property = Constants.SERVICE_RANKING + ":Integer=" + InjectorConstants.SERVICE_RANKING
-)
-public class RequestSelectorsInjector implements Injector {
-
-    private static final Logger LOG = LoggerFactory.getLogger(RequestSelectorsInjector.class);
+@Component(
+    service = Injector.class,
+    property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING)
+public class RequestSelectorsInjector extends BaseInjector<RequestSelectors> {
 
     public static final String NAME = "eak-request-selectors-injector";
 
@@ -58,45 +54,47 @@ public class RequestSelectorsInjector implements Injector {
     }
 
     /**
-     * Attempts to inject a value into the given adaptable
-     * @param adaptable        A {@link SlingHttpServletRequest} or a {@link Resource} instance
-     * @param name             Name of the Java class member to inject the value into
-     * @param type             Type of receiving Java class member
-     * @param element          {@link AnnotatedElement} instance that facades the Java class member allowing to retrieve
-     *                         annotation objects
-     * @param callbackRegistry {@link DisposalCallbackRegistry} object
-     * @return The value to inject, or null in case injection is not possible
-     * @see Injector
+     * {@inheritDoc}
+     */
+    @Override
+    public RequestSelectors getManagedAnnotation(AnnotatedElement element) {
+        return element.getDeclaredAnnotation(RequestSelectors.class);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public Object getValue(
-        @Nonnull Object adaptable,
+        Object adaptable,
         String name,
-        @Nonnull Type type,
-        AnnotatedElement element,
-        @Nonnull DisposalCallbackRegistry callbackRegistry) {
-
-        RequestSelectors annotation = element.getDeclaredAnnotation(RequestSelectors.class);
-        if (annotation == null) {
-            return null;
-        }
+        Type type,
+        RequestSelectors annotation) {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
             return null;
         }
+        return getValue(request, type);
+    }
 
-        if (TypeUtil.isValidCollection(type, String.class)) {
-            return Arrays.asList(request.getRequestPathInfo().getSelectors());
+    /**
+     * Extracts an attribute value from the given {@link SlingHttpServletRequest} object and casts it to the given type
+     * @param request A {@code SlingHttpServletRequest} instance
+     * @param type    Type of the returned value
+     * @return A nullable value
+     */
+    Object getValue(SlingHttpServletRequest request, Type type) {
+        String[] selectors = request.getRequestPathInfo().getSelectors();
+        if (ArrayUtils.isEmpty(selectors)) {
+            return null;
         }
-        if (TypeUtil.isValidArray(type, String.class)) {
-            return request.getRequestPathInfo().getSelectors();
+        if (String.class.equals(type) || Object.class.equals(type)) {
+            return String.join(CoreConstants.SEPARATOR_DOT, selectors);
         }
-        if (TypeUtil.isValidObjectType(type, String.class)) {
-            return request.getRequestPathInfo().getSelectorString();
+        if (ArrayUtils.getLength(selectors) == 1) {
+            return CastUtil.toType(selectors[0], type);
         }
-
-        LOG.debug(InjectorConstants.EXCEPTION_UNSUPPORTED_TYPE, type);
-        return null;
+        return CastUtil.toType(Arrays.asList(selectors), type);
     }
 }

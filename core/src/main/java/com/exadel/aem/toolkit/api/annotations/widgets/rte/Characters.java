@@ -15,6 +15,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.rte;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
@@ -27,6 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
  *     range of character codes</a> for characters displayed in the "Insert Symbol" dialog
  * @see RichTextEditor
  */
+@Target({})
 @Retention(RetentionPolicy.RUNTIME)
 @ValueRestriction("com.exadel.aem.toolkit.plugin.validators.CharactersObjectValidator")
 @AnnotationRendering(properties = "all")

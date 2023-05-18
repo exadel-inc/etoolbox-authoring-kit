@@ -47,7 +47,6 @@ module.exports = (config) => {
     dataTemplateEngine: 'njk',
     htmlTemplateEngine: 'njk',
     passthroughFileCopy: true,
-    templateFormats: ['md', 'njk', 'html'],
-    pathPrefix: '/etoolbox-authoring-kit/'
+    templateFormats: ['md', 'njk', 'html']
   };
 };

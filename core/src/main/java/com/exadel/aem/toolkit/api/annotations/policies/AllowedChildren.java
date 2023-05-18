@@ -74,7 +74,7 @@ public @interface AllowedChildren {
      * "*pages/design2/*"}.
      * <p><u>Note</u>: every item can represent either a single parent or a "chain" - a succession of
      * parents/groups. In this case, successive parents are divided with a space. E.g. {@code "acme/pages/design2/*
-     * *design2/homepage *pages/design2/*"} means that among the parents of the current resource there must be component
+     * *design2/homepage *pages/design2/*"} means that among the parents of the current resource there must be a component
      * with resource type matching "acme/pages/design2/*", and below it there must be another component with resource
      * type matching "*design2/homepage". They need not be direct parent and child: any level of nesting is allowed.
      * This works much like a sequence of CSS selectors.
@@ -88,7 +88,7 @@ public @interface AllowedChildren {
     /**
      * Used to specify paths of the pages to which the current rule should be applied. If this setting is skipped, the
      * rule applies to any page.
-     * <p>You can use wildcards, e.g. {@code "we-retail/language-masters/en/*", "*en/experience",
+     * <p>You can use wildcards, e.g. {@code "/content/we-retail/language-masters/en/*", "*en/experience",
      * "*language-masters/en*"}.
      * @return Optional {@code String} value, or an array of strings
      */

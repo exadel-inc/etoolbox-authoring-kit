@@ -117,6 +117,7 @@ public class PackageWriter implements AutoCloseable {
         Path infoFilePath = infoDirPath.resolve(PACKAGE_INFO_FILE_NAME);
         try {
             Files.createDirectories(infoDirPath);
+            Files.deleteIfExists(infoFilePath);
             Files.createFile(infoFilePath);
         } catch (IOException e) {
             PluginRuntime.context().getExceptionHandler().handle(e);

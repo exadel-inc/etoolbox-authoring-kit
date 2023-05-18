@@ -145,9 +145,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
             }
             LoadedRuntimeContext result = new LoadedRuntimeContext();
             result.settings = settings;
-            result.pluginReflections = ReflectionContextHelper.fromCodeScope(
-                classPathElements,
-                settings.getComponentsReferenceBase());
+            result.pluginReflections = ReflectionContextHelper.fromCodeScope(classPathElements);
             result.exceptionHandler = exceptionHandler != null
                 ? exceptionHandler
                 : ExceptionHandlers.forSetting(settings.getTerminateOnRule());

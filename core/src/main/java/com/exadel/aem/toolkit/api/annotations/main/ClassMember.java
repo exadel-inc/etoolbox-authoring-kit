@@ -13,7 +13,6 @@
  */
 package com.exadel.aem.toolkit.api.annotations.main;
 
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -25,7 +24,7 @@ import com.exadel.aem.toolkit.api.markers._Default;
 /**
  * Used to refer a particular member (field or method) of a class defined by the class reference and name
  */
-@Target(ElementType.TYPE)
+@Target({})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ClassMember {
 

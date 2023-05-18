@@ -106,7 +106,10 @@ class ComponentSourceImpl extends ClassSourceImpl implements ComponentSource {
         String pathByDialog = tryAdaptTo(Dialog.class)
             .map(Dialog::name)
             .orElse(null);
-        String effectivePath = StringUtils.firstNonBlank(pathByComponent, pathByDialog);
+        String effectivePath = Stream.of(pathByComponent, pathByDialog)
+            .filter(StringUtils::isNotBlank)
+            .findFirst()
+            .orElse(pathByDialog);
 
         if (StringUtils.isBlank(effectivePath)) {
             return null;
@@ -119,7 +122,7 @@ class ComponentSourceImpl extends ClassSourceImpl implements ComponentSource {
         }
 
         String result = StringUtils.stripEnd(
-            PluginRuntime.context().getSettings().getComponentsPathBase(),
+            PluginRuntime.context().getSettings().getPathBase(adaptTo(Class.class)),
             CoreConstants.SEPARATOR_SLASH)
             + CoreConstants.SEPARATOR_SLASH
             + effectivePath;

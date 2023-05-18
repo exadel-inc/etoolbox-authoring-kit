@@ -294,7 +294,7 @@
                                     jcr:primaryType="nt:unstructured"
                                     data-name="data-value"/>
                                 <items jcr:primaryType="nt:unstructured">
-                                    <title
+                                    <getawayTitle
                                         jcr:primaryType="nt:unstructured"
                                         sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                         disabled="{Boolean}false"
@@ -402,7 +402,7 @@
                                     jcr:primaryType="nt:unstructured"
                                     second-data-name="second-data-value"/>
                                 <items jcr:primaryType="nt:unstructured">
-                                    <title
+                                    <getawayTitle
                                         jcr:primaryType="nt:unstructured"
                                         sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                                         disabled="{Boolean}false"

@@ -13,9 +13,12 @@
  */
 package com.exadel.aem.toolkit.api.annotations.editconfig.listener;
 
+import java.lang.annotation.Target;
+
 /**
  * Used to define the {@code cq:listeners} node of a Granite UI component configuration
  */
+@Target({})
 public @interface Listener {
     /**
      * Name of a {@code cq:listeners} attribute

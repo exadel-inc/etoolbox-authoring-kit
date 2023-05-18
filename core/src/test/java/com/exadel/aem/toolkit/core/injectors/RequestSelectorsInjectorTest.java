@@ -13,117 +13,160 @@
  */
 package com.exadel.aem.toolkit.core.injectors;
 
-import java.util.Arrays;
-
-import org.junit.Before;
-import org.junit.Rule;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.testing.mock.sling.servlet.MockRequestPathInfo;
+import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest;
 import org.junit.Test;
-
-import com.exadel.aem.toolkit.core.injectors.models.ITestModelSelectors;
-import com.exadel.aem.toolkit.core.injectors.models.TestModelSelectors;
-
-import io.wcm.testing.mock.aem.junit.AemContext;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
-public class RequestSelectorsInjectorTest {
-    private static final String SELECTOR_1 = "selector1";
-    private static final String SELECTOR_2 = "selector2";
-    private static final String SELECTORS_1_2 = SELECTOR_1 + "." + SELECTOR_2;
+import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.injectors.models.RequestAdapterBase;
+import com.exadel.aem.toolkit.core.injectors.models.requestproperty.Strings;
+import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
-    @Rule
-    public final AemContext context = new AemContext();
+public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBase {
 
-    @Before
-    public void beforeTest() {
-        context.addModelsForClasses(TestModelSelectors.class);
-        context.registerInjectActivateService(new RequestSelectorsInjector());
+    private static final String ARRAY_BRACKETS = "[{}]";
+    private static final String SEPARATOR_COMMA_SPACE = ", ";
+    private static final String FRACTIONAL_PART_PATTERN = "\\.\\d+";
+
+    /* -----------
+       Preparation
+       ----------- */
+
+    @Override
+    BaseInjector<?> prepareInjector() {
+        return new RequestSelectorsInjector();
+    }
+
+    @Override
+    void prepareRequest(MockSlingHttpServletRequest request, Object payload) {
+        MockRequestPathInfo requestPathInfo = (MockRequestPathInfo) request.getRequestPathInfo();
+        requestPathInfo.setSelectorString(toSelectorString(payload));
+    }
+
+    /* -----
+       Tests
+       ----- */
+
+    @Test
+    public void shouldInjectString() {
+        super.shouldInjectString();
     }
 
     @Test
-    public void shouldInjectSelector() {
-        context.requestPathInfo().setSelectorString(SELECTOR_1);
-        TestModelSelectors testModel = context.request().adaptTo(TestModelSelectors.class);
-
-        assertNotNull(testModel);
-        assertEquals("selector1", testModel.getSelectorsString());
+    public void shouldInjectStringArray() {
+        super.shouldInjectStringArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
     }
 
     @Test
-    public void shouldInjectSelectorObject() {
-        context.requestPathInfo().setSelectorString(SELECTOR_2);
-        TestModelSelectors testModel = context.request().adaptTo(TestModelSelectors.class);
-
-        assertNotNull(testModel);
-        assertEquals(SELECTOR_2, testModel.getSelectorsObject());
+    public void shouldInjectStringCollection() {
+        super.shouldInjectStringCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
     }
 
     @Test
-    public void shouldInjectSelectorCollection() {
-        context.requestPathInfo().setSelectorString(SELECTORS_1_2);
-        TestModelSelectors testModel = context.request().adaptTo(TestModelSelectors.class);
-
-        assertNotNull(testModel);
-        assertEquals(Arrays.asList(SELECTOR_1, SELECTOR_2), testModel.getSelectorsCollection());
+    public void shouldInjectInteger() {
+        super.shouldInjectInteger(RequestSelectorsInjectorTest::assertStringifiedValuesEqual);
     }
 
     @Test
-    public void shouldInjectSelectorList() {
-        context.requestPathInfo().setSelectorString(SELECTORS_1_2);
-        TestModelSelectors testModel = context.request().adaptTo(TestModelSelectors.class);
-
-        assertNotNull(testModel);
-        assertEquals(Arrays.asList(SELECTOR_1, SELECTOR_2), testModel.getSelectorsList());
+    public void shouldInjectIntegerArray() {
+        super.shouldInjectIntegerArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
     }
 
     @Test
-    public void shouldInjectSelectorArray() {
-        context.requestPathInfo().setSelectorString(SELECTORS_1_2);
-        TestModelSelectors testModel = context.request().adaptTo(TestModelSelectors.class);
-
-        assertNotNull(testModel);
-        assertArrayEquals(new String[]{SELECTOR_1, SELECTOR_2}, testModel.getSelectorsArray());
+    public void shouldInjectIntegerCollection() {
+        super.shouldInjectIntegerCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
     }
 
     @Test
-    public void shouldInjectIntoMethodParameter() {
-        context.requestPathInfo().setSelectorString(SELECTOR_1);
-        TestModelSelectors testModel = context.request().adaptTo(TestModelSelectors.class);
-
-        assertNotNull(testModel);
-        assertEquals(SELECTOR_1, testModel.getSelectorsFromParameter());
+    public void shouldInjectUnparseableIntegerCollection() {
+        super.shouldInjectUnparseableIntegerCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
     }
 
     @Test
-    public void shouldInjectIntoMethod() {
-        context.requestPathInfo().setSuffix(SELECTOR_2);
-        ITestModelSelectors testModel = context.request().adaptTo(ITestModelSelectors.class);
-        assertNotNull(testModel);
-
-        String expectedSelectors = context.requestPathInfo().getSelectorString();
-        String actualSelectors = testModel.getSelectorsFromMethod();
-        assertEquals(expectedSelectors, actualSelectors);
+    public void shouldInjectLong() {
+        super.shouldInjectLong(RequestSelectorsInjectorTest::assertStringifiedValuesEqual);
     }
 
     @Test
-    public void shouldNotInjectIfSelectorsMissing() {
-        TestModelSelectors testModel = context.request().adaptTo(TestModelSelectors.class);
-
-        assertNotNull(testModel);
-        assertNull(testModel.getSelectorsString());
+    public void shouldInjectLongArray() {
+        super.shouldInjectLongArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
     }
 
     @Test
-    public void shouldNotInjectIfWrongType() {
-        context.requestPathInfo().setSelectorString(SELECTOR_1);
-        TestModelSelectors testModel = context.request().adaptTo(TestModelSelectors.class);
+    public void shouldInjectLongCollection() {
+        super.shouldInjectLongCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
+    }
 
-        assertNotNull(testModel);
-        assertNull(testModel.getSelectorsArrayInt());
-        assertNull(testModel.getSelectorsListInt());
-        assertNull(testModel.getSelectorsSet());
-        assertEquals(0, testModel.getSelectorsInt());
+    @Test
+    public void shouldInjectUnparseableLongCollection() {
+        super.shouldInjectUnparseableLongCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
+    }
+
+    @Test
+    public void shouldInjectBoolean() {
+        super.shouldInjectBoolean(RequestSelectorsInjectorTest::assertStringifiedValuesEqual);
+    }
+
+    @Test
+    public void shouldInjectBooleanArray() {
+        super.shouldInjectBooleanArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
+    }
+
+    @Test
+    public void shouldInjectBooleanCollection() {
+        super.shouldInjectBooleanCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
+    }
+
+    @Test
+    public void shouldInjectWholeSelectorString() {
+        prepareRequest(context.request(), EXPECTED_STRING_ARRAY);
+        Strings model = context.request().adaptTo(Strings.class);
+        assertNotNull(model);
+        assertEquals("Hello.World", model.getValue());
+
+        prepareRequest(context.request(), EXPECTED_DOUBLE_LIST);
+        model = context.request().adaptTo(Strings.class);
+        assertNotNull(model);
+        assertEquals("42.43.44", model.getValue());
+    }
+
+    @Test
+    public void shouldNotCauseExceptionWhenPayloadMissing() {
+        super.shouldNotCauseExceptionWhenPayloadMissing();
+    }
+
+    /* ---------------
+       Service methods
+       --------------- */
+
+    private static void assertStringifiedValuesEqual(RequestAdapterBase<?> model, Object payload) {
+        assertEquals(
+            String.valueOf(model.getObjectValue()),
+            String.valueOf(payload).replaceAll(FRACTIONAL_PART_PATTERN, StringUtils.EMPTY));
+    }
+
+    private static void assertStringifiedCollectionsEqual(RequestAdapterBase<?> model, Object payload) {
+        assertNotNull(model.getObjectValue());
+        assertEquals(toSelectorString(payload), model.getObjectValue());
+    }
+
+    private static String toSelectorString(Object value) {
+        if (value == null) {
+            return StringUtils.EMPTY;
+        }
+        String result = value.toString();
+        if (value.getClass().isArray()) {
+            result =  ArrayUtils.toString(value);
+        } else if (TypeUtil.isSupportedCollection(value.getClass(), false)) {
+            result = StringUtils.join((Iterable<?>) value, CoreConstants.SEPARATOR_COMMA);
+        }
+        return StringUtils.strip(result, ARRAY_BRACKETS)
+            .replaceAll(FRACTIONAL_PART_PATTERN, StringUtils.EMPTY)
+            .replace(SEPARATOR_COMMA_SPACE, CoreConstants.SEPARATOR_DOT)
+            .replace(CoreConstants.SEPARATOR_COMMA, CoreConstants.SEPARATOR_DOT);
     }
 }

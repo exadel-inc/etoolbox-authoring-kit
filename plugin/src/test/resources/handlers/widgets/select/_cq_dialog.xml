@@ -69,7 +69,6 @@
                                     prepend="[None:none]"
                                     path1="/path/to/acs/list"
                                     path2="/path/to/acs/list2"
-                                    fallbackPath2="/path/to/acs/list3"
                                     textMember2="pageTitle"
                                     selected="none"
                                     sorted="{Boolean}true"/>

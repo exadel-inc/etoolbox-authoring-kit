@@ -14,13 +14,16 @@
 package com.exadel.aem.toolkit.plugin.maven;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Contains information about the current binary, such as build version and timestamp, to be used for package versioning
+ * Contains information about the current binary, such as build version and timestamp, to be used for package
+ * versioning
  */
 public class PluginInfo {
     private static final String MANIFEST_FILE_ADDRESS = "META-INF/MANIFEST.MF";
@@ -93,5 +96,16 @@ public class PluginInfo {
             // This is not intended to produce an effective exception
             return new PluginInfo();
         }
+    }
+
+    /**
+     * Creates a new {@link PluginInfo} instance and fills it with information passed to this method. This overload is
+     * designed to be used for testing purposes
+     * @param name    Name of the artifact to be used with this {@code PluginInfo}
+     * @param version Version of the artifact to be used with this {@code PluginInfo}
+     * @return {@code PluginInfo} object
+     */
+    static PluginInfo getInstance(String name, String version) {
+        return new PluginInfo(name, version, LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME));
     }
 }
