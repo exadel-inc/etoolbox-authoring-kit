@@ -64,9 +64,9 @@
         <module>core</module>
         <module>ui.apps</module>
         <module>ui.content</module>
-        <module>all</module>
         <module>plugin</module>
         <module>it.tests</module>
+        <module>all</module>
     </modules>
 
     <properties>
@@ -191,6 +191,11 @@
                         <source>${project.build.jdkSpec}</source>
                         <target>${project.build.jdkSpec}</target>
                     </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-deploy-plugin</artifactId>
+                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -463,7 +468,7 @@
             <dependency>
                 <groupId>com.codeborne</groupId>
                 <artifactId>selenide</artifactId>
-                <version>6.7.4</version>
+                <version>6.14.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
