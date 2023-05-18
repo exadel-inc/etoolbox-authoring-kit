@@ -69,7 +69,7 @@ public class ValidatorsTest {
         pluginContext.testThrows(
             ValidatorTestCases.InvalidTextAreaDialog.class,
             ValidationException.class,
-            "'-99' provided");
+            "number greater than zero expected");
     }
 
     @Test
