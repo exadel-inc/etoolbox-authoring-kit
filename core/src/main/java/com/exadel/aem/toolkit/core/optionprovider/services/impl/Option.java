@@ -189,7 +189,7 @@ class Option {
         } else if (OptionProviderConstants.PARAMETER_ID.equals(attributeMember)) {
             return getResourceId();
         } else if (OptionProviderConstants.PARAMETER_NAME.equals(attributeMember)) {
-            return resource.getName();
+            return attributeTransform != null ? attributeTransform.apply(resource.getName()) : resource.getName();
         }
         // Tf [textMember]-valued or [valueMember]-valued attribute not found within this Resource, there's still
         // a chance that it may be found under jcr:content subnode (relevant for the case when current option is an
