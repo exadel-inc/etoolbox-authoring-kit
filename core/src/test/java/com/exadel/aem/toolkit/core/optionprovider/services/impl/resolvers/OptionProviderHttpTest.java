@@ -92,7 +92,7 @@ public class OptionProviderHttpTest {
     }
 
     @Test
-    public void shouldCreateHttpBasedDataSourceSingleton() throws IOException {
+    public void shouldCreateHttpBasedDataSourceWithMissingPath() throws IOException {
         String queryString = "path=https://acme.com/sample.json/base&textMember=dummy&exclude=*more";
         context.request().setQueryString(queryString);
 
@@ -100,7 +100,7 @@ public class OptionProviderHttpTest {
         context.request().setAttribute(OptionSourceResolver.class.getName(), new HttpOptionSourceResolver(mockHttpClient));
 
         assertArrayEquals(
-            new String[] {OptionProviderTest.VALUE_NONE, StringUtils.EMPTY},
+            new String[] {OptionProviderTest.VALUE_NONE},
             optionProvider.getOptions(context.request())
                 .stream()
                 .map(resource -> resource.getValueMap().get(CoreConstants.PN_VALUE))
