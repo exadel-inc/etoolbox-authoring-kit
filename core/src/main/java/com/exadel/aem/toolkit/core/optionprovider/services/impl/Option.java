@@ -85,6 +85,7 @@ class Option {
         valueMap.put(CoreConstants.PN_VALUE, getValue());
         if (selected) {
             valueMap.put(CoreConstants.PN_SELECTED, true);
+            valueMap.put(CoreConstants.PN_CHECKED, true);
         }
         return new OptionResource(effectiveResourceResolver, valueMap, getCustomAttributes());
     }
