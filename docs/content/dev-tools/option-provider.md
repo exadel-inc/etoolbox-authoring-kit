@@ -114,13 +114,15 @@ _textTransform_ - if specified, defines the way the <u>label</u> will be transfo
 
 _valueTransform_ - if specified, defines the way the <u>value</u> will be transformed before rendering;
 
-_isFallback_ - determines that the current `@OptionSource` is only used if other option source entries yielded no results. It is also used if it is the only option source. This option is useful, e.g., when you have a component with an authorable path to an option source. As the component is just created, the path will probably be empty. But still there will be a possibility to display some options retrieved via the fallback source.
+_isFallback_ - determines that the current `@OptionSource` is only used if other option source entries yielded no results. It is also used if it is the only option source. This option is useful, e.g., when you have a component with an authorable path to an option source. As the component is just created, the path will probably be empty. But still, there will be a possibility to display some options retrieved via the fallback source.
 
 #### Working with HTTP endpoints
 
-Apart from a JCR path, `@OptionSource` allows specifying a common network URL (note: must be a complete URL string parseable with `new URL("...")`. The content reached via the URL is expected to be a JSON entity. A JSON array becomes the list of options much the same way as JCR resource with children. A singular JSON object will be converted into a singleton list (containing one option).
+Apart from a JCR path, `@OptionSource` allows specifying a common network URL (note: must be a complete URL string parseable with `new URL("...")`. The content reached via the URL is expected to be a JSON entity. A JSON array becomes the list of options. A JSON node that has children produces the list of options from the enumeration of child nodes as well much the same way as a JCR resource with children.
 
 If the JSON structure is such that the required array is nested deeper than the "root" node, you can add a "path" within the url like `http://acme.com/apis/sample.json/internal/path` The "path" is defined similar to a Sling suffix: it is the trailing part of the URL after the _.json/_ extension.
+
+There is the possibility to add authentication info to the URL like in the following example: `http://admin:admin@localhost:4502/my/service.json`. The authentication info is converted into a Basic auth request header and sent with the request. This feature is mainly for the testing and debugging purposes. You should not use it when calling a 3rd-party API.
 
 #### Working with Enums
 
