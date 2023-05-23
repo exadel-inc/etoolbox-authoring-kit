@@ -15,7 +15,13 @@ package com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Spliterator;
@@ -62,6 +68,7 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
         + "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36";
     private static final int HTTP_TIMEOUT = 10_000;
 
+    private static final String EXCEPTION_COULD_NOT_PARSE = "Could not parse URI {}";
     private static final String EXCEPTION_NO_RESPONSE = "Could not get a response from {}";
     private static final String EXCEPTION_JSON = "Could not read or navigate the JSON tree";
 
@@ -86,33 +93,32 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
      */
     @Override
     public Resource resolve(SlingHttpServletRequest request, PathParameters params) {
-        String internalPath = getInternalPath(params.getPath());
-        String url = StringUtils.removeEnd(params.getPath(), internalPath);
-        String content = getResponseContent(url);
+        String path = params.getPath();
+        String internalPath = getInternalPath(path);
+        path = StringUtils.removeEnd(path, CoreConstants.SEPARATOR_SLASH + internalPath);
+        URI uri;
+        try {
+            uri = new URI(path);
+        } catch (URISyntaxException e) {
+            LOG.error(EXCEPTION_COULD_NOT_PARSE, path, e);
+            return null;
+        }
+        String content = getResponseContent(uri);
         JsonNode jsonNode = parseJson(content, internalPath);
-        return jsonNode != null ? createResource(request, jsonNode) : null;
+        return jsonNode != null ? createResource(request, CoreConstants.SEPARATOR_SLASH + internalPath, jsonNode) : null;
     }
 
-    /**
-     * Extracts the path to the target node within the JSON structure from the URL. This path can be specified if the
-     * option datasource does not begin from the "root" of the JSON structure
-     * @param url The URL of the endpoint serving JSON data
-     * @return String value; can be an empty string if additional traversing is not needed
-     */
-    private static String getInternalPath(String url) {
-        Matcher matcher = INTERNAL_PATH_PATTERN.matcher(url);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-        return StringUtils.EMPTY;
-    }
+    /* ------------------------
+       HTTP response processing
+       ------------------------ */
 
     /**
      * Attempts an HTTP request to the given endpoint and retrieves the payload of the response
-     * @param url Address of the endpoint
+     * @param uri Location of the endpoint
      * @return String value; can be an empty string
      */
-    private String getResponseContent(String url) {
+    @SuppressWarnings("java:S2647") // Basic authentication is allowed on purpose
+    private String getResponseContent(URI uri) {
         RequestConfig requestConfig = RequestConfig
             .custom()
             .setConnectTimeout(HTTP_TIMEOUT)
@@ -120,16 +126,22 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
             .setSocketTimeout(HTTP_TIMEOUT)
             .build();
 
-        HttpGet httpGet = new HttpGet(url);
+        HttpGet httpGet = new HttpGet(uri.toString());
         httpGet.setHeader(HttpHeaders.USER_AGENT, HTTP_USER_AGENT);
         httpGet.setHeader(HttpHeaders.CONTENT_TYPE, ContentType.APPLICATION_FORM_URLENCODED.getMimeType());
+        if (StringUtils.isNotEmpty(uri.getUserInfo())) {
+            httpGet.setHeader(
+                HttpHeaders.AUTHORIZATION,
+                "Basic " + Base64.getEncoder().encodeToString((uri.getUserInfo()).getBytes(StandardCharsets.ISO_8859_1)));
+        }
+
         HttpResponse httpResponse = null;
 
         try (HttpClientWrapper http = getCloseableHttpClient(requestConfig)) {
             httpResponse = http.getClient().execute(httpGet);
             return EntityUtils.toString(httpResponse.getEntity());
         } catch (IOException e) {
-            LOG.error(EXCEPTION_NO_RESPONSE, url, e);
+            LOG.error(EXCEPTION_NO_RESPONSE, uri, e);
         } finally {
             if (httpResponse != null) {
                 EntityUtils.consumeQuietly(httpResponse.getEntity());
@@ -180,39 +192,61 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
         return null;
     }
 
+    /* -----------------
+       Resource creation
+       ----------------- */
+
     /**
      * Converts the given JSON entity into a virtual {@link Resource} that represents a datasource option
      * @param request  Current {@code SlingHttpServletRequest}
-     * @param jsonNode {@link JsonNode} object containing values for the resource
+     * @param path String value that represents the "path" to the current node from the JSON structure root
+     * @param node {@link JsonNode} object containing values for the resource
      * @return {@code Resource} object
      */
-    private static Resource createResource(SlingHttpServletRequest request, JsonNode jsonNode) {
-        List<Resource> children;
-        if (jsonNode.isArray()) {
-            children = StreamSupport
-                .stream(Spliterators.spliteratorUnknownSize(jsonNode.elements(), Spliterator.ORDERED), false)
-                .map(HttpOptionSourceResolver::createValueMap)
-                .map(valueMap -> new ValueMapResource(request.getResourceResolver(), StringUtils.EMPTY, StringUtils.EMPTY, valueMap))
-                .collect(Collectors.toList());
-        } else {
-            ValueMap valueMap = createValueMap(jsonNode);
-            ValueMapResource valueMapResource = new ValueMapResource(
-                request.getResourceResolver(),
-                StringUtils.EMPTY,
-                JcrConstants.NT_UNSTRUCTURED,
-                valueMap);
-            children = Collections.singletonList(valueMapResource);
+    private static Resource createResource(SlingHttpServletRequest request, String path, JsonNode node) {
+        List<Resource> children = new ArrayList<>();
+        if (node.isObject()) {
+            Iterator<Map.Entry<String, JsonNode>> fieldIterator = node.fields();
+            while (fieldIterator.hasNext()) {
+                Map.Entry<String, JsonNode> nextField = fieldIterator.next();
+                if (!nextField.getValue().isObject()) {
+                    continue;
+                }
+                ValueMap valueMap = createValueMap(nextField.getValue());
+                Resource resource = new ValueMapResource(
+                    request.getResourceResolver(),
+                    path + CoreConstants.SEPARATOR_SLASH + nextField.getKey(),
+                    JcrConstants.NT_UNSTRUCTURED,
+                    valueMap);
+                children.add(resource);
+            }
+        } else if (node.isArray()) {
+            Iterator<JsonNode> elementIterator = node.elements();
+            int elementIndex = 0;
+            while (elementIterator.hasNext()) {
+                JsonNode nextElement = elementIterator.next();
+                if (!nextElement.isObject()) {
+                    continue;
+                }
+                ValueMap valueMap = createValueMap(nextElement);
+                Resource resource = new ValueMapResource(
+                    request.getResourceResolver(),
+                    path + CoreConstants.SEPARATOR_SLASH + CoreConstants.NN_ITEM + elementIndex++,
+                    JcrConstants.NT_UNSTRUCTURED,
+                    valueMap);
+                children.add(resource);
+            }
         }
         return new ValueMapResource(
             request.getResourceResolver(),
-            StringUtils.EMPTY,
+            path,
             JcrConstants.NT_UNSTRUCTURED,
             new ValueMapDecorator(Collections.emptyMap()),
             children);
     }
 
     /**
-     * Called by {@link HttpOptionSourceResolver#createResource(SlingHttpServletRequest, JsonNode)} to convert a
+     * Called by {@link HttpOptionSourceResolver#createResource(SlingHttpServletRequest, String, JsonNode)} to convert a
      * particular {@link JsonNode} into a {@code ValueMap} containing all the keys and values contained in the node
      * @param jsonNode {@link JsonNode} object containing values for the value map
      * @return {@link ValueMap} object
@@ -222,6 +256,24 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
             .stream(Spliterators.spliteratorUnknownSize(jsonNode.fields(), Spliterator.ORDERED), false)
             .collect(Collectors.toMap(Map.Entry::getKey, field -> field.getValue().asText()));
         return new ValueMapDecorator(sourceMap);
+    }
+
+    /* ----------------
+       URL manipulation
+       ---------------- */
+
+    /**
+     * Extracts the path to the target node within the JSON structure from the URL. This path can be specified if the
+     * option datasource does not begin from the "root" of the JSON structure
+     * @param url The URL of the endpoint serving JSON data
+     * @return String value; can be an empty string if additional traversing is not needed
+     */
+    private static String getInternalPath(String url) {
+        Matcher matcher = INTERNAL_PATH_PATTERN.matcher(url);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return StringUtils.EMPTY;
     }
 
     /* ---------------
