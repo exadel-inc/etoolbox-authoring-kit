@@ -57,7 +57,7 @@ public class AemConnection {
     }
 
     /**
-     * Attempts to open an AEM page with the given {@code path}. Returns after the page is loaded, and the actual page
+     * Attempts to open an AEM page with the given {@code path}. Waits untill the page is loaded, and the actual page
      * address matches the one specified (or, optionally, one of the additionally provided path variants). Else, throws
      * an exception
      * @param path     A string representing a relative path within an AEM server
