@@ -68,7 +68,7 @@ public class StringUtil {
      * @param value     The value to convert
      * @param valueType {@code Class<?>} reference representing the type of the value
      * @param <T>       Type of the value
-     * @return String representing the value. If {@code null} reference was passed, an empty string is returned
+     * @return A string that represents the value. If {@code null} reference was passed, an empty string is returned
      */
     public static <T> String format(T value, Class<?> valueType) {
         if (value == null) {
@@ -91,7 +91,7 @@ public class StringUtil {
      * @param value     The array to convert
      * @param valueType {@code Class<?>} reference representing the type of the array
      * @param <T>       Type of the value
-     * @return String representing the value. If {@code null} reference was passed, an empty string is returned
+     * @return A string that represents the value. If {@code null} reference was passed, an empty string is returned
      */
     public static <T> String format(T[] value, Class<?> valueType) {
         if (value == null || value.length == 0) {
@@ -105,7 +105,7 @@ public class StringUtil {
      * @param value     The array to convert
      * @param valueType {@code Class<?>} reference representing the underlying collection type
      * @param <T>       Type of the value
-     * @return String representing the value. If {@code null} reference was passed, an empty string is returned
+     * @return A string that represents the value. If {@code null} reference was passed, an empty string is returned
      */
     public static <T> String format(Collection<T> value, Class<?> valueType) {
         Function<Object, String> conversion = CONVERSIONS.getOrDefault(valueType, DEFAULT_CONVERSION);
@@ -113,13 +113,13 @@ public class StringUtil {
     }
 
     /**
-     * Converts a collection of arbitrary values into a JCR-compliant attribute value string. Every member of the collection
-     * is converted with the provided routine before being written to the resulting string
+     * Converts a collection of arbitrary values into a JCR-compliant attribute value string. Every member of the
+     * collection is processed with the provided routine before being written to the resulting string
      * @param value      The array to convert
      * @param valueType  {@code Class<?>} reference representing the underlying collection type
      * @param conversion {@code Function<Object, String>} to convert every passed collection member before storing
      * @param <T>        Type of the value
-     * @return String representing the value. If {@code null} reference was passed, empty string is returned
+     * @return A string that represents the value. If {@code null} reference was passed, an empty string is returned
      */
     private static <T> String format(Collection<T> value, Class<?> valueType, Function<Object, String> conversion) {
         if (value == null || value.isEmpty()) {
@@ -130,8 +130,8 @@ public class StringUtil {
             .map(conversion)
             .map(s ->
                 s.startsWith(DialogConstants.ARRAY_OPENING) && s.endsWith(DialogConstants.ARRAY_CLOSING)
-                ? ESCAPE_STRING + s
-                : s)
+                    ? ESCAPE_STRING + s
+                    : s)
             .collect(Collectors.joining(CoreConstants.SEPARATOR_COMMA));
         if (String.class.equals(valueType)) {
             return String.format(ARRAY_TEMPLATE, collectionPart);
@@ -150,6 +150,7 @@ public class StringUtil {
      * @param value The string to analyze
      * @return True or false
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public static boolean isCollection(String value) {
         return ATTRIBUTE_LIST_PATTERN.matcher(value).matches();
     }
