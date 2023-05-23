@@ -79,7 +79,7 @@ public class AemConnection {
 
     /**
      * Attempts to log into AEM with the {@code login} and {@code password} provided as runtime properties. If login and
-     * password are not provided, defaults are used
+     * password are not provided, the defaults are used
      * @throws TimeoutException if the login was not successful
      */
     public static void login() {
