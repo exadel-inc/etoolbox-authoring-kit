@@ -31,8 +31,6 @@ import com.exadel.aem.toolkit.plugin.writers.PackageWriter;
 class FileRenderingUtil {
     private static final Logger LOG = LoggerFactory.getLogger(FileRenderingUtil.class);
 
-    private static final String PROJECT_NAME = "test-package";
-
     private FileRenderingUtil() {
     }
 
@@ -58,7 +56,7 @@ class FileRenderingUtil {
             ? fileSystem.getPath(TestConstants.PACKAGE_ROOT_PATH + TestConstants.DEFAULT_COMPONENT_NAME)
             : createdFilesPath;
 
-        PackageWriter.forFileSystem(fileSystem, PROJECT_NAME).write(testable);
+        PackageWriter.forFileSystem(fileSystem, TestConstants.DEFAULT_PROJECT_NAME).write(testable);
 
         Map<String, String> actualFiles = getFiles(effectiveCreatedFilesPath);
         Map<String, String> expectedFiles = getFiles(sampleFilesPath);
@@ -68,7 +66,7 @@ class FileRenderingUtil {
             Files.delete(filePath);
         }
 
-        return FileComparingUtil.compare(actualFiles, expectedFiles, sampleFilesPath.toString());
+        return FileSetComparisonUtil.compare(actualFiles, expectedFiles, sampleFilesPath.toString());
     }
 
     private static Map<String, String> getFiles(Path componentPath) {
@@ -78,7 +76,7 @@ class FileRenderingUtil {
                 files.put(filePath.getFileName().toString(), String.join("", Files.readAllLines(filePath)));
             }
         } catch (NullPointerException | IOException ex) {
-            LOG.error("Could not read the package " + componentPath, ex);
+            LOG.error("Could not read the package {}", componentPath, ex);
         }
         return files;
     }

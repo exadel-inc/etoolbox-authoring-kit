@@ -13,229 +13,268 @@
  */
 package com.exadel.aem.toolkit.core.injectors;
 
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
+import java.util.stream.Collectors;
 
-import org.apache.commons.collections4.IteratorUtils;
+import org.apache.sling.api.adapter.Adaptable;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
-import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import com.day.cq.commons.jcr.JcrConstants;
+import io.wcm.testing.mock.aem.junit.AemContext;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import com.exadel.aem.toolkit.core.injectors.models.ITestModelEToolboxList;
-import com.exadel.aem.toolkit.core.injectors.models.TestModelEToolboxList;
+import com.exadel.aem.toolkit.core.injectors.models.lists.CustomListItem;
+import com.exadel.aem.toolkit.core.injectors.models.lists.CustomListItems;
+import com.exadel.aem.toolkit.core.injectors.models.lists.CustomListItemsMap;
+import com.exadel.aem.toolkit.core.injectors.models.lists.Resources;
+import com.exadel.aem.toolkit.core.injectors.models.lists.ResourcesMap;
+import com.exadel.aem.toolkit.core.injectors.models.lists.SimpleListItems;
+import com.exadel.aem.toolkit.core.injectors.models.lists.StringsMap;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 
-import io.wcm.testing.mock.aem.junit.AemContext;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 public class EToolboxListInjectorTest {
 
-    private static final String SIMPLE_LIST_PATH = "/content/etoolbox-lists/contentList";
-    private static final String CUSTOM_LIST_PATH = "/content/etoolbox-lists/customContentList";
+    private static final String MODELS_PACKAGE_NAME = "com.exadel.aem.toolkit.core.injectors.models.lists";
+
+    public static final String SIMPLE_LIST_PATH = "/content/etoolbox-lists/contentList";
+    public static final String CUSTOM_LIST_PATH = "/content/etoolbox-lists/customContentList";
+    public static final String PN_TEXT_VALUE = "textValue";
 
     @Rule
     public final AemContext context = new AemContext();
 
-    private TestModelEToolboxList testModel;
+    /* -----------
+       Preparation
+       ----------- */
 
     @Before
     public void beforeTest() {
-        context.addModelsForClasses(TestModelEToolboxList.class);
+        context.addModelsForPackage(MODELS_PACKAGE_NAME);
+
         context.registerInjectActivateService(new EToolboxListInjector());
+        context.registerInjectActivateService(new DelegateInjector(null));
         context.load().json("/com/exadel/aem/toolkit/core/injectors/listInjector.json", SIMPLE_LIST_PATH);
         context.load().json("/com/exadel/aem/toolkit/core/injectors/customListInjector.json", CUSTOM_LIST_PATH);
     }
 
-    @Test
-    public void shouldInjectResourceIntoList() {
-        testModel = context.request().adaptTo(TestModelEToolboxList.class);
-        List<Resource> expected = ListHelper.getResourceList(context.resourceResolver(), SIMPLE_LIST_PATH);
-        List<Resource> actual = testModel.getItemsListResource();
+    /* -----
+       Tests
+       ----- */
 
-        assertNotNull(testModel);
-        assertEquals(expected.size(), actual.size());
-        for (int i = 0; i < expected.size(); i++) {
-            assertEquals(expected.get(i).getValueMap(), actual.get(i).getValueMap());
+    @Test
+    public void shouldInjectIntoCollectionOfResources() {
+        context.currentResource(SIMPLE_LIST_PATH);
+        shouldInjectIntoCollectionOfResources(context.request());
+        shouldInjectIntoCollectionOfResources(context.request().getResource());
+    }
+
+    private void shouldInjectIntoCollectionOfResources(Adaptable adaptable) {
+        Resources model = adaptable.adaptTo(Resources.class);
+        assertNotNull(model);
+
+        List<Resource> expectedList = ListHelper.getResourceList(context.resourceResolver(), SIMPLE_LIST_PATH);
+
+        ComparisonHelper.assertCollectionsEqual(
+            expectedList,
+            model.getValue(),
+            EToolboxListInjectorTest::assertResourcesEqual);
+        ComparisonHelper.assertCollectionsEqual(
+            expectedList,
+            model.getArrayValue(),
+            EToolboxListInjectorTest::assertResourcesEqual);
+        ComparisonHelper.assertCollectionsEqual(
+            expectedList,
+            model.getConstructorValue(),
+            EToolboxListInjectorTest::assertResourcesEqual);
+        ComparisonHelper.assertCollectionsEqual(
+            expectedList,
+            model.getValueSupplier().getValue(),
+            EToolboxListInjectorTest::assertResourcesEqual);
+        ComparisonHelper.assertCollectionsEqual(
+            expectedList,
+            (List<?>) model.getObjectValue(),
+            EToolboxListInjectorTest::assertResourcesEqual);
+    }
+
+    @Test
+    public void shouldInjectIntoCollectionOfSimpleItems() {
+        context.currentResource(SIMPLE_LIST_PATH);
+        shouldInjectIntoCollectionOfSimpleItems(context.request());
+        shouldInjectIntoCollectionOfSimpleItems(context.request().getResource());
+    }
+
+    private void shouldInjectIntoCollectionOfSimpleItems(Adaptable adaptable) {
+        SimpleListItems model = adaptable.adaptTo(SimpleListItems.class);
+        assertNotNull(model);
+
+        List<SimpleListItem> expectedList = ListHelper.getList(context.resourceResolver(), SIMPLE_LIST_PATH);
+
+        ComparisonHelper.assertCollectionsEqual(
+            expectedList,
+            model.getValue(),
+            EToolboxListInjectorTest::assertSimpleListItemsEqual);
+        ComparisonHelper.assertCollectionsEqual(
+            expectedList,
+            model.getArrayValue(),
+            EToolboxListInjectorTest::assertSimpleListItemsEqual);
+        ComparisonHelper.assertCollectionsEqual(
+            expectedList,
+            model.getSetValue(),
+            EToolboxListInjectorTest::assertSimpleListItemsEqual);
+        ComparisonHelper.assertCollectionsEqual(
+            expectedList,
+            model.getConstructorValue(),
+            EToolboxListInjectorTest::assertSimpleListItemsEqual);
+        ComparisonHelper.assertCollectionsEqual(
+            expectedList,
+            model.getValueSupplier().getValue(),
+            EToolboxListInjectorTest::assertSimpleListItemsEqual);
+    }
+
+    @Test
+    public void shouldInjectIntoCollectionOfCustomModels() {
+        context.currentResource(CUSTOM_LIST_PATH);
+        shouldInjectIntoCollectionOfCustomModels(context.request());
+        shouldInjectIntoCollectionOfCustomModels(context.request().getResource());
+    }
+
+    private void shouldInjectIntoCollectionOfCustomModels(Adaptable adaptable) {
+        CustomListItems model = adaptable.adaptTo(CustomListItems.class);
+        assertNotNull(model);
+
+        List<CustomListItem> expectedList = ListHelper.getList(context.resourceResolver(), CUSTOM_LIST_PATH, CustomListItem.class);
+
+        ComparisonHelper.assertCollectionsEqual(
+            expectedList,
+            model.getValue(),
+            EToolboxListInjectorTest::assertEntitiesEqual);
+        ComparisonHelper.assertCollectionsEqual(
+            expectedList,
+            model.getArrayValue(),
+            EToolboxListInjectorTest::assertEntitiesEqual);
+        ComparisonHelper.assertCollectionsEqual(
+            expectedList,
+            model.getConstructorValue(),
+            EToolboxListInjectorTest::assertEntitiesEqual);
+        ComparisonHelper.assertCollectionsEqual(
+            expectedList,
+            model.getValueSupplier().getValue(),
+            EToolboxListInjectorTest::assertEntitiesEqual);
+    }
+
+    @Test
+    public void shouldInjectResourcesIntoMap() {
+        context.currentResource(SIMPLE_LIST_PATH);
+        shouldInjectResourcesIntoMap(context.request());
+        shouldInjectResourcesIntoMap(context.request().getResource());
+    }
+
+    private void shouldInjectResourcesIntoMap(Adaptable adaptable) {
+        ResourcesMap model = adaptable.adaptTo(ResourcesMap.class);
+        assertNotNull(model);
+
+        Map<String, Resource> expected = ListHelper.getMap(
+            context.resourceResolver(),
+            SIMPLE_LIST_PATH,
+            JcrConstants.JCR_TITLE,
+            Resource.class);
+
+        for (Map<String, Resource> actual :
+            Arrays.asList(model.getValue(), model.getConstructorValue(), model.getValueSupplier().getValue())) {
+
+            assertNotNull(actual);
+            assertEquals(expected.size(), actual.size());
+            ComparisonHelper.assertCollectionsEqual(
+                expected.values(),
+                actual.values(),
+                EToolboxListInjectorTest::assertResourcesEqual);
         }
+
+        Map<Object, Object> genericActual = model.getGenericValue();
+        assertNotNull(genericActual);
+        assertEquals(expected.size(), genericActual.size());
+        ComparisonHelper.assertCollectionsEqual(
+            expected.values(),
+            genericActual.values().stream().map(Resource.class::cast).collect(Collectors.toList()),
+            EToolboxListInjectorTest::assertResourcesEqual);
     }
 
     @Test
-    public void shouldInjectSimpleListItemIntoCollection() {
-        testModel = context.request().adaptTo(TestModelEToolboxList.class);
-        Collection<Resource> expected = ListHelper.getResourceList(context.resourceResolver(), SIMPLE_LIST_PATH);
-        Collection<Resource> actual = testModel.getItemsCollectionResource();
-
-        assertNotNull(testModel);
-        assertEquals(expected.size(), actual.size());
-        for (int i = 0; i < expected.size(); i++) {
-            assertEquals(
-                IteratorUtils.get(expected.iterator(), i).getValueMap(),
-                IteratorUtils.get(actual.iterator(), i).getValueMap()
-            );
-        }
+    public void shouldInjectItemMembersIntoMap() {
+        context.currentResource(SIMPLE_LIST_PATH);
+        shouldInjectItemMembersIntoMap(context.request());
+        shouldInjectItemMembersIntoMap(context.request().getResource());
     }
 
-    @Test
-    public void shouldInjectSimpleListItemIntoList() {
-        testModel = context.request().adaptTo(TestModelEToolboxList.class);
-        List<SimpleListItem> expected = ListHelper.getList(context.resourceResolver(), SIMPLE_LIST_PATH);
-        List<SimpleListItem> actual = testModel.getItemsListSimpleList();
+    private void shouldInjectItemMembersIntoMap(Adaptable adaptable) {
+        StringsMap model = adaptable.adaptTo(StringsMap.class);
+        assertNotNull(model);
 
-        assertNotNull(testModel);
-        assertEquals(expected.size(), actual.size());
-        for (int i = 0; i < expected.size(); i++) {
-            assertEquals(expected.get(i).getTitle(), actual.get(i).getTitle());
-            assertEquals(expected.get(i).getValue(), actual.get(i).getValue());
-        }
-    }
-
-    @Test
-    public void shouldInjectCustomModelIntoList() {
-        testModel = context.request().adaptTo(TestModelEToolboxList.class);
-        List<LocalListItemModel> expected = ListHelper.getList(
-            context.resourceResolver(), CUSTOM_LIST_PATH, LocalListItemModel.class);
-        List<LocalListItemModel> actual = testModel.getItemsListTestModel();
-
-        assertNotNull(testModel);
-        assertEquals(expected.size(), actual.size());
-        for (int i = 0; i < expected.size(); i++) {
-            assertEquals(expected.get(i), actual.get(i));
-        }
-    }
-
-    @Test
-    public void shouldInjectResourceIntoMap() {
-        testModel = context.request().adaptTo(TestModelEToolboxList.class);
-        Map<String, Resource> expected = ListHelper.getMap(context.resourceResolver(),
-            SIMPLE_LIST_PATH, JcrConstants.JCR_TITLE, Resource.class);
-        Map<String, Resource> actual = testModel.getItemsMapResource();
-
-        assertNotNull(testModel);
-        assertEquals(expected.size(), actual.size());
-        assertEquals(expected.keySet(), actual.keySet());
-        assertTrue(expected.entrySet().stream()
-            .allMatch(e -> e.getValue().getValueMap().equals(actual.get(e.getKey()).getValueMap())));
-    }
-
-    @Test
-    public void shouldInjectStringTypeIntoMap() {
-        testModel = context.request().adaptTo(TestModelEToolboxList.class);
         Map<String, String> expected = ListHelper.getMap(context.resourceResolver(), SIMPLE_LIST_PATH);
-        Map<String, String> actual = testModel.getItemsMapString();
 
-        assertNotNull(testModel);
-        assertEquals(expected.size(), actual.size());
-        assertEquals(expected, actual);
-    }
+        for (Map<String, String> actual :
+            Arrays.asList(model.getValue(), model.getConstructorValue(), model.getValueSupplier().getValue())) {
 
-    @Test
-    public void shouldInjectCustomModelInMapWithKeyProperty() {
-        testModel = context.request().adaptTo(TestModelEToolboxList.class);
-        Map<String, LocalListItemModel> expected = ListHelper.getMap(context.resourceResolver(),
-            CUSTOM_LIST_PATH, "textValue", LocalListItemModel.class);
-        Map<String, LocalListItemModel> actual = testModel.getItemsMapTestModel();
-
-        assertNotNull(testModel);
-        assertEquals(expected.size(), actual.size());
-        assertEquals(expected.keySet(), actual.keySet());
-        assertTrue(expected.entrySet().stream().allMatch(e -> e.getValue().equals(actual.get(e.getKey()))));
-    }
-
-    @Test
-    public void shouldInjectObjectTypeIntoMap() {
-        testModel = context.request().adaptTo(TestModelEToolboxList.class);
-        Map<String, String> expected = ListHelper.getMap(context.resourceResolver(), SIMPLE_LIST_PATH);
-        Map<Object, Object> actual = testModel.getItemsMapObjects();
-
-        assertNotNull(testModel);
-        assertEquals(expected.size(), actual.size());
-        assertEquals(expected, actual);
-    }
-
-    @Test
-    public void shouldInjectIntoMethodParameter() {
-        testModel = context.request().adaptTo(TestModelEToolboxList.class);
-        List<Resource> expected = ListHelper.getResourceList(context.resourceResolver(), SIMPLE_LIST_PATH);
-        List<Resource> actual = testModel.getItemsListResourceFromMethodParameter();
-
-        assertNotNull(testModel);
-        assertEquals(expected.size(), actual.size());
-        for (int i = 0; i < expected.size(); i++) {
-            assertEquals(expected.get(i).getValueMap(), actual.get(i).getValueMap());
+            assertNotNull(actual);
+            assertEquals(expected.size(), actual.size());
+            ComparisonHelper.assertCollectionsEqual(
+                expected.values(),
+                actual.values(),
+                EToolboxListInjectorTest::assertEntitiesEqual);
         }
     }
 
     @Test
-    public void shouldInjectIntoMethod() {
-        ITestModelEToolboxList testInterface = context.request().adaptTo(ITestModelEToolboxList.class);
-        assertNotNull(testInterface);
+    public void shouldInjectCustomItemsIntoMap() {
+        context.currentResource(CUSTOM_LIST_PATH);
+        shouldInjectCustomItemsIntoMap(context.request());
+        shouldInjectCustomItemsIntoMap(context.request().getResource());
+    }
 
-        Map<String, String> expected = ListHelper.getMap(context.resourceResolver(), SIMPLE_LIST_PATH);
-        Map<String, String> actual = testInterface.getItemsMapStringFromMethod();
+    private void shouldInjectCustomItemsIntoMap(Adaptable adaptable) {
+        CustomListItemsMap model = adaptable.adaptTo(CustomListItemsMap.class);
+        assertNotNull(model);
 
-        assertEquals(expected.size(), actual.size());
+        Map<String, CustomListItem> expected = ListHelper.getMap(
+            context.resourceResolver(),
+            CUSTOM_LIST_PATH,
+            PN_TEXT_VALUE,
+            CustomListItem.class);
+
+        for (Map<String, CustomListItem> actual :
+            Arrays.asList(model.getValue(), model.getConstructorValue(), model.getValueSupplier().getValue())) {
+
+            assertNotNull(actual);
+            assertEquals(expected.size(), actual.size());
+            ComparisonHelper.assertCollectionsEqual(
+                expected.values(),
+                actual.values(),
+                EToolboxListInjectorTest::assertEntitiesEqual);
+        }
+    }
+
+    /* ---------------
+       Service methods
+       --------------- */
+
+    private static void assertResourcesEqual(Resource expected, Object actual) {
+        assertTrue(actual instanceof Resource);
+        assertEquals(expected.getValueMap(), ((Resource) actual).getValueMap());
+    }
+
+    private static void assertSimpleListItemsEqual(SimpleListItem expected, SimpleListItem actual) {
+        assertEquals(expected.getTitle(), actual.getTitle());
+        assertEquals(expected.getValue(), actual.getValue());
+    }
+
+    private static <T> void assertEntitiesEqual(T expected, T actual) {
         assertEquals(expected, actual);
-    }
-
-    @Test
-    public void shouldNotInjectIfAnnotationValueMissingOrWrongType() {
-        testModel = context.request().adaptTo(TestModelEToolboxList.class);
-
-        assertNotNull(testModel);
-        assertNull(testModel.getItemsWithWrongCollectionType());
-        assertNull(testModel.getItemsWithWrongFieldType());
-    }
-
-    @Test
-    public void shouldInjectCustomModelItemsArray() {
-        testModel = context.request().adaptTo(TestModelEToolboxList.class);
-        LocalListItemModel[] expected = ListHelper.getList(
-            context.resourceResolver(), CUSTOM_LIST_PATH, LocalListItemModel.class).toArray(new LocalListItemModel[0]);
-        LocalListItemModel[] actual = testModel.getItemsArrayModel();
-
-        assertNotNull(testModel);
-        assertEquals(expected.length, testModel.getItemsArrayModel().length);
-        assertArrayEquals(expected, actual);
-    }
-
-    @Model(adaptables = Resource.class,
-        defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL
-    )
-    @SuppressWarnings("unused")
-    public static class LocalListItemModel {
-
-        @ValueMapValue
-        private String textValue;
-
-        @ValueMapValue
-        private boolean booleanValue;
-
-        @ValueMapValue
-        private int intValue;
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            LocalListItemModel that = (LocalListItemModel) o;
-            return booleanValue == that.booleanValue && intValue == that.intValue && Objects.equals(textValue, that.textValue);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(textValue, booleanValue, intValue);
-        }
     }
 }

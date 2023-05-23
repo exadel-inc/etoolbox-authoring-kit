@@ -21,6 +21,7 @@ import com.exadel.aem.toolkit.api.annotations.container.Tab;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
@@ -71,7 +72,7 @@ class LegacyTabSection extends Section {
         Attribute attributeAnnotation = tab.attribute();
         itemsContainer.attributes(attributeAnnotation, AnnotationUtil.getPropertyMappingFilter(attributeAnnotation));
         if (attributeAnnotation.data().length > 0) {
-            Target graniteDataElement = host.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA);
+            Target graniteDataElement = host.getOrCreateTarget(CoreConstants.NN_GRANITE_DATA);
             Arrays.stream(attributeAnnotation.data())
                 .forEach(data -> graniteDataElement.attribute(data.name(), data.value()));
         }

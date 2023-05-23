@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="cq:Page">
+    <jcr:content
+        jcr:primaryType="cq:PageContent"
+        sling:resourceType="etoolbox-authoring-kit/lists/components/structure/page-list"
+        jcr:title="Multisource Selection"
+        cq:template="/conf/etoolbox-authoring-kit/settings/wcm/templates/list"
+        itemResourceType="/apps/etoolbox-authoring-kit/lists/components/content/simpleListItem">
+        <list
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="wcm/foundation/components/responsivegrid">
+            <item_vegetables
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="etoolbox-authoring-kit/lists/components/content/listItem"
+                jcr:title="Vegetables"
+                value="/content/etoolbox-authoring-kit-test/cq:tags/vegetables"/>
+            <item_berries
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="etoolbox-authoring-kit/lists/components/content/listItem"
+                jcr:title="Berries"
+                value="/content/etoolbox-authoring-kit-test/cq:tags/berries"/>
+            <item_fruit
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="etoolbox-authoring-kit/lists/components/content/listItem"
+                jcr:title="Fruit"
+                value="http://$${aem.login}:$${aem.password}@$${aem.host}:$${aem.port}/content/etoolbox-authoring-kit-test/cq:tags.-1.json/fruit"/>
+        </list>
+    </jcr:content>
+</jcr:root>

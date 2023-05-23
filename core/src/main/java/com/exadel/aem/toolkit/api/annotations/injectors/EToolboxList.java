@@ -18,19 +18,22 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Source;
 import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
 
 import com.exadel.aem.toolkit.core.injectors.EToolboxListInjector;
+import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
+import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 
 /**
- * Used on either a field, a method, or a method parameter of a Sling model to inject a EToolbox List obtained via
- * {@code ResourceResolver} instance.
- * <p>Injects the list values of the same type that the ListHelper retrieves.
- * <p>If the annotated member is of type {@code Collection<T>}, {@code List<T>}, {@code Map<String, T>}, or
- * {@code T[]}, the collection of list entries stored in the specified JCR path is injected.
- * <p> If {@code value()} is empty or the underlying entity has a wrong type, nothing is injected.
- * Only the models that are adapted from Sling resources are supported
+ * Used on a field, a method, or a method parameter of a Sling model to inject items of an EToolbox List.
+ * <p>Injects values of the same types that {@link ListHelper} can produce. An array/collection of items can consist of
+ * {@link Resource}s, {@link SimpleListItem}s, or else arbitrary list items as soon as they are backed by a
+ * resource-adapted (not request-adapted) Sling model.
+ * <p>If the annotated member is of type {@code Collection} or {@code List}, or else an array of items, the collection
+ * of list entries is injected. If the member is of type {@code Object}, the list or resources is injected. A map is
+ * injected into a map-typed member. Otherwise, nothing is injected.</p>
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
@@ -45,8 +48,8 @@ public @interface EToolboxList {
     String value();
 
     /**
-     * Specifies the key attribute in a resource that represents an item in the list
-     * Is applicable only for {@code Map<String, T>} injected type
+     * Specifies the key attribute in a resource that identifies an item in the list. This setting applies only to
+     * Java class members of the {@code Map<String, T>} type
      * @return Optional non-blank string
      */
     String keyProperty() default "";

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workspaceFilter version="1.0">
+    <filter root="/apps/etoolbox-authoring-kit-test"/>
+    <filter root="/apps/settings/wcm/designs/etoolbox-authoring-kit-test"/>
+    <filter root="/conf/etoolbox-authoring-kit-test"/>
+    <filter root="/content/etoolbox-authoring-kit-test"/>
+</workspaceFilter>

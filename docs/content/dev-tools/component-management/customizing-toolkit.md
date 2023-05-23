@@ -284,7 +284,30 @@ You can debug the ToolKit's plugin while building your AEM project. In order to 
 mvnDebug clean install -PautoInstallPackage
 ```
 (Mind that the build won't technically start off before the next step. `mvnDebug` just establishes a listener service and waits for an incoming connection).
-3) Switch to the Toolkit's IDE window. Start the remote debug session with _localhost_ as the host and port _8000_. Most convenient is to create a new "Run/debug configuration" with these parameters in your IDE. The rest of the parameters will remain default.
+3) Switch to the ToolKit's IDE window. Start the remote debug session with _localhost_ as the host and port _8000_. Most convenient is to create a new "Run/debug configuration" with these parameters in your IDE. The rest of the parameters will remain default.
 4) Now the actual build process starts. You can set breakpoints in the plugin's code and operate as usual.
 
 Read more on debugging a Maven plugin e.g. [here](https://spin.atomicobject.com/2020/08/20/maven-debugging-intellij/).
+
+### Running integration tests
+
+Starting from version _2.3.0_, the ToolKit supports integration tests powered by [Selenide](https://selenide.org). They are mainly for checking the browser-bound functions as well as checking the connection to a live AEM server and/or 3rd-party services on the Internet.
+
+The integration tests are localed in the `it.tests` module. Important: unlike unit tests, integration tests are not run in frames of a "regular" build. To run them, you need to specify the dedicated Maven profile like the following:
+```
+mvn clean install -Pintegration
+```
+
+As the integration tests start, a synthetic content package containing test data will be created and deployed to a live AEM instance (the one specified by the _aem.host_ and/or _aem.port_ properties). You can find the data in AEM under _/apps/etoolbox-authoring-kit-test_ and also in the same folders under _/conf_ and _/content_.
+
+If the live AEM instance is not available, the tests will fail.
+
+The login and password are needed to install the package. You may specify them with _aem.login_ and _aem.password_ properties if they are not the default _admin/admin_ pair.
+
+After the integration tests are run, the synthetic package and its content are removed from the live AEM instance. You may, however, want them to stay, e.g., to manually re-run the test cases that failed. For that purpose, specify the _nouninstall=true_ property either in the Maven file or in the command line.
+
+A complete command line for running integration tests with different properties specified may look like the following:
+```
+mvn clean install -PautoInstallPackage -Pintegration -D"aem.host"=192.168.0.81 -D"aem.port"=8080 -D"aem.login"=siteadmin -D"aem.password"=MyPa$$w0rd -Dnouninstall=true
+
+```

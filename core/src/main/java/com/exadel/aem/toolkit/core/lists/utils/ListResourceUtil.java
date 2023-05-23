@@ -13,9 +13,6 @@
  */
 package com.exadel.aem.toolkit.core.lists.utils;
 
-import java.beans.Transient;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -34,18 +31,14 @@ import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.introspect.Annotated;
-import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.lists.ListConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
+import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
 /**
  * Contains methods for manipulation with List Resource
- * <p><u>Note</u>: This class is not a part of the public API</p>
  */
 class ListResourceUtil {
 
@@ -53,13 +46,6 @@ class ListResourceUtil {
         "jcr:createdBy", "jcr:created", "cq:lastModified", "cq:lastModifiedBy", "jcr:lastModified", "jcr:lastModifiedBy",
         "cq:lastReplicationAction", "cq:lastReplicatedBy", "cq:lastReplicated"
     );
-
-    private static final ObjectMapper OBJECT_MAPPER;
-
-    static {
-        OBJECT_MAPPER = new ObjectMapper();
-        OBJECT_MAPPER.setAnnotationIntrospector(new LocalAnnotationIntrospector());
-    }
 
     /**
      * Default (instantiation-restricting) constructor
@@ -140,7 +126,7 @@ class ListResourceUtil {
                 return properties;
             };
         }
-        return model -> OBJECT_MAPPER.convertValue(model, new TypeReference<Map<String, Object>>() {});
+        return ObjectConversionUtil::toPropertyMap;
     }
 
     /**
@@ -152,26 +138,5 @@ class ListResourceUtil {
         return MapUtils.emptyIfNull(properties).entrySet().stream()
             .filter(entry -> !PROPERTIES_TO_IGNORE.contains(entry.getKey()))
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-
-    /**
-     * Extends {@link JacksonAnnotationIntrospector} to add support for ToolKit-specific annotations used in
-     * entity-to-map object mapping
-     */
-    private static class LocalAnnotationIntrospector extends JacksonAnnotationIntrospector {
-        @Override
-        protected boolean _isIgnorable(Annotated a) {
-            if (super._isIgnorable(a)) {
-                return true;
-            }
-            if (a.hasAnnotation(Transient.class)) {
-                return true;
-            }
-            if (a.getAnnotated() instanceof Field) {
-                Field field = (Field) a.getAnnotated();
-                return Modifier.isTransient(field.getModifiers());
-            }
-            return false;
-        }
     }
 }

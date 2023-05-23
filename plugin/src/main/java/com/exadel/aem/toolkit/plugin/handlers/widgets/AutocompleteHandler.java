@@ -19,6 +19,7 @@ import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
@@ -37,7 +38,7 @@ public class AutocompleteHandler implements Handler {
     @Override
     public void accept(Source source, Target target) {
         Autocomplete autocomplete = source.adaptTo(Autocomplete.class);
-        target.getOrCreateTarget(DialogConstants.NN_DATASOURCE)
+        target.getOrCreateTarget(CoreConstants.NN_DATASOURCE)
                 .attribute(
                     DialogConstants.PN_SLING_RESOURCE_TYPE,
                     autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value())

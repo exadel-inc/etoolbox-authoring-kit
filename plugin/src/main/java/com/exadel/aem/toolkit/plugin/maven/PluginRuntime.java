@@ -44,7 +44,7 @@ public class PluginRuntime {
     }
 
     /**
-     * Disposes of current {@link LoadedRuntimeContext} instance by calling the {@link ThreadLocal#remove()} method
+     * Disposes of current {@link PluginRuntimeContext} instance by calling the {@link ThreadLocal#remove()} method
      */
     static void close() {
         INSTANCE.remove();

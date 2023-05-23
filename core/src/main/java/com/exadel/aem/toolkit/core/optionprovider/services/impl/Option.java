@@ -13,16 +13,17 @@
  */
 package com.exadel.aem.toolkit.core.optionprovider.services.impl;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.sling.api.resource.NonExistingResource;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -35,10 +36,11 @@ import com.adobe.granite.ui.components.ds.ValueMapResource;
 
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.optionprovider.OptionProviderConstants;
 
 /**
- * Represents a particular text-value pair to be extracted from a {@code Resource} and then transformed into
- * a datasource option
+ * Represents a particular text-value pair to be extracted from a {@code Resource} and then transformed into a
+ * datasource option
  */
 class Option {
     static final Comparator<Option> COMPARATOR = new OptionComparator();
@@ -53,11 +55,13 @@ class Option {
 
     private String textMember;
     private String valueMember;
-    private String[] attributeMembers;
-    private String[] attributes;
+    private List<String> attributeMembers;
+    private List<Pair<String, String>> attributes;
 
     private StringTransformation textTransform;
     private StringTransformation valueTransform;
+
+    private boolean uniqueByName;
 
     /**
      * Default (instantiation-restricting) constructor
@@ -66,11 +70,12 @@ class Option {
     }
 
     /**
-     * Generates a Granite-compliant {@link ValueMapResource} representing a particular option with specified label and value
-     * @return {@code ValueMapResource} item that stands for the datasource option, or null in case this
+     * Generates a Granite-compliant {@link ValueMapResource} representing a particular option with the specified label
+     * and value
+     * @return A {@code ValueMapResource} item that stands for the datasource option, or null in case this
      * {@code DataSourceEntry} is invalid
      */
-    ValueMapResource toValueMapEntry() {
+    ValueMapResource toDataSourceEntry() {
         if (!isValid()) {
             return null;
         }
@@ -80,12 +85,13 @@ class Option {
         valueMap.put(CoreConstants.PN_VALUE, getValue());
         if (selected) {
             valueMap.put(CoreConstants.PN_SELECTED, true);
+            valueMap.put(CoreConstants.PN_CHECKED, true);
         }
         return new OptionResource(effectiveResourceResolver, valueMap, getCustomAttributes());
     }
 
     /**
-     * Gets whether this entry has enough values to be transformed to a datasource option
+     * Gets whether this entry has enough values to be transformed into a datasource option
      * @return true or false
      */
     boolean isValid() {
@@ -100,6 +106,14 @@ class Option {
      */
     private static boolean isValid(Resource resource) {
         return resource != null && !(resource instanceof NonExistingResource);
+    }
+
+    /**
+     * Gets the name part of the option entry
+     * @return String value
+     */
+    String getName() {
+        return getCustomAttribute(OptionProviderConstants.PARAMETER_NAME, StringTransformation.NONE);
     }
 
     /**
@@ -142,8 +156,9 @@ class Option {
         if (!isValid(resource)) {
             return result;
         }
-        if (ArrayUtils.isNotEmpty(attributeMembers)) {
-            Arrays.stream(attributeMembers)
+        if (CollectionUtils.isNotEmpty(attributeMembers)) {
+            attributeMembers
+                .stream()
                 .filter(StringUtils::isNotBlank)
                 .forEach(attributeMember -> {
                     String attributeValue = getCustomAttribute(attributeMember, StringTransformation.NONE);
@@ -152,30 +167,29 @@ class Option {
                     }
                 });
         }
-        if (ArrayUtils.isNotEmpty(attributes)) {
-            Arrays.stream(attributes)
-                .map(attr -> attr.split(OptionSourceParameters.KEV_VALUE_SEPARATOR_PATTERN, 2))
-                .filter(parts -> ArrayUtils.getLength(parts) == 2 && StringUtils.isNotBlank(parts[0]))
-                .forEach(parts -> result.put(
-                    parts[0].replaceAll(OptionSourceParameters.INLINE_COLON_PATTERN, CoreConstants.SEPARATOR_HYPHEN).trim(),
-                    parts[1].trim()));
+        if (CollectionUtils.isNotEmpty(attributes)) {
+            attributes
+                .stream()
+                .filter(pair -> StringUtils.isNotBlank(pair.getKey()))
+                .forEach(pair -> result.put(pair.getKey(), pair.getValue()));
         }
         return result;
     }
 
     /**
      * Used to retrieve this option's text or value, or a custom attribute of an underlying JCR resource
-     * @param attributeMember    Reference to either {@code textMember}, {@code valueMember}, or {@code attributeMember} value
+     * @param attributeMember    Reference to either {@code textMember}, {@code valueMember}, or {@code attributeMember}
+     *                           value
      * @param attributeTransform Reference to either {@code textTransform} or {@code valueTransform} value
      * @return String value, or an empty string
      */
     private String getCustomAttribute(String attributeMember, StringTransformation attributeTransform) {
         if (!isValid(resource)) {
             return StringUtils.EMPTY;
-        } else if (CoreConstants.PARAMETER_ID.equals(attributeMember)) {
+        } else if (OptionProviderConstants.PARAMETER_ID.equals(attributeMember)) {
             return getResourceId();
-        } else if (CoreConstants.PARAMETER_NAME.equals(attributeMember)) {
-            return resource.getName();
+        } else if (OptionProviderConstants.PARAMETER_NAME.equals(attributeMember)) {
+            return attributeTransform != null ? attributeTransform.apply(resource.getName()) : resource.getName();
         }
         // Tf [textMember]-valued or [valueMember]-valued attribute not found within this Resource, there's still
         // a chance that it may be found under jcr:content subnode (relevant for the case when current option is an
@@ -192,8 +206,8 @@ class Option {
     }
 
     /**
-     * Returns resource ID as requested by the user setting. For an ordinary resource node (such as an ACS List -like
-     * option) this resolves to merely node name, but for a Tag, the namespace-qualified tag identifier is returned
+     * Returns resource ID as requested by the user setting. For an ordinary resource node (such as an ACS List-like
+     * option), this resolves to merely node name, but for a Tag, the namespace-qualified tag identifier is returned
      * @return String value
      */
     private String getResourceId() {
@@ -218,91 +232,100 @@ class Option {
     }
 
     /**
-     * Implements builder pattern for the {@link Option}. Ensures that the {@code DataSourceEntry} fields
-     * are initialized with proper defaults
+     * Implements builder pattern for the {@link Option}. Ensures that the {@code DataSourceEntry} fields are
+     * initialized with proper defaults
      */
     @SuppressWarnings("MissingJavadocMethod")
     static class Builder {
-        private final Option dataSourceOption = new Option();
+        private final Option option = new Option();
 
         private Builder() {
         }
 
         Builder resource(Resource value) {
-            dataSourceOption.resource = value;
+            option.resource = value;
             return this;
         }
 
         Builder resourceResolver(ResourceResolver value) {
-            dataSourceOption.resourceResolver = value;
+            option.resourceResolver = value;
             return this;
         }
 
         Builder text(String value) {
-            dataSourceOption.text = value;
+            option.text = value;
             return this;
         }
 
         Builder textMember(String value) {
-            dataSourceOption.textMember = value;
+            option.textMember = value;
             return this;
         }
 
         Builder value(String value) {
-            dataSourceOption.value = value;
+            option.value = value;
             return this;
         }
 
         Builder valueMember(String value) {
-            dataSourceOption.valueMember = value;
+            option.valueMember = value;
             return this;
         }
 
-        Builder attributeMembers(String[] value) {
-            dataSourceOption.attributeMembers = value;
+        Builder attributeMembers(List<String> value) {
+            option.attributeMembers = value;
             return this;
         }
 
-        Builder attributes(String[] value) {
-            dataSourceOption.attributes = value;
+        Builder attributes(List<Pair<String, String>> value) {
+            option.attributes = value;
             return this;
         }
 
         Builder textTransform(StringTransformation value) {
-            dataSourceOption.textTransform = value;
+            option.textTransform = value;
             return this;
         }
 
         Builder valueTransform(StringTransformation value) {
-            dataSourceOption.valueTransform = value;
+            option.valueTransform = value;
+            return this;
+        }
+
+        Builder uniqueByName(boolean value) {
+            option.uniqueByName = value;
             return this;
         }
 
         Option build() {
-            if (StringUtils.isBlank(dataSourceOption.textMember) && StringUtils.isEmpty(dataSourceOption.text)) {
-                dataSourceOption.textMember = JcrConstants.JCR_TITLE;
+            if (StringUtils.isBlank(option.textMember) && StringUtils.isEmpty(option.text)) {
+                option.textMember = JcrConstants.JCR_TITLE;
             }
-            if (StringUtils.isBlank(dataSourceOption.valueMember) && StringUtils.isEmpty(dataSourceOption.value)) {
-                dataSourceOption.valueMember = CoreConstants.PN_VALUE;
+            if (StringUtils.isBlank(option.valueMember) && StringUtils.isEmpty(option.value)) {
+                option.valueMember = CoreConstants.PN_VALUE;
             }
-            if (dataSourceOption.textTransform == null) {
-                dataSourceOption.textTransform = StringTransformation.NONE;
+            if (option.textTransform == null) {
+                option.textTransform = StringTransformation.NONE;
             }
-            if (dataSourceOption.valueTransform == null) {
-                dataSourceOption.valueTransform = StringTransformation.NONE;
+            if (option.valueTransform == null) {
+                option.valueTransform = StringTransformation.NONE;
             }
-            return dataSourceOption;
+            return option;
         }
     }
 
     /**
-     * Implements {@link Object#equals(Object)} to make sure two options are equal when have same values
+     * Implements {@link Object#equals(Object)} to make sure two options are equal when they have the same values. Note:
+     * this behavior is overridden if the {@code uniqueByName} set to {@code true}. In the latter case, two options are
+     * only considered equal if they have equal names
      * @param obj Object to compare to
      * @return True or false
      */
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof Option && StringUtils.equals(getValue(), ((Option) obj).getValue());
+        return obj instanceof Option
+            && (!uniqueByName || (StringUtils.equals(getName(), ((Option) obj).getName())))
+            && StringUtils.equals(getValue(), ((Option) obj).getValue());
     }
 
     /**
@@ -311,7 +334,7 @@ class Option {
      */
     @Override
     public int hashCode() {
-        return Objects.hashCode(getValue());
+        return uniqueByName ? Objects.hash(getName(), getValue()) : Objects.hashCode(getValue());
     }
 
     /**

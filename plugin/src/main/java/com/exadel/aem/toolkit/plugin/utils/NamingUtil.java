@@ -13,9 +13,12 @@
  */
 package com.exadel.aem.toolkit.plugin.utils;
 
+import java.lang.reflect.Method;
+
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Element;
 
+import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 
@@ -120,14 +123,18 @@ public class NamingUtil {
     }
 
     /**
-     * Retrieves the member name value with the Java getter prefix stripped
-     * @param value String used as the source
+     * Retrieves the member name that matches the given {@code Source}. If the source reflects a Java method,
+     * the {@code get...} prefix is stripped. Otherwise, the name is returned as is
+     * @param source {@link Source} object used to get the name and type of the Java class member
      * @return String value
      */
-    public static String stripGetterPrefix(String value) {
-        if (StringUtils.startsWith(value, PREFIX_GET)) {
+    public static String stripGetterPrefix(Source source) {
+        String value = source.getName();
+
+        if (source.adaptTo(Method.class) != null && StringUtils.startsWith(value, PREFIX_GET)) {
             return Character.toLowerCase(value.charAt(PREFIX_GET.length())) + value.substring(PREFIX_GET.length() + 1);
         }
+
         return value;
     }
 }

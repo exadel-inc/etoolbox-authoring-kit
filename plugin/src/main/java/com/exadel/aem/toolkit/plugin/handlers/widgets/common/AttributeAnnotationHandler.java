@@ -19,7 +19,7 @@ import java.util.function.BiConsumer;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
+import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a
@@ -38,7 +38,7 @@ public class AttributeAnnotationHandler implements BiConsumer<Source, Target> {
         if (attributeAnnotation == null || attributeAnnotation.data().length == 0) {
             return;
         }
-        Target graniteDataElement = target.getOrCreateTarget(DialogConstants.NN_GRANITE_DATA);
+        Target graniteDataElement = target.getOrCreateTarget(CoreConstants.NN_GRANITE_DATA);
         Arrays.stream(attributeAnnotation.data())
             .forEach(data -> graniteDataElement.attribute(data.name(), data.value()));
     }
