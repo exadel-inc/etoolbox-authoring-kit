@@ -222,7 +222,7 @@ public class PackageSuite extends Runner {
     /**
      * Used to sort test methods by the value of {@link Order} annotation
      * @param first  {@code Method} instance
-     * @param second {@code Method instance}
+     * @param second {@code Method} instance
      * @return Int value per the contract of {@link Comparator#compare(Object, Object)}
      */
     private static int compareMethods(Method first, Method second) {
