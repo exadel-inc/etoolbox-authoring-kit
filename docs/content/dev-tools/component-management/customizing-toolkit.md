@@ -292,7 +292,7 @@ Read more on debugging a Maven plugin e.g. [here](https://spin.atomicobject.com/
 
 ### Running integration tests
 
-Starting from version _2.3.0_, the ToolKit support integration tests powered by [Selenide](https://selenide.org). They are mainly for checking the browser-bound functions as well as checking connection to a live AEM server and/or 3rd-party services on the Internet.
+Starting from version _2.3.0_, the ToolKit supports integration tests powered by [Selenide](https://selenide.org). They are mainly for checking the browser-bound functions as well as checking the connection to a live AEM server and/or 3rd-party services on the Internet.
 
 The integration tests are localed in the `it.tests` module. Important: unlike unit tests, integration tests are not run in frames of a "regular" build. To run them, you need to specify the dedicated Maven profile like the following:
 ```
