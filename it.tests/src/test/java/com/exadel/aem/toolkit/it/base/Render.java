@@ -18,9 +18,17 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * Attached to a test class to specify what AEM components must be rendered into Granite dialog/config files and
+ * included in the content package before running tests
+ */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Render {
-
+    /**
+     * Specifies what AEM components must be rendered into Granite dialog/config files and included in the content
+     * package
+     * @return An array of {@code Class} references representing AEM components
+     */
     Class<?>[] value();
 }
