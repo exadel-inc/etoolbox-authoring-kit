@@ -65,7 +65,6 @@
         <module>ui.apps</module>
         <module>ui.content</module>
         <module>plugin</module>
-        <module>it.tests</module>
         <module>all</module>
     </modules>
 
@@ -191,11 +190,6 @@
                         <source>${project.build.jdkSpec}</source>
                         <target>${project.build.jdkSpec}</target>
                     </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-deploy-plugin</artifactId>
-                    <version>3.1.0</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -412,6 +406,18 @@
         </profile>
 
         <profile>
+            <id>integration</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>core</module>
+                <module>plugin</module>
+                <module>it.tests</module>
+            </modules>
+        </profile>
+
+        <profile>
             <id>coverage</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
@@ -442,7 +448,6 @@
                 </pluginManagement>
             </build>
         </profile>
-
     </profiles>
 
     <dependencyManagement>
@@ -534,7 +539,13 @@
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.13</version>
+                <version>4.5.14</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpmime</artifactId>
+                <version>4.5.14</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

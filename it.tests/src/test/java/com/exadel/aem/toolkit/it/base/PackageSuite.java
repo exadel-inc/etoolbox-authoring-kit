@@ -20,11 +20,15 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.http.HttpException;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.Description;
@@ -35,6 +39,10 @@ import org.junit.runners.Suite;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Implements JUnit {@link Runner} pattern to facilitate creating a content package with test data, deploying it to an
+ * AEM server, running multiple test cases, and, optionally, cleaning up the deployed content
+ */
 public class PackageSuite extends Runner {
 
     private static final Logger LOG = LoggerFactory.getLogger(PackageSuite.class);
@@ -43,15 +51,25 @@ public class PackageSuite extends Runner {
 
     private final Class<?> suiteClass;
 
+    /**
+     * Creates a new {@link PackageSuite} instance
+     * @param suiteClass The class that represents an entry point for test cases
+     */
     public PackageSuite(Class<?> suiteClass) {
         this.suiteClass = suiteClass;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Description getDescription() {
         return Description.createSuiteDescription(suiteClass);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void run(RunNotifier notifier) {
         Suite.SuiteClasses suite = suiteClass.getAnnotation(Suite.SuiteClasses.class);
@@ -61,7 +79,7 @@ public class PackageSuite extends Runner {
         }
 
         notifier.fireTestSuiteStarted(Description.createSuiteDescription(suiteClass));
-        runServiceMethod(BeforeClass.class);
+        runServiceMethod(suiteClass, BeforeClass.class);
 
         Package contentPackage = new Package();
         List<Object> testObjects = prepareTestClasses(suite, contentPackage);
@@ -90,14 +108,21 @@ public class PackageSuite extends Runner {
             LOG.warn("Error finalizing test package", e);
         }
 
-        runServiceMethod(AfterClass.class);
+        runServiceMethod(suiteClass, AfterClass.class);
         notifier.fireTestSuiteFinished(Description.createSuiteDescription(suiteClass));
     }
 
-    private void runServiceMethod(Class<? extends Annotation> annotationClass) {
-        Method serviceMethod = Arrays.stream(suiteClass.getDeclaredMethods())
+    /**
+     * Searches for a specially annotated method that manifests a test running stage, such as {@link BeforeClass}, and
+     * runs it. This method is intended for running stateless (static) methods of the target class
+     * @param target         The class in which the method is expected to be
+     * @param annotationType The type of annotation that signifies the method
+     */
+    private static void runServiceMethod(Class<?> target, Class<? extends Annotation> annotationType) {
+        Method serviceMethod = Arrays.stream(target.getDeclaredMethods())
             .filter(method -> Modifier.isStatic(method.getModifiers()))
-            .filter(method -> method.isAnnotationPresent(BeforeClass.class))
+            .filter(method -> Modifier.isPublic(method.getModifiers()))
+            .filter(method -> method.isAnnotationPresent(annotationType))
             .findFirst()
             .orElse(null);
         if (serviceMethod == null) {
@@ -106,10 +131,41 @@ public class PackageSuite extends Runner {
         try {
             serviceMethod.invoke(null);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            LOG.error("Could not run @{} method", annotationClass.getSimpleName(), e);
+            LOG.error("Could not run @{} method", annotationType.getSimpleName(), e);
         }
     }
 
+    /**
+     * Searches for a specially annotated method that manifests a test running stage, such as {@link Before}, and runs
+     * it. This method is intended for running state-dependent (instance) methods of the target class
+     * @param target         The class in which the method is expected to be
+     * @param annotationType The type of annotation that signifies the method
+     */
+    private static void runServiceMethod(Object target, Class<? extends Annotation> annotationType) {
+        Class<?> targetClass = target.getClass();
+        Method serviceMethod = Arrays.stream(targetClass.getDeclaredMethods())
+            .filter(method -> !Modifier.isStatic(method.getModifiers()))
+            .filter(method -> Modifier.isPublic(method.getModifiers()))
+            .filter(method -> method.isAnnotationPresent(annotationType))
+            .findFirst()
+            .orElse(null);
+        if (serviceMethod == null) {
+            return;
+        }
+        try {
+            serviceMethod.invoke(target);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            LOG.error("Could not run @{} method", annotationType.getSimpleName(), e);
+        }
+    }
+
+    /**
+     * Creates instances of classes that are included in the current suite and renders Granite dialogs/config files for
+     * them if necessary
+     * @param suite          The {@link Suite.SuiteClasses} object that enumerates classes
+     * @param contentPackage {@link Package} instance
+     * @return A non-null list of initialized objects; can be empty
+     */
     private static List<Object> prepareTestClasses(Suite.SuiteClasses suite, Package contentPackage) {
         List<Object> result = new ArrayList<>();
         for (Class<?> testClass : suite.value()) {
@@ -126,16 +182,22 @@ public class PackageSuite extends Runner {
         return result;
     }
 
+    /**
+     * Runs the particular test case class
+     * @param notifier   {@link RunNotifier} object responsible for informing subscribers on the test process
+     * @param testObject A class instance that is being tested right now
+     */
     private static void run(RunNotifier notifier, Object testObject) {
         Class<?> testClass = testObject.getClass();
-        for (Method method : testClass.getDeclaredMethods()) {
-            if (!Modifier.isPublic(method.getModifiers())
-                || Modifier.isStatic(method.getModifiers())
-                || !method.isAnnotationPresent(Test.class)) {
-                continue;
-            }
+        runServiceMethod(testClass, BeforeClass.class);
+        List<Method> testMethods = Arrays.stream(testClass.getDeclaredMethods())
+            .filter(method -> method.isAnnotationPresent(Test.class))
+            .sorted(PackageSuite::compareMethods)
+            .collect(Collectors.toList());
 
+        for (Method method : testMethods) {
             notifier.fireTestStarted(Description.createTestDescription(testClass, method.getName()));
+            runServiceMethod(testObject, Before.class);
             try {
                 method.invoke(testObject);
                 notifier.fireTestFinished(Description.createTestDescription(testClass, method.getName()));
@@ -145,7 +207,27 @@ public class PackageSuite extends Runner {
                     Description.createTestDescription(testClass, method.getName()),
                     e.getCause()
                 ));
+                if (method.isAnnotationPresent(Order.class)) {
+                    // It makes sense to terminate the testing flow  in case of failure for only ordered methods
+                    // (assuming that a subsequent method relies on the current one)
+                    break;
+                }
+            } finally {
+                runServiceMethod(testObject, After.class);
             }
         }
+        runServiceMethod(testClass, AfterClass.class);
+    }
+
+    /**
+     * Used to sort test methods by the value of {@link Order} annotation
+     * @param first  {@code Method} instance
+     * @param second {@code Method} instance
+     * @return Int value per the contract of {@link Comparator#compare(Object, Object)}
+     */
+    private static int compareMethods(Method first, Method second) {
+        int firstOrder = first.isAnnotationPresent(Order.class) ? first.getAnnotation(Order.class).value() : 0;
+        int secondOrder = second.isAnnotationPresent(Order.class) ? second.getAnnotation(Order.class).value() : 0;
+        return firstOrder - secondOrder;
     }
 }

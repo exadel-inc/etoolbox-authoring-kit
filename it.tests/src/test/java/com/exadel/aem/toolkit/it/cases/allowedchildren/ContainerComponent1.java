@@ -16,24 +16,25 @@ package com.exadel.aem.toolkit.it.cases.allowedchildren;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
+import com.exadel.aem.toolkit.it.cases.Constants;
 
 @AemComponent(
-    path = "/apps/etoolbox-authoring-kit-test/components/content/container1",
+    path = Constants.JCR_COMPONENTS_ROOT + "/container1",
     title = "Container Component 1",
-    componentGroup="Components",
+    componentGroup = Constants.GROUP_COMPONENTS,
     isContainer = true,
     disableTargeting = true
 )
 @Dialog
 @AllowedChildren(
     value = {
-        "/apps/etoolbox-authoring-kit-test/components/content/video",
-        "/apps/etoolbox-authoring-kit-test/components/content/audio"
+        Constants.JCR_COMPONENTS_ROOT + "/video",
+        Constants.JCR_COMPONENTS_ROOT + "/audio"
     },
     pageResourceTypes = "etoolbox-authoring-kit-test/components/pages/editable-template-page-descendant"
 )
 @AllowedChildren(
-    value = "/apps/etoolbox-authoring-kit-test/components/content/video",
+    value = Constants.JCR_COMPONENTS_ROOT + "/video",
     classes = ContainerComponent2.class
 )
 public class ContainerComponent1 {

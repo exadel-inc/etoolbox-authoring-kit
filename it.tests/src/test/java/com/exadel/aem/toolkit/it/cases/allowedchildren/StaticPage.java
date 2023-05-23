@@ -16,30 +16,31 @@ package com.exadel.aem.toolkit.it.cases.allowedchildren;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
 import com.exadel.aem.toolkit.api.annotations.policies.PolicyMergeMode;
+import com.exadel.aem.toolkit.it.cases.Constants;
 
 @AemComponent(
-    path = "/apps/etoolbox-authoring-kit-test/components/pages/static-template-page",
+    path = Constants.JCR_PAGES_ROOT + "/static-template-page",
     title = "Static Page",
     resourceSuperType = "wcm/foundation/components/page"
 )
 @AllowedChildren(
-    value = "/apps/etoolbox-authoring-kit-test/components/content/video",
+    value = Constants.JCR_COMPONENTS_ROOT + "/video",
     classes = ContainerComponent1.class,
     pagePaths = "*/allowedChildren/*",
     resourceNames = "parsys_0"
 )
 @AllowedChildren(
-    value = "/apps/etoolbox-authoring-kit-test/components/content/video",
+    value = Constants.JCR_COMPONENTS_ROOT + "/video",
     classes = ContainerComponent2.class,
     templates = "*/other-template",
     resourceNames = "parsys_1"
 )
 @AllowedChildren(
-    value = "/apps/etoolbox-authoring-kit-test/components/content/video",
+    value = Constants.JCR_COMPONENTS_ROOT + "/video",
     resourceNames = "parsys_0"
 )
 @AllowedChildren(
-    value = "/apps/etoolbox-authoring-kit-test/components/content/video",
+    value = Constants.JCR_COMPONENTS_ROOT + "/video",
     resourceNames = "parsys_1",
     mode = PolicyMergeMode.MERGE
 )

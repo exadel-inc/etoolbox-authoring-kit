@@ -38,13 +38,6 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
                 <configuration>
                     <skip>true</skip>
@@ -55,6 +48,10 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <skipTests>true</skipTests>
+                    <systemPropertyVariables>
+                        <aem.host>${aem.host}</aem.host>
+                        <aem.port>${aem.port}</aem.port>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>
@@ -62,7 +59,7 @@
 
     <profiles>
         <profile>
-            <id>it-tests</id>
+            <id>integration</id>
             <build>
                 <plugins>
                     <plugin>
@@ -71,7 +68,10 @@
                         <configuration>
                             <skipTests>false</skipTests>
                             <systemPropertyVariables>
-                                <endpoint>http://${aem.host}:${aem.port}</endpoint>
+                                <aem.host>${aem.host}</aem.host>
+                                <aem.port>${aem.port}</aem.port>
+                                <aem.login>${aem.login}</aem.login>
+                                <aem.password>${aem.login}</aem.password>
                             </systemPropertyVariables>
                             <includes>
                                 <include>**/AllTests.class</include>
@@ -123,6 +123,10 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpmime</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

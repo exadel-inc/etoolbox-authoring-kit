@@ -18,31 +18,42 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.hc.client5.http.classic.methods.HttpPost;
-import org.apache.hc.client5.http.entity.mime.ByteArrayBody;
-import org.apache.hc.client5.http.entity.mime.HttpMultipartMode;
-import org.apache.hc.client5.http.entity.mime.MultipartEntityBuilder;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpClient;
-import org.apache.hc.client5.http.impl.classic.CloseableHttpResponse;
-import org.apache.hc.client5.http.impl.classic.HttpClients;
-import org.apache.hc.core5.http.HttpEntity;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpException;
 import org.apache.http.HttpHeaders;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ByteArrayBody;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+/**
+ * Contains utility methods for installing and uninstalling synthetic content packages
+ */
 class PackageInstallerUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(PackageInstallerUtil.class);
 
     private static final String FORM_FIELD_PACKAGE = "package";
 
+    /**
+     * Default (instantiation-blocking) constructor
+     */
     private PackageInstallerUtil() {
     }
 
+    /**
+     * Installs the provided {@link Package} to an AEM server
+     * @param contentPackage {@code Package} instance
+     * @throws HttpException if package installation fails
+     */
     public static void install(Package contentPackage) throws HttpException {
         LOG.info("Uploading test package...");
         PackageManagerResponse response = executePackageRequest("?cmd=upload&force=true", null, contentPackage.toByteArray());
@@ -58,6 +69,11 @@ class PackageInstallerUtil {
         LOG.info("Installation complete");
     }
 
+    /**
+     * Uninstalls the provided {@link Package} from an AEM server
+     * @param contentPackage {@code Package} instance
+     * @throws HttpException if package uninstallation fails
+     */
     public static void uninstall(Package contentPackage) throws HttpException {
         LOG.info("Uninstalling test package...");
         PackageManagerResponse response = executePackageRequest("?cmd=uninstall", contentPackage.getPath());
@@ -73,17 +89,32 @@ class PackageInstallerUtil {
         LOG.info("Uninstall complete");
     }
 
-    private static PackageManagerResponse executePackageRequest(String queryParams, String suffix) throws HttpException {
-        return executePackageRequest(queryParams, suffix, null);
+    /**
+     * Performs a particular package-related operation with an HTTP request
+     * @param params URL query parameters, such as {@code ?cmd=...}
+     * @param suffix URL suffix, such as the one specifying the package path
+     * @return {@link PackageManagerResponse} object
+     * @throws HttpException if the HTTP request fails
+     */
+    private static PackageManagerResponse executePackageRequest(String params, String suffix) throws HttpException {
+        return executePackageRequest(params, suffix, null);
     }
 
-    private static PackageManagerResponse executePackageRequest(String queryParams, String suffix, byte[] payload) throws HttpException {
+    /**
+     * Performs a particular package-related operation with an HTTP request carrying a body
+     * @param params  URL query parameters, such as {@code ?cmd=...}
+     * @param suffix  URL suffix, such as the one specifying the package path
+     * @param payload Request condent (body)
+     * @return {@link PackageManagerResponse} object
+     * @throws HttpException if the HTTP request fails
+     */
+    private static PackageManagerResponse executePackageRequest(String params, String suffix, byte[] payload) throws HttpException {
         try (CloseableHttpClient client = HttpClients.createDefault();
-             CloseableHttpResponse response = client.execute(getPostRequest(queryParams, suffix, payload))) {
-            if (response.getCode() != HttpStatus.SC_OK) {
+             CloseableHttpResponse response = client.execute(getPostRequest(params, suffix, payload))) {
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
                 throw new HttpException(String.format(
                     "Could not install package. Response code %s received",
-                    response.getCode()));
+                    response.getStatusLine().getStatusCode()));
             }
             String textResponse = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
             return new ObjectMapper().readValue(
@@ -94,19 +125,29 @@ class PackageInstallerUtil {
         }
     }
 
-    private static HttpPost getPostRequest(String queryParams, String suffix, byte[] payload) {
-        HttpPost httpPost = new HttpPost(AemConnection.getPackageManagerEndpoint(queryParams, suffix));
+    /**
+     * Produces a {@link HttpPost} entity with given params and body for an operation with a content package
+     * @param params  URL query parameters, such as {@code ?cmd=...}
+     * @param suffix  URL suffix, such as the one specifying the package path
+     * @param payload Request condent (body)
+     * @return {@code HttpPost} object
+     */
+    private static HttpPost getPostRequest(String params, String suffix, byte[] payload) {
+        HttpPost httpPost = new HttpPost(AemConnection.getPackageManagerUrl(params, suffix));
         if (ArrayUtils.isNotEmpty(payload)) {
             HttpEntity file = MultipartEntityBuilder.create()
-                .setMode(HttpMultipartMode.EXTENDED)
+                .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
                 .addPart(FORM_FIELD_PACKAGE, new ByteArrayBody(payload, Package.FILE_NAME))
                 .build();
             httpPost.setEntity(file);
         }
-        httpPost.setHeader(HttpHeaders.AUTHORIZATION, AemConnection.AUTH_HEADER);
+        httpPost.setHeader(HttpHeaders.AUTHORIZATION, AemConnection.getAuthHeader());
         return httpPost;
     }
 
+    /**
+     * This is a DTO entity used to parse a response from an AEM PackageManager endpoint
+     */
     private static class PackageManagerResponse {
 
         @JsonProperty("success")
@@ -118,6 +159,7 @@ class PackageInstallerUtil {
         @JsonProperty("path")
         private String path;
 
+        @SuppressWarnings("BooleanMethodIsAlwaysInverted")
         public boolean isSuccess() {
             return success;
         }

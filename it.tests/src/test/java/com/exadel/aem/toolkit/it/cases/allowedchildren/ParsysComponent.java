@@ -17,11 +17,12 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
 import com.exadel.aem.toolkit.api.annotations.policies.PolicyTarget;
+import com.exadel.aem.toolkit.it.cases.Constants;
 
 @AemComponent(
-    path = "/apps/etoolbox-authoring-kit-test/components/content/myparsys",
+    path = Constants.JCR_COMPONENTS_ROOT + "/myparsys",
     title = "Sample Parsys Component",
-    componentGroup="Components",
+    componentGroup = Constants.GROUP_COMPONENTS,
     resourceSuperType = "foundation/components/parsys",
     isContainer = true,
     disableTargeting = true
@@ -29,8 +30,8 @@ import com.exadel.aem.toolkit.api.annotations.policies.PolicyTarget;
 @Dialog
 @AllowedChildren(
     value = {
-        "/apps/etoolbox-authoring-kit-test/components/content/video",
-        "/apps/etoolbox-authoring-kit-test/components/content/audio"
+        Constants.JCR_COMPONENTS_ROOT + "/video",
+        Constants.JCR_COMPONENTS_ROOT + "/audio"
     },
     targetContainer = PolicyTarget.CURRENT
 )
