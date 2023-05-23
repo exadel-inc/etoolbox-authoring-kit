@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="cq:Page">
+    <jcr:content
+        jcr:primaryType="cq:PageContent"
+        sling:resourceType="etoolbox-authoring-kit/lists/components/structure/page-list"
+        jcr:title="Social Channels"
+        cq:template="/conf/etoolbox-authoring-kit/settings/wcm/templates/list"
+        itemResourceType="/apps/etoolbox-authoring-kit-test/components/content/lists/socialChannel">
+        <list
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="wcm/foundation/components/responsivegrid">
+            <item_linkedin
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="etoolbox-authoring-kit/lists/components/content/listItem"
+                icon="https://upload.wikimedia.org/wikipedia/commons/0/01/LinkedIn_Logo.svg"
+                id="linkedin"
+                title="Linkedin"
+                url="//www.linkedin.com/sharing"/>
+            <item_myspace
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="etoolbox-authoring-kit/lists/components/content/listItem"
+                icon="https://upload.wikimedia.org/wikipedia/commons/d/db/Myspace.svg"
+                id="myspace"
+                title="Myspace"
+                url="//myspace.com/post"/>
+            <item_rss
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="etoolbox-authoring-kit/lists/components/content/listItem"
+                icon="https://upload.wikimedia.org/wikipedia/en/4/43/Feed-icon.svg"
+                id="rss"
+                title="RSS"
+                url="//en.wikipedia.org/wiki/RSS"/>
+        </list>
+    </jcr:content>
+</jcr:root>

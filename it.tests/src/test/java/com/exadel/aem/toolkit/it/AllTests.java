@@ -26,10 +26,12 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntimeUtil;
  */
 @RunWith(PackageSuite.class)
 @SuiteClasses({
-    LoginTest.class,
-    AllowedChildrenTest.class
+    AllowedChildrenTest.class,
+    ListsTest.class,
+    OptionProviderTest.class,
+    IgnoreFreshnessTest.class
 })
-@SuppressWarnings("java:S2187")
+@SuppressWarnings("java:S2187") // Tests are run via {@code SuiteClasses(...)}
 public class AllTests {
     @BeforeClass
     public static void setUp() {

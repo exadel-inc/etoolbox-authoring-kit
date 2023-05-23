@@ -13,18 +13,16 @@
  */
 package com.exadel.aem.toolkit.it;
 
-import java.time.Duration;
-
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
-import com.codeborne.selenide.SelenideElement;
 
 import com.exadel.aem.toolkit.it.base.AemConnection;
+import com.exadel.aem.toolkit.it.base.EditModeUtil;
 import com.exadel.aem.toolkit.it.base.Render;
 import com.exadel.aem.toolkit.it.cases.allowedchildren.ContainerComponent1;
 import com.exadel.aem.toolkit.it.cases.allowedchildren.ContainerComponent2;
@@ -41,7 +39,6 @@ import com.exadel.aem.toolkit.it.cases.allowedchildren.StaticPage;
 })
 public class AllowedChildrenTest {
 
-    private static final int PAUSE_MS = 500;
     private static final String BODY = "body";
 
     private static final String TITLE_AUDIO = "Sample Audio Component";
@@ -50,6 +47,11 @@ public class AllowedChildrenTest {
     private static final String TITLE_IMAGE = "Sample Image Component";
     private static final String TITLE_TEXT = "Sample Text Component";
     private static final String TITLE_VIDEO = "Sample Video Component";
+
+    @BeforeClass
+    public static void login() {
+        AemConnection.login();
+    }
 
     @Test
     public void shouldAssignToStaticPageRootContainer() {
@@ -62,16 +64,25 @@ public class AllowedChildrenTest {
     }
 
     private void assignToPageRootContainer(String pageType, String container) {
-        Selenide.open(AemConnection.getUrl("editor.html/content/etoolbox-authoring-kit-test/" + pageType + "-page/empty.html"));
+        AemConnection.open("editor.html/content/etoolbox-authoring-kit-test/allowedChildren/" + pageType + "-page/empty.html");
 
-        ElementsCollection componentOptions = getInsertOptions("[data-path='/content/etoolbox-authoring-kit-test/" + pageType + "-page/empty/jcr:content/" + container + "_0/*']");
-        componentOptions.shouldBe(CollectionCondition.size(1));
+        ElementsCollection componentOptions = EditModeUtil.getInsertChildOptions(
+            "/content/etoolbox-authoring-kit-test/allowedChildren/"
+                + pageType
+                + "-page/empty/jcr:content/"
+                + container + "_0/*");
+        componentOptions.shouldBe(CollectionCondition.size(2));
+        componentOptions.shouldHave(CollectionCondition.itemWithText(TITLE_CONTAINER_1));
         componentOptions.shouldHave(CollectionCondition.itemWithText(TITLE_VIDEO));
 
         Selenide.$(BODY).sendKeys(Keys.ESCAPE);
-        Selenide.Wait().withTimeout(Duration.ofMillis(PAUSE_MS));
 
-        componentOptions = getInsertOptions("[data-path='/content/etoolbox-authoring-kit-test/" + pageType + "-page/empty/jcr:content/" + container + "_1/*']");
+        componentOptions = EditModeUtil.getInsertChildOptions(
+            "/content/etoolbox-authoring-kit-test/allowedChildren/"
+                + pageType
+                + "-page/empty/jcr:content/"
+                + container
+                + "_1/*");
         componentOptions.shouldBe(CollectionCondition.size(3)); // 2 from the "Predefined" group + 1 insertable
         componentOptions.shouldHave(CollectionCondition.itemWithText(TITLE_VIDEO));
     }
@@ -87,92 +98,90 @@ public class AllowedChildrenTest {
     }
 
     private void assignToComponentInTemplate(String pageType, String container) {
-        Selenide.open(AemConnection.getUrl("editor.html/content/etoolbox-authoring-kit-test/" + pageType + "-page/nested-container.html"));
+        AemConnection.open("editor.html/content/etoolbox-authoring-kit-test/allowedChildren/" + pageType + "-page/nested-container.html");
 
-        ElementsCollection componentOptions = getInsertOptions("[data-path='/content/etoolbox-authoring-kit-test/" + pageType + "-page/nested-container/jcr:content/" + container + "_0/container1/content/*']");
+        ElementsCollection componentOptions = EditModeUtil.getInsertChildOptions(
+            "/content/etoolbox-authoring-kit-test/allowedChildren/"
+                + pageType
+                + "-page/nested-container/jcr:content/"
+                + container
+                + "_0/container1/content/*");
         componentOptions.shouldBe(CollectionCondition.size(2));
         componentOptions.shouldHave(CollectionCondition.textsInAnyOrder(TITLE_VIDEO, TITLE_CONTAINER_2));
 
         Selenide.$(BODY).sendKeys(Keys.ESCAPE);
-        Selenide.Wait().withTimeout(Duration.ofMillis(PAUSE_MS));
 
-        componentOptions = getInsertOptions("[data-path='/content/etoolbox-authoring-kit-test/" + pageType + "-page/nested-container/jcr:content/" + container + "_1/container2/content/*']");
+        componentOptions = EditModeUtil.getInsertChildOptions(
+            "/content/etoolbox-authoring-kit-test/allowedChildren/"
+                + pageType
+                + "-page/nested-container/jcr:content/"
+                + container
+                + "_1/container2/content/*");
         componentOptions.shouldBe(CollectionCondition.size(4)); // 2 from the "Predefined" group + 2 insertable
         componentOptions.should(CollectionCondition.containExactTextsCaseSensitive(TITLE_VIDEO, TITLE_CONTAINER_1));
 
         // Inserting an extra container
         componentOptions.filter(Condition.exactText(TITLE_CONTAINER_1)).first().click();
-        Selenide.Wait().withTimeout(Duration.ofMillis(PAUSE_MS));
-
-        componentOptions = getInsertOptions("[data-path='/content/etoolbox-authoring-kit-test/" + pageType + "-page/nested-container/jcr:content/" + container + "_1/container2/content/container1/content/*']");
+        componentOptions = EditModeUtil.getInsertChildOptions(
+            "/content/etoolbox-authoring-kit-test/allowedChildren/"
+                + pageType
+                + "-page/nested-container/jcr:content/"
+                + container
+                + "_1/container2/content/container1/content/*");
         componentOptions.shouldBe(CollectionCondition.size(2));
         componentOptions.shouldHave(CollectionCondition.textsInAnyOrder(TITLE_VIDEO, TITLE_CONTAINER_2));
     }
 
     @Test
     public void shouldAssignToPageUnderPath() {
-        Selenide.open(AemConnection.getUrl("editor.html/content/etoolbox-authoring-kit-test/allowedChildren/static-page.html"));
-
-        ElementsCollection componentOptions = getInsertOptions("[data-path='/content/etoolbox-authoring-kit-test/allowedChildren/static-page/jcr:content/parsys_0/*']");
+        AemConnection.open("editor.html/content/etoolbox-authoring-kit-test/allowedChildren/static-page.html");
+        ElementsCollection componentOptions = EditModeUtil.getInsertChildOptions(
+            "/content/etoolbox-authoring-kit-test/allowedChildren/static-page/jcr:content/parsys_0/*");
         componentOptions.shouldBe(CollectionCondition.size(2));
         componentOptions.shouldHave(CollectionCondition.textsInAnyOrder(TITLE_VIDEO, TITLE_CONTAINER_1));
     }
 
     @Test
     public void shouldAssignToPageWithTemplate() {
-        Selenide.open(AemConnection.getUrl("editor.html/content/etoolbox-authoring-kit-test/allowedChildren/static-page.html"));
-
-        ElementsCollection componentOptions = getInsertOptions("[data-path='/content/etoolbox-authoring-kit-test/allowedChildren/static-page/jcr:content/parsys_1/*']");
+        AemConnection.open("editor.html/content/etoolbox-authoring-kit-test/allowedChildren/static-page.html");
+        ElementsCollection componentOptions = EditModeUtil.getInsertChildOptions(
+            "/content/etoolbox-authoring-kit-test/allowedChildren/static-page/jcr:content/parsys_1/*");
         componentOptions.shouldBe(CollectionCondition.size(2));
         componentOptions.shouldHave(CollectionCondition.textsInAnyOrder(TITLE_VIDEO, TITLE_CONTAINER_2));
     }
 
     @Test
     public void shouldAssignToPageWithResourceType() {
-        Selenide.open(AemConnection.getUrl("editor.html/content/etoolbox-authoring-kit-test/allowedChildren/editable-page.html"));
+        AemConnection.open("editor.html/content/etoolbox-authoring-kit-test/allowedChildren/editable-page.html");
 
-        ElementsCollection componentOptions = getInsertOptions("[data-path='/content/etoolbox-authoring-kit-test/allowedChildren/editable-page/jcr:content/root/grid_0/container1/content/*']");
+        ElementsCollection componentOptions = EditModeUtil.getInsertChildOptions(
+            "/content/etoolbox-authoring-kit-test/allowedChildren/editable-page/jcr:content/root/grid_0/container1/content/*");
         componentOptions.shouldBe(CollectionCondition.size(2));
         componentOptions.shouldHave(CollectionCondition.textsInAnyOrder(TITLE_VIDEO, TITLE_AUDIO));
 
         Selenide.$(BODY).sendKeys(Keys.ESCAPE);
-        Selenide.Wait().withTimeout(Duration.ofMillis(PAUSE_MS));
-
-        componentOptions = getInsertOptions("[data-path='/content/etoolbox-authoring-kit-test/allowedChildren/editable-page/jcr:content/root/grid_1/container2/content/container1/content/*']");
+        componentOptions = EditModeUtil.getInsertChildOptions(
+            "/content/etoolbox-authoring-kit-test/allowedChildren/editable-page/jcr:content/root/grid_1/container2/content/container1/content/*");
         componentOptions.shouldBe(CollectionCondition.size(2));
         componentOptions.shouldHave(CollectionCondition.textsInAnyOrder(TITLE_VIDEO, TITLE_AUDIO));
     }
 
     @Test
     public void shouldAssignToPathWithParents() {
-        Selenide.open(AemConnection.getUrl("editor.html/content/etoolbox-authoring-kit-test/allowedChildren/editable-page.html"));
-
-        ElementsCollection componentOptions = getInsertOptions("[data-path='/content/etoolbox-authoring-kit-test/allowedChildren/editable-page/jcr:content/root/grid_0/container1/content/container2/content/*']");
+        AemConnection.open("editor.html/content/etoolbox-authoring-kit-test/allowedChildren/editable-page.html");
+        ElementsCollection componentOptions = EditModeUtil.getInsertChildOptions(
+            "/content/etoolbox-authoring-kit-test/allowedChildren/editable-page/jcr:content/root/grid_0/container1/content/container2/content/*");
         componentOptions.shouldBe(CollectionCondition.size(3));
         componentOptions.shouldHave(CollectionCondition.textsInAnyOrder(TITLE_AUDIO, TITLE_IMAGE, TITLE_TEXT));
-
         Selenide.$(BODY).sendKeys(Keys.ESCAPE);
-        Selenide.Wait().withTimeout(Duration.ofMillis(PAUSE_MS));
     }
 
     @Test
     public void shouldHandleSelfContainerRules() {
-        Selenide.open(AemConnection.getUrl("editor.html/content/etoolbox-authoring-kit-test/allowedChildren/static-page.html"));
-
-        ElementsCollection componentOptions = getInsertOptions("[data-path='/content/etoolbox-authoring-kit-test/allowedChildren/static-page/jcr:content/parsys_0/myparsys']");
+        AemConnection.open("editor.html/content/etoolbox-authoring-kit-test/allowedChildren/static-page.html");
+        ElementsCollection componentOptions = EditModeUtil.getInsertChildOptions(
+            "/content/etoolbox-authoring-kit-test/allowedChildren/static-page/jcr:content/parsys_0/myparsys");
         componentOptions.shouldBe(CollectionCondition.size(2));
         componentOptions.shouldHave(CollectionCondition.textsInAnyOrder(TITLE_VIDEO, TITLE_AUDIO));
-    }
-
-    private ElementsCollection getInsertOptions(String container) {
-        Selenide.$(container).click();
-        Selenide.$("#EditableToolbar").should(Condition.appear);
-
-        Selenide.$("[data-action='INSERT']").click();
-        SelenideElement dialogHeader = Selenide.element(By.xpath("//*[text()='Insert New Component']"));
-        dialogHeader.should(Condition.appear);
-
-        SelenideElement dialog = dialogHeader.ancestor("coral-dialog");
-        return dialog.$$("coral-selectlist-item");
     }
 }

@@ -16,14 +16,17 @@ package com.exadel.aem.toolkit.it.cases.allowedchildren;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
 import com.exadel.aem.toolkit.api.annotations.policies.PolicyMergeMode;
+import com.exadel.aem.toolkit.it.cases.Constants;
 
 @AemComponent(
-    path = "/apps/etoolbox-authoring-kit-test/components/pages/editable-template-page",
+    path = Constants.JCR_PAGES_ROOT + "/editable-template-page",
     title = "Dynamic Page",
     resourceSuperType = "core/wcm/components/page/v2/page"
 )
 @AllowedChildren(
+    classes = ContainerComponent1.class,
     value = "/apps/etoolbox-authoring-kit-test/components/content/video",
+    pagePaths = "*/allowedChildren/*",
     resourceNames = "grid_0"
 )
 @AllowedChildren(

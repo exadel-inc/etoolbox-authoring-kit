@@ -17,22 +17,23 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
 import com.exadel.aem.toolkit.api.annotations.policies.PolicyMergeMode;
+import com.exadel.aem.toolkit.it.cases.Constants;
 
 @AemComponent(
-    path = "/apps/etoolbox-authoring-kit-test/components/content/container2",
+    path = Constants.JCR_COMPONENTS_ROOT + "/container2",
     title = "Container Component 2",
-    componentGroup="Components",
+    componentGroup = Constants.GROUP_COMPONENTS,
     isContainer = true,
     disableTargeting = true
 )
 @Dialog
 @AllowedChildren(
-    value = "/apps/etoolbox-authoring-kit-test/components/content/audio",
+    value = Constants.JCR_COMPONENTS_ROOT + "/audio",
     parents = "*/responsivegrid */container1 */parsys",
     mode = PolicyMergeMode.MERGE
 )
 @AllowedChildren(
-    value = "/apps/etoolbox-authoring-kit-test/components/content/video",
+    value = Constants.JCR_COMPONENTS_ROOT + "/video",
     classes = ContainerComponent1.class,
     mode = PolicyMergeMode.MERGE
 )

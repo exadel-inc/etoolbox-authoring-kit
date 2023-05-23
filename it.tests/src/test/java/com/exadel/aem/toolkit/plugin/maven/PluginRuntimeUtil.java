@@ -21,12 +21,14 @@ public class PluginRuntimeUtil {
 
     private static final String CURRENT_MODULE_TARGET = Paths.get("target", "classes").toAbsolutePath().toString();
     private static final String CURRENT_MODULE_TEST_TARGET = Paths.get( "target", "test-classes").toAbsolutePath().toString();
-    private static final String API_MODULE_TARGET = CURRENT_MODULE_TARGET.replace("etoolbox-authoring-kit-plugin", "etoolbox-authoring-kit-core");
+    private static final String API_MODULE_TARGET = CURRENT_MODULE_TARGET.replace("it.tests", "core");
+    private static final String PLUGIN_MODULE_TARGET = CURRENT_MODULE_TARGET.replace("it.tests", "plugin");
 
     private static final List<String> CLASSPATH_ELEMENTS = Arrays.asList(
         CURRENT_MODULE_TARGET,
         CURRENT_MODULE_TEST_TARGET,
-        API_MODULE_TARGET
+        API_MODULE_TARGET,
+        PLUGIN_MODULE_TARGET
     );
 
     private PluginRuntimeUtil() {
