@@ -1,13 +1,12 @@
 <!--
 layout: content
-title: Dialog Layout
+title: Laying out your dialogs
+navTitle: Dialog Layout
 seoTitle: Dialog Layout - Exadel Authoring Kit
 order: 2
 -->
 
-## Laying out your dialogs
-
-### Tabbed layout
+## Tabbed layout
 
 * [@Tabs](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/layouts/Tabs.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/tabs
@@ -92,7 +91,7 @@ Note that the ancestor class does not have to be declared `@AemComponent` itself
 
 Additionally, you can facilitate a tabbed area *within* the dialog or one of its sections to keep your visual elements well organized. See the "Tabs" division in [Component Structure](./component-structure.md) for particulars.
 
-### Accordion layout
+## Accordion layout
 
 * [@Accordion](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/layouts/Accordion.html)
 * Resource type: /libs/granite/ui/components/coral/foundation/accordion
@@ -130,7 +129,7 @@ public class MyComponent {
 ```
 Accordion panels inheritance and ignoring works exactly the same as for the tabs. And so is the ability to create a nested accordion within a dialog or its section. See the "Accordion" division in [Component Structure](./component-structure.md).
 
-### Fixed columns layout
+## Fixed columns layout
 
 * [@FixedColumns](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/annotations/layouts/FixedColumns.html)
 * Resource type: /libs/granite/ui/components/foundation/layouts/fixedcolumns
@@ -165,7 +164,8 @@ Multiple columns are placed side-by-side if the width of the dialog allows, or e
 
 Then again, same as for Tabs and Accordion, `@FixedColumns` can be used as an in-dialog widget. This is particularly useful when you need to render dialog content screen-centered, as within a Page properties' tab (see "Page properties" section in [Component Structure](./component-structure.md)). For the in-dialog usage two additional properties of `@FixedColumns` can be specified: *margin* and *maximized* (see the Javadoc for more detail).
 
-### See also
+<hr/>
+<h2 id="see-also" class="h3">See also</h2>
 
 - [Component Structure](./component-structure.md)
 - [Reusing code and making it brief](./reusing-code.md)

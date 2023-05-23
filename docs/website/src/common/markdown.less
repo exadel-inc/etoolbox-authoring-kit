@@ -6,7 +6,7 @@
     margin-bottom: 20px;
 
     &:not(:first-child) {
-      margin-top: 40px;
+      margin-top: 25px;
     }
   }
 
@@ -27,33 +27,5 @@
     background-color: #fff;
     border-radius: 4px;
     padding: 25px 20px;
-  }
-
-  #see-also {
-    margin-top: 60px;
-
-    + ul {
-      display: flex;
-      flex-direction: column;
-      padding-left: 0;
-
-      li {
-        padding-bottom: 10px;
-        list-style: none;
-
-        a { color: @body-fg; }
-      }
-
-      @media @md-xl {
-        flex-direction: row;
-        flex-wrap: wrap;
-
-        li {
-          flex: 0 0 33.333333%;
-        }
-      }
-    }
-
-    + p a { color: @body-fg; }
   }
 }

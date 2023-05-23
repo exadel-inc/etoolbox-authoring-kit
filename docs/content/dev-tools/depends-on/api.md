@@ -1,13 +1,12 @@
 <!--
 layout: content
-title: API
-seoTitle: API - Exadel Authoring Kit
+title: DependsOn API
+navTitle: API
+seoTitle: DependsOn API - Exadel Authoring Kit
 order: 3
 -->
 
-## Depends On API
-
-### Actions
+## Actions
 
 Built-in plug-in actions are:
 * `visibility` - hide the element if the Query result is 'falsy'. <u>This is the default action that is applied when no action is specified.</u>
@@ -19,7 +18,7 @@ Built-in plug-in actions are:
 * `validate` - set the validation state of the field from the Query result.
 * `disabled` - set the field's disabled state from the Query result.
 
-#### Async actions
+### Async actions
 
 Built-in plug-in async actions:
 * `fetch` - an action to set the result of fetching an arbitrary resource.
@@ -32,11 +31,11 @@ Built-in plug-in async actions:
       Note: If the mapping result is `undefined` then the action will not change the current value.
     * `postfix` (optional, `.json` by default) - a string to append to the path if it is not already presented
 
-#### Widget-specific actions
+### Widget-specific actions
 
 * `update-options` - changes the option set of a Granite Select component based on the path from the Query result. The path can lead to any endpoint that is supported by the [Option Provider mechanism](../option-provider.md).
 
-### Action Registry
+## Action Registry
 
 Custom action can be specified using `Granite.DependsOnPlugin.ActionRegistry`.
 
@@ -51,7 +50,7 @@ Granite.DependsOnPlugin.ActionRegistry.register('set', function setValue(value) 
 });
 ```
 
-### Reference Types
+## Reference Types
 
 Allowed reference types:
 * `boolean` - cast to boolean (according to JS cast rules)
@@ -67,7 +66,7 @@ In any other case (e.g. if the type is `any`), no cast will be performed.
 
 Note: If you use a Hidden field to save a temporary boolean result, use `boolstring` reference type in order to retrieve it.
 
-### ElementsAccessor Registry
+## ElementsAccessor Registry
 
 Registry `Granite.DependsOnPlugin.ElementAccessors` - can be used to define the custom accessors of an element.
 The accessor provides information on how to get/set values, set a require/visibility/disabled state, or returns `preferableType` for the specific type of component.
@@ -105,7 +104,7 @@ Granite.DependsOnPlugin.ElementAccessors.registerAccessor({
 });
 ```
 
-### Query Syntax
+## Query Syntax
 
 A Query is a plain JavaScript condition or expression.
 Any global and native JavaScript object can be used inside a Query.
@@ -113,7 +112,7 @@ You can also use dynamic references to access other fields' values.
 In order to define a reference, the referenced field's name should be specified in a `dependsOnRef` attribute.
 Then the reference will be accessible in the Query using the `@` or `@@` symbol and reference name.
 
-#### Using Semicolons in DependsOn Queries
+### Using Semicolons in DependsOn Queries
 
 DependsOn queries are always treated as a single JavaScript expression and never as multiple statements in one line.
 Semicolon symbols (`;`) within a DependsOn Query must be escaped.
@@ -155,7 +154,7 @@ class MyComponent {
 }
 ```
 
-#### Query Reference Syntax
+### Query Reference Syntax
 
 There are two versions of references available in the Queries:
 - 'Single' reference: `@reference`. 'Single' reference starts from the `@` symbol in the Query, it allows you to access a defined field value.
@@ -182,7 +181,7 @@ Back and forward selectors are separated by '|>'.
 For example:
 * `@enableCta (section |> .fieldset-1)` - will reference the value of the field marked by `dependsOnRef=enableCta` in bounds of element with `fieldset-1` class placed in the closest parent section element.
 
-### Multiple Actions
+## Multiple Actions
 Multiple actions with Queries can be defined.
 Queries/Actions should be separated by ';' and placed in the same order.
 The number of Actions should match the number of Queries.

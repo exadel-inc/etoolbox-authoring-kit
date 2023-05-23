@@ -310,7 +310,8 @@ public class DummyComponent {
 ```
 Else you can use a nested class annotated with `FixedColumns` for that purpose.
 
-### See also
+<hr/>
+<h2 id="see-also" class="h3">See also</h2>
 
 - [Laying out your dialog](./dialog-layout.md)
 - [Configuring RichTextEditor](./dialog-fields/configuring-rte.md)

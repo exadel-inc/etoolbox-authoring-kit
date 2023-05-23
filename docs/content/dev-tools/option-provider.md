@@ -1,10 +1,10 @@
 <!--
 layout: content
-title: Option Provider
+title: Feeding data to selection widgets with OptionProvider
+navTitle: Option Provider
 seoTitle: Option Provider - Exadel Authoring Kit
 order: 3
 -->
-## Feeding data to selection widgets with OptionProvider
 
 Several Granite/Touch UI components, such as _RadioGroup_ or _Select_, facilitate selecting from a set of options. Traditionally, the options are either inlined (the ToolKit offers its `@RadioButton` and `@Option` annotations for that) or supplied via a datasource. Both ways have their limitations; the in-line options are not dynamic and potentially lead to a lot of copy-pasting across components, while the _datasource_ pattern requires creating a datasource servlet for every occasion.
 
@@ -22,7 +22,7 @@ The options managed by _OptionProvider_ can originate from:
 
 Moreover, a single _OptionProvider_ can join several data sources, merge and sort their options in a common sequence, enjoy having a "primary" and "fallback" option source, etc.
 
-#### Static OptionProvider setup
+## Static OptionProvider setup
 
 For a static Granite UI component, OptionProvider is set up via a property of such annotations as `ButtonGroup`, `@RadioGroup`, or `@Select` (see the samples below):
 
@@ -116,7 +116,7 @@ _valueTransform_ - if specified, defines the way the <u>value</u> will be transf
 
 _isFallback_ - determines that the current `@OptionSource` is only used if other option source entries yielded no results. It is also used if it is the only option source. This option is useful, e.g., when you have a component with an authorable path to an option source. As the component is just created, the path will probably be empty. But still, there will be a possibility to display some options retrieved via the fallback source.
 
-#### Working with HTTP endpoints
+## Working with HTTP endpoints
 
 Apart from a JCR path, `@OptionSource` allows specifying a common network URL (note: must be a complete URL string parseable with `new URL("...")`. The content reached via the URL is expected to be a JSON entity. A JSON array becomes the list of options. A JSON node that has children produces the list of options from the enumeration of child nodes as well much the same way as a JCR resource with children.
 
@@ -159,7 +159,7 @@ By default, `@OptionProvider` uses the return value of the `.name()` method as t
 
 You can redefine this via the _textMember_, _valueMember_, and _attributeMembers_ properties. E.g. if the enum you want to use has the _.getInteger()_ method, you may specify it like `@OptionSource(enumeration = MyEnum.class, valueMember="getInteger")`. Besides, you can, for example, ensure that the value of _.toString()_ is rendered as an HTML attribute by specifying `attributeMembers="toString"`.
 
-#### Working with Java classes holding constants
+## Working with Java classes holding constants
 
 Apart from an enum, you can make an "ordinary" Java class work as the source of options if it contains `public static final` fields. Names of such fields will become option titles, and the stringified values (`String.valueOf(MY_CONSTANT)`) will become option values. You are able to select only some of the available fields with `@OptionSource(exclude=...)`.
 
@@ -191,7 +191,7 @@ This code will make `@OptionProvider` look for all the constants whose names mat
 
 Note that the "backgrounds" are not included in the list, as they do not correspond to the provided mask. You can introduce a separate _Select_, this time bor backgrounds, and populate it with `@OptionSource(enumeration = ColorConstants.class, textMember="BACKGROUND_NAME_*", valueMember="BACKGROUND_VALUE_*")`.
 
-#### Dynamic option change
+## Dynamic option change
 
 Because an `@OptionProvider` supports _path references_ apart from regular paths, the setting that says "where to look for the path" can be stored in a dialog field other than the one that actually deals with paths.
 
@@ -229,6 +229,7 @@ public class MyComponent {
 
 The facility that makes it possible to dynamically update selectable options is the _DependsOn_ action _"update-options"_ (see more on DependsOn actions [here](./depends-on/api.md)). It accepts any of the conventional _OptionProvider_ params described above in its `params` collection.
 
-### See also
+<hr/>
+<h2 id="see-also" class="h3">See also</h2>
 
-[Programming dynamic dialog behavior: DependsOn plugin client library](./depends-on/introduction.md)
+- [Programming dynamic dialog behavior: DependsOn plugin client library](./depends-on/introduction.md)

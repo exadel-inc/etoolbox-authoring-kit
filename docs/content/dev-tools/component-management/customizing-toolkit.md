@@ -1,13 +1,12 @@
 <!--
 layout: content
-title: Customization
+title: Customizing the ToolKit to your needs
+navTitle: Customization
 seoTitle: Customization - Exadel Authoring Kit
 order: 6
 -->
 
-## Customizing the ToolKit to your needs
-
-### Custom annotations. Annotation scopes
+## Custom annotations. Annotation scopes
 
 When creating markup for the Granite UI, the ToolKit handles data from the project's source code. Often it comes from Java annotations like `@AemComponent`, `@EditConfig`, or, e.g., `@DatePicker`.
 
@@ -15,7 +14,7 @@ You can create such annotations yourself. In the most basic case, you only need 
 
 `@AnnotationRendering` allows specifying what properties will be automatically mapped to the underlying node's attributes and in what *scope*.
 
-#### Custom annotation scope
+### Custom annotation scope
 
 The notion of *scope* refers to the region of a component in which the current annotation/handler is effective. The most common scopes are enumerated in the `Scopes` class. These are the component scope (roughly maps to the *.content.xml* file in a component's folder as we see in the project source files), *\<cq:dialog>*, *\<cq:design_dialog>*, *\<cq:editConfig>*, *\<cq:childEditConfig>*, *\<cq:htmlTag>*. There can be custom scopes for specific cases. Whenever the scope is not specified, the default (or "all-included") scope is assumed.
 
@@ -60,7 +59,7 @@ The `@CustomDialogAnnotation` will also affect the Granite UI markup. Its `@Anno
 
 You can omit the *scope* property. Then the appropriate scope will be decided on from other annotations attached to the current class. That is, if the class is `@Dialog`-annotated and a custom annotation is missing a *scope*, it is assumed that the custom annotation is also bound to the dialog scope. But if the class has its `@EditConfig` specified but no `@Dialog`, it is assumed that the custom annotation is within the *\<cq:editConfig>* scope, etc.
 
-#### How to control the automapping
+### How to control the automapping
 
 From `@CustomDialogAnnotation`, the following property values will be automatically mapped: *field1*, *field2*, and *field3*. That is because they have the "mappable" property type. Automatic mapping works for `string`s (and string arrays); `long`s (and long arrays), `double`s (and double arrays), `boolean`s (and boolean arrays); `enum` types (ane enum arrays). However, it does not work for `Class<?>`-typed properties or annotation types.
 
@@ -68,7 +67,7 @@ There is a way to restrict automatic mapping to particular properties by specify
 
 You can also set a prefix for all the properties rendered via the current annotation. Just use `@AnnotationRendering(prefix="some_value")`.
 
-#### @PropertyRendering
+### @PropertyRendering
 
 More settings for the mapping flow can be defined at the individual property level. See the following example:
 
@@ -103,7 +102,7 @@ public @interface CustomAnnotation {
 
 *valueType* allows you to control how a value is stored in JCR. For example, a value of type `boolean` would be by default rendered as `{Boolean}true` or `{Boolean}false`. If you need the type hint skipped, make the ToolKit perceive the value as a string by specifying `valueType = String.class`.
 
-### Custom handlers
+## Custom handlers
 
 ToolKit annotations are rendered with *Handlers* (even an automatically mapped annotation is processed via an undercover "automapping handler"). All the out-of-box annotations are supplemented with bundled handlers, but you can declare custom ones as well.
 
@@ -134,7 +133,7 @@ Every custom handler is characterized by the following features:
 
 Usually, the ToolKit initializes one instance of every handler and manages it as a *singleton*, so a developer is expected to avoid assigning handler-wide *states*. All the logic should be processed within the `accept(Source, Target)`method or in methods called from the latter.
 
-#### @Handles
+### @Handles
 
 `@Handles` is the marker of a handler. This annotation exposes the following properties.
 
@@ -146,7 +145,7 @@ There is no restriction regarding what annotations can be handled; built-in ones
 
 *before* and *after* parameters allow for arranging the sequence of handling. If neither is specified, the handlers are executed in the following sequence: first the built-in handlers hooked to this annotation, then custom handlers, in alphabetical order by name.
 
-#### Source object
+### Source object
 
 The first argument of a handler's `accept` method is the [Source](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/com/exadel/aem/toolkit/api/handlers/Source.html). This is a generic data provider that matches the entity (a Java class or a class member) the handler is called for. If the current handler is invoked due to an annotation attached to a class, the *Source* represents the class itself. But if the annotation was attached to a method or a field, the *Source* stands for the underlying member.
 
@@ -192,7 +191,7 @@ public class CustomHandler implements Handler {
 
 Adapter instances are retained for a *Source* through the handling chain. Therefore, you can assign values to custom adapters and be sure that the same value can be retrieved in, for example, another handler processing some other annotation attached to the same class or class member.
 
-#### Target object
+### Target object
 
 In a ToolKit's handler, *Target* stands for an abstraction of rendering a target. Each *Target* instance represents a future Granite UI entity or a corresponding XML node. It can have its attributes, a parent target, and an ordered collection of child targets (nodes) the same way that Granite/XML nodes do.
 
@@ -273,7 +272,7 @@ There are many more possibilities. For greater detail, see the inline documentat
 
 Just like *Source*, *Target* is an adaptable entity. By default, *Target* adapts to `DomAdapter` with the possibility of being serialized to an XML DOM document. You can apply any custom adapters in the way described in the "Source object" section.
 
-### Debugging custom plugin logic
+## Debugging custom plugin logic
 
 You can debug the ToolKit's plugin while building your AEM project. In order to do so, you need to:
 

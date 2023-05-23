@@ -36,10 +36,6 @@ rules:
   keyframe-declaration-no-important: true
   # Disallow duplicated at-rules
   no-duplicate-at-import-rules: true
-  # Warn about duplicate selectors within a stylesheet
-  no-duplicate-selectors:
-    - true
-    - severity: warning
   # Warn if empty sources
   no-empty-source:
     - true

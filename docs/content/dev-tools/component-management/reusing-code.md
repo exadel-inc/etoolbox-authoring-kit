@@ -1,12 +1,12 @@
 <!--
 layout: content
-title: Reusing Code
+title: Reusing code and making it brief
+navTitle: Reusing Code
 seoTitle: Reusing Code - Exadel Authoring Kit
 order: 5
 -->
-## Reusing code and making it brief
 
-### Members inheritance and how to cancel it
+## Members inheritance and how to cancel it
 
 Either dialog containers (tabs or accordion panels) or dialog fields are "inherited" across Java classes that *extend* or *implement* other classes.
 
@@ -38,7 +38,7 @@ But if we need to ignore a field in one particular FieldSet of Multifield within
 
 The `@Ignore` setting is *not* inherited, unlike fields themselves, and works only for the class where it was specified.
 
-### Sections inheritance
+## Sections inheritance
 
 With the ToolKit, dialog sections (tabs or accordion panels) declared in a superclass are also "inherited" by the descendant class, and the layout instructions (`@Place`) are in effect even if referring to a superclass container.
 
@@ -59,7 +59,7 @@ public class TestTabsExtension {/* ... */}
 ```
 Note that, again, the `@Ignore` setting is *not* inherited and works only for the class where it was specified.
 
-### Replacing members
+## Replacing members
 
 Apart from ignoring class members, there is an option to replace an (ancestral) field or method with another one. This may be used to virtually "override" a field from superclass preserving the same field name (but with no duplicating this time). Take a look at the following sample:
 ```
@@ -72,7 +72,7 @@ This way, the *text* field in the superclass will be removed from the rendering 
 
 If you omit the *source* part from `@Replace`, the current class will be assumed. Otherwise, if you omit the *value*, the same-named field or method from the specified source class will be assumed.
 
-### @Extends-ing fields annotations
+## @Extends-ing fields annotations
 
 Several dialog fields, such as the RichTextEditor field, may require vast and sophisticated annotation code. If there are multiple such fields in your Java files, they may become overgrown and difficult to maintain. You will also probably face the need to copy the lengthy annotation listings between fields (e.g. if you plan to use several RTE boxes with virtually the same set of toolbar buttons, plugins, etc.).
 
