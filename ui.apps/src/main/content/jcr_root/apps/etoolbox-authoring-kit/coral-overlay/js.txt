@@ -1,3 +1,0 @@
-# Granite fixes
-js/updateValidationSelectors.js
-js/updateMultifieldNames.js

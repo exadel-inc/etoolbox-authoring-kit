@@ -1,62 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.exadel.etoolbox</groupId>
-    <artifactId>etoolbox-authoring-kit</artifactId>
+    <artifactId>etoolbox-authoring-kit-samples</artifactId>
     <version>2.3.0</version>
 
-    <name>Exadel Toolbox Authoring Kit</name>
-    <description>Automates generating and managing rich and responsive authoring interfaces for Adobe Experience Manager</description>
-    <url>https://github.com/exadel-inc/etoolbox-authoring-kit</url>
-
-    <organization>
-        <name>Exadel, Inc.</name>
-        <url>https://exadel.com</url>
-    </organization>
-
-    <developers>
-        <developer>
-            <id>exadel-martech</id>
-            <name>Exadel MarTech Team</name>
-            <organization>Exadel, Inc.</organization>
-            <organizationUrl>https://exadel.com</organizationUrl>
-            <roles>
-                <role>developer</role>
-            </roles>
-            <timezone>Europe/Minsk</timezone>
-        </developer>
-    </developers>
-
-    <licenses>
-        <license>
-            <name>The Apache License, Version 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
-
-    <scm>
-        <connection>scm:git:git://github.com/exadel-inc/etoolbox-authoring-kit.git</connection>
-        <developerConnection>scm:git:git@github.com:exadel-inc/etoolbox-authoring-kit.git</developerConnection>
-        <url>https://github.com/exadel-inc/etoolbox-authoring-kit</url>
-        <tag>HEAD</tag>
-    </scm>
-
-    <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
-    <issueManagement>
-        <system>Github</system>
-        <url>https://github.com/exadel-inc/etoolbox-authoring-kit/issues</url>
-    </issueManagement>
+    <name>Exadel Toolbox Authoring Kit - Samples</name>
 
     <packaging>pom</packaging>
 
@@ -64,160 +16,38 @@
         <module>core</module>
         <module>ui.apps</module>
         <module>ui.content</module>
-        <module>plugin</module>
-        <module>all</module>
     </modules>
 
     <properties>
-        <project.shortName>EToolbox Authoring Kit</project.shortName>
-        <project.vendor>Exadel</project.vendor>
-
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.build.jdkSpec>1.8</project.build.jdkSpec>
-        <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
-
-        <sonar.projectKey>${project.artifactId}</sonar.projectKey>
-        <sonar.java.binaries>target/classes</sonar.java.binaries>
-
-        <aem.host>localhost</aem.host>
-        <aem.port>4502</aem.port>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <host>localhost</host>
+        <port>4502</port>
+        <serviceUrl>http://${host}:${port}/crx/packmgr/service.jsp</serviceUrl>
+        <project.jcrAppFolder>etoolbox-authoring-kit/samples</project.jcrAppFolder>
+        <toolkit.version>2.3.0</toolkit.version>
+        <project.vendor>Exadel</project.vendor>
     </properties>
 
     <build>
         <pluginManagement>
             <plugins>
                 <plugin>
-                    <groupId>com.day.jcr.vault</groupId>
-                    <artifactId>content-package-maven-plugin</artifactId>
-                    <version>0.5.1</version>
-                    <extensions>true</extensions>
-                    <configuration>
-                        <group>${project.parent.groupId}/${project.parent.artifactId}</group>
-                        <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
-                        <targetURL>http://${aem.host}:${aem.port}/crx/packmgr/service.jsp</targetURL>
-                        <properties>
-                            <name>${project.name}</name>
-                            <description>${project.name}</description>
-                            <version>${project.version}</version>
-                            <created>${maven.build.timestamp}</created>
-                            <createdBy>${project.vendor}</createdBy>
-                            <packagePath>${project.artifactId}-${project.version}.zip</packagePath>
-                        </properties>
-                        <archive>
-                            <manifestEntries>
-                                <Built-By>${project.vendor}</Built-By>
-                                <Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
-                                <Implementation-Title>${project.shortName}</Implementation-Title>
-                                <Implementation-Version>${project.version}</Implementation-Version>
-                            </manifestEntries>
-                        </archive>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>build-package</id>
-                            <goals>
-                                <goal>package</goal>
-                            </goals>
-                            <configuration>
-                                <group>${project.parent.groupId}/${project.parent.artifactId}</group>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
                     <groupId>org.apache.felix</groupId>
                     <artifactId>maven-bundle-plugin</artifactId>
                     <version>5.1.1</version>
                     <extensions>true</extensions>
                     <configuration>
-                        <exportScr>true</exportScr>
                         <instructions>
-                            <Bundle-Name>${project.shortName}</Bundle-Name>
+                            <Sling-Model-Packages>com.exadel.aem.toolkit.samples.models</Sling-Model-Packages>
+                            <Export-Package>com.exadel.aem.toolkit.samples.*</Export-Package>
                             <Import-Package>*;resolution:=optional</Import-Package>
-                            <_dsannotations>*</_dsannotations>
-                            <_metatypeannotations>*</_metatypeannotations>
+                            <Embed-Dependency>*;scope=compile|runtime</Embed-Dependency>
                         </instructions>
                     </configuration>
-                    <executions>
-                        <execution>
-                            <id>generate-scr-metadata</id>
-                            <goals>
-                                <goal>manifest</goal>
-                            </goals>
-                        </execution>
-                    </executions>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-checkstyle-plugin</artifactId>
-                    <version>3.1.2</version>
-                    <configuration>
-                        <configLocation>checkstyle.xml</configLocation>
-                        <encoding>UTF-8</encoding>
-                        <consoleOutput>true</consoleOutput>
-                        <failsOnError>true</failsOnError>
-                        <linkXRef>false</linkXRef>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>check-style</id>
-                            <phase>validate</phase>
-                            <goals>
-                                <goal>check</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.puppycrawl.tools</groupId>
-                            <artifactId>checkstyle</artifactId>
-                            <version>9.3</version>
-                        </dependency>
-                    </dependencies>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-clean-plugin</artifactId>
-                    <version>2.5</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.6.1</version>
-                    <configuration>
-                        <encoding>${project.build.sourceEncoding}</encoding>
-                        <source>${project.build.jdkSpec}</source>
-                        <target>${project.build.jdkSpec}</target>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <version>1.4.1</version>
-                    <configuration>
-                        <rules>
-                            <requireMavenVersion>
-                                <version>3.3.9</version>
-                                <message>Maven version 3.3.9 or above is required</message>
-                            </requireMavenVersion>
-                            <requireJavaVersion>
-                                <version>1.8</version>
-                                <message>Project is designed for compilation with at least Java 8</message>
-                            </requireJavaVersion>
-                        </rules>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>enforce-versions</id>
-                            <goals>
-                                <goal>enforce</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-install-plugin</artifactId>
                     <version>2.5.2</version>
                 </plugin>
@@ -230,7 +60,6 @@
                             <manifestEntries>
                                 <Built-By>${project.vendor}</Built-By>
                                 <Build-Jdk>${java.version}</Build-Jdk>
-                                <Build-Timestamp>${maven.build.timestamp}</Build-Timestamp>
                                 <Bundle-ManifestVersion>2</Bundle-ManifestVersion>
                                 <Bundle-Name>${project.name}</Bundle-Name>
                                 <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
@@ -241,264 +70,55 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>2.10.4</version>
-                    <configuration>
-                        <encoding>UTF-8</encoding>
-                        <nodeprecated>true</nodeprecated>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-plugin-plugin</artifactId>
-                    <version>3.6.0</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-resources-plugin</artifactId>
-                    <version>2.6</version>
-                    <configuration>
-                        <includeEmptyDirs>true</includeEmptyDirs>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.18.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.sonatype.plugins</groupId>
-                    <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.7</version>
+                    <groupId>com.day.jcr.vault</groupId>
+                    <artifactId>content-package-maven-plugin</artifactId>
+                    <version>0.5.1</version>
                     <extensions>true</extensions>
                     <configuration>
-                        <serverId>ossrh</serverId>
-                        <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                        <autoReleaseAfterClose>false</autoReleaseAfterClose>
-                        <autoDropAfterRelease>true</autoDropAfterRelease>
+                        <targetURL>${serviceUrl}</targetURL>
+                        <packaging>zip</packaging>
+                        <filterSource>src/main/content/META-INF/vault/filter.xml</filterSource>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <id>Creating ToolKit Samples package</id>
+                            <goals>
+                                <goal>package</goal>
+                            </goals>
+                            <configuration>
+                                <group>${project.groupId}/${project.parent.artifactId}</group>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>com.exadel.etoolbox</groupId>
+                    <artifactId>etoolbox-authoring-kit-plugin</artifactId>
+                    <version>${toolkit.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>aem-authoring</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <configuration>
+                        <terminateOn>ALL</terminateOn>
                     </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
     </build>
-
-    <profiles>
-
-        <profile>
-            <id>deploy</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-gpg-plugin</artifactId>
-                            <version>1.6</version>
-                            <executions>
-                                <execution>
-                                    <id>sign-artifacts</id>
-                                    <phase>install</phase>
-                                    <goals>
-                                        <goal>sign</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-javadoc-plugin</artifactId>
-                            <version>3.2.0</version>
-                            <executions>
-                                <execution>
-                                    <id>attach-javadoc</id>
-                                    <phase>package</phase>
-                                    <goals>
-                                        <goal>jar</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
-                        <plugin>
-                            <groupId>org.apache.maven.plugins</groupId>
-                            <artifactId>maven-source-plugin</artifactId>
-                            <version>3.0.1</version>
-                            <executions>
-                                <execution>
-                                    <id>attach-sources</id>
-                                    <phase>package</phase>
-                                    <goals>
-                                        <goal>jar-no-fork</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>autoInstallPackage</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>com.day.jcr.vault</groupId>
-                            <artifactId>content-package-maven-plugin</artifactId>
-                            <executions>
-                                <execution>
-                                    <id>deploy-to-instance</id>
-                                    <goals>
-                                        <goal>install</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-
-        <profile>
-            <id>nocheckstyle</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-checkstyle-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>check-style</id>
-                                <phase>none</phase>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>integration</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <modules>
-                <module>core</module>
-                <module>plugin</module>
-                <module>it.tests</module>
-            </modules>
-        </profile>
-
-        <profile>
-            <id>coverage</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.jacoco</groupId>
-                            <artifactId>jacoco-maven-plugin</artifactId>
-                            <version>0.8.5</version>
-                            <executions>
-                                <execution>
-                                    <id>agent</id>
-                                    <goals>
-                                        <goal>prepare-agent</goal>
-                                    </goals>
-                                </execution>
-                                <execution>
-                                    <id>report</id>
-                                    <goals>
-                                        <goal>report</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
-        </profile>
-    </profiles>
 
     <dependencyManagement>
         <dependencies>
+            <!-- Foreign -->
             <dependency>
-                <groupId>ch.qos.logback</groupId>
-                <artifactId>logback-classic</artifactId>
-                <version>1.3.5</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>2.13.4.2</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.code.findbugs</groupId>
-                <artifactId>jsr305</artifactId>
-                <version>3.0.2</version>
+                <groupId>com.adobe.aem</groupId>
+                <artifactId>uber-jar</artifactId>
+                <version>6.4.0</version>
+                <classifier>apis</classifier>
                 <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.codeborne</groupId>
-                <artifactId>selenide</artifactId>
-                <version>6.14.1</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>31.0.1-jre</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.google.jimfs</groupId>
-                <artifactId>jimfs</artifactId>
-                <version>1.1</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>2.7</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>io.wcm</groupId>
-                <artifactId>io.wcm.testing.aem-mock.junit4</artifactId>
-                <version>3.1.0</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>javax.inject</groupId>
@@ -507,88 +127,10 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>javax.jcr</groupId>
-                <artifactId>jcr</artifactId>
-                <version>2.0</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>2.5</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>javax.servlet.jsp</groupId>
-                <artifactId>jsp-api</artifactId>
-                <version>2.1</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>4.13.1</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.12.0</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpclient</artifactId>
-                <version>4.5.14</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.httpcomponents</groupId>
-                <artifactId>httpmime</artifactId>
-                <version>4.5.14</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven</groupId>
-                <artifactId>maven-core</artifactId>
-                <version>3.6.1</version>
-                <type>jar</type>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven.plugin-tools</groupId>
-                <artifactId>maven-plugin-annotations</artifactId>
-                <version>3.4</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.maven</groupId>
-                <artifactId>maven-plugin-api</artifactId>
-                <version>3.0</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.apache.sling</groupId>
                 <artifactId>org.apache.sling.api</artifactId>
-                <version>2.16.4</version>
+                <version>2.18.4</version>
                 <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.sling</groupId>
-                <artifactId>org.apache.sling.jcr.resource</artifactId>
-                <version>3.0.18</version>
-                <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.sling</groupId>
-                <artifactId>org.apache.sling.testing.sling-mock-oak</artifactId>
-                <version>2.1.10-1.16.0</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.mockito</groupId>
-                <artifactId>mockito-core</artifactId>
-                <version>2.7.22</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>
@@ -596,56 +138,56 @@
                 <version>6.0.1</version>
                 <scope>provided</scope>
             </dependency>
+            <!-- ToolKit-specific -->
             <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>osgi.cmpn</artifactId>
-                <version>6.0.0</version>
+                <groupId>com.exadel.etoolbox</groupId>
+                <artifactId>etoolbox-authoring-kit-core</artifactId>
+                <version>${toolkit.version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.osgi</groupId>
-                <artifactId>osgi.core</artifactId>
-                <version>6.0.0</version>
-                <scope>provided</scope>
+                <groupId>com.exadel.etoolbox</groupId>
+                <artifactId>etoolbox-authoring-kit-all</artifactId>
+                <version>${toolkit.version}</version>
+                <type>zip</type>
             </dependency>
+            <!-- Internal -->
             <dependency>
-                <groupId>org.reflections</groupId>
-                <artifactId>reflections</artifactId>
-                <version>0.9.11</version>
-                <scope>compile</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.slf4j</groupId>
-                <artifactId>slf4j-api</artifactId>
-                <version>2.0.5</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.xmlunit</groupId>
-                <artifactId>xmlunit-core</artifactId>
-                <version>2.6.3</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.adobe.aem</groupId>
-                <artifactId>uber-jar</artifactId>
-                <version>6.4.0</version>
-                <classifier>apis</classifier>
-                <scope>provided</scope>
+                <groupId>${project.groupId}</groupId>
+                <artifactId>etoolbox-authoring-kit-samples-core</artifactId>
+                <version>${project.parent.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
     <repositories>
         <repository>
+            <id>toolkit-snapshots</id>
+            <name>ToolKit Snapshot</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </repository>
+        <repository>
             <id>adobe</id>
             <name>Adobe Public Repository</name>
-            <url>https://repo.adobe.com/nexus/content/groups/public</url>
+            <url>https://repo.adobe.com/nexus/content/groups/public/</url>
             <layout>default</layout>
         </repository>
     </repositories>
 
     <pluginRepositories>
+        <pluginRepository>
+            <id>toolkit-snapshots</id>
+            <name>ToolKit Snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+            <snapshots>
+                <enabled>true</enabled>
+                <updatePolicy>always</updatePolicy>
+            </snapshots>
+        </pluginRepository>
         <pluginRepository>
             <id>adobe</id>
             <name>Adobe Public Repository</name>
@@ -653,5 +195,4 @@
             <layout>default</layout>
         </pluginRepository>
     </pluginRepositories>
-
 </project>

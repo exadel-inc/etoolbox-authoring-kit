@@ -1,21 +1,16 @@
 {
-  "name": "depends-on",
-  "description": "A clientlib that executes defined action on dependent fields",
-  "version": "2.4.1",
-  "private": true,
-  "devDependencies": {
-    "eslint": "^8.31.0",
-    "eslint-config-standard": "^17.0.0",
-    "eslint-plugin-import": "^2.27.4",
-    "eslint-plugin-n": "^15.6.1",
-    "eslint-plugin-promise": "^6.1.1"
-  },
-  "directories": {
-    "doc": "src/main/content/jcr_root/apps/etoolbox-authoring-kit/depends-on/docs"
-  },
+  "name": "toolkit-samples-package",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "lint": "eslint \"src/main/content/jcr_root/apps/**/*.js\""
+    "run": "node index.js"
   },
-  "license": "Apache-2.0",
-  "repository": "https://github.com/exadel-inc/etoolbox-authoring-kit/tree/master/ui.apps/src/main/content/jcr_root/apps/etoolbox-authoring-kit/depends-on"
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "aemsync": "^4.0.1",
+    "ansi-colors": "^4.1.1",
+    "fancy-log": "^1.3.3"
+  }
 }

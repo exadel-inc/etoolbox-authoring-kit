@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
-    <filter root="/conf/etoolbox-authoring-kit"/>
-
-    <!-- The following filter clears an old directory in JCR content. This can be removed after v.2 release -->
-    <filter root="/conf/authoring-toolkit"/>
+    <filter root="/content/etoolbox-authoring-kit/samples" mode="merge"/>
+    <filter root="/content/cq:tags/movies"/>
+    <filter root="/content/cq:tags/fruit"/>
+    <filter root="/etc/tags/fruit"/>
+    <filter root="/etc/tags/movies"/>
+    <!-- Clean-up filter - Not necessary for a new installation -->
+    <filter root="/content/toolkit-samples"/>
 </workspaceFilter>

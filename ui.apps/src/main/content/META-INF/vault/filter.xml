@@ -1,14 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
-    <filter root="/apps/cq/core/content/nav/tools/etoolbox/lists"/>
-    <filter root="/apps/wcm/core/content/sites/actions/secondary/create/items/createlist"/>
-
-    <filter root="/apps/etoolbox-authoring-kit">
-        <exclude pattern="/apps/etoolbox-authoring-kit/fixes(/.*)?"/>
-        <exclude pattern="/apps/etoolbox-authoring-kit/samples(/.*)?"/>
-    </filter>
-
-    <!-- The following filters clear old directories in JCR content. They can be removed after v.2 release -->
-    <filter root="/apps/authoring-toolkit"/>
-    <filter root="/apps/cq/core/content/nav/tools/aembox/lists"/>
+    <filter root="/apps/etoolbox-authoring-kit/samples/"/>
+    <filter root="/apps/settings/wcm/designs/etoolbox-authoring-kit-samples"/>
+    <!-- Clean-up filters - Not necessary for a new installation -->
+    <filter root="/apps/settings/wcm/designs/toolkit-samples"/>
+    <filter root="/etc/packages/authoring-toolkit-samples"/>
 </workspaceFilter>

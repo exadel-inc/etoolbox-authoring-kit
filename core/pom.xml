@@ -1,187 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
+        <artifactId>etoolbox-authoring-kit-samples</artifactId>
         <groupId>com.exadel.etoolbox</groupId>
-        <artifactId>etoolbox-authoring-kit</artifactId>
         <version>2.3.0</version>
     </parent>
 
-    <artifactId>etoolbox-authoring-kit-core</artifactId>
+    <artifactId>etoolbox-authoring-kit-samples-core</artifactId>
 
-    <name>Exadel Toolbox Authoring Kit - Core</name>
-    <description>API and core functionality module of Exadel Toolbox Authoring Kit</description>
+    <name>Exadel Toolbox Authoring Kit - Samples Core</name>
 
-    <packaging>jar</packaging>
+    <packaging>bundle</packaging>
 
     <properties>
-        <sonar.coverage.jacoco.xmlReportPaths>../plugin/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <build>
-        <sourceDirectory>src/main/java</sourceDirectory>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Import-Package>javax.inject;javax.annotation;version=0.0.0,*;resolution:=optional</Import-Package>
-                        <Sling-Model-Packages>com.exadel.aem.toolkit.core.lists.models,com.exadel.aem.toolkit.core.authoring.models,com.exadel.aem.toolkit.core.policymanagement.models</Sling-Model-Packages>
-                        <Export-Package>com.exadel.aem.toolkit.api.*,com.exadel.aem.toolkit.core.*</Export-Package>
-                    </instructions>
-                </configuration>
+                <artifactId>maven-jar-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <configuration>
-                    <includes>
-                        <include>**/AllTests.class</include>
-                    </includes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
 
-    <profiles>
-
-        <profile>
-            <id>deploy</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>coverage</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-    </profiles>
-
     <dependencies>
+        <!-- Foreign -->
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.code.findbugs</groupId>
-            <artifactId>jsr305</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.wcm</groupId>
-            <artifactId>io.wcm.testing.aem-mock.junit4</artifactId>
+            <groupId>com.adobe.aem</groupId>
+            <artifactId>uber-jar</artifactId>
+            <classifier>apis</classifier>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.jcr</groupId>
-            <artifactId>jcr</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>javax.servlet.jsp</groupId>
-            <artifactId>jsp-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.sling</groupId>
-            <artifactId>org.apache.sling.testing.sling-mock-oak</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>osgi.annotation</artifactId>
         </dependency>
+        <!-- Internal -->
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.cmpn</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>osgi.core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.adobe.aem</groupId>
-            <artifactId>uber-jar</artifactId>
-            <classifier>apis</classifier>
+            <groupId>com.exadel.etoolbox</groupId>
+            <artifactId>etoolbox-authoring-kit-core</artifactId>
         </dependency>
     </dependencies>
-
 </project>
