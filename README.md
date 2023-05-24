@@ -276,5 +276,5 @@ This annotation is used in the [AbilitiesComponent](./core/src/main/java/com/exa
        params = { @DependsOnParam(name = "msg", value = "Too powerful!")}
    )
    ```
-Custom *DependsOn* actions are placed in the [`abilities-component`](./apps/src/main/content/jcr_root/apps/etoolbox-authoring-kit/samples/components/content/abilities-component/clientlib/authoring/altVisibility.js) and [`warrior-description-component`](./apps/src/main/content/jcr_root/apps/etoolbox-authoring-kit/samples/components/content/warrior-description-component/clientlib/authoring) folders.
+Custom *DependsOn* actions are placed in the [`abilities-component`](./ui.apps/src/main/content/jcr_root/apps/etoolbox-authoring-kit/samples/components/content/abilities-component/clientlib/authoring/altVisibility.js) and [`warrior-description-component`](./ui.apps/src/main/content/jcr_root/apps/etoolbox-authoring-kit/samples/components/content/warrior-description-component/clientlib/authoring) folders.
 
