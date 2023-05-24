@@ -1,2 +1,0 @@
-namespaceFilter.js
-getParentColorTheme.js
