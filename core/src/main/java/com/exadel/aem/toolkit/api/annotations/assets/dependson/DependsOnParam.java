@@ -15,11 +15,13 @@ package com.exadel.aem.toolkit.api.annotations.assets.dependson;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * Presents a name-value pair of {@code granite:data} attributes to be rendered as a DependsOn parameter
  * @see DependsOn
  */
+@Target({})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DependsOnParam {
 

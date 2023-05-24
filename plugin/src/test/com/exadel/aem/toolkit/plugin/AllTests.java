@@ -39,6 +39,7 @@ import com.exadel.aem.toolkit.plugin.targets.TargetsTest;
 import com.exadel.aem.toolkit.plugin.utils.AnnotationUtilTest;
 import com.exadel.aem.toolkit.plugin.utils.ordering.TopologicalSorterTest;
 import com.exadel.aem.toolkit.plugin.validators.ValidatorsTest;
+import com.exadel.aem.toolkit.plugin.writers.PackageInfoTest;
 
 /**
  * Shortcut class for running all available test cases in a batch
@@ -67,6 +68,8 @@ import com.exadel.aem.toolkit.plugin.validators.ValidatorsTest;
 
     ValidatorsTest.class,
     TerminateOnTest.class,
+
+    PackageInfoTest.class
 })
 public class AllTests {
     @BeforeClass

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:title="Static Page"
+          jcr:description="EToolbox Authoring Kit static page sample"
+          jcr:primaryType="cq:Template"
+          allowedPaths="[/content(/.*)?]"
+          ranking="{Long}9999">
+    <jcr:content
+        jcr:primaryType="cq:PageContent"
+        cq:designPath="/apps/settings/wcm/designs/etoolbox-authoring-kit-test"
+        sling:resourceType="etoolbox-authoring-kit-test/components/pages/static-template-page"/>
+</jcr:root>

@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.exadel.etoolbox</groupId>
         <artifactId>etoolbox-authoring-kit</artifactId>
-        <version>2.2.2-SNAPSHOT</version>
+        <version>2.3.0</version>
     </parent>
 
     <artifactId>etoolbox-authoring-kit-core</artifactId>
@@ -114,6 +114,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.google.code.findbugs</groupId>
             <artifactId>jsr305</artifactId>
         </dependency>
@@ -168,6 +172,10 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.adobe.aem</groupId>

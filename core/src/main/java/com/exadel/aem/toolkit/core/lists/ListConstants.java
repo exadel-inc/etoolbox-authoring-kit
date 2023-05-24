@@ -14,7 +14,9 @@
 package com.exadel.aem.toolkit.core.lists;
 
 /**
- * Contains constant values used across lists module
+ * Contains constant values used across the {@code EToolbox Lists} module
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  */
 public class ListConstants {
 

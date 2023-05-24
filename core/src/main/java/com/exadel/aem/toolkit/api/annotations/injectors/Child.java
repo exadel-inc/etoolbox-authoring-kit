@@ -19,17 +19,24 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Source;
 import org.apache.sling.models.spi.injectorspecific.InjectAnnotation;
 
 import com.exadel.aem.toolkit.core.injectors.ChildInjector;
 
 /**
- * Used on a field, a method, or a method parameter of a Sling model to inject either a secondary model derived from the
- * current or a child (relative) resource or such a resource itself. One can select particular properties used for
- * injection by specifying their common prefix and/or postfix.
- * <p>The type of the underlying Java must be {@link org.apache.sling.api.resource.Resource} or a class adaptable from
- * {@code Resource}. Otherwise, nothing is injected
+ * Used on a field, a method, or a method parameter of a Sling model to inject one of the following: a child/relative
+ * resource of the current one; the current resource itself; or another Sling model based on one of the previous. Use
+ * "{@code ..}" to traverse to a parent resource. Use "{@code ./}" to refer to the current resource itself.
+ * <p>You can choose to use only a subset of properties of the given resource by specifying their common {@code prefix}
+ * and/or {@code postfix}.</p>
+ * <p>The type of the annotated Java class member is expected to be {@link Resource} or else a class adaptable from
+ * {@code Resource} or {@link SlingHttpServletRequest} (such are Sling model classes).</p>
+ * <p>If an array, a {@code Collection}, {@code List}, or {@code Set} is specified instead of a simple type, an
+ * array/collection consisting of just one member is injected. If the annotated member is of type {@code Object}, a
+ * resource is injected. Otherwise, nothing is injected
  * @see Children
  */
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
@@ -39,25 +46,24 @@ import com.exadel.aem.toolkit.core.injectors.ChildInjector;
 public @interface Child {
 
     /**
-     * Used to specify the relative path to the child resource. If not specified, defaults to the name of the underlying
+     * Used to provide the relative path to the child resource. If not specified, defaults to the name of the underlying
      * field/method. If such a resource does not exist, nothing is injected.
-     * <p>Note: use {@code ./} to consider the current resource as the source of injection (the prefix and postfix
-     * values
-     * will apply to the properties of the current resource)
+     * <p>Note: use {@code ./} to position the very current resource as the source of injection (the prefix and postfix
+     * values will apply to the properties of the current resource)
      * @return Optional non-blank string
      */
     String name() default StringUtils.EMPTY;
 
     /**
-     * Used to specify the prefix. If set to a non-blank string, the properties of the child (relative) resource that
-     * start with the given value will be used for injection, while others will be skipped
+     * Used to specify the prefix. If set to a non-blank string, the properties of the child/relative resource that
+     * starts with the given value will be used for injection, while others will be skipped
      * @return Optional non-blank string
      */
     String prefix() default StringUtils.EMPTY;
 
     /**
-     * Used to specify the prefix. If set to a non-blank string, the properties of the child (relative) resource that
-     * end with the given value will be used for injection, while others will be skipped
+     * Used to specify the postfix. If set to a non-blank string, the properties of the child/relative resource that end
+     * with the given value will be used for injection, while others will be skipped
      * @return Optional non-blank string
      */
     String postfix() default StringUtils.EMPTY;

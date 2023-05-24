@@ -1,11 +1,10 @@
 <!--
 layout: content
-title: Introduction
-seoTitle: Introduction - Exadel Authoring Kit
+title: 'Programming dynamic dialog behavior: DependsOn'
+navTitle: Introduction
+seoTitle: Introduction to DependsOn - Exadel Authoring Kit
 order: 1
 -->
-
-## Programming dynamic dialog behavior: DependsOn client library
 
 The DependsOn Plug-in is a clientlib that executes defined actions on dependent fields.
 

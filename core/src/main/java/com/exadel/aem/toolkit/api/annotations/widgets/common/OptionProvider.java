@@ -15,6 +15,7 @@ package com.exadel.aem.toolkit.api.annotations.widgets.common;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
@@ -27,6 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
  * set or appended to the list indicatively, i.e. via a string array, without the need to query for JCR values. For each
  * of the options, specific title, value, and HTML attributes can be set
  */
+@Target({})
 @Retention(RetentionPolicy.RUNTIME)
 @AnnotationRendering(properties = "!prepend,!append")
 public @interface OptionProvider {

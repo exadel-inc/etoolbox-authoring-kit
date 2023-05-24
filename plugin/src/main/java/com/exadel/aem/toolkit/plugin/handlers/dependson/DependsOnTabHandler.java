@@ -80,7 +80,7 @@ public class DependsOnTabHandler implements Handler {
                 DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY);
             target
                 .getTarget(TAB_ITEMS_NODE_PATH  + CoreConstants.SEPARATOR_SLASH  + value.tabTitle())
-                .getOrCreateTarget(DialogConstants.NN_GRANITE_DATA)
+                .getOrCreateTarget(CoreConstants.NN_GRANITE_DATA)
                 .attributes(dependsOnAttributes);
         } else {
             PluginRuntime.context()

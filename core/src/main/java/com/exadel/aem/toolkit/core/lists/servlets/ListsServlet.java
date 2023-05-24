@@ -54,6 +54,8 @@ import com.exadel.aem.toolkit.core.lists.ListConstants;
 /**
  * Provides the collection of AEM resources that either represent Exadel Toolbox Lists or serve as folders for Exadel
  * Toolbox Lists to be displayed in the Exadel Toolbox Lists console
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  */
 @Component(
     service = Servlet.class,

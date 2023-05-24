@@ -18,10 +18,11 @@ We actively welcome your pull requests:
 1. Fork the repo and create your branch from `develop`.
 2. Do code changes. Whenever you create new files, add the "Licenced under the Apache Licence..." header (use any of the  existing files to copy the full header). Whenever you create new methods, add Javadoc / JSDoc. Alter existing Javadoc
    / JSDoc if you change a method's signature.
-3. If you've added code that should be tested, add tests. Make sure that the tests pass.
-4. If you've changed APIs, update the documentation under `docs/content` if needed.
-5. Make sure your code lints.
-6. Issue the pull request.
+3. If you've added code that should be tested, add unit tests under the _test_ folder of the respective module. Make sure that the tests pass.
+4. If your code covers the features that cannot be verified without live connectivity to an AEM server or a 3rd party service, add an integration test under the _it.tests_ module. Make sure that the tests pass.
+5. If you've changed APIs, update the documentation under `docs/content` if needed.
+6. Make sure your code lints.
+7. Issue the pull request.
 
 #### Procedural pull request questions
 
@@ -38,7 +39,7 @@ Every pull request consists of one or more commits. Commit messages must be pres
 ## Licensing
 Any contributions you make are understood to be under the  [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0) that covers the whole project. Feel free to contact the maintainers if that's a concern.
 
-After creating your first pull request, you will be asked to sign our Contributor License Agreement by commenting on your PR with a special message.
+After creating your first pull request, you will be asked to sign our [Contributor License Agreement](CLA.md) by commenting on your PR with a special message.
 
 ## Bug reporting
 We use Github's [issues](https://github.com/exadel-inc/etoolbox-authoring-kit/issues) to track public bugs.

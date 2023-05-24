@@ -129,9 +129,9 @@ public class AnnotationUtil {
     /**
      * Retrieves a list of properties of an {@code Annotation} object to which non-default values have been set as a
      * key-value map. The keys are the method names this annotation possesses, and the values are the results of
-     * methods' invocation
+     * the methods' invocation
      * @param annotation The annotation instance to analyze
-     * @return List of {@code Method} instances that represent properties initialized with non-defaults
+     * @return A map of {@code Method} instances that represent properties initialized with non-defaults
      */
     public static Map<String, Object> getNonDefaultProperties(Annotation annotation) {
         return getProperties(annotation, method -> propertyIsNotDefault(annotation, method));
@@ -139,7 +139,7 @@ public class AnnotationUtil {
 
     /**
      * Retrieves a list of properties of an {@code Annotation} object as a key-value map. The keys are the method names
-     * this annotation possesses, and the values are the results of methods' invocation
+     * this annotation possesses, and the values are the results of the methods' invocation
      * @param annotation The annotation instance to analyze
      * @param filter     {@code Predicate<Method>} do decide whether the current method is eligible for collection
      * @return {@code Map<String, Object>} instance containing property names and values
@@ -168,7 +168,7 @@ public class AnnotationUtil {
      * an actual annotation. Values to annotation methods are provided as a {@code Map<String, Object>} collection
      * @param type   Target annotation type
      * @param values Values that map to the target annotation's fields (methods)
-     * @param <T>    Particular type of the annotation facade
+     * @param <T>    A particular type of the annotation facade
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
      */
     public static <T extends Annotation> T createInstance(Class<T> type, Map<String, Object> values) {
@@ -191,7 +191,7 @@ public class AnnotationUtil {
      * @param type   Target annotation type
      * @param source Annotation object that provides values for the target annotation's fields (methods)
      * @param values Values that map to the target annotation's fields
-     * @param <T>    Particular type of the annotation facade
+     * @param <T>    A particular type of the annotation facade
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
      */
     public static <T extends Annotation> T createInstance(Class<T> type, T source, Map<String, Object> values) {
@@ -207,7 +207,7 @@ public class AnnotationUtil {
      * the values specified
      * @param source       {@code Annotation} instance to produce a facade for
      * @param voidedFields The fields to be voided, a list of non-blank Strings
-     * @param <T>          Particular type of the annotation facade
+     * @param <T>          A particular type of the annotation facade
      * @return Facade annotation instance, a subtype of the {@code Annotation} class
      */
     @SuppressWarnings("unchecked")
@@ -227,7 +227,7 @@ public class AnnotationUtil {
     /**
      * Gets a filter routine to select properties of the given annotation eligible for automatic mapping. If one of the
      * property-mapping annotations is present in the annotation given, the filter combs through the methods and picks
-     * those satisfying the mapping; otherwise a neutral (pass-all) filter is imposed
+     * those satisfying the mapping; otherwise, a neutral (pass-all) filter is imposed
      * @param annotation {@code Annotation} object to use methods from
      * @return {@code Predicate<Method>} instance
      */
@@ -338,7 +338,7 @@ public class AnnotationUtil {
     }
 
     /**
-     * Called by {@link AnnotationUtil#filterInstance(Annotation, List)} to retrieve a default value fore a
+     * Called by {@link AnnotationUtil#filterInstance(Annotation, List)} to retrieve a default value for a
      * method based on the method return type. Note: currently this method is not comprehensive since it covers not all
      * the possible annotation properties' types
      * @param method {@code Method} instance

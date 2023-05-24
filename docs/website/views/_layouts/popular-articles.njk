@@ -2,14 +2,13 @@
 layout: content
 ---
 
-<h2 class="popular-articles-title">Welcome on Exadel authoring Kit for AEM</h2>
-<h3 class="popular-articles-subheader">Popular articles</h3>
-<ul class="popular-articles-container">
+<h2 class="popular-articles-subheader">Welcome on Exadel authoring Kit for AEM</h2>
+<ul class="popular-articles-container" id="popular-articles-list">
   {% for article in articles %}
   {# Check if article is manually added #}
-    {% if article.title and article.content and article.url  %}
+    {% if article.title and article.content and article.url %}
       <li class="popular-articles-item">
-        <h4 class="mb-2">{{ article.title }}</h4>
+        <h3 class="mb-2 h4">{{ article.title }}</h3>
         <p class="popular-articles-content">{{ article.content }}</p>
         <a href="{{ article.url | url }}">Learn More</a>
       </li>
@@ -18,7 +17,7 @@ layout: content
       {% for item in collections.all | equalByUrl(article) %}
         <li class="popular-articles-item">
           {% set text = item.data.content %}
-          <h4 class="mb-2">{{ text | extractArticleHeader | striptags }}</h4>
+          <h3 class="mb-2 h4">{{ text | extractArticleHeader | striptags }}</h3>
           <p class="popular-articles-content">{{ text | extractArticleContent | striptags }}</p>
           <a href="{{ item.data.page.filePathStem | url }}">Learn More</a>
         </li>

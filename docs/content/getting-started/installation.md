@@ -3,26 +3,25 @@ layout: content
 title: Installation
 seoTitle: Installation - Exadel Authoring Kit
 -->
-## Installation
 
-### Using precompiled artifacts
+## Using precompiled artifacts
 
-1) Insert dependency to the core module in the _\<dependencies>_ section of the POM file of your **bundle** module:
+1) Insert dependency to the core module in the _\<dependencies>_ section of the POM file of your **bundle** (**_core_**) module:
 ```xml
 <dependency>
    <groupId>com.exadel.etoolbox</groupId>
    <artifactId>etoolbox-authoring-kit-core</artifactId>
-   <version>2.2.2-SNAPSHOT</version> <!-- Prefer the latest stable version whenever possible -->
+   <version>2.3.0</version> <!-- Prefer the latest stable version whenever possible -->
    <scope>provided</scope> <!-- Do not use compile or runtime scope!-->
 </dependency>
 ```
-2) Insert plugin's config in the _\<plugins>_ section of the POM file of your **package** module:
+2) Insert plugin's config in the _\<plugins>_ section of the POM file of your **package** (**_ui.apps_**) module:
 ```xml
 
 <plugin>
     <groupId>com.exadel.etoolbox</groupId>
     <artifactId>etoolbox-authoring-kit-plugin</artifactId>
-    <version>2.2.2-SNAPSHOT</version>
+    <version>2.3.0</version>
     <executions>
         <execution>
             <goals>
@@ -40,17 +39,17 @@ seoTitle: Installation - Exadel Authoring Kit
     </configuration>
 </plugin>
 ```
-#### Plugin Settings
+### Plugin Settings
 
-##### componentsPathBase
+#### componentsPathBase
 
 Specifies the path to a folder in the current package where the AEM components are situated. Whenever you specify the `path` property of `@AemComponent` as a relative path (without leading */*), its value is appended to the _componentsPathBase_. It is recommended to always specify this setting.
 
-##### componentsReferenceBase
+#### componentsReferenceBase
 
 Specifies the root package to scan for AEM components' back end Java classes. It can be used to limit the classes scanned by the plugin (= to filter out classes that are not matched by a component folder within the current package), and also to recognize a component address  via the matching class name. It is recommended to always specify this setting.
 
-##### terminateOn
+#### terminateOn
 
 Specifies the list of exceptions, comma-separated, that would cause this plugin to terminate
 the build process.
@@ -68,7 +67,7 @@ It is also considered a good practice to end the enumeration with a default "fal
 
 If *terminateOn* is not configured, the default setting is effective. By default, the plugin will terminate on an `IOException` or one of its derivatives.
 
-### Installing assets
+## Installing assets
 
 For many of the ToolKit's features to work properly, namely *DependsOn* and *Lists*, you need to deploy the _etoolbox-authoring-kit-all-<version>.zip_ package to your AEM author instance.
 
@@ -80,7 +79,7 @@ You need to do two steps.
 <dependency>
     <groupId>com.exadel.etoolbox</groupId>
     <artifactId>etoolbox-authoring-kit-all</artifactId>
-    <version>2.2.2-SNAPSHOT</version>
+    <version>2.3.0</version>
     <type>content-package</type>
 </dependency>
 ```
@@ -104,7 +103,7 @@ You need to do two steps.
     </plugin>
 ```
 
-#### Compiling and deploying by hand
+### Compiling and deploying by hand
 
 Feel free to clone the project sources and run ```mvn clean install``` from the project's root folder. The plugin and the API artifacts will be installed in the local .m2 repository.
 
@@ -116,7 +115,7 @@ You can run the build with the *autoInstallPackage* profile like `mvn clean inst
 
 You can also use <u>other means</u> to get the content package deployed to the AEM instance by adding it manually via the _Package Manager_ or posting to an HTTP endpoint.
 
-### Troubleshooting installation issues
+## Troubleshooting installation issues
 
 1) Add the _etoolbox-authoring-kit-plugin_ after the rest of plugins in your package.
 

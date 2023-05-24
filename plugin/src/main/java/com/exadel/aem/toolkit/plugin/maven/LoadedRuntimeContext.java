@@ -86,7 +86,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
      * Accumulates data and performs necessary routines for creating the functional ("loaded") {@link
      * PluginRuntimeContext}
      */
-    static class Builder {
+    public static class Builder {
 
         private List<String> classPathElements;
         private PluginSettings settings = new PluginSettings();

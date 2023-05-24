@@ -40,3 +40,8 @@ Also, you can take a look at these popular articles:
 ### Need more documentation?
 
 See the complete API and core module documentation (Javadoc) [here](https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/index.html).
+
+
+### Contribution
+
+Want to contribute to the project? Please learn the [contribution guide](CONTRIBUTING.md).

@@ -1,10 +1,10 @@
 <!--
 layout: content
-title: Configuring RTE
+title: Configuring RichTextEditor
+navTitle: Configuring RTE
 seoTitle: Configuring RTE - Exadel Authoring Kit
 order: 3
 -->
-## Configuring RichTextEditor
 
 [RichTextEditor (RTE)](https://experienceleague.adobe.com/docs/experience-manager-65/administering/operations/rich-text-editor.html?lang=en) is a somehow special yet vastly demanded dialog component that makes it possible to edit strings and texts with WYSIWYG experience. The functionality of the component is based upon a set of plugins, either built-in or custom. Most plugins expose sets of "features" reflected by UI elements (buttons, or dropdown lists, or button panels, or floating panels - so called "popovers").
 
@@ -12,7 +12,7 @@ Traditionally, to add a feature to the RichTextEditor, a user needs to include a
 
 The ToolKit streamlines that workflow a lot.
 
-### RTE features and popovers
+## RTE features and popovers
 
 To initialize a RichTextEditor component with certain plugins/features, you’ll need to apply a `@RichTextEditor` annotation to a class field and then set the annotation's features property. This property accepts an array of strings in a plugin#feature format. To specify a popover, you must add to the array a square-bracketed string like *[plugin#feature1, plugin#feature2,...plugin#featureN]* or *[plugin:feature1:feature2:...featureN]* depending on the plugin's specification.
 
@@ -68,7 +68,7 @@ This is how you alter any of the predefined popovers or compose a different popo
 )
 ```
 
-### RTE view modes
+## RTE view modes
 
 RichTextEditor configuration allows specifying features for three different editor modes. These are:
 
@@ -82,7 +82,7 @@ Generally it is recommended that a narrower set of features be used for the *inl
 
 If neither *features* nor *fullscreenFeatures* are populated, a default set of buttons will be generated for each of the three editor modes.
 
-### Toolbar icons
+## Toolbar icons
 
 A user can override existing or add new icon definitions for toolbar buttons via the *icons* property. Several icon definitions may be missing from the Coral installation. To provide a complete user experience with the mentioned full feature set, you may use the following snippet:
 
@@ -100,7 +100,7 @@ A user can override existing or add new icon definitions for toolbar buttons via
 )
 ```
 
-### Settings for pasting text
+## Settings for pasting text
 
 One substantial concern for a RichTextEditor component is the rules for processing the input from the clipboard. A user may specify *defaultPasteMode* and *htmlPasteRules* for dealing with non-plaintext clipboard content as in the snippet below:
 
@@ -134,7 +134,7 @@ Setting the [htmlLinkRules](https://experienceleague.adobe.com/docs/experience-m
 )
 ```
 
-### Inserting special characters
+## Inserting special characters
 
 Among the commonly user RTE assets is the *misctools#specialchars* feature that represents an "Insert symbol"-like dialog. The set of Unicode characters to offer may be defined in specialCharacters property. This is an array that stores either a single HTML entity definition or a Unicode range (decimal values) as in the following snippet:
 
@@ -151,7 +151,7 @@ Among the commonly user RTE assets is the *misctools#specialchars* feature that 
 )
 ```
 
-### Paragraph tagging and text styles
+## Paragraph tagging and text styles
 
 Set of formatting tags for a "paraformat" button can be defined in [formats](https://experienceleague.adobe.com/docs/experience-manager-65/administering/operations/configure-rich-text-editor-plug-ins.html?lang=en#operations) property as in the snippet:
 
@@ -180,6 +180,6 @@ RichTextEditor allows altering the visual representation of the text by [CSS rul
 ```
 Unlike *formats* above, these are not HTML tag definitions but rather *\<span style='...'>...\</span>* blocks that will be added to selected text.
 
-### Miscellaneous tweaks
+## Miscellaneous tweaks
 
 Additionally, a user can specify the number of edit operations stored for undo/redo logic (via [maxUndoSteps](https://experienceleague.adobe.com/docs/experience-manager-65/administering/operations/configure-rich-text-editor-plug-ins.html?lang=en#undohistory) property), the width of tabulation (in spaces, via [tabSize](https://experienceleague.adobe.com/docs/experience-manager-65/administering/operations/configure-rich-text-editor-plug-ins.html?lang=en#tabsize) property), and the indentation margin of lists (in spaces, via [indentMargin](https://experienceleague.adobe.com/docs/experience-manager-65/administering/operations/configure-rich-text-editor-plug-ins.html?lang=en#indentmargin) property).

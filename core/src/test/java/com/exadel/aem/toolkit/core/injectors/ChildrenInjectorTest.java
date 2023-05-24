@@ -13,195 +13,350 @@
  */
 package com.exadel.aem.toolkit.core.injectors;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.sling.api.adapter.Adaptable;
 import org.apache.sling.api.resource.Resource;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import com.day.cq.commons.jcr.JcrConstants;
-
-import com.exadel.aem.toolkit.core.injectors.models.ITestModelChildren;
-import com.exadel.aem.toolkit.core.injectors.models.NestedModel;
-import com.exadel.aem.toolkit.core.injectors.models.TestModelChildren;
-import com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel;
-
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.TestConstants;
+import com.exadel.aem.toolkit.core.injectors.models.child.ExtendedListItem;
+import com.exadel.aem.toolkit.core.injectors.models.children.InjectedByLoopbackPath;
+import com.exadel.aem.toolkit.core.injectors.models.children.InjectedByMemberName;
+import com.exadel.aem.toolkit.core.injectors.models.children.InjectedByPath;
+import com.exadel.aem.toolkit.core.injectors.models.children.InjectedWithFilters;
+import com.exadel.aem.toolkit.core.injectors.models.children.InjectedWithPostfix;
+import com.exadel.aem.toolkit.core.injectors.models.children.InjectedWithPrefix;
+import com.exadel.aem.toolkit.core.injectors.models.children.InjectedWithPrefixPostfix;
+import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
 public class ChildrenInjectorTest {
+
+    private static final String MODELS_PACKAGE_NAME = "com.exadel.aem.toolkit.core.injectors.models.children";
+
+    private static final List<String> EXPECTED_VALUE_SEQUENCE = Arrays.asList("value1", "value2", "value3", "value4");
+    public static final String EXPECTED_TITLE = "key1";
 
     @Rule
     public final AemContext context = new AemContext();
 
+    /* -----------
+       Preparation
+       ----------- */
+
     @Before
     public void beforeTest() {
-        context.addModelsForClasses(TestModelChildren.class);
+        context.addModelsForPackage(MODELS_PACKAGE_NAME);
         context.registerInjectActivateService(new ChildrenInjector());
-        context.load().json("/com/exadel/aem/toolkit/core/injectors/childInjector.json", "/content");
-        context.request().setResource(context.resourceResolver().getResource("/content/jcr:content"));
+        context.registerInjectActivateService(new ChildInjector());
+        context.load().json(ChildInjectorTest.MODELS_RESOURCES_FOLDER, TestConstants.ROOT_RESOURCE);
+        context.request().setResource(context.resourceResolver().getResource(TestConstants.ROOT_PAGE_CONTENT));
     }
 
-    /* -----------
-       Valid cases
-       ----------- */
+    /* -----
+       Tests
+       ----- */
 
     @Test
     public void shouldInjectByFieldName() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
-        assertNotNull(testModel);
+        shouldInjectByFieldName(context.request());
+        shouldInjectByFieldName(context.request().getResource());
+    }
 
-        List<Resource> resourceList = testModel.getList();
-        assertNotNull(resourceList);
-        assertEquals(5, resourceList.size());
+    private void shouldInjectByFieldName(Adaptable adaptable) {
+        InjectedByMemberName model = adaptable.adaptTo(InjectedByMemberName.class);
+        assertNotNull(model);
+
+        assertNotNull(model.getValue());
+        assertTrue(CollectionUtils.isEqualCollection(
+            EXPECTED_VALUE_SEQUENCE,
+            model.getValue().stream().map(SimpleListItem::getValue).collect(Collectors.toList())));
+
+        assertNotNull(model.getObjectValue());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            (List<?>) model.getObjectValue(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
+
+        assertNotNull(model.getSupplier());
+        assertNotNull(model.getSupplier().getList());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            model.getSupplier().getList(),
+            (first, second) -> {
+                assertEquals(first.getTitle(), second.getTitle());
+                assertEquals(first.getValue(), second.getValue());
+            });
+
+        assertNotNull(model.getValueFromConstructor());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            model.getValueFromConstructor(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
     }
 
     @Test
-    public void shouldInjectByArbitraryName() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
-        assertNotNull(testModel);
+    public void shouldInjectByPath() {
+        shouldInjectByPath(context.request());
+        shouldInjectByPath(context.request().getResource());
+    }
 
-        List<Resource> resourceList = testModel.getResourceList();
-        assertNotNull(resourceList);
-        assertEquals(5, resourceList.size());
+    private void shouldInjectByPath(Adaptable adaptable) {
+        InjectedByPath model = adaptable.adaptTo(InjectedByPath.class);
+        assertNotNull(model);
+
+        assertNotNull(model.getValue());
+        assertTrue(CollectionUtils.isEqualCollection(
+            EXPECTED_VALUE_SEQUENCE,
+            model.getValue().stream().map(SimpleListItem::getValue).collect(Collectors.toList())));
+
+        assertNotNull(model.getObjectValue());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            (List<?>) model.getObjectValue(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
+
+        assertNotNull(model.getArrayValue());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            model.getArrayValue(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
+
+        assertNotNull(model.getSupplier());
+        assertNotNull(model.getSupplier().getValue());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            model.getSupplier().getValue(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
+
+        assertNotNull(model.getValueFromConstructor());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            model.getValueFromConstructor(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
     }
 
     @Test
-    public void shouldInjectNestedProperties() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
-        assertNotNull(testModel);
+    public void shouldInjectSingularValues() {
+        shouldInjectSingularValues(context.request());
+        shouldInjectSingularValues(context.request().getResource());
+    }
 
-        List<NestedModel> nestedModelList = testModel.getNestedModelList();
-        assertNotNull(nestedModelList);
-        assertEquals(5, nestedModelList.size());
-        assertEquals("value", nestedModelList.get(0).getValue());
-        assertEquals("nestedValue", nestedModelList.get(0).getNestedProperty());
+    private void shouldInjectSingularValues(Adaptable adaptable) {
+        InjectedByPath model = adaptable.adaptTo(InjectedByPath.class);
+        assertNotNull(model);
+        assertNotNull(model.getValue());
+
+        assertNotNull(model.getSingularItem());
+        assertEquals(model.getValue().iterator().next().getTitle(), model.getSingularItem().getTitle());
+        assertEquals(model.getValue().iterator().next().getValue(), model.getSingularItem().getValue());
+
+        assertNotNull(model.getSingularResource());
+        assertEquals(
+            model.getValue().iterator().next().getTitle(),
+            model.getSingularResource().getValueMap().get(JcrConstants.JCR_TITLE));
+        assertEquals(
+            model.getValue().iterator().next().getValue(),
+            model.getSingularResource().getValueMap().get(CoreConstants.PN_VALUE));
     }
 
     @Test
-    public void shouldInjectModelsByRelativePath() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
-        assertNotNull(testModel);
+    public void shouldInjectByLoopbackPath() {
+        context.currentResource(TestConstants.ROOT_PAGE_CONTENT + "/list");
+        shouldInjectByLoopbackPath(context.request());
+        shouldInjectByLoopbackPath(context.request().getResource());
+    }
 
-        Collection<ListItemModel> modelList = testModel.getListItemModels();
-        assertNotNull(modelList);
-        assertEquals(2, modelList.size());
+    private void shouldInjectByLoopbackPath(Adaptable adaptable) {
+        InjectedByLoopbackPath model = adaptable.adaptTo(InjectedByLoopbackPath.class);
+        assertNotNull(model);
+
+        assertNotNull(model.getValue());
+        assertTrue(CollectionUtils.isEqualCollection(
+            EXPECTED_VALUE_SEQUENCE,
+            model.getValue().stream().map(SimpleListItem::getValue).collect(Collectors.toList())));
+
+        assertNotNull(model.getObjectValue());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            (List<?>) model.getObjectValue(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
+
+        assertNotNull(model.getValueFromConstructor());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            model.getValueFromConstructor(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
     }
 
     @Test
-    public void shouldInjectChildrenUsingPrefix() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
-        assertNotNull(testModel);
+    public void shouldProcessNestedChildren() {
+        context.currentResource(TestConstants.ROOT_PAGE_CONTENT + "/list");
+        shouldProcessNestedChildren(context.request());
+        shouldProcessNestedChildren(context.request().getResource());
+    }
 
-        ListItemModel[] modelList = testModel.getListItemModelsWithPrefix();
-        assertNotNull(modelList);
-        assertEquals(1, modelList.length);
+    private void shouldProcessNestedChildren(Adaptable adaptable) {
+        InjectedByLoopbackPath model = adaptable.adaptTo(InjectedByLoopbackPath.class);
+        assertNotNull(model);
+        assertNotNull(model.getValue());
+        assertEquals(3, model.getValue().stream().filter(item -> item.getNestedViaChild() != null).count());
     }
 
     @Test
-    public void shouldInjectChildrenUsingPostfix() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
-        assertNotNull(testModel);
+    public void shouldInjectPrefixFiltered() {
+        shouldInjectPrefixFiltered(context.request());
+        shouldInjectPrefixFiltered(context.request().getResource());
+    }
 
-        List<ListItemModel> modelList = testModel.getListItemModelsWithPostfix();
-        assertNotNull(modelList);
-        assertEquals(1, modelList.size());
-        assertEquals(4, modelList.get(0).getProperties().size());
+    private void shouldInjectPrefixFiltered(Adaptable adaptable) {
+        InjectedWithPrefix model = adaptable.adaptTo(InjectedWithPrefix.class);
+        assertNotNull(model);
+
+        assertNotNull(model.getValue());
+        assertTrue(CollectionUtils.isEqualCollection(
+            Arrays.asList("alt_value2", "alt_value4"),
+            model.getValue().stream().map(ExtendedListItem::getValue).collect(Collectors.toList())));
+
+        assertEquals(
+            ChildInjectorTest.NESTED_RESOURCE_TITLE,
+            Objects.requireNonNull(model.getValue().get(0).getNestedViaChildResource()).getNestedTitle());
+        assertEquals(
+            ChildInjectorTest.NESTED_RESOURCE_VALUE,
+            Objects.requireNonNull(model.getValue().get(0).getNestedViaChildResource()).getNestedValue());
+
+        assertNotNull(model.getCastObjectValue());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            model.getCastObjectValue(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
+
+        assertNotNull(model.getValueFromConstructor());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            model.getValueFromConstructor(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
     }
 
     @Test
-    public void shouldInjectChildrenUsingPrefixAndPostfix() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
-        assertNotNull(testModel);
+    public void shouldInjectPostfixFiltered() {
+        shouldInjectPostfixFiltered(context.request());
+        shouldInjectPostfixFiltered(context.request().getResource());
+    }
 
-        List<ListItemModel> modelList = testModel.getListItemModelsWithPrefixAndPostfix();
-        assertNotNull(modelList);
-        assertEquals(1, modelList.size());
-        assertEquals(1, modelList.get(0).getProperties().size());
-        assertEquals("Value with prefix and postfix", modelList.get(0).getProperties().get("value"));
+    private void shouldInjectPostfixFiltered(Adaptable adaptable) {
+        InjectedWithPostfix model = adaptable.adaptTo(InjectedWithPostfix.class);
+        assertNotNull(model);
+
+        assertNotNull(model.getValue());
+        assertTrue(CollectionUtils.isEqualCollection(
+            Arrays.asList("value3_alt", "value4_alt"),
+            model.getValue().stream().map(SimpleListItem::getValue).collect(Collectors.toList())));
+
+        assertNotNull(model.getCastObjectValue());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            model.getCastObjectValue(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
+
+        assertNotNull(model.getValueFromConstructor());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            model.getValueFromConstructor(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
     }
 
     @Test
-    public void shouldInjectChildrenUsingFilters() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
-        assertNotNull(testModel);
+    public void shouldInjectPrefixPostfixFiltered() {
+        shouldInjectPrefixPostfixFiltered(context.request());
+        shouldInjectPrefixPostfixFiltered(context.request().getResource());
+    }
 
-        List<ListItemModel> modelList = testModel.getListItemModelsFiltered();
-        assertNotNull(modelList);
-        assertEquals(1, modelList.size());
+    private void shouldInjectPrefixPostfixFiltered(Adaptable adaptable) {
+        InjectedWithPrefixPostfix model = adaptable.adaptTo(InjectedWithPrefixPostfix.class);
+        assertNotNull(model);
+
+        assertNotNull(model.getValue());
+        assertEquals(1, model.getValue().size());
+        assertEquals("alt_key4_alt", model.getValue().get(0).getTitle());
+        assertEquals("alt_value4_alt", model.getValue().get(0).getValue());
+
+        assertNotNull(model.getCastObjectValue());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            model.getCastObjectValue(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
+
+
+        assertNotNull(model.getValueFromConstructor());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getValue(),
+            model.getValueFromConstructor(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
     }
 
     @Test
-    public void shouldInjectChildrenAdaptedFromRequest() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
-        assertNotNull(testModel);
-
-        List<NestedModel> modelsFromRequest = testModel.getModelsAdaptedFromRequest();
-        assertEquals(1, modelsFromRequest.size());
-        assertEquals("Value with prefix and postfix", modelsFromRequest.get(0).getValue());
-        assertNotNull(modelsFromRequest.get(0).getRequest());
+    public void shouldInjectUsingFilters() {
+        shouldInjectUsingFilters(context.request());
+        shouldInjectUsingFilters(context.request().getResource());
     }
 
-    @Test
-    public void shouldInjectOwnChildren() {
-        context.request().setResource(context.resourceResolver().getResource("/content/jcr:content/list"));
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
-        assertNotNull(testModel);
-        assertNotNull(testModel.getOwnList());
-        assertEquals(5, testModel.getOwnList().size());
+    private void shouldInjectUsingFilters(Adaptable adaptable) {
+        InjectedWithFilters model = adaptable.adaptTo(InjectedWithFilters.class);
+        assertNotNull(model);
+
+        assertNotNull(model.getNonGhosts());
+        assertEquals(2, model.getNonGhosts().size());
+        assertEquals("Only used with ChildrenInjector + NonGhostFilter", model.getNonGhosts().get(0).getNestedTitle());
+        assertEquals(42, model.getNonGhosts().get(0).getNestedValue());
+
+        assertNotNull(model.getValueFromConstructor());
+        ComparisonHelper.assertCollectionsEqual(
+            model.getNonGhosts(),
+            model.getValueFromConstructor(),
+            ChildrenInjectorTest::assertTitleAndValueEqual);
+
+        assertNotNull(model.getByNameFilter());
+        assertEquals(1, model.getByNameFilter().length);
+        assertEquals(EXPECTED_TITLE, model.getByNameFilter()[0].getTitle());
+        assertEquals(EXPECTED_VALUE_SEQUENCE.get(0), model.getByNameFilter()[0].getValue());
+
+        assertNotNull(model.getSupplier());
+        assertNotNull(model.getSupplier().getByRestypeFilter());
+        assertEquals(3, model.getSupplier().getByRestypeFilter().size());
+        assertEquals(EXPECTED_TITLE, model.getSupplier().getByRestypeFilter().get(0).getTitle());
+        assertEquals(EXPECTED_VALUE_SEQUENCE.get(0), model.getSupplier().getByRestypeFilter().get(0).getValue());
     }
 
-    @Test
-    public void shouldInjectConstructorArguments() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
-        assertNotNull(testModel);
+    /* ---------------
+       Service methods
+       --------------- */
 
-        List<ListItemModel> models = new ArrayList<>(testModel.getListItemModels());
-
-        assertEquals(testModel.getInjectedViaConstructor().length, models.size());
-        for (int i = 0; i < testModel.getInjectedViaConstructor().length; i++) {
-            assertEquals(
-                testModel.getInjectedViaConstructor()[i].getProperties().get(JcrConstants.JCR_TITLE),
-                models.get(i).getProperties().get(JcrConstants.JCR_TITLE));
-        }
+    private static void assertTitleAndValueEqual(SimpleListItem item, Object resource) {
+        assertTrue(resource instanceof Resource);
+        assertEquals(item.getTitle(), ((Resource) resource).getValueMap().get(JcrConstants.JCR_TITLE, String.class));
+        assertEquals(item.getValue(), ((Resource) resource).getValueMap().get(CoreConstants.PN_VALUE, String.class));
     }
 
-    @Test
-    public void shouldInjectViaMethod() {
-        ITestModelChildren testModel = context.request().adaptTo(ITestModelChildren.class);
-        assertNotNull(testModel);
-
-        assertEquals(2, testModel.getInjectedViaMethod().size());
-        assertEquals("key1", testModel.getInjectedViaMethod().get(0).getProperties().get(JcrConstants.JCR_TITLE));
+    private static void assertTitleAndValueEqual(ExtendedListItem.Nested item, Resource resource) {
+        assertEquals(item.getNestedTitle(), resource.getValueMap().get(CoreConstants.PN_TITLE, String.class));
+        assertEquals(item.getNestedValue(), (long) resource.getValueMap().get(CoreConstants.PN_VALUE, 0));
     }
 
-
-    /* -------------
-       Invalid cases
-       ------------- */
-
-    @Test
-    public void shouldNotInjectNonExistentResource() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
-        assertNotNull(testModel);
-
-        List<Resource> resourceList = testModel.getNonExistentResources();
-        assertNull(resourceList);
-
-        List<ListItemModel> modelList = testModel.getNonExistentModel();
-        assertNull(modelList);
-    }
-
-    @Test
-    public void shouldNotInjectIfNotMatchingPrefix() {
-        TestModelChildren testModel = context.request().adaptTo(TestModelChildren.class);
-        assertNotNull(testModel);
-
-        List<ListItemModel> modelList = testModel.getNonExistentPrefix();
-        assertNull(modelList);
+    private static void assertTitleAndValueEqual(SimpleListItem first, SimpleListItem second) {
+        assertEquals(first.getTitle(), second.getTitle());
+        assertEquals(first.getValue(), second.getValue());
     }
 }

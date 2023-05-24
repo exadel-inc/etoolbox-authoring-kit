@@ -1,7 +1,12 @@
 @import "../common/variables.less";
 
+#popular-articles-list {
+  padding: 0;
+}
+
 .popular-articles {
   &-container {
+    margin-top: 40px;
     display: grid;
     grid-template-columns: repeat(1, 100%);
     grid-gap: 50px;
@@ -12,16 +17,6 @@
 
   &-item {
     list-style: none;
-  }
-
-  &-title {
-    color: @nav-accent;
-    margin-bottom: 24px;
-  }
-
-  &-subheader {
-    color: @nav-accent;
-    margin-bottom: 40px;
   }
 
   &-content {

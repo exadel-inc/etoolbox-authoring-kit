@@ -1,13 +1,12 @@
 <!--
 layout: content
-title: Additional Properties
+title: Additional properties of components, dialogs and fields
+navTitle: Additional Properties
 seoTitle: Additional Properties - Exadel Authoring Kit
 order: 4
 -->
 
-## Additional properties of components, dialogs and fields
-
-### Attributes of fields
+## Attributes of fields
 Components Touch UI dialogs honor the concept of [global HTML attributes](https://developer.adobe.com/experience-manager/reference-materials/6-5/granite-ui/api/jcr_root/libs/granite/ui/docs/server/commonattrs.html) added to rendered HTML tags. To set them via AEM-Dialog-Plugin, you use the @Attribute annotation.
 ```java
 public class DialogWithHtmlAttributes {
@@ -24,7 +23,7 @@ public class DialogWithHtmlAttributes {
 }
 ```
 
-### Additional properties
+## Additional properties
 
 You can define an additional property for a Granite UI widget or overwrite an existing one with the `@Property` annotation. This will be rendered into an appropriate subnode under the component's *\<cq:dialog>* or *\<cq:design_dialog>* node and will affect the behavior of a dialog widget.
 
@@ -41,7 +40,7 @@ public class MyComponent {
 }
 ```
 
-### Common (component-wide) properties
+## Common (component-wide) properties
 
 Yet another mechanism available is to specify custom properties at Java class level. This can be used:
 
@@ -57,13 +56,13 @@ For these goals the `@CommonProperties` annotation is designed. It accepts simil
     @CommonProperty(scope = Scopes.CQ_DIALOG, name = "numericAttribute", value = "{Long}-1000"),
     @CommonProperty(scope = Scopes.CQ_EDIT_CONFIG, name = "arrayAttribute", value = "[any,many,minny,moe]"),
     @CommonProperty(
-        scope = XmlScope.CQ_EDIT_CONFIG,
+        scope = Scopes.CQ_EDIT_CONFIG,
         path = "/root/inplaceEditing/config/rtePlugins/edit/htmlPasteRules/table",
         name = "allow",
         value = "{Boolean}true"
     ),
     @CommonProperty(
-        scope = XmlScope.CQ_DIALOG,
+        scope = Scopes.CQ_DIALOG,
         path = "//*[@size='L']",
         name = "size",
         value = "S"

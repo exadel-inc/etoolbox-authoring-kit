@@ -120,7 +120,7 @@ public class ListHelper {
      * is effective
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
-     * @param keyName          Item resource property that holds the key of the resulting map
+     * @param keyName          Item resource property that manifests the key of the resulting map
      * @return Map representing title-to-value pairs. If the path provided is invalid or cannot be resolved, an empty
      * map is returned
      */
@@ -154,7 +154,7 @@ public class ListHelper {
      * key, the last one is effective
      * @param resourceResolver Sling {@code ResourceResolver} instance used to access the list
      * @param path             JCR path of the items list
-     * @param keyName          Item resource property that holds the key of the resulting map
+     * @param keyName          Item resource property that manifests the key of the resulting map
      * @param itemType         {@code Class} reference representing the type of map values required
      * @param <T>              Type of map values; must be one adaptable from a Sling {@code Resource}
      * @return Map containing {@code <T>}-typed instances. If the path provided is invalid or cannot be resolved,
@@ -247,7 +247,7 @@ public class ListHelper {
             }
 
             listPage = ListPageUtil.createPage(resourceResolver, path);
-            Resource list = listPage.getContentResource().getChild(CoreConstants.NN_LIST);
+            Resource list = Objects.requireNonNull(listPage.getContentResource()).getChild(CoreConstants.NN_LIST);
             for (Resource resource : resources) {
                 ListResourceUtil.createListItem(resourceResolver, list, resource.getValueMap());
             }
@@ -332,7 +332,7 @@ public class ListHelper {
      * @return {@code Function} object
      */
     private static <T> Function<Resource, T> getMapperFunction(Class<T> itemType) {
-        if (Resource.class.equals(itemType)) {
+        if (Resource.class.equals(itemType) || Object.class.equals(itemType)) {
             return itemType::cast;
         }
         return resource -> resource.adaptTo(itemType);

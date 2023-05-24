@@ -75,7 +75,7 @@ public class SelectWidget {
         optionProvider = @OptionProvider(
             value = {
                 @OptionSource(value = ACS_LIST_PATH),
-                @OptionSource(value = ACS_LIST_PATH + "2", fallback = ACS_LIST_PATH + "3", textMember = "pageTitle"),
+                @OptionSource(value = ACS_LIST_PATH + "2", textMember = "pageTitle"),
             },
             prepend = "None:none",
             selectedValue = "none",

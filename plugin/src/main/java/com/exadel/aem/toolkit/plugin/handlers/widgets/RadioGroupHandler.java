@@ -47,7 +47,7 @@ public class RadioGroupHandler extends OptionProviderHandler implements Handler 
             Target items = target.getOrCreateTarget(DialogConstants.NN_ITEMS);
             Arrays.stream(radioGroup.buttons()).forEach(button -> appendOption(button, button.value(), items));
         }
-        appendDataSource(radioGroup.datasource(), target);
+        appendDataSourceData(radioGroup.datasource(), target);
     }
 
 }
