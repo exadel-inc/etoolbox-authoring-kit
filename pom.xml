@@ -77,8 +77,8 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
 
-        <sonar.projectKey>${project.artifactId}</sonar.projectKey>
-        <sonar.java.binaries>target/classes</sonar.java.binaries>
+<!--        <sonar.projectKey>${project.artifactId}</sonar.projectKey>-->
+<!--        <sonar.java.binaries>target/classes</sonar.java.binaries>-->
 
         <aem.host>localhost</aem.host>
         <aem.port>4502</aem.port>
@@ -294,7 +294,61 @@
     </build>
 
     <profiles>
-
+        <profile>
+            <id>autoInstallPackage</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>com.day.jcr.vault</groupId>
+                            <artifactId>content-package-maven-plugin</artifactId>
+                            <executions>
+                                <execution>
+                                    <id>deploy-to-instance</id>
+                                    <goals>
+                                        <goal>install</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
+        <profile>
+            <id>coverage</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.jacoco</groupId>
+                            <artifactId>jacoco-maven-plugin</artifactId>
+                            <version>0.8.10</version>
+                            <executions>
+                                <execution>
+                                    <id>agent</id>
+                                    <goals>
+                                        <goal>prepare-agent</goal>
+                                    </goals>
+                                </execution>
+                                <execution>
+                                    <id>report</id>
+                                    <goals>
+                                        <goal>report</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+            </build>
+        </profile>
         <profile>
             <id>deploy</id>
             <activation>
@@ -355,32 +409,17 @@
                 </plugins>
             </build>
         </profile>
-
         <profile>
-            <id>autoInstallPackage</id>
+            <id>integration</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
             </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>com.day.jcr.vault</groupId>
-                            <artifactId>content-package-maven-plugin</artifactId>
-                            <executions>
-                                <execution>
-                                    <id>deploy-to-instance</id>
-                                    <goals>
-                                        <goal>install</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
-            </build>
+            <modules>
+                <module>core</module>
+                <module>plugin</module>
+                <module>it.tests</module>
+            </modules>
         </profile>
-
         <profile>
             <id>nocheckstyle</id>
             <activation>
@@ -402,50 +441,6 @@
                         </executions>
                     </plugin>
                 </plugins>
-            </build>
-        </profile>
-
-        <profile>
-            <id>integration</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <modules>
-                <module>core</module>
-                <module>plugin</module>
-                <module>it.tests</module>
-            </modules>
-        </profile>
-
-        <profile>
-            <id>coverage</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <pluginManagement>
-                    <plugins>
-                        <plugin>
-                            <groupId>org.jacoco</groupId>
-                            <artifactId>jacoco-maven-plugin</artifactId>
-                            <version>0.8.5</version>
-                            <executions>
-                                <execution>
-                                    <id>agent</id>
-                                    <goals>
-                                        <goal>prepare-agent</goal>
-                                    </goals>
-                                </execution>
-                                <execution>
-                                    <id>report</id>
-                                    <goals>
-                                        <goal>report</goal>
-                                    </goals>
-                                </execution>
-                            </executions>
-                        </plugin>
-                    </plugins>
-                </pluginManagement>
             </build>
         </profile>
     </profiles>

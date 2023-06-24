@@ -17,10 +17,6 @@
 
     <packaging>content-package</packaging>
 
-    <properties>
-        <sonar.skip>true</sonar.skip>
-    </properties>
-
     <build>
         <sourceDirectory>src/main/content/jcr_root/apps/${project.parent.artifactId}/depends-on/js</sourceDirectory>
         <resources>

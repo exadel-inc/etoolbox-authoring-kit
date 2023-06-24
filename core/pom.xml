@@ -17,10 +17,6 @@
 
     <packaging>jar</packaging>
 
-    <properties>
-        <sonar.coverage.jacoco.xmlReportPaths>../plugin/target/site/jacoco-aggregate/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
-    </properties>
-
     <build>
         <sourceDirectory>src/main/java</sourceDirectory>
         <plugins>
@@ -77,7 +73,17 @@
     </build>
 
     <profiles>
-
+        <profile>
+            <id>coverage</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>deploy</id>
             <build>
@@ -97,19 +103,6 @@
                 </plugins>
             </build>
         </profile>
-
-        <profile>
-            <id>coverage</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.jacoco</groupId>
-                        <artifactId>jacoco-maven-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
     </profiles>
 
     <dependencies>
