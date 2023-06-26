@@ -13,6 +13,8 @@
  */
 package com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers;
 
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.sling.api.resource.Resource;
@@ -68,7 +70,11 @@ public class OptionProviderConstantsTest {
 
         List<Resource> options = optionProvider.getOptions(context.request());
         assertNotNull(options);
-        assertEquals(ColorConstants.class.getDeclaredFields().length, options.size());
+        assertEquals(
+            Arrays.stream(ColorConstants.class.getDeclaredFields())
+                .filter(field -> !Modifier.isPrivate(field.getModifiers()))
+                .count(),
+            options.size());
     }
 
     @Test

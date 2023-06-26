@@ -94,6 +94,7 @@ class EnumResolverHelper {
         Arrays.stream(source.getDeclaredMethods())
             .filter(method -> !ENUM_METHOD_VALUES.equals(method.getName()))
             .filter(method -> method.getParameterCount() == 0)
+            .filter(method -> !Modifier.isPrivate(method.getModifiers()))
             .forEach(method -> {
                 Object value = getMethodInvocationResult(enumConstant, method);
                 if (value != null) {
