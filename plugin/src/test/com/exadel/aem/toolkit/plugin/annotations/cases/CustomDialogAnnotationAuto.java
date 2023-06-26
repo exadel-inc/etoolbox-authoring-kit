@@ -11,25 +11,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.annotations;
+package com.exadel.aem.toolkit.plugin.annotations.cases;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.DialogWidgetAnnotation;
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 
-@Target(ElementType.FIELD)
+@Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@DialogWidgetAnnotation(source = "testCustomAnnotation")
-@ResourceType("test-components/form/customfield")
-@SuppressWarnings({"unused", "deprecation"}) // @DialogWidgetAnnotation is retained for compatibility testing;
-// will be removed in a version after 2.0.0
-public @interface CustomWidgetAnnotation {
+@AnnotationRendering(properties = "!field3")
+// This will have its scope defined dynamically: when appended to a class already
+// possessing e.g. @Dialog, it will have cq:dialog scope, etc.
+public @interface CustomDialogAnnotationAuto {
 
-    @PropertyRendering(name = "custom")
-    String customField() default "Non-overridden value";
+    String field1() default "";
+
+    long field2();
+
+    boolean field3() default false; // will not be rendered
 }
