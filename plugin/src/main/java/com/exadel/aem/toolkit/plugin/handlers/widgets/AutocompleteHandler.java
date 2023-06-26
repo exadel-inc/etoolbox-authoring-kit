@@ -20,7 +20,8 @@ import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.annotations.Modifiable;
+import com.exadel.aem.toolkit.plugin.annotations.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
@@ -44,7 +45,7 @@ public class AutocompleteHandler implements Handler {
                     autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value())
                 .attributes(
                     autocomplete.datasource(),
-                    AnnotationUtil.getPropertyMappingFilter(autocomplete.datasource()))
+                    new RenderingFilter(autocomplete.datasource()))
                 .getParent()
                 .getOrCreateTarget(DialogConstants.NN_OPTIONS)
                 .attribute(
@@ -52,7 +53,7 @@ public class AutocompleteHandler implements Handler {
                     autocomplete.options().annotationType().getAnnotation(ResourceType.class).value())
                 .attributes(
                     autocomplete.options(),
-                    AnnotationUtil.getPropertyMappingFilter(autocomplete.options()))
+                    new RenderingFilter(autocomplete.options()))
                 .getParent()
                 .getOrCreateTarget(DialogConstants.NN_VALUES)
                 .attribute(
@@ -60,6 +61,6 @@ public class AutocompleteHandler implements Handler {
                     autocomplete.values().annotationType().getAnnotation(ResourceType.class).value())
                 .attributes(
                     autocomplete.values(),
-                    AnnotationUtil.getPropertyMappingFilter(autocomplete.values()));
+                    new RenderingFilter(autocomplete.values()));
     }
 }

@@ -33,9 +33,11 @@ import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.plugin.annotations.Modifiable;
+import com.exadel.aem.toolkit.plugin.annotations.Property;
+import com.exadel.aem.toolkit.plugin.annotations.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 import com.exadel.aem.toolkit.plugin.validators.CharactersObjectValidator;
@@ -245,7 +247,7 @@ public class RichTextEditorHandler implements Handler {
         Arrays.stream(rteAnnotation.icons()).forEach(
             iconMapping -> icons
                 .getOrCreateTarget(iconMapping.command())
-                .attributes(iconMapping, AnnotationUtil.getPropertyMappingFilter(iconMapping)));
+                .attributes(iconMapping, new RenderingFilter(iconMapping)));
     }
 
     /**
@@ -266,9 +268,7 @@ public class RichTextEditorHandler implements Handler {
                 paragraphFormat ->
                     formats
                         .getOrCreateTarget(paragraphFormat.tag())
-                        .attributes(
-                            paragraphFormat,
-                            AnnotationUtil.getPropertyMappingFilter(paragraphFormat))
+                        .attributes(paragraphFormat, new RenderingFilter(paragraphFormat))
             );
     }
 
@@ -288,9 +288,7 @@ public class RichTextEditorHandler implements Handler {
             annotation ->
                 charsConfigNode
                     .getOrCreateTarget(getCharactersTagName((Characters) annotation))
-                    .attributes(
-                        annotation,
-                        AnnotationUtil.getPropertyMappingFilter(annotation))
+                    .attributes(annotation, new RenderingFilter(annotation))
         );
     }
 
@@ -307,7 +305,7 @@ public class RichTextEditorHandler implements Handler {
         }
         Arrays.stream(rteAnnotation.styles()).forEach(style ->
             styles.getOrCreateTarget(style.cssName())
-                .attributes(style, AnnotationUtil.getPropertyMappingFilter(style)));
+                .attributes(style, new RenderingFilter(style)));
     }
 
     /**

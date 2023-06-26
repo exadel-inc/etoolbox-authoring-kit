@@ -21,7 +21,7 @@ import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.annotations.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.ScopeUtil;
 
@@ -46,8 +46,6 @@ public class ComponentHandler implements BiConsumer<Source, Target> {
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_COMPONENT)
             .attributes(
                 annotation,
-                AnnotationUtil
-                    .getPropertyMappingFilter(annotation)
-                    .and(member -> ScopeUtil.fits(Scopes.COMPONENT, member)));
+                new RenderingFilter(annotation).and(member -> ScopeUtil.fits(Scopes.COMPONENT, member)));
     }
 }

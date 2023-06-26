@@ -24,7 +24,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.annotations.Modifiable;
+import com.exadel.aem.toolkit.plugin.annotations.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.utils.ScopeUtil;
 
 /**
@@ -57,9 +58,10 @@ public class PropertyMappingHandler implements BiConsumer<Source, Target> {
             // to sort out annotations with specific mapping processing
             .filter(annotation -> !SPECIALLY_PROCESSED.contains(annotation.annotationType()))
             // for the exact case when @AnnotationRendering is present -- to make sure the scope is right
-            .filter(annotation -> !annotation.annotationType().isAnnotationPresent(AnnotationRendering.class)
-                || ScopeUtil.fits(target.getScope(), annotation, annotations))
-
-            .forEach(annotation -> target.attributes(annotation, AnnotationUtil.getPropertyMappingFilter(annotation)));
+            .filter(annotation -> {
+                AnnotationRendering annotationRendering = annotation.getAnnotation(AnnotationRendering.class);
+                return annotationRendering == null || ScopeUtil.fits(target.getScope(), annotation, annotations);
+            })
+            .forEach(annotation -> target.attributes(annotation, new RenderingFilter(annotation)));
     }
 }

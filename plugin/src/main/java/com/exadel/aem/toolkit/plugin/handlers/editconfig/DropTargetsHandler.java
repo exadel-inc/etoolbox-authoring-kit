@@ -21,7 +21,7 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.annotations.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
@@ -47,7 +47,7 @@ public class DropTargetsHandler implements BiConsumer<Source, Target> {
             DropTargetConfig dropTargetConfig = editConfig.dropTargets()[i];
             dropTargetsElement.getOrCreateTarget(dropTargetConfig.nodeName())
                     .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_DROP_TARGET_CONFIG)
-                    .attributes(dropTargetConfig, AnnotationUtil.getPropertyMappingFilter(dropTargetConfig))
+                    .attributes(dropTargetConfig, new RenderingFilter(dropTargetConfig))
                     .attribute(DialogConstants.PN_ACCEPT, Arrays.stream(dropTargetConfig.accept()).collect(Collectors.toList()).toString())
                     .attribute(DialogConstants.PN_GROUPS, Arrays.stream(dropTargetConfig.groups()).collect(Collectors.toList()).toString());
         }

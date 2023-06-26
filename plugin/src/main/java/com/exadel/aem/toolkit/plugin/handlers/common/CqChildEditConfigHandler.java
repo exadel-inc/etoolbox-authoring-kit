@@ -21,9 +21,10 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.annotations.Modifiable;
+import com.exadel.aem.toolkit.plugin.annotations.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
@@ -53,7 +54,7 @@ public class CqChildEditConfigHandler implements BiConsumer<Source, Target> {
     private static void populateChildEditConfig(ChildEditConfig childEditConfig, Target target) {
         target
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
-            .attributes(childEditConfig, AnnotationUtil.getPropertyMappingFilter(childEditConfig));
+            .attributes(childEditConfig, new RenderingFilter(childEditConfig));
         // Herewith we create a "proxied" @EditConfig object out of the provided @ChildEditConfig
         // with "dropTargets" and "listeners" methods of @EditConfig populated with  @ChildEditConfig values
         EditConfig derivedEditConfig = AnnotationUtil.createInstance(EditConfig.class, ImmutableMap.of(

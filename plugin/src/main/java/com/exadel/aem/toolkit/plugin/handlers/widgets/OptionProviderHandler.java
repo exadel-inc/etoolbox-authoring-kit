@@ -41,9 +41,10 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.utils.PatternUtil;
+import com.exadel.aem.toolkit.plugin.annotations.Modifiable;
+import com.exadel.aem.toolkit.plugin.annotations.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.utils.ArrayUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.StringUtil;
@@ -92,7 +93,7 @@ abstract class OptionProviderHandler {
         Target item = existing.isEmpty()
             ? parentElement.createTarget(DialogConstants.DOUBLE_QUOTE + optionValue + DialogConstants.DOUBLE_QUOTE)
             : parentElement.getTarget(DialogConstants.DOUBLE_QUOTE + optionValue + DialogConstants.DOUBLE_QUOTE);
-        item.attributes(option, AnnotationUtil.getPropertyMappingFilter(option));
+        item.attributes(option, new RenderingFilter(option));
     }
 
     /* ----------------------
@@ -124,7 +125,7 @@ abstract class OptionProviderHandler {
         Target datasourceElement = target
             .getOrCreateTarget(CoreConstants.NN_DATASOURCE)
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, RESOURCE_TYPE_PREFIX + ResourceTypes.OPTION_PROVIDER)
-            .attributes(optionProvider, AnnotationUtil.getPropertyMappingFilter(optionProvider));
+            .attributes(optionProvider, new RenderingFilter(optionProvider));
         if (ArrayUtils.isNotEmpty(optionProvider.prepend())) {
             datasourceElement.attribute(CoreConstants.PN_PREPEND, ArrayUtil.flatten(optionProvider.prepend()));
         }

@@ -33,11 +33,11 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.annotations.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.handlers.placement.layouts.LayoutHandlers;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.targets.Targets;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.ScopeUtil;
@@ -69,9 +69,7 @@ public class CqDialogHandler implements BiConsumer<Source, Target> {
         target
             .attributes(
                 dialogAnnotation,
-                AnnotationUtil
-                    .getPropertyMappingFilter(dialogAnnotation)
-                    .and(member -> ScopeUtil.fits(target.getScope(), member)))
+                new RenderingFilter(dialogAnnotation).and(member -> ScopeUtil.fits(target.getScope(), member)))
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.DIALOG);
         populateTitleProperty(source, target);
 

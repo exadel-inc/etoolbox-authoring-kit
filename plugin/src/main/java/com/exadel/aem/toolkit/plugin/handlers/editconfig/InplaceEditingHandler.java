@@ -27,12 +27,12 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.plugin.annotations.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.InheritanceHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.rte.RichTextEditorHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 
@@ -152,8 +152,7 @@ public class InplaceEditingHandler implements BiConsumer<Source, Target> {
             RichTextEditor rteAnnotation = referencedRteField.adaptTo(RichTextEditor.class);
             target.attributes(
                 rteAnnotation,
-                AnnotationUtil
-                    .getPropertyMappingFilter(rteAnnotation)
+                new RenderingFilter(rteAnnotation)
                     .and(method -> !DialogConstants.PN_USE_FIXED_INLINE_TOOLBAR.equals(method.getName()))
             );
         }

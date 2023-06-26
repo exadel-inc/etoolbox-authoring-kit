@@ -18,7 +18,7 @@ import java.util.function.BiConsumer;
 import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.annotations.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
@@ -37,6 +37,6 @@ public class CqHtmlTagHandler implements BiConsumer<Source, Target> {
         HtmlTag htmlTag = source.adaptTo(HtmlTag.class);
         target
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_UNSTRUCTURED)
-            .attributes(htmlTag, AnnotationUtil.getPropertyMappingFilter(htmlTag));
+            .attributes(htmlTag, new RenderingFilter(htmlTag));
     }
 }
