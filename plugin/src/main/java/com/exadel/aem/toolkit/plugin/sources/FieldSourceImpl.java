@@ -125,10 +125,10 @@ class FieldSourceImpl extends MemberSourceImpl {
      * {@inheritDoc}
      */
     @Override
-    public <T> T adaptTo(Class<T> adaptation) {
-        if (adaptation.equals(Field.class) || adaptation.equals(Member.class)) {
-            return adaptation.cast(field);
+    public <T> T adaptTo(Class<T> type) {
+        if (type.equals(Field.class) || type.equals(Member.class)) {
+            return type.cast(field);
         }
-        return super.adaptTo(adaptation);
+        return super.adaptTo(type);
     }
 }

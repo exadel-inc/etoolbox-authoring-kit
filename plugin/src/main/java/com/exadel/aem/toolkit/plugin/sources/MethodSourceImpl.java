@@ -124,10 +124,10 @@ class MethodSourceImpl extends MemberSourceImpl {
      * {@inheritDoc}
      */
     @Override
-    public <T> T adaptTo(Class<T> adaptation) {
-        if (adaptation.equals(Method.class) || adaptation.equals(Member.class)) {
-            return adaptation.cast(method);
+    public <T> T adaptTo(Class<T> type) {
+        if (type.equals(Method.class) || type.equals(Member.class)) {
+            return type.cast(method);
         }
-        return super.adaptTo(adaptation);
+        return super.adaptTo(type);
     }
 }

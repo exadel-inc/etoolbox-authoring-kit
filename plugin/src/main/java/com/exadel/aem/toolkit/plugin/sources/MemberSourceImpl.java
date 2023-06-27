@@ -24,6 +24,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
+import com.exadel.aem.toolkit.plugin.annotations.Metadata;
 
 /**
  * Presents an abstract implementation of {@link Source} that exposes the metadata that is specific for the underlying
@@ -96,7 +97,10 @@ abstract class MemberSourceImpl extends SourceImpl implements ModifiableMemberSo
      */
     boolean isWidgetAnnotationPresent() {
         return Arrays.stream(adaptTo(Annotation[].class))
-            .anyMatch(annotation -> annotation.annotationType().isAnnotationPresent(ResourceType.class)
-                && StringUtils.isNotBlank(annotation.annotationType().getDeclaredAnnotation(ResourceType.class).value()));
+            .anyMatch(annotation -> {
+                Metadata metadata = Metadata.from(annotation);
+                ResourceType resourceType = metadata.getAnnotation(ResourceType.class);
+                return resourceType != null && StringUtils.isNotBlank(resourceType.value());
+            });
     }
 }

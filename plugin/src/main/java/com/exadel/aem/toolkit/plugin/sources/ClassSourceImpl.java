@@ -78,10 +78,10 @@ class ClassSourceImpl extends SourceImpl {
      * {@inheritDoc}
      */
     @Override
-    public <T> T adaptTo(Class<T> adaptation) {
-        if (Class.class.equals(adaptation)) {
-            return adaptation.cast(value);
+    public <T> T adaptTo(Class<T> type) {
+        if (Class.class.equals(type)) {
+            return type.cast(value);
         }
-        return super.adaptTo(adaptation);
+        return super.adaptTo(type);
     }
 }

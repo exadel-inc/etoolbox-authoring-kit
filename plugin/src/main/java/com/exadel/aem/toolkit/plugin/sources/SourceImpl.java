@@ -14,9 +14,14 @@
 package com.exadel.aem.toolkit.plugin.sources;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Array;
+
+import org.apache.commons.lang3.ArrayUtils;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
+import com.exadel.aem.toolkit.plugin.annotations.Metadata;
+import com.exadel.aem.toolkit.plugin.annotations.ScriptingHelper;
 
 /**
  * Presents a basic implementation of {@link Source} that exposes the metadata that is specific for the underlying class
@@ -57,24 +62,53 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
      * {@inheritDoc}
      */
     @Override
-    public <T> T adaptTo(Class<T> adaptation) {
-        if (adaptation == null) {
+    public <T> T adaptTo(Class<T> type) {
+        if (type == null) {
             return null;
         }
-        if (adaptation.isArray()) {
-            if (adaptation.getComponentType().equals(Annotation.class)) {
-                return adaptation.cast(getDeclaredAnnotations());
-            } else if (adaptation.getComponentType().isAnnotation()) {
-                @SuppressWarnings("unchecked")
-                Class<? extends Annotation> annotationClass = (Class<? extends Annotation>) adaptation.getComponentType();
-                return adaptation.cast(getAnnotationsByType(annotationClass));
+        if (type.isArray()) {
+            if (type.getComponentType().equals(Annotation.class)) {
+                return type.cast(getDeclaredAnnotations());
+            } else if (type.getComponentType().isAnnotation()) {
+                return adaptToAnnotationArray(type);
             }
         }
-        if (adaptation.isAnnotation()) {
-            @SuppressWarnings("unchecked")
-            Class<? extends Annotation> annotationClass = (Class<? extends Annotation>) adaptation;
-            return adaptation.cast(getDeclaredAnnotation(annotationClass));
+        if (type.isAnnotation()) {
+            return adaptToAnnotation(type);
         }
-        return super.adaptTo(adaptation); // Retrieves adaptation value, if present, or null
+        return super.adaptTo(type);
+    }
+
+    private <T> T adaptToAnnotationArray(Class<T> type) {
+        T cachedAdaptationArray = getAdaptation(type);
+        if (cachedAdaptationArray != null) {
+            return type.cast(cachedAdaptationArray);
+        }
+        @SuppressWarnings("unchecked")
+        Annotation[] annotations = getAnnotationsByType((Class<? extends Annotation>) type.getComponentType());
+        if (ArrayUtils.isEmpty(annotations)) {
+            return type.cast(annotations);
+        }
+        Object newArray = Array.newInstance(type.getComponentType(), annotations.length);
+        for (int i = 0; i < annotations.length; i++) {
+            Array.set(newArray, i, Metadata.from(annotations[i]));
+        }
+        return type.cast(newArray);
+    }
+
+    private <T> T adaptToAnnotation(Class<T> type) {
+        Object cachedAdaptation = getAdaptation(type);
+        if (cachedAdaptation != null) {
+            return type.cast(cachedAdaptation);
+        }
+        @SuppressWarnings("unchecked")
+        Annotation annotation = getDeclaredAnnotation((Class<? extends Annotation>) type);
+        if (annotation == null) {
+            return null;
+        }
+        Metadata metadata = Metadata.from(annotation);
+        ScriptingHelper.interpolate(metadata, this);
+        storeAdaptation(type, metadata);
+        return type.cast(metadata);
     }
 }

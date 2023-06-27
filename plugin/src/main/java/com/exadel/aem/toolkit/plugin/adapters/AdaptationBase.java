@@ -45,31 +45,30 @@ public abstract class AdaptationBase<T> {
     }
 
     /**
-     * Implements the basic adaptation functionality. This method is expected to be overridden by a descendant class
-     * and internally called within an overriding method for the fallback result
-     * @param adaptation {@code Class} reference indicating the desired data type
-     * @param <A>        The type of the resulting value
-     * @return The {@code A}-typed object, or null in case the adaptation to the particular type was not possible or failed
+     * Implements the basic adaptation functionality. This method is expected to be overridden by a descendant class and
+     * internally called within an overriding method for the fallback result
+     * @param type {@code Class} reference indicating the desired data type
+     * @param <A>  The type of the resulting value
+     * @return The {@code A}-typed object, or null in case the adaptation to the particular type was not possible or
+     * failed
      */
-    public <A> A adaptTo(Class<A> adaptation) {
-        if (ClassUtils.isAssignable(getClass(), adaptation)) {
-            return adaptation.cast(this);
+    public <A> A adaptTo(Class<A> type) {
+        if (ClassUtils.isAssignable(getClass(), type)) {
+            return type.cast(this);
         }
-        if (adaptationsCache != null && adaptationsCache.containsKey(adaptation)) {
-            return adaptation.cast(adaptationsCache.get(adaptation));
+        A cachedAdaptation = getAdaptation(type);
+        if (cachedAdaptation != null) {
+            return cachedAdaptation;
         }
-        if (adaptation.isAnnotationPresent(Adapts.class)
-            && reflectedClass.equals(adaptation.getAnnotation(Adapts.class).value())) {
+        if (type.isAnnotationPresent(Adapts.class)
+            && reflectedClass.equals(type.getAnnotation(Adapts.class).value())) {
             try {
-                Object result = adaptation.getConstructor(reflectedClass).newInstance(this);
-                if (adaptationsCache == null) {
-                    adaptationsCache = new HashMap<>();
-                }
-                adaptationsCache.put(adaptation, result);
-                return adaptation.cast(result);
+                Object value = type.getConstructor(reflectedClass).newInstance(this);
+                storeAdaptation(type, value);
+                return type.cast(value);
             } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 ReflectionException re = new ReflectionException(
-                    ADAPTER_EXCEPTION_MESSAGE + adaptation.getName(), e);
+                    ADAPTER_EXCEPTION_MESSAGE + type.getName(), e);
                 PluginRuntime.context().getExceptionHandler().handle(re);
             }
         }
@@ -86,6 +85,20 @@ public abstract class AdaptationBase<T> {
         if (ClassUtils.isAssignable(getClass(), adaptation)) {
             return true;
         }
-        return adaptationsCache != null && adaptationsCache.containsKey(adaptation);
+        return getAdaptation(adaptation) != null;
+    }
+
+    protected <A> A getAdaptation(Class<A> type) {
+        if (adaptationsCache != null && adaptationsCache.containsKey(type)) {
+            return type.cast(adaptationsCache.get(type));
+        }
+        return null;
+    }
+
+    protected void storeAdaptation(Class<?> type, Object value) {
+        if (adaptationsCache == null) {
+            adaptationsCache = new HashMap<>();
+        }
+        adaptationsCache.put(type, value);
     }
 }
