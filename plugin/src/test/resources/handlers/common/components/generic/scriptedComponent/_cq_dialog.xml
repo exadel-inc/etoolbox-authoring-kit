@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jcr:root
+    xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+    xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+    jcr:primaryType="nt:unstructured"
+    sling:resourceType="cq/gui/components/authoring/dialog"
+    jcr:title="Scripted Component Dialog"
+    height="{Double}480.0"
+    width="{Double}560.0">
+    <content
+        jcr:primaryType="nt:unstructured"
+        sling:resourceType="granite/ui/components/coral/foundation/container">
+        <layout
+            jcr:primaryType="nt:unstructured"
+            sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"/>
+        <items jcr:primaryType="nt:unstructured">
+            <column
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/container">
+                <items jcr:primaryType="nt:unstructured">
+                    <text
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="cq/gui/components/authoring/dialog/richtext"
+                        name="./text"
+                        disabled="{Boolean}false"
+                        externalStyleSheets="[/etc/clientlibs/myLib/style1.css,/etc/clientlibs/myLib/style2.css]"
+                        fieldLabel="Default title"
+                        renderHidden="{Boolean}false"
+                        required="{Boolean}false"
+                        useFixedInlineToolbar="{Boolean}false">
+                        <granite:data
+                            jcr:primaryType="nt:unstructured"
+                            rteFeatures="[undo]"/>
+                        <uiSettings jcr:primaryType="nt:unstructured">
+                            <cui jcr:primaryType="nt:unstructured">
+                                <inline
+                                    jcr:primaryType="nt:unstructured"
+                                    toolbar="[#control,undo#undo,-,#edit,#findreplace]">
+                                    <popovers jcr:primaryType="nt:unstructured">
+                                        <findreplace
+                                            jcr:primaryType="nt:unstructured"
+                                            items="[findreplace#find,findreplace#replace]"
+                                            ref="findreplace"/>
+                                        <edit
+                                            jcr:primaryType="nt:unstructured"
+                                            items="[edit#cut,edit#copy,edit#paste-default,edit#paste-plaintext,edit#paste-wordhtml]"
+                                            ref="edit"/>
+                                        <control
+                                            jcr:primaryType="nt:unstructured"
+                                            items="[control#save,control#close]"
+                                            ref="control"/>
+                                    </popovers>
+                                </inline>
+                                <fullscreen jcr:primaryType="nt:unstructured"
+                                    toolbar="[#control,undo#undo,-,#edit,#findreplace]">
+                                    <popovers jcr:primaryType="nt:unstructured">
+                                        <findreplace
+                                            jcr:primaryType="nt:unstructured"
+                                            items="[findreplace#find,findreplace#replace]"
+                                            ref="findreplace"/>
+                                        <edit
+                                            items="[edit#cut,edit#copy,edit#paste-default,edit#paste-plaintext,edit#paste-wordhtml]"
+                                            jcr:primaryType="nt:unstructured"
+                                            ref="edit"/>
+                                        <control
+                                            jcr:primaryType="nt:unstructured"
+                                            items="[control#save,control#close]"
+                                            ref="control"/>
+                                    </popovers>
+                                </fullscreen>
+                                <dialogFullScreen jcr:primaryType="nt:unstructured"
+                                    toolbar="[#control,undo#undo,-,#edit,#findreplace]">
+                                    <popovers jcr:primaryType="nt:unstructured">
+                                        <findreplace
+                                            jcr:primaryType="nt:unstructured"
+                                            items="[findreplace#find,findreplace#replace]"
+                                            ref="findreplace"/>
+                                        <edit
+                                            jcr:primaryType="nt:unstructured"
+                                            items="[edit#cut,edit#copy,edit#paste-default,edit#paste-plaintext,edit#paste-wordhtml]"
+                                            ref="edit"/>
+                                        <control
+                                            jcr:primaryType="nt:unstructured"
+                                            items="[control#save,control#close]"
+                                            ref="control"/>
+                                    </popovers>
+                                </dialogFullScreen>
+                                <icons jcr:primaryType="nt:unstructured">
+                                    <edit command="#edit"
+                                        icon="copy"
+                                        jcr:primaryType="nt:unstructured"/>
+                                    <findreplace command="#findreplace"
+                                        icon="search"
+                                        jcr:primaryType="nt:unstructured"/>
+                                    <links command="#links"
+                                        icon="link"
+                                        jcr:primaryType="nt:unstructured"/>
+                                </icons>
+                            </cui>
+                        </uiSettings>
+                        <rtePlugins jcr:primaryType="nt:unstructured">
+                            <undo
+                                jcr:primaryType="nt:unstructured"
+                                features="undo"
+                                maxUndoSteps="{Long}25"/>
+                            <findreplace
+                                jcr:primaryType="nt:unstructured"
+                                features="[find,replace]"/>
+                            <edit
+                                jcr:primaryType="nt:unstructured"
+                                features="[cut,copy,paste-default,paste-plaintext,paste-wordhtml]"/>
+                            <control
+                                jcr:primaryType="nt:unstructured"
+                                features="[save,close]"/>
+                            <misctools jcr:primaryType="nt:unstructured">
+                                <specialCharsConfig jcr:primaryType="nt:unstructured">
+                                    <chars jcr:primaryType="nt:unstructured">
+                                        <copy
+                                            jcr:primaryType="nt:unstructured"
+                                            entity="&amp;copy"
+                                            name="Copyright"/>
+                                        <x20AC
+                                            jcr:primaryType="nt:unstructured"
+                                            entity="&amp;#x20AC"
+                                            name="Euro sign"/>
+                                    </chars>
+                                </specialCharsConfig>
+                            </misctools>
+                            <styles jcr:primaryType="nt:unstructured"/>
+                        </rtePlugins>
+                        <htmlRules jcr:primaryType="nt:unstructured">
+                            <links defaultProtocol="http:"
+                                jcr:primaryType="nt:unstructured"
+                                protocols="[http:,https:]">
+                                <targetConfig jcr:primaryType="nt:unstructured"
+                                    mode="auto"
+                                    targetExternal="blank"
+                                    targetInternal="manual"/>
+                            </links>
+                        </htmlRules>
+                    </text>
+                    <options
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/select">
+                        <granite:data
+                            jcr:primaryType="nt:unstructured"
+                            selectedOption="2"/>
+                        <items jcr:primaryType="nt:unstructured">
+                            <item1
+                                jcr:primaryType="nt:unstructured"
+                                text="First"
+                                value="1"/>
+                            <item2
+                                jcr:primaryType="nt:unstructured"
+                                text="Second"
+                                value="2"
+                                selected="true"/>
+                        </items>
+                    </options>
+                </items>
+            </column>
+        </items>
+    </content>
+</jcr:root>

@@ -20,7 +20,6 @@ import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
-import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionSource;
@@ -43,12 +42,12 @@ import com.exadel.aem.toolkit.plugin.annotations.cases.NestedAnnotations;
 @Dialog(title = "Scripted Component Dialog")
 @Ignore(members = @ClassMember("moreOptions"))
 public class ScriptedComponent {
-    @DialogField(label = "@{textFieldTitle || 'Default title'}")
+    @DialogField(label = "@{data.textFieldTitle || 'Default title'}")
     @RichTextEditor(
             features = {
                     RteFeatures.Popovers.CONTROL_ALL,
-                    "@{!rteFeatures || rteFeatures.includes('undo') ? 'undo#undo' : ''}",
-                    "@{rteFeatures.contains('redo') ? 'undo#redo' : ''}",
+                    "@{!data.rteFeatures || data.rteFeatures.includes('undo') ? 'undo#undo' : ''}",
+                    "@{!data.rteFeatures || data.rteFeatures.includes('redo') ? 'undo#redo' : ''}",
                     RteFeatures.SEPARATOR,
                     RteFeatures.Popovers.EDIT_ALL,
                     RteFeatures.Popovers.FINDREPLACE_ALL,
@@ -64,8 +63,8 @@ public class ScriptedComponent {
             },
             defaultPasteMode = PasteMode.WORDHTML,
             externalStyleSheets = {
-                    "@{styleAddress}",
-                    "/etc/clientlibs/myLib/@{styleName}.css"
+                    "@{data.styleAddress}",
+                    "/etc/clientlibs/myLib/@{data.styleName}.css"
             },
             maxUndoSteps = 25,
             htmlLinkRules = @HtmlLinkRules(
@@ -76,9 +75,9 @@ public class ScriptedComponent {
             ),
             useFixedInlineToolbar = false
     )
-    @Attribute(data = {
-        @Data(name = "rteFeatures", value = "[undo]")
-    })
+    @Data(name = "styleAddress", value = "/etc/clientlibs/myLib/style1.css", persist = false)
+    @Data(name = "styleName", value = "style2", persist = false)
+    @Data(name = "rteFeatures", value = "[undo]")
     private String text;
 
     @Select(
@@ -87,10 +86,8 @@ public class ScriptedComponent {
             @Option(text = "Second", value = "2")
         }
     )
-    @Property(name = "items/item@{selectedOption}/selected", value = "true")
-    @Attribute(data = {
-        @Data(name = "selectedOption", value = "2")
-    })
+    @Property(name = "items/item@{data.selectedOption}/selected", value = "true")
+    @Data(name = "selectedOption", value = "2")
     private String options;
 
     @Select(
