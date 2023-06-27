@@ -46,7 +46,7 @@ class LineFactory {
 
     public LineFactory(Element root, String focusedPath, int lengthLimit) {
         this.root = root;
-        this.focusedPath = StringUtils.substringBeforeLast(focusedPath, XmlComparatorConstants.SEPARATOR_ATTRIBUTE);
+        this.focusedPath = StringUtils.substringBeforeLast(focusedPath, XmlComparatorConstants.ATTRIBUTE_SEPARATOR);
         this.lengthLimit = lengthLimit;
     }
 
@@ -56,11 +56,11 @@ class LineFactory {
 
     private List<Line> getLines(Element element, String path, int indentLevel) {
         boolean isWithinFocus = StringUtils.startsWith(
-            StringUtils.substringBeforeLast(path, XmlComparatorConstants.SEPARATOR_ATTRIBUTE),
+            StringUtils.substringBeforeLast(path, XmlComparatorConstants.ATTRIBUTE_SEPARATOR),
             focusedPath);
 
-        String indent = StringUtils.repeat(XmlComparatorConstants.LOG_INDENT, indentLevel);
-        String nestedIndent = indent + XmlComparatorConstants.LOG_INDENT;
+        String indent = StringUtils.repeat(LineUtil.getIndent(), indentLevel);
+        String nestedIndent = indent + LineUtil.getIndent();
 
         List<Line> tagStart = isWithinFocus
             ? getLines(path, indent + TAG_START + element.getTagName())
@@ -72,14 +72,14 @@ class LineFactory {
         if (isWithinFocus) {
             List<Node> attributeNodes = getSortedAttributeNodes(element);
             for (Node node : attributeNodes) {
-                String attributePath = path + XmlComparatorConstants.SEPARATOR_ATTRIBUTE + stripNamespace(node.getNodeName());
+                String attributePath = path + XmlComparatorConstants.ATTRIBUTE_SEPARATOR + stripNamespace(node.getNodeName());
                 String attributeContent = nestedIndent + String.format(ATTRIBUTE_TEMPLATE, node.getNodeName(), node.getNodeValue());
                 List<Line> nodeLines = getLines(attributePath, attributeContent);
                 attributeSection.addAll(nodeLines);
             }
-            attributeSection.get(attributeSection.size() - 1).append(ending);
+            appendSectionEnding(attributeSection, path, ending);
         } else {
-            tagStart.get(tagStart.size() - 1).append(ending);
+            appendSectionEnding(tagStart, path, ending);
         }
 
         List<Line> childNodesSection = new ArrayList<>();
@@ -122,6 +122,18 @@ class LineFactory {
         return result;
     }
 
+    private void appendSectionEnding(List<Line> section, String id, String ending) {
+        if (section.isEmpty()) {
+            section.add(new Line(id, ending));
+            return;
+        }
+        Line lastLine = section.get(section.size() - 1);
+        if (lastLine.getLength() + ending.length() <= lengthLimit) {
+            lastLine.append(ending);
+        } else {
+            section.add(new Line(id, ending));
+        }
+    }
 
     private static List<Node> getSortedAttributeNodes(Element element) {
         List<Node> result = new ArrayList<>();

@@ -26,7 +26,6 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -60,7 +59,9 @@ public class XmlComparator {
         this.actual = actual;
         diff = DiffBuilder
             .compare(Input.fromString(expected))
-            .withTest(Input.fromString(actual)).normalizeWhitespace().build();
+            .withTest(Input.fromString(actual))
+            .normalizeWhitespace()
+            .build();
     }
 
     public boolean isEqual() {
@@ -68,7 +69,7 @@ public class XmlComparator {
     }
 
     public void logDiff()
-        throws IOException, SAXException, ParserConfigurationException, XPathExpressionException {
+        throws IOException, SAXException, ParserConfigurationException {
 
         if (isEqual()) {
             return;
@@ -175,10 +176,10 @@ public class XmlComparator {
         for (Difference difference : diff.getDifferences()) {
             String expectedNodePath = StringUtils.substringBeforeLast(
                 difference.getComparison().getControlDetails().getXPath(),
-                XmlComparatorConstants.SEPARATOR_ATTRIBUTE);
+                XmlComparatorConstants.ATTRIBUTE_SEPARATOR);
             String actualNodePath = StringUtils.substringBeforeLast(
                 difference.getComparison().getTestDetails().getXPath(),
-                XmlComparatorConstants.SEPARATOR_ATTRIBUTE);
+                XmlComparatorConstants.ATTRIBUTE_SEPARATOR);
             String effectivePath;
             if (difference.getComparison().getType() == ComparisonType.CHILD_LOOKUP
                 && StringUtils.isAnyEmpty(expectedNodePath, actualNodePath)) {
