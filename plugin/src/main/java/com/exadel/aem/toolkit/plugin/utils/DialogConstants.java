@@ -124,6 +124,7 @@ public class DialogConstants {
     public static final String PN_MODE = "mode";
     public static final String PN_PADDING = "padding";
     public static final String PN_PRIMARY_TYPE = "jcr:primaryType";
+    public static final String PN_PREFIX = "prefix";
     public static final String PN_PROPERTY_NAME = "propertyName";
     public static final String PN_PROTOCOLS = "protocols";
     public static final String PN_REF = "ref";
