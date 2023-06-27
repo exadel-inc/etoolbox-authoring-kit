@@ -60,6 +60,7 @@ public class XmlComparator {
         diff = DiffBuilder
             .compare(Input.fromString(expected))
             .withTest(Input.fromString(actual))
+            .ignoreComments()
             .normalizeWhitespace()
             .build();
     }
