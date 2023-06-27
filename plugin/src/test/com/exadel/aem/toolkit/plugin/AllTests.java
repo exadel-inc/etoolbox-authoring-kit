@@ -37,6 +37,7 @@ import com.exadel.aem.toolkit.plugin.handlers.placement.layouts.LayoutTest;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.WidgetsTest;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.WidgetsMetaTest;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRule;
+import com.exadel.aem.toolkit.plugin.sources.SourcesTest;
 import com.exadel.aem.toolkit.plugin.targets.TargetsTest;
 import com.exadel.aem.toolkit.plugin.utils.ordering.TopologicalSorterTest;
 import com.exadel.aem.toolkit.plugin.validators.ValidatorsTest;
@@ -47,6 +48,7 @@ import com.exadel.aem.toolkit.plugin.writers.PackageInfoTest;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
+    SourcesTest.class,
     TargetsTest.class,
     MetadataTest.class,
     RenderingFilterTest.class,
