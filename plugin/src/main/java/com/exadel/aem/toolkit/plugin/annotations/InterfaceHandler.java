@@ -51,6 +51,7 @@ class InterfaceHandler<T> implements InvocationHandler {
     private static final String METHOD_GET_ANNOTATION = "getAnnotation";
     private static final String METHOD_GET_ANY_ANNOTATION = "getAnyAnnotation";
     private static final String METHOD_GET_PROPERTY = "getProperty";
+    private static final String METHOD_HAS_PROPERTY = "hasProperty";
     private static final String METHOD_HASH_CODE = "hashCode";
     private static final String METHOD_ITERATOR = "iterator";
     private static final String METHOD_PUT = "putValue";
@@ -111,7 +112,7 @@ class InterfaceHandler<T> implements InvocationHandler {
         if (invocation.isDone()) {
             return invocation.getResult();
         }
-        return getProperty(method.getName(), method.getName(), true).getValue();
+        return getProperty(method.getName(), method.getName(), true, true).getValue();
     }
 
     private InvocationResult tryInvokeStandardMember(Method method, Object[] args) {
@@ -134,6 +135,7 @@ class InterfaceHandler<T> implements InvocationHandler {
         return Stream.<BiFunction<Method, Object[], InvocationResult>>of(
             this::tryInvokeGetAnnotation,
             this::tryInvokeGetAnyAnnotation,
+            this::tryInvokeHasProperty,
             this::tryInvokeGetValue,
             this::tryInvokeGetProperty,
             this::tryInvokePutValue,
@@ -171,12 +173,23 @@ class InterfaceHandler<T> implements InvocationHandler {
         return InvocationResult.NOT_DONE;
     }
 
+    private InvocationResult tryInvokeHasProperty(Method method, Object[] args) {
+        if (matchesNameAndArguments(method, args, METHOD_HAS_PROPERTY, String.class)) {
+            Property result = getProperty((String) args[0], false);
+            return InvocationResult.done(result.getValue() != null);
+        } else if (matchesNameAndArguments(method, args, METHOD_HAS_PROPERTY, PropertyPath.class)) {
+            Property result = getProperty((PropertyPath) args[0], false);
+            return InvocationResult.done(result.getValue() != null);
+        }
+        return InvocationResult.NOT_DONE;
+    }
+
     private InvocationResult tryInvokeGetValue(Method method, Object[] args) {
         if (matchesNameAndArguments(method, args, METHOD_GET, String.class)) {
-            Property result = getProperty((String) args[0]);
+            Property result = getProperty((String) args[0], false);
             return InvocationResult.done(result.getValue());
         } else if (matchesNameAndArguments(method, args, METHOD_GET, PropertyPath.class)) {
-            Property result = getProperty((PropertyPath) args[0]);
+            Property result = getProperty((PropertyPath) args[0], false);
             return InvocationResult.done(result.getValue());
         }
         return InvocationResult.NOT_DONE;
@@ -184,10 +197,10 @@ class InterfaceHandler<T> implements InvocationHandler {
 
     private InvocationResult tryInvokeGetProperty(Method method, Object[] args) {
         if (matchesNameAndArguments(method, args, METHOD_GET_PROPERTY, String.class)) {
-            Property result = getProperty((String) args[0]);
+            Property result = getProperty((String) args[0], true);
             return InvocationResult.done(result);
         } else if (matchesNameAndArguments(method, args, METHOD_GET_PROPERTY, PropertyPath.class)) {
-            Property result = getProperty((PropertyPath) args[0]);
+            Property result = getProperty((PropertyPath) args[0], true);
             return InvocationResult.done(result);
         }
         return InvocationResult.NOT_DONE;
@@ -298,11 +311,11 @@ class InterfaceHandler<T> implements InvocationHandler {
        <Metadata> #get logic
        ----------------------- */
 
-    private Property getProperty(String path) {
-        return getProperty(PropertyPath.parse(path));
+    private Property getProperty(String path, boolean throwOnMissing) {
+        return getProperty(PropertyPath.parse(path), throwOnMissing);
     }
 
-    private Property getProperty(PropertyPath path) {
+    private Property getProperty(PropertyPath path, boolean throwOnMissing) {
         PropertyPathElement element = path.getElements().remove();
         String name = element.getName();
         if (FIELD_SOURCE.equals(name)) {
@@ -310,7 +323,7 @@ class InterfaceHandler<T> implements InvocationHandler {
         } else if (FIELD_PROPERTIES.equals(name)) {
             return new Property(name, properties);
         }
-        Property result = getProperty(path.getPath(), name, true);
+        Property result = getProperty(path.getPath(), name, throwOnMissing, true);
         if (result.getValue() == null) {
             return result;
         }
@@ -328,23 +341,25 @@ class InterfaceHandler<T> implements InvocationHandler {
         return result;
     }
 
-    private Property getProperty(String path, String name, boolean createMissingObjects) {
+    private Property getProperty(String path, String name, boolean throwOnMissingMethod, boolean substituteMissingValue) {
         try {
             Method method = type.getDeclaredMethod(name);
-            Object value = getDefaultReturnValue(method, createMissingObjects);
+            Object value = getDefaultReturnValue(method, substituteMissingValue);
             if (source != null) {
                 value = method.invoke(source);
             }
             if (properties != null && properties.containsKey(name)) {
                 value = properties.get(method.getName());
-                value = value != null ? value : getDefaultReturnValue(method, createMissingObjects);
+                value = value != null ? value : getDefaultReturnValue(method, substituteMissingValue);
             }
             return new MethodBackedProperty(path, method, value);
         } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
-            PluginRuntime
-                .context()
-                .getExceptionHandler()
-                .handle(new ReflectionException(String.format(VALUE_EXCEPTION_TEMPLATE, name), e));
+            if (throwOnMissingMethod) {
+                PluginRuntime
+                    .context()
+                    .getExceptionHandler()
+                    .handle(new ReflectionException(String.format(VALUE_EXCEPTION_TEMPLATE, name), e));
+            }
         }
         return Property.EMPTY;
     }
@@ -408,7 +423,7 @@ class InterfaceHandler<T> implements InvocationHandler {
             return putInTree(path, value);
         }
         PropertyPathElement element = path.getElements().remove();
-        Property currentProperty = getProperty(path.getPath(), element.getName(), false);
+        Property currentProperty = getProperty(path.getPath(), element.getName(), true, false);
         if (Property.EMPTY.equals(currentProperty)) {
             // Probably a nonexistent property name. An exception is already handled
             return null;
@@ -437,7 +452,7 @@ class InterfaceHandler<T> implements InvocationHandler {
 
     private Object putInTree(PropertyPath path, Object value) {
         PropertyPathElement element = path.getElements().remove();
-        Property currentProperty = getProperty(path.getPath(), element.getName(), false);
+        Property currentProperty = getProperty(path.getPath(), element.getName(), true, false);
         if (Property.EMPTY.equals(currentProperty)) {
             // Probably a nonexistent property name. An exception is already handled
             return null;

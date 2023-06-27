@@ -22,7 +22,7 @@ public class Property {
 
     static final Property EMPTY = new Property(null, null);
 
-    private String path;
+    private final String path;
     private Object value;
 
     Property(String path, Object value) {

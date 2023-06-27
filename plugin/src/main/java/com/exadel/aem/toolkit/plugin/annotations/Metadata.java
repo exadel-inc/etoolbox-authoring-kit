@@ -27,13 +27,17 @@ public interface Metadata extends Annotation, Iterable<Property> {
 
     Annotation getAnyAnnotation(Class<?>... types);
 
-    Property getProperty(PropertyPath path);
+    boolean hasProperty(String path);
+
+    boolean hasProperty(PropertyPath path);
 
     Property getProperty(String path);
 
-    Object getValue(PropertyPath path);
+    Property getProperty(PropertyPath path);
 
     Object getValue(String path);
+
+    Object getValue(PropertyPath path);
 
     Iterator<Property> iterator(boolean deepRead, boolean expandArrays);
 
@@ -76,7 +80,7 @@ public interface Metadata extends Annotation, Iterable<Property> {
             properties.forEach((key, value) -> ((Metadata) source).putValue(key, value));
             return (Metadata) source;
         }
-        Object newInstance = Proxy.newProxyInstance(source.getClass().getClassLoader(),
+        Object newInstance = Proxy.newProxyInstance(Metadata.class.getClassLoader(),
             new Class[]{source.annotationType(), Metadata.class},
             new InterfaceHandler<>(source, properties));
         return (Metadata) newInstance;
