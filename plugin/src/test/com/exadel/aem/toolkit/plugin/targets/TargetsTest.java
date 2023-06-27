@@ -38,6 +38,7 @@ public class TargetsTest {
     private static final String PN_INT_ARRAY = "intArray";
     private static final String PN_BOOL_ARRAY = "boolArray";
     private static final String PN_DATE_ARRAY = "dateArray";
+    private static final String PN_OBJECT_ARRAY = "objectArray";
     private static final String PN_ORDINAL = "ordinal";
 
     private static final int TIER_1_CHILD_COUNT = 10;
@@ -58,6 +59,7 @@ public class TargetsTest {
                         .attribute(PN_INT_ARRAY, new long[] {1, 2, 3})
                         .attribute(PN_BOOL_ARRAY, new boolean[] {true, true, false, true})
                         .attribute(PN_DATE_ARRAY, new Date[] {getDate(2020,10,1), getDate(2021, 1, 10)})
+                        .attribute(PN_OBJECT_ARRAY, new StringBuilder[] {new StringBuilder("Hello"), new StringBuilder("World")})
                         .createTarget(NN_SUBITEM + i + CoreConstants.SEPARATOR_SLASH + NN_SUBSUBITEM + i)
                             .attribute(PN_ORDINAL, i);
                 }
@@ -138,6 +140,9 @@ public class TargetsTest {
         Assert.assertEquals(
             "{Boolean}[true,true,false,true]",
             ((Element) document.getDocumentElement().getFirstChild()).getAttribute(PN_BOOL_ARRAY));
+        Assert.assertEquals(
+            "[Hello,World]",
+            ((Element) document.getDocumentElement().getFirstChild()).getAttribute(PN_OBJECT_ARRAY));
         Assert.assertEquals(
             "{Date}[2020-11-01T00:00:00.000,2021-02-10T00:00:00.000]",
             ((Element) document.getDocumentElement().getFirstChild()).getAttribute(PN_DATE_ARRAY).replaceAll("\\+\\d{2}:\\d{2}|Z|z(?<=$|,)", StringUtils.EMPTY));

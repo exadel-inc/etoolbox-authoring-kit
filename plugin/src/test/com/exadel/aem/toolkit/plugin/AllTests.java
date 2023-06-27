@@ -19,6 +19,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.exadel.aem.toolkit.plugin.annotations.MetadataTest;
+import com.exadel.aem.toolkit.plugin.annotations.RenderingFilterTest;
 import com.exadel.aem.toolkit.plugin.exceptions.TerminateOnTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.AllowedChildrenTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.ComponentsTest;
@@ -36,7 +38,6 @@ import com.exadel.aem.toolkit.plugin.handlers.widgets.WidgetsTest;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.WidgetsMetaTest;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRule;
 import com.exadel.aem.toolkit.plugin.targets.TargetsTest;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtilTest;
 import com.exadel.aem.toolkit.plugin.utils.ordering.TopologicalSorterTest;
 import com.exadel.aem.toolkit.plugin.validators.ValidatorsTest;
 import com.exadel.aem.toolkit.plugin.writers.PackageInfoTest;
@@ -46,8 +47,9 @@ import com.exadel.aem.toolkit.plugin.writers.PackageInfoTest;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
-    AnnotationUtilTest.class,
     TargetsTest.class,
+    MetadataTest.class,
+    RenderingFilterTest.class,
 
     ComponentsTest.class,
     EditConfigTest.class,
