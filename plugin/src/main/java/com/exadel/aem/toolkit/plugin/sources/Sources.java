@@ -14,9 +14,7 @@
 package com.exadel.aem.toolkit.plugin.sources;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Member;
-import java.lang.reflect.Method;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 
@@ -49,9 +47,7 @@ public class Sources {
      * @return {@code Source} instance
      */
     public static Source fromMember(Member value, Class<?> reportingClass) {
-        ModifiableMemberSource result = value instanceof Field
-            ? new FieldSourceImpl((Field) value)
-            : new MethodSourceImpl((Method) value);
+        ModifiableMemberSource result = new MemberSourceImpl(value);
         result.setReportingClass(reportingClass);
         return result;
     }

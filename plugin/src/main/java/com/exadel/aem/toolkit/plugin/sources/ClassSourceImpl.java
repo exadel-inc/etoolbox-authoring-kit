@@ -13,14 +13,12 @@
  */
 package com.exadel.aem.toolkit.plugin.sources;
 
-import java.lang.annotation.Annotation;
-
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**
- * Implements {@link Source} to expose the metadata that is specific for the underlying Java class
+ * Initializes a {@link Source} instance referencing the managed Java class
  */
 class ClassSourceImpl extends SourceImpl {
 
@@ -31,6 +29,7 @@ class ClassSourceImpl extends SourceImpl {
      * @param value The metadata source
      */
     ClassSourceImpl(Class<?> value) {
+        super(value);
         this.value = value;
     }
 
@@ -40,30 +39,6 @@ class ClassSourceImpl extends SourceImpl {
     @Override
     public String getName() {
         return isValid() ? value.getName() : StringUtils.EMPTY;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Annotation[] getDeclaredAnnotations() {
-        return value != null ? value.getDeclaredAnnotations() : null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass) {
-        return value != null ? value.getAnnotationsByType(annotationClass) : null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass) {
-        return value != null ? value.getDeclaredAnnotation(annotationClass) : null;
     }
 
     /**

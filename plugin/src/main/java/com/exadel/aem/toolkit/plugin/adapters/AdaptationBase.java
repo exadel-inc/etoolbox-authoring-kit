@@ -34,7 +34,7 @@ public abstract class AdaptationBase<T> {
     private static final String ADAPTER_EXCEPTION_MESSAGE = "Could not create an adapter for ";
 
     private final Class<T> reflectedClass;
-    private Map<Class<?>, Object> adaptationsCache;
+    private Map<Class<?>, Object> adaptations;
 
     /**
      * Initializes the instance with the reference to the class exposing the generic type of the adaptable
@@ -89,16 +89,16 @@ public abstract class AdaptationBase<T> {
     }
 
     protected <A> A getAdaptation(Class<A> type) {
-        if (adaptationsCache != null && adaptationsCache.containsKey(type)) {
-            return type.cast(adaptationsCache.get(type));
+        if (adaptations != null && adaptations.containsKey(type)) {
+            return type.cast(adaptations.get(type));
         }
         return null;
     }
 
     protected void storeAdaptation(Class<?> type, Object value) {
-        if (adaptationsCache == null) {
-            adaptationsCache = new HashMap<>();
+        if (adaptations == null) {
+            adaptations = new HashMap<>();
         }
-        adaptationsCache.put(type, value);
+        adaptations.put(type, value);
     }
 }

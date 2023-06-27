@@ -13,12 +13,14 @@
  */
 package com.exadel.aem.toolkit.api.annotations.meta;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
+
 /**
  * Contains value restrictions processed by built-in {@link Validator} implementations
  * @see ValueRestriction
  */
 public class ValueRestrictions {
-    private static final String BUILTIN_VALIDATORS_PACKAGE = "com.exadel.aem.toolkit.plugin.validators.";
+    private static final String BUILTIN_VALIDATORS_PACKAGE = CoreConstants.ROOT_PACKAGE + ".plugin.validators.";
 
     public static final String NUMBER = BUILTIN_VALIDATORS_PACKAGE + "NumberValidator";
     public static final String POSITIVE = BUILTIN_VALIDATORS_PACKAGE + "PositiveNumberValidator";

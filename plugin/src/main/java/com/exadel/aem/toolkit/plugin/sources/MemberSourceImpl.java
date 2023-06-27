@@ -14,6 +14,11 @@
 package com.exadel.aem.toolkit.plugin.sources;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
@@ -25,14 +30,65 @@ import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.plugin.annotations.Metadata;
+import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 
 /**
  * Presents an abstract implementation of {@link Source} that exposes the metadata that is specific for the underlying
  * class member
  */
-abstract class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
+class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
 
+    private final Class<?> componentType;
+
+    private final Member member;
     private Class<?> reportingClass;
+    private Class<?> declaringClass;
+
+    private String name;
+
+    /**
+     * Initializes a {@link Source} instance referencing the managed Java class member
+     * @param member Reference to the class member
+     */
+    MemberSourceImpl(Member member) {
+        super((AnnotatedElement) member);
+        this.member = member;
+        name = member.getName();
+        declaringClass = member.getDeclaringClass();
+        componentType = MemberUtil.getComponentType(member);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setName(String value) {
+        name = value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<?> getDeclaringClass() {
+        return declaringClass;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setDeclaringClass(Class<?> value) {
+        declaringClass = value;
+    }
 
     /**
      * {@inheritDoc}
@@ -53,21 +109,22 @@ abstract class MemberSourceImpl extends SourceImpl implements ModifiableMemberSo
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("deprecation") // Usage of Multifield#field is retained for compatibility and will be removed after 2.0.2
+    @SuppressWarnings("deprecation")
+    // The usage of {@code Multifield#field} is retained for compatibility and will be removed after 2.0.2
     @Override
     public Class<?> getValueType() {
         // Retrieve the "immediate" return type
-        Class<?> result = getPlainReturnType();
-        // Then switch to directly specified type, if any
-        if (getDeclaredAnnotation(MultiField.class) != null
-            && getDeclaredAnnotation(MultiField.class).value() != _Default.class) {
-            result = getDeclaredAnnotation(MultiField.class).value();
-        } else if (getDeclaredAnnotation(MultiField.class) != null
-            && getDeclaredAnnotation(MultiField.class).field() != _Default.class) {
-            result = getDeclaredAnnotation(MultiField.class).field();
-        } else if (getDeclaredAnnotation(FieldSet.class) != null
-            && getDeclaredAnnotation(FieldSet.class).value() != _Default.class) {
-            result = getDeclaredAnnotation(FieldSet.class).value();
+        Class<?> result = componentType;
+        // Then switch to the directly specified type, if any
+        if (adaptTo(MultiField.class) != null
+            && adaptTo(MultiField.class).value() != _Default.class) {
+            result = adaptTo(MultiField.class).value();
+        } else if (adaptTo(MultiField.class) != null
+            && adaptTo(MultiField.class).field() != _Default.class) {
+            result = adaptTo(MultiField.class).field();
+        } else if (adaptTo(FieldSet.class) != null
+            && adaptTo(FieldSet.class).value() != _Default.class) {
+            result = adaptTo(FieldSet.class).value();
         }
         return result;
     }
@@ -84,18 +141,37 @@ abstract class MemberSourceImpl extends SourceImpl implements ModifiableMemberSo
             && StringUtils.equals(getName(), other.getName());
     }
 
+    @Override
+    public boolean isValid() {
+        return member != null
+            && !(member instanceof Field && member.getDeclaringClass().isInterface())
+            && !Modifier.isStatic(member.getModifiers())
+            && isWidgetAnnotationPresent();
+    }
+
+    @Override
+    public <T> T adaptTo(Class<T> type) {
+        boolean canCastToField = member instanceof Field && (type.equals(Field.class) || type.equals(Member.class));
+        boolean canCastToMethod = member instanceof Method && (type.equals(Method.class) || type.equals(Member.class));
+        if (canCastToField || canCastToMethod) {
+            return type.cast(member);
+        }
+        return super.adaptTo(type);
+    }
+
+
     /**
      * Retrieves the return type of the underlying Java class member (field or method). If the class member returns
-     * an array value, or a collection, the type of array/collection element is returned.
+     * an array value or a collection, the type of array/collection element is returned
      * @return Non-null {@code Class} reference
      */
-    abstract Class<?> getPlainReturnType();
+//    abstract Class<?> getPlainReturnType();
 
     /**
      * Gets whether the current class member has a widget annotation - the one with {@code sling:resourceType} specified
      * @return True or false
      */
-    boolean isWidgetAnnotationPresent() {
+    private boolean isWidgetAnnotationPresent() {
         return Arrays.stream(adaptTo(Annotation[].class))
             .anyMatch(annotation -> {
                 Metadata metadata = Metadata.from(annotation);
@@ -103,4 +179,5 @@ abstract class MemberSourceImpl extends SourceImpl implements ModifiableMemberSo
                 return resourceType != null && StringUtils.isNotBlank(resourceType.value());
             });
     }
+
 }

@@ -33,6 +33,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.injectors.models.RequestAdapterBase;
 import com.exadel.aem.toolkit.core.injectors.models.requestproperty.BooleanArrays;
 import com.exadel.aem.toolkit.core.injectors.models.requestproperty.BooleanCollections;
@@ -59,7 +60,7 @@ abstract class RequestPropertyInjectorTestBase {
         Doubles.class, DoubleArrays.class, DoubleCollections.class,
         Booleans.class, BooleanArrays.class, BooleanCollections.class);
 
-    private static final String MODELS_PACKAGE_NAME = "com.exadel.aem.toolkit.core.injectors.models.requestproperty";
+    private static final String MODELS_PACKAGE_NAME = CoreConstants.ROOT_PACKAGE + ".core.injectors.models.requestproperty";
 
     private static final String EXPECTED_STRING = "Hello World";
     static final String[] EXPECTED_STRING_ARRAY = {"Hello", "World"};
