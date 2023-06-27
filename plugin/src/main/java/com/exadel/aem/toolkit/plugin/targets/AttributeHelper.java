@@ -31,7 +31,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.markers._Default;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.annotations.Metadata;
+import com.exadel.aem.toolkit.plugin.annotations.Property;
 import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 import com.exadel.aem.toolkit.plugin.validators.Validation;
@@ -52,8 +53,8 @@ public class AttributeHelper<T, V> {
     private boolean valueTypeIsSupported;
 
     private Annotation annotation;
-    private Method method;
-    private String name;
+    private String annotationPropertyName;
+    private String attributeName;
     private String[] ignoredValues;
     private boolean blankValuesAllowed;
     private Class<?> typeHintValueType;
@@ -80,7 +81,7 @@ public class AttributeHelper<T, V> {
      * @return Current {@code XmlAttributeSettingHelper} instance
      */
     public AttributeHelper<T, V> withName(String value) {
-        this.name = value;
+        this.attributeName = value;
         return this;
     }
 
@@ -107,11 +108,11 @@ public class AttributeHelper<T, V> {
         if (!valueTypeIsSupported) {
             return;
         }
-        Object invocationResult = AnnotationUtil.getProperty(annotation, method);
+        Object invocationResult = Metadata.from(annotation).getValue(annotationPropertyName);
         if (invocationResult == null) {
             return;
         }
-        if (method.getReturnType().isArray()) {
+        if (invocationResult.getClass().isArray()) {
             List<V> invocationResultList = Arrays.stream(castToArray(invocationResult))
                 .map(this::cast)
                 .filter(Objects::nonNull)
@@ -169,14 +170,14 @@ public class AttributeHelper<T, V> {
     private void setValue(String value, T target) {
         if (Element.class.equals(holderType)) {
             Element element = (Element) target;
-            String oldAttributeValue = element.hasAttribute(name)
-                ? element.getAttribute(name)
+            String oldAttributeValue = element.hasAttribute(attributeName)
+                ? element.getAttribute(attributeName)
                 : StringUtils.EMPTY;
-            element.setAttribute(name, valueMerger.apply(oldAttributeValue, value));
+            element.setAttribute(attributeName, valueMerger.apply(oldAttributeValue, value));
         } else if (Target.class.equals(holderType)) {
             Target castedTarget = (Target) target;
-            String oldAttributeValue = castedTarget.getAttributes().getOrDefault(name, StringUtils.EMPTY);
-            castedTarget.attribute(name, valueMerger.apply(oldAttributeValue, value));
+            String oldAttributeValue = castedTarget.getAttributes().getOrDefault(attributeName, StringUtils.EMPTY);
+            castedTarget.attribute(attributeName, valueMerger.apply(oldAttributeValue, value));
         }
     }
 
@@ -186,9 +187,9 @@ public class AttributeHelper<T, V> {
      */
     private void removeAttributeFrom(T target) {
         if (Element.class.equals(holderType)) {
-            ((Element) target).removeAttribute(name);
+            ((Element) target).removeAttribute(attributeName);
         } else if (Target.class.equals(holderType)) {
-            ((Target) target).getAttributes().remove(name);
+            ((Target) target).getAttributes().remove(attributeName);
         }
     }
 
@@ -268,8 +269,8 @@ public class AttributeHelper<T, V> {
        ------------- */
 
     /**
-     * Retrieves an {@link AttributeHelper.Builder} aimed at creating a helper object for manipulation with XML elements.
-     * This is mainly to be used with notation such as {@code AttributeSettingHelper.forXmlTarget().forAnnotationProperty(...)}
+     * Retrieves an {@link AttributeHelper.Builder} aimed at creating a helper object for manipulation with XML
+     * elements. This is mainly to be used with notation such as {@code AttributeSettingHelper.forXmlTarget().forAnnotationProperty(...)}
      * @return {@link AttributeHelper.Builder} instance
      */
     public static Builder<Element> forXmlTarget() {
@@ -279,10 +280,10 @@ public class AttributeHelper<T, V> {
     /**
      * Retrieves an AttributeSettingHelper instance for a particular {@code Annotation}'s property
      * @param annotation {@code Annotation} object to handle
-     * @param property   {@code Method} that represents the annotation's property
+     * @param property   {@link Property} object that represents a named annotation value
      * @return New {@code AttributeSettingHelper} instance
      */
-    public static AttributeHelper<Target, Object> forAnnotationProperty(Annotation annotation, Method property) {
+    public static AttributeHelper<Target, Object> forAnnotationProperty(Annotation annotation, Property property) {
         return new Builder<>(Target.class).forAnnotationProperty(annotation, property);
     }
 
@@ -309,20 +310,20 @@ public class AttributeHelper<T, V> {
          * @return New {@code AttributeSettingHelper} instance
          */
         @SuppressWarnings("unchecked")
-        public AttributeHelper<T, Object> forAnnotationProperty(Annotation annotation, Method property) {
-            AttributeHelper<T, ?> attributeSetter = new AttributeHelper<>(holderType, getMethodWrappedType(property));
+        public AttributeHelper<T, Object> forAnnotationProperty(Annotation annotation, Property property) {
+            AttributeHelper<T, ?> attributeSetter = new AttributeHelper<>(holderType, getWrappedValueType(property));
             if (!fits(property)) {
                 return (AttributeHelper<T, Object>) attributeSetter;
             }
             attributeSetter.valueTypeIsSupported = true;
-            attributeSetter.method = property;
+            attributeSetter.annotationPropertyName = property.getName();
             attributeSetter.annotation = annotation;
-            attributeSetter.name = property.getName();
+            attributeSetter.attributeName = property.getName();
 
-            attributeSetter.isEnum = property.getReturnType().isEnum()
-                || (property.getReturnType().getComponentType() != null
-                && property.getReturnType().getComponentType().isEnum());
-            if (property.isAnnotationPresent(PropertyRendering.class)) {
+            attributeSetter.isEnum = property.getType().isEnum()
+                || (property.getType().getComponentType() != null
+                && property.getType().getComponentType().isEnum());
+            if (property.getAnnotation(PropertyRendering.class) != null) {
                 PropertyRendering propertyRendering = property.getAnnotation(PropertyRendering.class);
                 attributeSetter.ignoredValues = propertyRendering.ignoreValues();
                 attributeSetter.blankValuesAllowed = propertyRendering.allowBlank();
@@ -331,8 +332,8 @@ public class AttributeHelper<T, V> {
                     attributeSetter.typeHintValueType = propertyRendering.valueType();
                 }
             }
-            if (AnnotationUtil.propertyIsNotDefault(annotation, property)) {
-                attributeSetter.validationChecker = Validation.forMethod(property);
+            if (!property.valueIsDefault()) {
+                attributeSetter.validationChecker = Validation.forProperty(property);
             }
             return (AttributeHelper<T, Object>) attributeSetter;
         }
@@ -350,7 +351,7 @@ public class AttributeHelper<T, V> {
                 return attributeSetter;
             }
             attributeSetter.valueTypeIsSupported = true;
-            attributeSetter.name = name;
+            attributeSetter.attributeName = name;
             return attributeSetter;
         }
 
@@ -360,7 +361,11 @@ public class AttributeHelper<T, V> {
          * @return True or false
          */
         private static boolean fits(Method method) {
-            return fits(ClassUtils.primitiveToWrapper(getMethodWrappedType(method)));
+            return fits(ClassUtils.primitiveToWrapper(getWrappedValueType(method)));
+        }
+
+        private static boolean fits(Property property) {
+            return fits(getWrappedValueType(property));
         }
 
         /**
@@ -380,8 +385,16 @@ public class AttributeHelper<T, V> {
          * @param method {@code Method} instance representing an annotation property
          * @return Object type
          */
-        private static Class<?> getMethodWrappedType(Method method) {
-            Class<?> effectiveType = MemberUtil.getPlainType(method);
+        private static Class<?> getWrappedValueType(Method method) {
+            Class<?> effectiveType = MemberUtil.getComponentType(method);
+            if (effectiveType.isEnum()) {
+                return String.class;
+            }
+            return ClassUtils.primitiveToWrapper(effectiveType);
+        }
+
+        private static Class<?> getWrappedValueType(Property property) {
+            Class<?> effectiveType = property.getComponentType();
             if (effectiveType.isEnum()) {
                 return String.class;
             }

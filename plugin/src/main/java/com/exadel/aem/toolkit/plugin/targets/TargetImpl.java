@@ -16,13 +16,13 @@ package com.exadel.aem.toolkit.plugin.targets;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
 import java.util.function.BinaryOperator;
@@ -42,6 +42,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
+import com.exadel.aem.toolkit.plugin.annotations.Metadata;
+import com.exadel.aem.toolkit.plugin.annotations.Property;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 import com.exadel.aem.toolkit.plugin.utils.StringUtil;
@@ -291,7 +293,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
      */
     @Override
     public void addTarget(Target other, int position) {
-        // We cannot attach target B to target A if target A is a descendant of target A
+        // We cannot attach Target B to Target A if Target A is a descendant of Target A
         if (other == null || other.findChild(child -> child.equals(this)) != null) {
             return;
         }
@@ -530,22 +532,17 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
      * {@inheritDoc}
      */
     @Override
-    public Target attributes(Map<String, Object> value) {
-        if (value == null) {
-            return this;
+    public Target attribute(String name, Object value) {
+        if (value != null) {
+            attributes.put(name, StringUtil.format(value, String.class));
         }
-        for (Map.Entry<String, Object> entry : value.entrySet()) {
-            if (Long.class.equals(entry.getValue().getClass())) {
-                this.attribute(entry.getKey(), (long) entry.getValue());
-            } else if (Boolean.class.equals(entry.getValue().getClass())) {
-                this.attribute(entry.getKey(), (boolean) entry.getValue());
-            } else if (Double.class.equals(entry.getValue().getClass())) {
-                this.attribute(entry.getKey(), (double) entry.getValue());
-            } else if (Date.class.equals(entry.getValue().getClass())) {
-                this.attribute(entry.getKey(), (Date) entry.getValue());
-            } else {
-                this.attribute(entry.getKey(), entry.getValue().toString());
-            }
+        return this;
+    }
+
+    @Override
+    public Target attribute(String name, Object[] value) {
+        if (value != null) {
+            attributes.put(name, StringUtil.format(value, String.class));
         }
         return this;
     }
@@ -592,49 +589,46 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
     }
 
     /**
-     * Called by {@link TargetImpl#attributes(Annotation, Predicate)} in order to store annotation properties
-     * to the current instance
-     * @param value  {@code Annotation} object used as the source of attribute names and values
-     * @param filter {@code Predicate} used to sort out irrelevant properties
+     * Called by {@link TargetImpl#attributes(Annotation, Predicate)} in order to store annotation properties to the
+     * current instance
+     * @param annotation {@code Annotation} object used as the source of attribute names and values
+     * @param filter     {@code Predicate} used to sort out irrelevant properties
      */
-    private void populateAnnotationProperties(Annotation value, Predicate<Method> filter) {
-        String propertyPrefix = getPropertyPrefix(value);
+    private void populateAnnotationProperties(Annotation annotation, Predicate<Method> filter) {
+        String propertyPrefix = getPropertyPrefix(annotation);
         String nodePrefix = propertyPrefix.contains(CoreConstants.SEPARATOR_SLASH)
             ? StringUtils.substringBeforeLast(propertyPrefix, CoreConstants.SEPARATOR_SLASH)
             : StringUtils.EMPTY;
 
-        Target effectiveTarget = this;
-        if (StringUtils.isNotEmpty(nodePrefix)) {
-            effectiveTarget = effectiveTarget.getOrCreateTarget(nodePrefix);
-        }
-        List<Method> propertySources = Arrays.stream(value.annotationType().getDeclaredMethods())
-            .filter(filter)
-            .collect(Collectors.toList());
-        for (Method propertySource : propertySources) {
-            populateAnnotationProperty(value, propertySource, effectiveTarget);
-        }
+        Target effectiveTarget = StringUtils.isNotEmpty(nodePrefix)
+            ?  getOrCreateTarget(nodePrefix)
+            : this;
+        Metadata.from(annotation)
+            .stream()
+            .filter(prop -> prop.matches(filter))
+            .forEach(method -> populateAnnotationProperty(annotation, method, effectiveTarget));
     }
 
     /**
-     * Called by {@link TargetImpl#populateAnnotationProperties(Annotation, Predicate)} to store the value of a particular
-     * annotation property
-     * @param value  {@code Annotation} object used as the source of attribute names and values
-     * @param method {@code Method} reference representing the annotation property
-     * @param target Resulting {@code Target} object
+     * Called by {@link TargetImpl#populateAnnotationProperties(Annotation, Predicate)} to store the value of a
+     * particular annotation property
+     * @param annotation {@code Annotation} object used as the source of attribute names and values
+     * @param property   {@code Method} reference representing the annotation property
+     * @param target     Resulting {@code Target} object
      */
-    private static void populateAnnotationProperty(Annotation value, Method method, Target target) {
+    private static void populateAnnotationProperty(Annotation annotation, Property property, Target target) {
         boolean ignorePrefix = false;
 
         // Extract property name
-        String propertyName = method.getName();
-        if (method.isAnnotationPresent(PropertyRendering.class)) {
-            PropertyRendering propertyRenderingAnnotation = method.getAnnotation(PropertyRendering.class);
-            propertyName = NamingUtil.getValidFieldName(StringUtils.defaultIfBlank(propertyRenderingAnnotation.name(), propertyName));
-            ignorePrefix = propertyRenderingAnnotation.ignorePrefix();
+        String propertyName = property.getName();
+        PropertyRendering propertyRendering = property.getAnnotation(PropertyRendering.class);
+        if (propertyRendering != null) {
+            propertyName = NamingUtil.getValidFieldName(StringUtils.defaultIfBlank(propertyRendering.name(), propertyName));
+            ignorePrefix = propertyRendering.ignorePrefix();
         }
 
         // Extract the property prefix and prepend it to the name
-        String prefixByPropertyMapping = getPropertyPrefix(value);
+        String prefixByPropertyMapping = getPropertyPrefix(annotation);
         String namePrefix = prefixByPropertyMapping.contains(CoreConstants.SEPARATOR_SLASH)
             ? StringUtils.substringAfterLast(prefixByPropertyMapping, CoreConstants.SEPARATOR_SLASH)
             : prefixByPropertyMapping;
@@ -657,7 +651,7 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
         }
 
         BinaryOperator<String> merger = TargetImpl::mergeStringAttributes;
-        AttributeHelper.forAnnotationProperty(value, method)
+        AttributeHelper.forAnnotationProperty(annotation, property)
             .withName(propertyName)
             .withMerger(merger)
             .setTo(effectiveTarget);
@@ -671,17 +665,15 @@ class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandler
     @SuppressWarnings("deprecation") // Processing of PropertyMapping is retained for compatibility and will be removed
     // in a version after 2.0.2
     private static String getPropertyPrefix(Annotation annotation) {
-        String result = StringUtils.EMPTY;
-        if (annotation.annotationType().isAnnotationPresent(AnnotationRendering.class)) {
-            result = annotation.annotationType().getDeclaredAnnotation(AnnotationRendering.class).prefix();
-        } else if (annotation.annotationType().isAnnotationPresent(PropertyMapping.class)) {
-            result = annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class).prefix();
-        }
-        return result;
+        Metadata metadata = Metadata.from(annotation);
+        return Optional.ofNullable(metadata.getAnyAnnotation(AnnotationRendering.class, PropertyMapping.class))
+            .map(a -> Metadata.from(a).getValue(DialogConstants.PN_PREFIX))
+            .map(Object::toString)
+            .orElse(StringUtils.EMPTY);
     }
 
     /**
-     * Merges two string attributes expressing either plain values or inline value lists into the resulting string.
+     * Merges two string attributes that express plain values or inline value lists into the resulting string.
      * This method leaves no duplicate elements
      * @param first  First string value
      * @param second Second string value

@@ -13,14 +13,12 @@
  */
 package com.exadel.aem.toolkit.plugin.validators;
 
-import java.util.Arrays;
-
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.annotations.Metadata;
 
 /**
- *  {@link Validator} implementation for testing that provided character range is valid
+ * {@link Validator} implementation for testing that provided character range is valid
  */
 public class CharactersObjectValidator extends AllNotBlankValidator {
     private static final String MSG_VALID_PARAMS_EXPECTED = "a character range (start < end) or entity definition must be set";
@@ -57,18 +55,21 @@ public class CharactersObjectValidator extends AllNotBlankValidator {
     }
 
     /**
-     * Gets a {@code Characters} annotation instance with redundant data filtered out based on the result
-     * of {@link AllNotBlankValidator#test(Object)} and {@link CharactersObjectValidator#test(Object)}
+     * Filters out redundant data from a {@code Characters} annotation instance basing on the result of {@link
+     * AllNotBlankValidator#test(Object)} and {@link CharactersObjectValidator#test(Object)}. Either the {@code name}
+     * and {@code entity} fields are set, while the numeric fields are nullified, or the {@code rangeStart} and {@code
+     * rangeEnd} fields are set, while String fields are voided
      * @param source Source {@code Characters} annotation
-     * @return Filtered {@code Characters} value:
-     * either with the two of "name" and "entity" String fields set, while the numeric fields are nilled,
-     * or with the two "rangeStart" and "rangeEnd" numeric fields set, while String fields are voided
      */
-    public Characters getFilteredInstance(Characters source) {
+    public void filter(Characters source) {
+        Metadata metadata = Metadata.from(source);
         if (super.test(source)) {
-            return AnnotationUtil.filterInstance(source, Arrays.asList(METHOD_RANGE_START, METHOD_RANGE_END));
+            metadata.unsetValue(METHOD_RANGE_START);
+            metadata.unsetValue(METHOD_RANGE_END);
+        } else {
+            metadata.unsetValue(METHOD_NAME);
+            metadata.unsetValue(METHOD_ENTITY);
         }
-        return AnnotationUtil.filterInstance(source, Arrays.asList(METHOD_NAME, METHOD_ENTITY));
     }
 
     /**

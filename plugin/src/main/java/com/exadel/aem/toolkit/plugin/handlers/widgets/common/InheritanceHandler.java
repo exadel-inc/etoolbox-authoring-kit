@@ -14,7 +14,6 @@
 package com.exadel.aem.toolkit.plugin.handlers.widgets.common;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.function.BiConsumer;
@@ -25,6 +24,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.widgets.Extends;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.annotations.Metadata;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
 
@@ -106,10 +106,13 @@ public class InheritanceHandler implements BiConsumer<Source, Target> {
      * @return {@code Annotation} object or null in case no compliant annotation is found
      */
     private static Annotation getReferencedWidgetAnnotation(Source source) {
-        return Arrays.stream(source.adaptTo(Annotation[].class))
-            .filter(annotation -> annotation.annotationType().isAnnotationPresent(ResourceType.class)
-                && StringUtils.isNotBlank(annotation.annotationType().getDeclaredAnnotation(ResourceType.class).value()))
-            .findFirst()
-            .orElse(null);
+        for (Annotation annotation : source.adaptTo(Annotation[].class)) {
+            Metadata metadata = Metadata.from(annotation);
+            ResourceType resourceType = metadata.getAnnotation(ResourceType.class);
+            if (resourceType != null && StringUtils.isNotBlank(resourceType.value())) {
+                return annotation;
+            }
+        }
+        return null;
     }
 }

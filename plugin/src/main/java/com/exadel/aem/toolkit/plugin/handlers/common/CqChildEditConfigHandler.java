@@ -21,7 +21,7 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.annotations.Modifiable;
+import com.exadel.aem.toolkit.plugin.annotations.Metadata;
 import com.exadel.aem.toolkit.plugin.annotations.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
@@ -57,10 +57,12 @@ public class CqChildEditConfigHandler implements BiConsumer<Source, Target> {
             .attributes(childEditConfig, new RenderingFilter(childEditConfig));
         // Herewith we create a "proxied" @EditConfig object out of the provided @ChildEditConfig
         // with "dropTargets" and "listeners" methods of @EditConfig populated with  @ChildEditConfig values
-        EditConfig derivedEditConfig = AnnotationUtil.createInstance(EditConfig.class, ImmutableMap.of(
-            METHOD_DROP_TARGETS, childEditConfig.dropTargets(),
-            METHOD_LISTENERS, childEditConfig.listeners()
-        ));
+        EditConfig derivedEditConfig = Metadata.from(
+            EditConfig.class,
+            ImmutableMap.of(
+                METHOD_DROP_TARGETS, childEditConfig.dropTargets(),
+                METHOD_LISTENERS, childEditConfig.listeners()
+            ));
 
         HandlerChains.forEditConfig().accept(Sources.fromAnnotation(derivedEditConfig), target);
     }

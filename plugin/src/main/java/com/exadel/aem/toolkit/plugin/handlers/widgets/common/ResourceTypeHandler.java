@@ -23,6 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.annotations.Metadata;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
@@ -38,7 +39,7 @@ public class ResourceTypeHandler implements BiConsumer<Source, Target> {
     @Override
     public void accept(Source source, Target target) {
         String resourceType = Arrays.stream(source.adaptTo(Annotation[].class))
-            .map(annotation -> annotation.annotationType().getDeclaredAnnotation(ResourceType.class))
+            .map(annotation -> Metadata.from(annotation).getAnnotation(ResourceType.class))
             .filter(Objects::nonNull)
             .map(ResourceType::value)
             .findFirst()

@@ -24,13 +24,13 @@ import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.annotations.Modifiable;
+import com.exadel.aem.toolkit.plugin.annotations.Metadata;
 import com.exadel.aem.toolkit.plugin.annotations.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.utils.ScopeUtil;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties set to be automatically mapped
- * fot the use of meta-annotation such as {@link AnnotationRendering}
+ * for the use of meta-annotation such as {@link AnnotationRendering}
  */
 public class PropertyMappingHandler implements BiConsumer<Source, Target> {
 
@@ -52,15 +52,15 @@ public class PropertyMappingHandler implements BiConsumer<Source, Target> {
     public void accept(Source source, Target target) {
         Annotation[] annotations = source.adaptTo(Annotation[].class);
         Arrays.stream(annotations)
+            .map(Metadata::from)
             // to make sure the annotation has one of "mapping" meta-annotations
-            .filter(annotation -> annotation.annotationType().isAnnotationPresent(AnnotationRendering.class)
-                || annotation.annotationType().isAnnotationPresent(PropertyMapping.class))
+            .filter(metadata -> metadata.getAnyAnnotation(AnnotationRendering.class, PropertyMapping.class) != null)
             // to sort out annotations with specific mapping processing
-            .filter(annotation -> !SPECIALLY_PROCESSED.contains(annotation.annotationType()))
+            .filter(metadata -> !SPECIALLY_PROCESSED.contains(metadata.annotationType()))
             // for the exact case when @AnnotationRendering is present -- to make sure the scope is right
-            .filter(annotation -> {
-                AnnotationRendering annotationRendering = annotation.getAnnotation(AnnotationRendering.class);
-                return annotationRendering == null || ScopeUtil.fits(target.getScope(), annotation, annotations);
+            .filter(metadata -> {
+                AnnotationRendering annotationRendering = metadata.getAnnotation(AnnotationRendering.class);
+                return annotationRendering == null || ScopeUtil.fits(target.getScope(), metadata, annotations);
             })
             .forEach(annotation -> target.attributes(annotation, new RenderingFilter(annotation)));
     }

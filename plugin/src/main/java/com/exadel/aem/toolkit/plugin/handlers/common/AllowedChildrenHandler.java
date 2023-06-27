@@ -16,13 +16,13 @@ package com.exadel.aem.toolkit.plugin.handlers.common;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import com.google.common.collect.ImmutableMap;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,8 +38,8 @@ import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.plugin.annotations.Metadata;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.utils.ArrayUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
@@ -75,7 +75,7 @@ public class AllowedChildrenHandler implements Handler {
      */
     private static void populatePolicies(AllowedChildren[] rules, Target target) {
         List<AllowedChildren> allowedChildrenList = Arrays.stream(rules)
-            .filter(rule -> isEditConfig(target) == PolicyTarget.CURRENT.equals(rule.targetContainer()))
+            .filter(rule -> isEditConfig(target) == (PolicyTarget.CURRENT == rule.targetContainer()))
             .map(AllowedChildrenHandler::combineValues)
             .collect(Collectors.toList());
         if (allowedChildrenList.isEmpty()) {
@@ -100,10 +100,9 @@ public class AllowedChildrenHandler implements Handler {
     }
 
     /**
-     * Called from {@link AllowedChildrenHandler#populatePolicies(AllowedChildren[], Target)} to produce a combined
-     * rendition of rule's values (i.e. components that are referenced either by path or by class)
+     * Called from {@link AllowedChildrenHandler#populatePolicies(AllowedChildren[], Target)} to combine
+     * the rule's values (i.e., components that are referenced either by path or by class)
      * @param rule {@link AllowedChildren} instance
-     * @return The same instance, or else a modified proxy object that fulfills the {@code AllowedChildren} contract
      */
     private static AllowedChildren combineValues(AllowedChildren rule) {
         if (ArrayUtils.isEmpty(rule.classes())) {
@@ -114,10 +113,10 @@ public class AllowedChildrenHandler implements Handler {
             .map(cls -> PluginRuntime.context().getReflection().getComponent(cls).getJcrPath())
             .filter(StringUtils::isNotBlank)
             .forEach(effectiveValues::add);
-        Map<String, Object> modification = ImmutableMap.of(
+        Map<String, Object> modification = Collections.singletonMap(
             CoreConstants.PN_VALUE,
             effectiveValues.stream().distinct().toArray(String[]::new));
-        return AnnotationUtil.createInstance(AllowedChildren.class, rule, modification);
+        return (AllowedChildren) Metadata.from(rule, modification);
     }
 
     /* -------------
@@ -189,7 +188,7 @@ public class AllowedChildrenHandler implements Handler {
                 ArrayUtil.flatten(allowedChildren.resourceNames()),
                 jsonGenerator,
                 serializerProvider);
-            if (!PolicyMergeMode.OVERRIDE.equals(allowedChildren.mode())) {
+            if (PolicyMergeMode.OVERRIDE != allowedChildren.mode()) {
                 serializerProvider.defaultSerializeField("mode", allowedChildren.mode(), jsonGenerator);
             }
             jsonGenerator.writeEndObject();

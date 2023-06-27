@@ -27,7 +27,6 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import com.google.common.collect.ImmutableMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -41,7 +40,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.utils.PatternUtil;
-import com.exadel.aem.toolkit.plugin.annotations.Modifiable;
+import com.exadel.aem.toolkit.plugin.annotations.Metadata;
 import com.exadel.aem.toolkit.plugin.annotations.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
@@ -159,11 +158,10 @@ abstract class OptionProviderHandler {
         if (StringUtils.isBlank(original.fallback())) {
             return Stream.of(original);
         }
-        Map<String, Object> newProperties = ImmutableMap.of(
-            CoreConstants.PN_PATH, original.fallback(),
-            PROPERTY_IS_FALLBACK, true);
-        OptionSource newInstance = AnnotationUtil.createInstance(OptionSource.class, original, newProperties);
-        return Stream.of(original, newInstance);
+        Metadata newInstance = Metadata.from(original);
+        newInstance.putValue(CoreConstants.PN_VALUE, original.fallback());
+        newInstance.putValue(PROPERTY_IS_FALLBACK, true);
+        return Stream.of(original, (OptionSource) newInstance);
     }
 
     /**
