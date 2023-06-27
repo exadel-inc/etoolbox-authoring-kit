@@ -27,6 +27,7 @@ public class ValueRestrictions {
     public static final String NOT_BLANK_OR_DEFAULT = BUILTIN_VALIDATORS_PACKAGE + "NotBlankOrEmptyValidator";
     public static final String ALL_NOT_BLANK = BUILTIN_VALIDATORS_PACKAGE + "AllNotBlankValidator";
     public static final String JCR_PATH = BUILTIN_VALIDATORS_PACKAGE + "JcrPathValidator";
+    public static final String DATE_TIME = BUILTIN_VALIDATORS_PACKAGE + "DateTimeValidator";
 
     /**
      * Default (instantiation-preventing) constructor

@@ -23,6 +23,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.TypeHint;
 
 /**
@@ -76,6 +78,7 @@ public @interface DatePicker {
      * @see DateTimeValue
      * @return {@code DateTimeValue} instance
      */
+    @ValueRestriction(ValueRestrictions.DATE_TIME)
     DateTimeValue minDate() default @DateTimeValue;
 
     /**
@@ -84,6 +87,7 @@ public @interface DatePicker {
      * @see DateTimeValue
      * @return {@code DateTimeValue} instance
      */
+    @ValueRestriction(ValueRestrictions.DATE_TIME)
     DateTimeValue maxDate() default @DateTimeValue;
 
     /**
