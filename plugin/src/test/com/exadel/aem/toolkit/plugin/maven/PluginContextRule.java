@@ -41,14 +41,18 @@ public class PluginContextRule implements TestRule {
             && description.getTestClass().getAnnotation(ThrowsPluginException.class) == null) {
             return statement;
         }
-        exceptionHandler.unmute();
+        if (exceptionHandler != null) {
+            exceptionHandler.unmute();
+        }
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
                 try {
                     statement.evaluate();
                 } finally {
-                    exceptionHandler.mute();
+                    if (exceptionHandler != null) {
+                        exceptionHandler.mute();
+                    }
                 }
             }
         };
