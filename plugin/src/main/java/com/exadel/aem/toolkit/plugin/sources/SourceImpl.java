@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
@@ -125,10 +126,14 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
     }
 
     private static void applyInterpolation(Source source, Map<Class<?>, Object> metadata) {
-        metadata.forEach((key, value) -> {
-            if (!key.isArray() && value instanceof Metadata) {
+        for (Object value : metadata.values()) {
+            if (value instanceof Metadata[] && !value.getClass().getComponentType().equals(Data.class)) {
+                for (Metadata metadataEntry : (Metadata[]) value) {
+                    ScriptingHelper.interpolate(metadataEntry, source);
+                }
+            } else if (value instanceof Metadata) {
                 ScriptingHelper.interpolate((Metadata) value, source);
             }
-        });
+        }
     }
 }
