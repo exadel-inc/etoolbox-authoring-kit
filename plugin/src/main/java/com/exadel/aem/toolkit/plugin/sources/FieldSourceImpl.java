@@ -83,7 +83,7 @@ class FieldSourceImpl extends MemberSourceImpl {
      */
     @Override
     Class<?> getPlainReturnType() {
-        return MemberUtil.getPlainType(field);
+        return MemberUtil.getComponentType(field);
     }
 
     /**

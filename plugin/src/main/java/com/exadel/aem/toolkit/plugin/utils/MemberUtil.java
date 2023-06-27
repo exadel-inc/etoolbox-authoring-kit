@@ -42,7 +42,7 @@ public class MemberUtil {
      * @param member The member to analyze, a {@link Field} or {@link Method} reference expected
      * @return Appropriate {@code Class} instance or null if an invalid {@code Member} provided
      */
-    public static Class<?> getPlainType(Member member) {
+    public static Class<?> getComponentType(Member member) {
         if (!(member instanceof Field) && !(member instanceof Method)) {
             return null;
         }

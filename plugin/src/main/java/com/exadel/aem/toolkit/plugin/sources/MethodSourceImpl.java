@@ -83,7 +83,7 @@ class MethodSourceImpl extends MemberSourceImpl {
      */
     @Override
     Class<?> getPlainReturnType() {
-        return MemberUtil.getPlainType(method);
+        return MemberUtil.getComponentType(method);
     }
 
     /**
