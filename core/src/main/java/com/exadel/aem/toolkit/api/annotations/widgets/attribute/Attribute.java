@@ -44,9 +44,9 @@ public @interface Attribute {
 
     /**
      * The HTML {@code class} attribute. With this property, you can assign an arbitrary CSS class, or a set of classes,
-     * space-separated, to the widget's container.
-     * Mind that you can also use a number of <a href="https://opensource.adobe.com/coral-spectrum/dist/documentation/manual/styles.html#css-utility-classes">
-     *     pre-defined utility classes</a>
+     * space-separated, to the widget's container. Mind that you can also use a number of <a
+     * href="https://opensource.adobe.com/coral-spectrum/dist/documentation/manual/styles.html#css-utility-classes">
+     * pre-defined utility classes</a>
      * @return Optional string value
      */
     @PropertyRendering(name = "class")
@@ -67,6 +67,10 @@ public @interface Attribute {
     /**
      * Optional collection of extra attributes represented as name-value pairs
      * @return {@code @Data} annotation value, or an array of {@code @Data}
+     * @deprecated This property is to be removed from the current place. Since version 2.4.0 you are advised
+     * to specify data attributes directly on a field, method, or class with a standalone statement like {@code
+     * @Data(name="hello", value="world")}
      */
+    @Deprecated
     Data[] data() default {};
 }

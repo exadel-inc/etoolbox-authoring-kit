@@ -13,18 +13,30 @@
  */
 package com.exadel.aem.toolkit.api.annotations.widgets.attribute;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
+
 /**
- * Represents a name-value string pair used to populate {@link Attribute#data()} array
+ * Represents a name-value string pair used to populate {@code granite:data} subnode of the dialog field and,
+ * accordingly, to create {@code data-} attributes in dialog markup, or else to preserve variables for the scripting
+ * support
  */
-@Target({})
+@Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Repeatable(DataSet.class)
 public @interface Data {
 
     /**
-     * Attribute name
+     * Name of the data entry
      * @return String value, non-blank
      */
+    @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String name();
 
     /**
@@ -32,4 +44,12 @@ public @interface Data {
      * @return String value
      */
     String value();
+
+    /**
+     * If set to {@code true}, the value is the {@code granite:data} subnode of the dialog field and renders to a {@code
+     * data-} attribute of the correspondent HTML tag. If set to {@code false}, the value is only effective for the
+     * scripting support
+     * @return True or false
+     */
+    boolean persist() default true;
 }

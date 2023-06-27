@@ -65,11 +65,9 @@ public class DesignDialogView implements Addition, Addition2 {
     @TextField
     @Attribute(
         id = "field1-id",
-        className = "field1-attribute-class",
-        data = {
-            @Data(name = "field1-data1", value = "value-data1"),
-            @Data(name = "field1-data2", value = "value-data2")
-        })
+        className = "field1-attribute-class")
+    @Data(name = "field1-data1", value = "value-data1")
+    @Data(name = "field1-data2", value = "value-data2")
     @Place(LABEL_TAB_1)
     String field1;
 

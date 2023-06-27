@@ -167,7 +167,6 @@
                         sling:resourceType="granite/ui/components/coral/foundation/container">
                         <items jcr:primaryType="nt:unstructured">
                             <feedFirst
-                                    granite:hidden="{Boolean}false"
                                     jcr:primaryType="nt:unstructured"
                                     jcr:title="Feed first"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
@@ -322,7 +321,6 @@
                                     uncheckedValue="{Boolean}false"
                                     value="{Boolean}true"/>
                             <feed
-                                    granite:hidden="{Boolean}false"
                                     jcr:primaryType="nt:unstructured"
                                     jcr:title="Feed"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
