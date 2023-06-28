@@ -169,6 +169,6 @@ class LineFactory {
             }
             previous = previous.getPreviousSibling();
         }
-        return String.format(XPATH_NAME_TEMPLATE, value.getNodeName(), siblingCount);
+        return String.format(XPATH_NAME_TEMPLATE, stripNamespace(value.getNodeName()), siblingCount);
     }
 }
