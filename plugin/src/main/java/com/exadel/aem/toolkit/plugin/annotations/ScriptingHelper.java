@@ -25,13 +25,14 @@ import java.util.stream.Collectors;
 import javax.script.Bindings;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import jdk.nashorn.api.scripting.AbstractJSObject;
+import jdk.nashorn.api.scripting.ClassFilter;
+import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.Source;
@@ -42,7 +43,11 @@ public class ScriptingHelper {
 
     private static final Pattern SCRIPT_TEMPLATE = Pattern.compile("@\\{([^}]*?)}");
 
-    private static final ScriptEngine ENGINE = new ScriptEngineManager().getEngineByName("ecmascript");
+    private static final ScriptEngine ENGINE;
+    static {
+        NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
+        ENGINE = factory.getScriptEngine(new RestrictingClassFilter());
+    }
 
     private static final String PN_DATA = "data";
     private static final String METHOD_INCLUDES = "includes";
@@ -124,9 +129,9 @@ public class ScriptingHelper {
         return SCRIPT_TEMPLATE.matcher(value.toString()).find();
     }
 
-    /* ---------------
-       Utility classes
-       --------------- */
+    /* -----------------
+       Extension classes
+       ----------------- */
 
     private static class CollectionDecorator extends AbstractJSObject {
         private final List<Object> items = new ArrayList<>();
@@ -173,6 +178,17 @@ public class ScriptingHelper {
         @Override
         public Collection<Object> values() {
             return items;
+        }
+    }
+
+    /* ---------
+       Utilities
+       --------- */
+
+    private static class RestrictingClassFilter implements ClassFilter {
+        @Override
+        public boolean exposeToScripts(String name) {
+            return false;
         }
     }
 }
