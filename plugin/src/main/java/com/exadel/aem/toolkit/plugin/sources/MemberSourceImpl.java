@@ -26,10 +26,13 @@ import org.apache.commons.lang3.StringUtils;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
+import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.plugin.annotations.Metadata;
+import com.exadel.aem.toolkit.plugin.annotations.scripting.DataStack;
+import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 
 /**
@@ -41,8 +44,9 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
     private final Class<?> componentType;
 
     private final Member member;
-    private Class<?> reportingClass;
     private Class<?> declaringClass;
+    private Class<?> reportingClass;
+    private Member reportingMember;
 
     private String name;
 
@@ -109,6 +113,14 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
     /**
      * {@inheritDoc}
      */
+    @Override
+    public void setReportingMember(Member value) {
+        this.reportingMember = value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @SuppressWarnings("deprecation")
     // The usage of {@code Multifield#field} is retained for compatibility and will be removed after 2.0.2
     @Override
@@ -141,6 +153,9 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
             && StringUtils.equals(getName(), other.getName());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean isValid() {
         return member != null
@@ -149,6 +164,9 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
             && isWidgetAnnotationPresent();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public <T> T adaptTo(Class<T> type) {
         boolean canCastToField = member instanceof Field && (type.equals(Field.class) || type.equals(Member.class));
@@ -159,16 +177,33 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
         return super.adaptTo(type);
     }
 
-
     /**
-     * Retrieves the return type of the underlying Java class member (field or method). If the class member returns
-     * an array value or a collection, the type of array/collection element is returned
-     * @return Non-null {@code Class} reference
+     * {@inheritDoc} This implementation considers the {@link Data} entries attached to the current field/method; to the
+     * class where the current member is defined and all its superclasses/interfaces; to the member of the related class
+     * that triggered rendering of the current class; and to all the ancestors of that class
+     * @see Sources#fromMember(Member, Class, Member)
      */
-//    abstract Class<?> getPlainReturnType();
+    @Override
+    DataStack adaptToDataStack() {
+        DataStack result = new DataStack();
+        if (reportingMember != null) {
+            for (Class<?> ancestor : ClassUtil.getInheritanceTree(reportingMember.getDeclaringClass())) {
+                result.append(ancestor.getAnnotationsByType(Data.class));
+            }
+        }
+        for (Class<?> ancestor : ClassUtil.getInheritanceTree(getDeclaringClass())) {
+            result.append(ancestor.getAnnotationsByType(Data.class));
+        }
+        if (reportingMember != null) {
+            result.append(((AnnotatedElement) reportingMember).getAnnotationsByType(Data.class));
+        }
+        result.append(adaptTo(Data[].class));
+        return result;
+    }
 
     /**
-     * Gets whether the current class member has a widget annotation - the one with {@code sling:resourceType} specified
+     * Gets whether the current class member has a widget annotation - the one with {@code sling:resourceType}
+     * specified
      * @return True or false
      */
     private boolean isWidgetAnnotationPresent() {
@@ -179,5 +214,4 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
                 return resourceType != null && StringUtils.isNotBlank(resourceType.value());
             });
     }
-
 }

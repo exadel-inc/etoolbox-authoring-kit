@@ -15,7 +15,10 @@ package com.exadel.aem.toolkit.plugin.sources;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.plugin.annotations.scripting.DataStack;
+import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 
 /**
  * Initializes a {@link Source} instance referencing the managed Java class
@@ -58,5 +61,19 @@ class ClassSourceImpl extends SourceImpl {
             return type.cast(value);
         }
         return super.adaptTo(type);
+    }
+
+    /**
+     * {@inheritDoc}
+     * This implementation honors the {@link Data} entries attached to superclasses and interfaces of the current class
+     */
+    @Override
+    DataStack adaptToDataStack() {
+        DataStack result = new DataStack();
+        for (Class<?> ancestor : ClassUtil.getInheritanceTree(value, false)) {
+            result.append(ancestor.getAnnotationsByType(Data.class));
+        }
+        result.append(adaptTo(Data[].class));
+        return result;
     }
 }

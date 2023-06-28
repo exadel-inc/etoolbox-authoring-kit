@@ -20,6 +20,8 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
@@ -28,7 +30,8 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
 import com.exadel.aem.toolkit.plugin.annotations.Metadata;
 import com.exadel.aem.toolkit.plugin.annotations.Property;
-import com.exadel.aem.toolkit.plugin.annotations.ScriptingHelper;
+import com.exadel.aem.toolkit.plugin.annotations.scripting.DataStack;
+import com.exadel.aem.toolkit.plugin.annotations.scripting.ScriptingHelper;
 
 /**
  * Presents a basic implementation of {@link Source} that exposes the metadata that is specific for the underlying class
@@ -37,15 +40,15 @@ import com.exadel.aem.toolkit.plugin.annotations.ScriptingHelper;
 abstract class SourceImpl extends AdaptationBase<Source> implements Source {
 
     private final Map<Class<?>, Object> metadata;
+    private boolean metadataProcessed = false;
 
     /**
-     * Initializes a {@link SourceImpl} object with reference to a Java entity capable of exposing annotations
+     * Initializes a {@link SourceImpl} object that contains a reference to a Java entity capable of exposing annotations
      * @param annotated A {@link AnnotatedElement} instance, such as a method, a field, or a class
      */
     SourceImpl(AnnotatedElement annotated) {
         super(Source.class);
         metadata = collectMetadata(annotated);
-        applyInterpolation(this, metadata);
     }
 
     /**
@@ -53,45 +56,72 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
      */
     @Override
     public <T> T adaptTo(Class<T> type) {
-        T result = tryAdaptToMetadataEntry(type);
+        T result = Stream.<Supplier<T>>of(
+                () -> adaptToAnnotation(type),
+                () -> adaptToAnnotationArray(type),
+                () -> type == DataStack.class ? type.cast(adaptToDataStack()) : null)
+            .map(Supplier::get)
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
         if (result != null) {
             return result;
         }
         return super.adaptTo(type);
     }
 
-    private <T> T tryAdaptToMetadataEntry(Class<T> type) {
-        if (type.isArray()) {
-            if (type.getComponentType().equals(Annotation.class)) {
-                Annotation[] result = metadata
-                    .values()
-                    .stream()
-                    .flatMap(value -> value.getClass().isArray() ? Arrays.stream((Annotation[]) value) : Stream.of(value))
-                    .map(Annotation.class::cast)
-                    .toArray(Annotation[]::new);
-                return type.cast(result);
-            }
-            if (type.getComponentType().isAnnotation() && metadata.containsKey(type)) {
-                Object stored = metadata.get(type);
-                Object newArray = Array.newInstance(type.getComponentType(), Array.getLength(stored));
-                for (int i = 0; i < Array.getLength(stored); i++) {
-                    Array.set(newArray, i, Array.get(stored, i));
-                }
-                return type.cast(newArray);
-            }
-            if (type.getComponentType().isAnnotation() && metadata.containsKey(type.getComponentType())) {
-                Object newArray = Array.newInstance(type.getComponentType(), 1);
-                Array.set(newArray, 0, metadata.get(type.getComponentType()));
-                return type.cast(newArray);
-            }
-            if (type.getComponentType().isAnnotation()) {
-                return type.cast(Array.newInstance(type.getComponentType(), 0));
-            }
+    private <T> T adaptToAnnotation(Class<T> type) {
+        if (!type.isAnnotation() || !getMetadata().containsKey(type)) {
+            return null;
         }
-        if (type.isAnnotation() && metadata.containsKey(type)) {
-            return type.cast(metadata.get(type));
+        return type.cast(getMetadata().get(type));
+    }
+
+    private <T> T adaptToAnnotationArray(Class<T> type) {
+        if (!type.isArray()) {
+            return null;
+        }
+        if (type.getComponentType().equals(Annotation.class)) {
+            Annotation[] result = getMetadata()
+                .values()
+                .stream()
+                .flatMap(value -> value.getClass().isArray() ? Arrays.stream((Annotation[]) value) : Stream.of(value))
+                .map(Annotation.class::cast)
+                .toArray(Annotation[]::new);
+            return type.cast(result);
+        }
+        if (type.getComponentType().isAnnotation() && getMetadata().containsKey(type)) {
+            Object stored = getMetadata().get(type);
+            Object newArray = Array.newInstance(type.getComponentType(), Array.getLength(stored));
+            for (int i = 0; i < Array.getLength(stored); i++) {
+                Array.set(newArray, i, Array.get(stored, i));
+            }
+            return type.cast(newArray);
+        }
+        if (type.getComponentType().isAnnotation() && getMetadata().containsKey(type.getComponentType())) {
+            Object newArray = Array.newInstance(type.getComponentType(), 1);
+            Array.set(newArray, 0, getMetadata().get(type.getComponentType()));
+            return type.cast(newArray);
+        }
+        if (type.getComponentType().isAnnotation()) {
+            return type.cast(Array.newInstance(type.getComponentType(), 0));
         }
         return null;
+    }
+
+    /**
+     * Retrieves a {@link DataStack} object for the current {@link Source}. The {@code DataStack} is used to
+     * interpolate scripting templates
+     * @return A non-null {@code DataStack} object. Can be empty if no data was gathered via {@link Data} annotations
+     */
+    abstract DataStack adaptToDataStack();
+
+    private Map<Class<?>, Object> getMetadata() {
+        if (!metadataProcessed) {
+            metadataProcessed = true;
+            applyInterpolation(this, metadata);
+        }
+        return metadata;
     }
 
     private static Map<Class<?>, Object> collectMetadata(AnnotatedElement value) {
