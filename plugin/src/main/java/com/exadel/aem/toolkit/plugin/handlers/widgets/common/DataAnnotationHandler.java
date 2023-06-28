@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
  * object that define {@code granite:data} and similar attributes for the current Granite component
  */
-public class AttributeAnnotationHandler implements BiConsumer<Source, Target> {
+public class DataAnnotationHandler implements BiConsumer<Source, Target> {
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code
@@ -47,7 +47,8 @@ public class AttributeAnnotationHandler implements BiConsumer<Source, Target> {
             .filter(Data::persist)
             .collect(Collectors.toList());
 
-        if (dataEntries.isEmpty()) {
+        // We do not add "granite:data" section to the parent node of an XML because Granite won't be able to process it
+        if (dataEntries.isEmpty() || target.getParent() == null) {
             return;
         }
         Target graniteDataElement = target.getOrCreateTarget(CoreConstants.NN_GRANITE_DATA);
