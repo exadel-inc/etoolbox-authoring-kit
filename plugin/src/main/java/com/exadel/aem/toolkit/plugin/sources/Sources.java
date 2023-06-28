@@ -47,8 +47,28 @@ public class Sources {
      * @return {@code Source} instance
      */
     public static Source fromMember(Member value, Class<?> reportingClass) {
+        return fromMember(value, reportingClass, null);
+    }
+
+    /**
+     * Creates a {@link Source} facade for a Java class member
+     * @param value           {@code Method} or a {@code Field} for which a source facade is created
+     * @param reportingClass  Optional {@code Class<?>} pointer determining the class that "reports" to the ToolKit
+     *                        Maven plugin about the current member (can be a class where this member was declared or a
+     *                        descendant of some superclass that uses the member for UI rendering)
+     * @param reportingMember Optional {@code Member} reference that triggered rendering of the class that contains the
+     *                        current member. This is useful for rendering containers such as {@code FieldSet}s.
+     *                        <p><i>Ex.: a class {@code Foo} contains {@code private FooFieldset fooFieldset;} and class
+     *                        {@code FooFieldset} contains {@code private String bar}. As the plugin renders {@code Foo},
+     *                        it needs to render members of {@code FooFieldset} inside. As it reaches {@code bar}, it
+     *                        will receive {@code reportingClass = Foo.class} and
+     *                        {@code reportingMember = Foo#fooFieldset}</i></p>
+     * @return {@code Source} instance
+     */
+    public static Source fromMember(Member value, Class<?> reportingClass, Member reportingMember) {
         ModifiableMemberSource result = new MemberSourceImpl(value);
         result.setReportingClass(reportingClass);
+        result.setReportingMember(reportingMember);
         return result;
     }
 
