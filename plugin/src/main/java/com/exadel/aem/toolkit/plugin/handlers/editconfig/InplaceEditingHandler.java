@@ -172,7 +172,9 @@ public class InplaceEditingHandler implements BiConsumer<Source, Target> {
             return null;
         }
         try {
-            return Sources.fromMember(config.richText().value().getDeclaredField(config.richText().field()), config.richText().value());
+            return Sources.fromMember(
+                config.richText().value().getDeclaredField(config.richText().field()),
+                config.richText().value());
         } catch (NoSuchFieldException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
                     config.richText().value(),
