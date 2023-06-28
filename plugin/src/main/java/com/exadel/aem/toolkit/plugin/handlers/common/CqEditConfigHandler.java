@@ -19,7 +19,7 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.annotations.RenderingFilter;
-import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
+import com.exadel.aem.toolkit.plugin.handlers.Handlers;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
@@ -50,6 +50,6 @@ public class CqEditConfigHandler implements BiConsumer<Source, Target> {
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
             .attributes(editConfig, new RenderingFilter(editConfig));
 
-        HandlerChains.forEditConfig().accept(Sources.fromAnnotation(editConfig), target);
+        Handlers.forEditConfig().accept(Sources.fromAnnotation(editConfig), target);
     }
 }

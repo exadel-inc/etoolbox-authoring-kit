@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.annotations.Metadata;
 import com.exadel.aem.toolkit.plugin.annotations.RenderingFilter;
-import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
+import com.exadel.aem.toolkit.plugin.handlers.Handlers;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
@@ -64,6 +64,6 @@ public class CqChildEditConfigHandler implements BiConsumer<Source, Target> {
                 METHOD_LISTENERS, childEditConfig.listeners()
             ));
 
-        HandlerChains.forEditConfig().accept(Sources.fromAnnotation(derivedEditConfig), target);
+        Handlers.forEditConfig().accept(Sources.fromAnnotation(derivedEditConfig), target);
     }
 }

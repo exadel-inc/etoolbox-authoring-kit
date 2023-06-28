@@ -31,7 +31,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
-import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
+import com.exadel.aem.toolkit.plugin.handlers.Handlers;
 import com.exadel.aem.toolkit.plugin.handlers.common.DomHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
@@ -84,7 +84,7 @@ abstract class PackageEntryWriter {
      * @return {@code BiConsumer} object representing the handler or handler chain
      */
     BiConsumer<Source, Target> getHandlers() {
-        return HandlerChains.forScope(getScope());
+        return Handlers.forScope(getScope());
     }
 
     /**
