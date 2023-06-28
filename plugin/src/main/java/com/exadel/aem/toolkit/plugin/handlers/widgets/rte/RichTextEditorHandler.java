@@ -208,6 +208,9 @@ public class RichTextEditorHandler implements Handler {
     ) {
         RteNodeWithListBuilder nodeBuilder = featureItem.left;
         String feature = featureItem.right;
+        if (StringUtils.isBlank(feature)) {
+            return;
+        }
         if (FEATURE_TOKEN_PATTERN.matcher(feature).matches()) {
             // single#feature
             nodeBuilder.store(null, feature);
