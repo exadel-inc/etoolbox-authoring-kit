@@ -11,14 +11,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.annotations;
+package com.exadel.aem.toolkit.plugin.annotations.scripting;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -28,16 +23,14 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import jdk.nashorn.api.scripting.AbstractJSObject;
 import jdk.nashorn.api.scripting.ClassFilter;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.plugin.annotations.Metadata;
+import com.exadel.aem.toolkit.plugin.annotations.Property;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 
 public class ScriptingHelper {
 
@@ -50,7 +43,6 @@ public class ScriptingHelper {
     }
 
     private static final String PN_DATA = "data";
-    private static final String METHOD_INCLUDES = "includes";
 
     private ScriptingHelper() {
     }
@@ -90,21 +82,8 @@ public class ScriptingHelper {
 
     private static Bindings getBindings(Source source) {
         Bindings bindings = ENGINE.createBindings();
-        Data[] data = source.adaptTo(Data[].class);
-        if (ArrayUtils.isEmpty(data)) {
-            return bindings;
-        }
-        Map<String, Object> dataMap = new HashMap<>();
-        for (Data entry : data) {
-            String name = entry.name();
-            String value = entry.value();
-            if (StringUtil.isCollection(value)) {
-                dataMap.put(name, new CollectionDecorator(StringUtil.parseCollection(value)));
-            } else {
-                dataMap.put(name, value);
-            }
-        }
-        bindings.put(PN_DATA, dataMap);
+        DataStack dataStack = source.adaptTo(DataStack.class);
+        bindings.put(PN_DATA, dataStack.getData());
         return bindings;
     }
 
@@ -127,58 +106,6 @@ public class ScriptingHelper {
             return false;
         }
         return SCRIPT_TEMPLATE.matcher(value.toString()).find();
-    }
-
-    /* -----------------
-       Extension classes
-       ----------------- */
-
-    private static class CollectionDecorator extends AbstractJSObject {
-        private final List<Object> items = new ArrayList<>();
-
-        public CollectionDecorator(List<?> items) {
-            this.items.addAll(items);
-        }
-
-        @Override
-        public boolean isArray() {
-            return true;
-        }
-
-        @Override
-        public boolean hasMember(String name) {
-            return this.items.contains(name);
-        }
-
-        @Override
-        public Object getMember(String name) {
-            if (METHOD_INCLUDES.equals(name)) {
-                return (Predicate<Object>) obj -> hasMember(String.valueOf(obj));
-            }
-            return super.getMember(name);
-        }
-
-        @Override
-        public Object getSlot(int index) {
-            return index >= 0 && index < items.size() ? items.get(0) : null;
-        }
-
-        @Override
-        public boolean hasSlot(int slot) {
-            return slot >= 0 && slot < items.size();
-        }
-
-        @Override
-        public void setSlot(int index, Object value) {
-            if (index >= 0 && index < items.size()) {
-                items.set(index, value);
-            }
-        }
-
-        @Override
-        public Collection<Object> values() {
-            return items;
-        }
     }
 
     /* ---------
