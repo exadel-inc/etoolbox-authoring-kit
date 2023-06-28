@@ -19,7 +19,10 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
+import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionSource;
@@ -41,7 +44,9 @@ import com.exadel.aem.toolkit.plugin.annotations.cases.NestedAnnotations;
 )
 @Dialog(title = "Scripted Component Dialog")
 @Ignore(members = @ClassMember("moreOptions"))
-public class ScriptedComponent {
+@Data(name = "inheritedDescription", value = "From ScriptedComponent", persist = false)
+@Data(name = "inheritedValue", value = "From ParentScriptedComponent", persist = false)
+public class ScriptedComponent extends ParentScriptedComponent {
     @DialogField(label = "@{data.textFieldTitle || 'Default title'}")
     @RichTextEditor(
             features = {
@@ -115,8 +120,27 @@ public class ScriptedComponent {
         @NestedAnnotations.Level1({
             @NestedAnnotations.Level2(numbers = {12, 13, 14}),
         })
-    })
+    }) // Will not be rendered in _cq_dialog.xml because of missing custom handler
     private int numbers;
+
+    @FieldSet
+    @Data(name = "greeting", value = "Welcome")
+    @Data(name = "key1", value = ".", persist = false)
+    @Data(name = "key2", value = "sub", persist = false)
+    @Data(name = "inheritedDescription", value = "From ScriptedComponent#fieldset", persist = false)
+    private ScriptedFieldset fieldset;
+
+    @MultiField(ScriptedMultifieldEntry.class)
+    @Data(name = "greeting", value = "Hi there", persist = false)
+    private String moreFieldsets;
+
+    @FieldSet(ScriptedMultifieldEntry.class)
+    @Multiple
+    private String moreFieldsetsWithMultiple;
+
 }
 
-
+@Data(name = "inheritedLabel", value = "From ParentScriptedComponent", persist = false)
+@Data(name = "inheritedValue", value = "From ParentScriptedComponent", persist = false)
+class ParentScriptedComponent {
+}

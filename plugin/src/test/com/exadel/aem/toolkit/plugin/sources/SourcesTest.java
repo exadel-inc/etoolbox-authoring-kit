@@ -94,7 +94,7 @@ public class SourcesTest {
         Assert.assertNotNull(classLevelData);
         Assert.assertEquals("scripted{@value}", classLevelData[0].value());
 
-        source = Sources.fromMember(ScriptedFieldset.class.getDeclaredMethod("getText"));
+        source = Sources.fromMember(ScriptedFieldset.class.getDeclaredMethod("getHeading"));
         Property[] properties = source.adaptTo(Property[].class);
         Assert.assertNotNull(properties);
         Assert.assertEquals(2, properties.length);

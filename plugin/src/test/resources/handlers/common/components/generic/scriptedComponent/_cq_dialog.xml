@@ -159,6 +159,99 @@
                                 selected="true"/>
                         </items>
                     </options>
+                    <fieldset
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/fieldset">
+                        <granite:data
+                            jcr:primaryType="nt:unstructured"
+                            key="scripted{@value}"
+                            greeting="Welcome"/>
+                        <items
+                            jcr:primaryType="nt:unstructured">
+                            <heading
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/heading"
+                                level="{Long}1"
+                                text="Welcome"/>
+                            <text
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                name="./text"
+                                autocomplete="From ScriptedFieldset#text"
+                                disabled="{Boolean}false"
+                                emptyText="From ScriptedFieldsetInterface"
+                                fieldDescription="From ScriptedComponent#fieldset"
+                                fieldLabel="From ParentScriptedComponent"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"
+                                value="From ScriptedFieldset"/>
+                            <heading_textfield
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                name="./heading_textfield"
+                                disabled="{Boolean}false"
+                                fieldLabel="Heading field"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"
+                                subnode_1="value">
+                                <sub
+                                    jcr:primaryType="nt:unstructured"
+                                    subnode_2="value2"/>
+                            </heading_textfield>
+                        </items>
+                    </fieldset>
+                    <moreFieldsets
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                        composite="{Boolean}true"
+                        multifieldSpecial="This is added to Multifields">
+                        <field
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                            <items
+                                jcr:primaryType="nt:unstructured">
+                                <heading
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/heading"
+                                    level="{Long}1"
+                                    text="Hi there"/>
+                                <text
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    name="text"
+                                    disabled="{Boolean}false"
+                                    fieldLabel="From ParentScriptedComponent"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false"/>
+                            </items>
+                        </field>
+                    </moreFieldsets>
+                    <moreFieldsetsWithMultiple
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                        composite="{Boolean}true"
+                        multifieldSpecial="This is added to Multifields">
+                        <field
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/container">
+                            <items
+                                jcr:primaryType="nt:unstructured">
+                                <heading
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/heading"
+                                    level="{Long}1"
+                                    text=""/>
+                                <text
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    name="text"
+                                    disabled="{Boolean}false"
+                                    fieldLabel="From ParentScriptedComponent"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false"/>
+                            </items>
+                        </field>
+                    </moreFieldsetsWithMultiple>
                 </items>
             </column>
         </items>

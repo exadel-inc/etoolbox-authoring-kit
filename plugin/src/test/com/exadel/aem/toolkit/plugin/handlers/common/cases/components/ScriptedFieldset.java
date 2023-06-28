@@ -15,20 +15,43 @@ package com.exadel.aem.toolkit.plugin.handlers.common.cases.components;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
+import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 
 @Data(name = "key", value = "scripted{@value}")
+@Data(name = "inheritedValue", value = "From ScriptedFieldset", persist = false)
+@Data(name = "inheritedAutocomplete", value = "From ScriptedFieldset", persist = false)
 @SuppressWarnings("unused")
-public class ScriptedFieldset {
+public class ScriptedFieldset implements ScriptedFieldsetInterface {
 
-    @Heading("@{data.hello || 'Hello world'}")
-    private String text;
+    @Heading("@{data.greeting || 'Hello world'}")
+    private String heading;
 
-    @DialogField(label = "Foo@{data.bar}")
-    @Property(name = "@{data.key}/subnode_1", value = "value")
-    @Property(name = "@{data.key}/subnode_2", value = "value@{data.index}2")
-    public String getText() {
-        return text;
+    @DialogField(label = "@{data.inheritedLabel} field")
+    @TextField
+    @Property(name = "@{data.key1}/subnode_1", value = "value")
+    @Property(name = "@{data.key2}/subnode_2", value = "value@{data.index}2")
+    @Data(name = "inheritedLabel", value = "Heading", persist = false)
+    private String getHeading() {
+        return heading;
     }
+
+    @DialogField(
+        label = "@{data.inheritedLabel}",
+        description = "@{data.inheritedDescription}"
+    )
+    @TextField(
+        value = "@{data.inheritedValue}",
+        emptyText = "@{data.inheritedEmptyText}",
+        autocomplete = "@{data.inheritedAutocomplete}")
+    @Data(name = "inheritedAutocomplete", value = "From ScriptedFieldset#text", persist = false)
+    private String text;
+}
+
+@Data(name = "inheritedEmptyText", value = "From ScriptedFieldsetParentInterface", persist = false)
+interface ScriptedFieldsetParentInterface {
+}
+@Data(name = "inheritedEmptyText", value = "From ScriptedFieldsetInterface", persist = false)
+interface ScriptedFieldsetInterface extends ScriptedFieldsetParentInterface {
 }

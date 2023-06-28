@@ -27,6 +27,7 @@ import com.exadel.aem.toolkit.plugin.maven.TestConstants;
     title = TestConstants.DEFAULT_COMPONENT_TITLE
 )
 @Dialog
+@Data(name = "class-level", value = "value", persist = false)
 public class AttributesAnnotation {
     @DialogField
     @TextField
