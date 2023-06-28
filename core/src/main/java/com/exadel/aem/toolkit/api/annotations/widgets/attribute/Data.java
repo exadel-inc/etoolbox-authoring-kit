@@ -29,7 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
  */
 @Target({ElementType.TYPE, ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@Repeatable(DataSet.class)
+@Repeatable(DataCollection.class)
 public @interface Data {
 
     /**
