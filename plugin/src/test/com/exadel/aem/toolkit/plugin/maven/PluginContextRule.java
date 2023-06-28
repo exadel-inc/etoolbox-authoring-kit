@@ -74,4 +74,8 @@ public class PluginContextRule implements TestRule {
     public static void closeContext() {
         PluginRuntime.close();
     }
+
+    protected static boolean isContextInitialized() {
+        return exceptionHandler != null;
+    }
 }
