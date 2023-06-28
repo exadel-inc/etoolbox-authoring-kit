@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.annotations.scripting;
+package com.exadel.aem.toolkit.plugin.metadata.scripting;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -28,9 +28,9 @@ import jdk.nashorn.api.scripting.ClassFilter;
 import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.plugin.annotations.Metadata;
-import com.exadel.aem.toolkit.plugin.annotations.Property;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.metadata.Metadata;
+import com.exadel.aem.toolkit.plugin.metadata.Property;
 
 public class ScriptingHelper {
 

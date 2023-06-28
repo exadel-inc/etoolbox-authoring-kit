@@ -15,7 +15,7 @@ package com.exadel.aem.toolkit.plugin.validators;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
-import com.exadel.aem.toolkit.plugin.annotations.Metadata;
+import com.exadel.aem.toolkit.plugin.metadata.Metadata;
 
 /**
  * {@link Validator} implementation for testing that provided character range is valid

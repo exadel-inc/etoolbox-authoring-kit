@@ -19,8 +19,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import com.exadel.aem.toolkit.plugin.annotations.MetadataTest;
-import com.exadel.aem.toolkit.plugin.annotations.RenderingFilterTest;
 import com.exadel.aem.toolkit.plugin.exceptions.TerminateOnTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.AllowedChildrenTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.ComponentsTest;
@@ -37,6 +35,8 @@ import com.exadel.aem.toolkit.plugin.handlers.placement.layouts.LayoutTest;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.WidgetsTest;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.WidgetsMetaTest;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRule;
+import com.exadel.aem.toolkit.plugin.metadata.MetadataTest;
+import com.exadel.aem.toolkit.plugin.metadata.RenderingFilterTest;
 import com.exadel.aem.toolkit.plugin.sources.SourcesTest;
 import com.exadel.aem.toolkit.plugin.targets.TargetsTest;
 import com.exadel.aem.toolkit.plugin.utils.ordering.TopologicalSorterTest;

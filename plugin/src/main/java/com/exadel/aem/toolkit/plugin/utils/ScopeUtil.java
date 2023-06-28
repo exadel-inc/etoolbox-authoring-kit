@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
-import com.exadel.aem.toolkit.plugin.annotations.Metadata;
+import com.exadel.aem.toolkit.plugin.metadata.Metadata;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
 
 /**

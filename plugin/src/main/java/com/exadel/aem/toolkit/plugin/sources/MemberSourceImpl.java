@@ -30,8 +30,8 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
-import com.exadel.aem.toolkit.plugin.annotations.Metadata;
-import com.exadel.aem.toolkit.plugin.annotations.scripting.DataStack;
+import com.exadel.aem.toolkit.plugin.metadata.Metadata;
+import com.exadel.aem.toolkit.plugin.metadata.scripting.DataStack;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 

@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.annotations;
+package com.exadel.aem.toolkit.plugin.metadata;
 
 import java.util.LinkedList;
 import java.util.Queue;

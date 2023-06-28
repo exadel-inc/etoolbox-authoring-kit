@@ -28,10 +28,10 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
-import com.exadel.aem.toolkit.plugin.annotations.Metadata;
-import com.exadel.aem.toolkit.plugin.annotations.Property;
-import com.exadel.aem.toolkit.plugin.annotations.scripting.DataStack;
-import com.exadel.aem.toolkit.plugin.annotations.scripting.ScriptingHelper;
+import com.exadel.aem.toolkit.plugin.metadata.Metadata;
+import com.exadel.aem.toolkit.plugin.metadata.Property;
+import com.exadel.aem.toolkit.plugin.metadata.scripting.DataStack;
+import com.exadel.aem.toolkit.plugin.metadata.scripting.ScriptingHelper;
 
 /**
  * Presents a basic implementation of {@link Source} that exposes the metadata that is specific for the underlying class

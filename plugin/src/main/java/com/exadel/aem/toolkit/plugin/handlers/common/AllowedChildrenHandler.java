@@ -38,8 +38,8 @@ import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.plugin.annotations.Metadata;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.metadata.Metadata;
 import com.exadel.aem.toolkit.plugin.utils.ArrayUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 

@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.plugin.annotations.scripting.DataStack;
+import com.exadel.aem.toolkit.plugin.metadata.scripting.DataStack;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 
 /**
