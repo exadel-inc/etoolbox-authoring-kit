@@ -164,6 +164,23 @@
          * */
         static setDisabled($el, value) {
             ElementAccessors._findAccessorHandler($el, 'disabled')($el, value);
+            // Clear concurrent
+            const actors = $el.data('disable-actors');
+            actors && actors.clear();
+        }
+
+        /**
+         * Set the disabled state of $el. Field becomes enabled only if all of disable requesters (actors) have requested enabling.
+         * @param {JQuery} $el - target element
+         * @param {boolean} value - state to set
+         * @param {object} actor - component that requests change
+         * */
+        static requestDisable($el, value, actor = null) {
+            const actors = $el.data('disable-actors') || new Set();
+            value ? actors.add(actor) : actors.delete(actor);
+            $el.data('disable-actors', actors);
+            const state = actors.size > 0;
+            ElementAccessors._findAccessorHandler($el, 'disabled')($el, state);
         }
 
         /**

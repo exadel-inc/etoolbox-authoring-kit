@@ -59,7 +59,7 @@
      * query type: boolean
      * */
     ns.ActionRegistry.register('disabled', function setDisabled(state) {
-        ns.ElementAccessors.setDisabled(this.$el, state);
+        ns.ElementAccessors.requestDisable(this.$el, state, this);
     });
 
     /**
