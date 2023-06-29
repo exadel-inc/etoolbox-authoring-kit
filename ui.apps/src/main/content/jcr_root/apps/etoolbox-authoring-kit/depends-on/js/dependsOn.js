@@ -68,7 +68,8 @@
     const handleChange = ns.ElementReferenceRegistry.handleChange;
     $document
         .off('change.dependsOn').on('change.dependsOn', '[data-dependsonref]', handleChange)
-        .off('selected.dependsOn').on('selected.dependsOn', '[data-dependsonref]', handleChange);
+        .off('selected.dependsOn').on('selected.dependsOn', '[data-dependsonref]', handleChange)
+        .off('change:value.dependsOn').on('change:value.dependsOn', '[data-dependsonref]', handleChange);
 
     // Track input event
     const handleChangeDebounced = $.debounce(750, handleChange);
