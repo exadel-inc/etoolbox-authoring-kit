@@ -15,6 +15,7 @@ package com.exadel.aem.toolkit.plugin.sources;
 
 import java.lang.reflect.Member;
 
+import com.exadel.aem.toolkit.api.handlers.EmbeddedMemberSource;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 
@@ -24,7 +25,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
  * @see Source
  * @see MemberSource
  */
-public interface ModifiableMemberSource extends MemberSource {
+public interface ModifiableMemberSource extends EmbeddedMemberSource {
 
     /**
      * Stores the string that is used as the "overriding" name of the current {@code Source}
@@ -51,7 +52,6 @@ public interface ModifiableMemberSource extends MemberSource {
      * facility is designed for members of entities such as fieldsets. This method gives the ability to query for
      * metadata attached to the field/method of a class that uses the fieldset
      * @param value {@code Member} reference
-     * @see Sources#fromMember(Member, Class, Member)
      */
-    void setReportingMember(Member value);
+    void setUpstreamMember(Member value);
 }

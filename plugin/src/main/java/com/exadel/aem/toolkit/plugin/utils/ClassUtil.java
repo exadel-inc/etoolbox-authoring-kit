@@ -79,19 +79,21 @@ public class ClassUtil {
     /**
      * Retrieves a list of {@link Source} objects representing manageable members that belong to a certain {@code Class}
      * (and its superclasses) and match the criteria represented by a {@code Predicate}
-     * @param sourceClass  The class to extract sources from
-     * @param sourceMember
-     * @param condition    Nullable {@code Predicate<Member>} instance that helps to pick up appropriate fields and
-     *                     methods
-     * @param ordered      True to perform proper sources ordering (considers the {@code @DialogField(ranking=..,)}
-     *                     values, and then the {@code @Place(before/after=...)} instructions). False to skip ordering
+     * @param sourceClass    The class to extract sources from
+     * @param upstreamMember Nullable {@code Member} reference that signifies the context in which the current class
+     *                       members are retrieved. See {@link Sources#fromMember(Member, Class, Member)} for detail
+     * @param condition      Nullable {@code Predicate<Member>} instance that helps to pick up appropriate fields and
+     *                       methods
+     * @param ordered        True to perform proper sources ordering (considers the {@code @DialogField(ranking=..,)}
+     *                       values, and then the {@code @Place(before/after=...)} instructions). False to skip
+     *                       ordering
      * @return List of {@code Source} objects
      */
     @SuppressWarnings("deprecation") // Processing of IgnoreFields is retained for compatibility and will be removed
     // in a version after 2.0.2
     public static List<Source> getSources(
         Class<?> sourceClass,
-        Member sourceMember,
+        Member upstreamMember,
         Predicate<Source> condition,
         boolean ordered) {
         List<Source> raw = new ArrayList<>();
@@ -103,7 +105,7 @@ public class ClassUtil {
                 ? Arrays.stream(classEntry.getMethods())
                 : Stream.concat(Arrays.stream(classEntry.getDeclaredFields()), Arrays.stream(classEntry.getDeclaredMethods()));
             List<Source> classMemberSources = classMembersStream
-                .map(member -> Sources.fromMember(member, sourceClass, sourceMember))
+                .map(member -> Sources.fromMember(member, sourceClass, upstreamMember))
                 .filter(source -> source.isValid() && (condition == null || condition.test(source)))
                 .collect(Collectors.toList());
             raw.addAll(classMemberSources);

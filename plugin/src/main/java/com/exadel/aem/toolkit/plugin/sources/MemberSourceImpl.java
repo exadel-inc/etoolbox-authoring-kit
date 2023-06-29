@@ -46,7 +46,7 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
     private final Member member;
     private Class<?> declaringClass;
     private Class<?> reportingClass;
-    private Member reportingMember;
+    private Member upstreamMember;
 
     private String name;
 
@@ -59,6 +59,7 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
         this.member = member;
         name = member.getName();
         declaringClass = member.getDeclaringClass();
+        reportingClass = member.getDeclaringClass();
         componentType = MemberUtil.getComponentType(member);
     }
 
@@ -114,8 +115,16 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
      * {@inheritDoc}
      */
     @Override
-    public void setReportingMember(Member value) {
-        this.reportingMember = value;
+    public Member getUpstreamMember() {
+        return this.upstreamMember;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setUpstreamMember(Member value) {
+        this.upstreamMember = value;
     }
 
     /**
@@ -186,16 +195,16 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
     @Override
     DataStack adaptToDataStack() {
         DataStack result = new DataStack();
-        if (reportingMember != null) {
-            for (Class<?> ancestor : ClassUtil.getInheritanceTree(reportingMember.getDeclaringClass())) {
+        if (upstreamMember != null) {
+            for (Class<?> ancestor : ClassUtil.getInheritanceTree(upstreamMember.getDeclaringClass())) {
                 result.append(ancestor.getAnnotationsByType(Data.class));
             }
         }
         for (Class<?> ancestor : ClassUtil.getInheritanceTree(getDeclaringClass())) {
             result.append(ancestor.getAnnotationsByType(Data.class));
         }
-        if (reportingMember != null) {
-            result.append(((AnnotatedElement) reportingMember).getAnnotationsByType(Data.class));
+        if (upstreamMember != null) {
+            result.append(((AnnotatedElement) upstreamMember).getAnnotationsByType(Data.class));
         }
         result.append(adaptTo(Data[].class));
         return result;
