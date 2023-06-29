@@ -43,7 +43,7 @@ public class DataStack {
 
     private static Object convert(String value) {
         return StringUtil.isCollection(value)
-            ? new CollectionDecorator(StringUtil.parseCollection(value))
+            ? new ListJsObject<>(StringUtil.parseCollection(value))
             : value;
     }
 }

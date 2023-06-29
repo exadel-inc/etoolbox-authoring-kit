@@ -16,18 +16,30 @@ package com.exadel.aem.toolkit.plugin.metadata.scripting;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
 import jdk.nashorn.api.scripting.AbstractJSObject;
 
-class CollectionDecorator extends AbstractJSObject {
+class ListJsObject<T> extends AbstractJSObject {
 
     private static final String METHOD_INCLUDES = "includes";
 
-    private final List<Object> items = new ArrayList<>();
+    private final List<T> items = new ArrayList<>();
+    private final BiPredicate<T, String> matcher;
 
-    public CollectionDecorator(List<?> items) {
+    public ListJsObject(List<T> items) {
+        this(items, null);
+    }
+
+    public ListJsObject(List<T> items, BiPredicate<T, String> matcher) {
         this.items.addAll(items);
+        this.matcher = matcher;
+    }
+
+    @Override
+    public Object call(Object loopback, Object... args) {
+        return this;
     }
 
     @Override
@@ -37,7 +49,10 @@ class CollectionDecorator extends AbstractJSObject {
 
     @Override
     public boolean hasMember(String name) {
-        return this.items.contains(name);
+        if (matcher == null) {
+            return items.stream().anyMatch(item -> String.valueOf(item).equals(name));
+        }
+        return items.stream().anyMatch(item -> matcher.test(item, name));
     }
 
     @Override
@@ -59,14 +74,16 @@ class CollectionDecorator extends AbstractJSObject {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void setSlot(int index, Object value) {
         if (index >= 0 && index < items.size()) {
-            items.set(index, value);
+            items.set(index, (T) value);
         }
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Collection<Object> values() {
-        return items;
+        return (Collection<Object>) items;
     }
 }

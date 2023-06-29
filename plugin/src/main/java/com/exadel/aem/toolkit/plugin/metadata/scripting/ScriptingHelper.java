@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.plugin.metadata.scripting;
 
+import java.lang.reflect.Member;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +32,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.metadata.Metadata;
 import com.exadel.aem.toolkit.plugin.metadata.Property;
+import com.exadel.aem.toolkit.plugin.sources.ModifiableMemberSource;
 
 public class ScriptingHelper {
 
@@ -43,6 +45,7 @@ public class ScriptingHelper {
     }
 
     private static final String PN_DATA = "data";
+    private static final String PN_SOURCE = "source";
 
     private ScriptingHelper() {
     }
@@ -84,6 +87,16 @@ public class ScriptingHelper {
         Bindings bindings = ENGINE.createBindings();
         DataStack dataStack = source.adaptTo(DataStack.class);
         bindings.put(PN_DATA, dataStack.getData());
+        if (source.adaptTo(Member.class) != null) {
+            Member reflectedMember = source.adaptTo(Member.class);
+            Member reflectedContextMember = source
+                .tryAdaptTo(ModifiableMemberSource.class)
+                .map(ModifiableMemberSource::getUpstreamMember)
+                .orElse(null);
+            bindings.put(PN_SOURCE, new MemberJsObject(reflectedMember, reflectedContextMember));
+        } else if (source.adaptTo(Class.class) != null) {
+            bindings.put(PN_SOURCE, new ClassJsObject(source.adaptTo(Class.class)));
+        }
         return bindings;
     }
 
