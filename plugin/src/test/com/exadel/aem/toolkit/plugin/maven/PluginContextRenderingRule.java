@@ -53,7 +53,7 @@ public class PluginContextRenderingRule extends PluginContextRule {
     public void test(Class<?> component) {
         boolean adHocInitialization = !isContextInitialized();
         if (adHocInitialization) {
-            PluginContextRule.initializeContext();
+            initializeContext();
         }
         String subfolderName = TestConstants.RESOURCE_FOLDER_COMPONENTS + PATH_POSTFIX_GENERIC;
         if (component.getSimpleName().endsWith(KEYWORD_WIDGET)) {
@@ -65,7 +65,7 @@ public class PluginContextRenderingRule extends PluginContextRule {
             subfolderName,
             StringUtils.uncapitalize(StringUtils.removePattern(component.getSimpleName(), SUFFIX_PATTERN)));
         if (adHocInitialization) {
-            PluginContextRule.closeContext();
+            closeContext();
         }
     }
 

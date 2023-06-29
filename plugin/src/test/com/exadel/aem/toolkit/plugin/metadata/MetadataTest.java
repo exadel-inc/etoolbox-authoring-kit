@@ -53,6 +53,7 @@ public class MetadataTest {
 
     private static final String PN_OPTIONS = "moreOptions";
     private static final String PN_NUMBERS = "numbers";
+
     @ClassRule
     public static FileSystemRule fileSystemHost = new FileSystemRule();
 

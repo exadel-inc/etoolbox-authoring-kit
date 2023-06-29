@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 @Data(name = "inheritedValue", value = "From ScriptedFieldset", persist = false)
 @Data(name = "inheritedAutocomplete", value = "From ScriptedFieldset", persist = false)
 @SuppressWarnings("unused")
-public class ScriptedFieldset implements ScriptedFieldsetInterface {
+public class ScriptedFieldset1 implements ScriptedFieldsetInterface {
 
     @Heading("@{data.greeting || 'Hello world'}")
     private String heading;

@@ -46,7 +46,7 @@ import com.exadel.aem.toolkit.plugin.annotations.cases.NestedAnnotations;
 @Ignore(members = @ClassMember("moreOptions"))
 @Data(name = "inheritedDescription", value = "From ScriptedComponent", persist = false)
 @Data(name = "inheritedValue", value = "From ParentScriptedComponent", persist = false)
-public class ScriptedComponent extends ParentScriptedComponent {
+public class ScriptedComponent extends ScriptedParent {
     @DialogField(label = "@{data.textFieldTitle || 'Default title'}")
     @RichTextEditor(
             features = {
@@ -128,7 +128,10 @@ public class ScriptedComponent extends ParentScriptedComponent {
     @Data(name = "key1", value = ".", persist = false)
     @Data(name = "key2", value = "sub", persist = false)
     @Data(name = "inheritedDescription", value = "From ScriptedComponent#fieldset", persist = false)
-    private ScriptedFieldset fieldset;
+    private ScriptedFieldset1 fieldset;
+
+    @FieldSet
+    private ScriptedFieldset2 fieldset2;
 
     @MultiField(ScriptedMultifieldEntry.class)
     @Data(name = "greeting", value = "Hi there", persist = false)
@@ -142,5 +145,5 @@ public class ScriptedComponent extends ParentScriptedComponent {
 
 @Data(name = "inheritedLabel", value = "From ParentScriptedComponent", persist = false)
 @Data(name = "inheritedValue", value = "From ParentScriptedComponent", persist = false)
-class ParentScriptedComponent {
+class ScriptedParent {
 }

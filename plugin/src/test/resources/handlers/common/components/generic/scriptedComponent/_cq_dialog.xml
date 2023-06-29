@@ -200,6 +200,38 @@
                             </heading_textfield>
                         </items>
                     </fieldset>
+                    <fieldset2
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/fieldset">
+                        <items
+                            jcr:primaryType="nt:unstructured">
+                            <text
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                name="./text"
+                                disabled="{Boolean}false"
+                                fieldLabel="Field text"
+                                fieldDescription="In class ScriptedFieldset2"
+                                emptyText="Hello World"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"
+                                value="Imported Field text">
+                                <granite:data
+                                    jcr:primaryType="nt:unstructured"
+                                    emptyText="Hello World"/>
+                            </text>
+                            <extensionText
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                name="./extensionText"
+                                disabled="{Boolean}false"
+                                fieldDescription="Has parent interface"
+                                fieldLabel="Extension text"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"
+                                value="test-component"/>
+                        </items>
+                    </fieldset2>
                     <moreFieldsets
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="granite/ui/components/coral/foundation/form/multifield"

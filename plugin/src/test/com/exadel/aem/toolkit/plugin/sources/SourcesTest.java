@@ -17,19 +17,27 @@ import java.lang.annotation.Annotation;
 import java.util.Arrays;
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComplexComponent1;
-import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ScriptedFieldset;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ScriptedFieldset1;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ScriptedFieldset2;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.viewpattern.component1.views.DesignDialogView;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.policies.AllowedChildrenTestCases;
+import com.exadel.aem.toolkit.plugin.maven.EvaluationRule;
 
 public class SourcesTest {
+
+    @Rule
+    public EvaluationRule evaluation = new EvaluationRule();
 
     @Test
     public void testCacheMetadata1() {
@@ -87,19 +95,40 @@ public class SourcesTest {
 
     @Test
     public void testInterpolateMetadata() throws NoSuchMethodException {
-        Source source = Sources.fromClass(ScriptedFieldset.class);
+        Source source = Sources.fromClass(ScriptedFieldset1.class);
         Assert.assertNotNull(source);
 
         Data[] classLevelData = source.adaptTo(Data[].class);
         Assert.assertNotNull(classLevelData);
         Assert.assertEquals("scripted{@value}", classLevelData[0].value());
 
-        source = Sources.fromMember(ScriptedFieldset.class.getDeclaredMethod("getHeading"));
+        source = Sources.fromMember(ScriptedFieldset1.class.getDeclaredMethod("getHeading"));
         Property[] properties = source.adaptTo(Property[].class);
         Assert.assertNotNull(properties);
         Assert.assertEquals(2, properties.length);
         Assert.assertEquals("/subnode_1", properties[0].name());
         Assert.assertEquals("/subnode_2", properties[1].name());
+    }
+
+    @Test
+    public void testInterpolateReflectiveData1() throws NoSuchFieldException {
+        Source source = Sources.fromMember(ScriptedFieldset2.class.getDeclaredField("text"));
+        Assert.assertNotNull(source);
+        DialogField dialogField = source.adaptTo(DialogField.class);
+        Assert.assertEquals("Field text", dialogField.label());
+        Assert.assertEquals("In class ScriptedFieldset2", dialogField.description());
+        TextField textField = source.adaptTo(TextField.class);
+        Assert.assertEquals("Imported Field text", textField.value());
+        Assert.assertEquals("Hello World", textField.emptyText());
+    }
+
+    @Test
+    public void testInterpolateReflectiveData2() throws NoSuchFieldException {
+        Source source = Sources.fromMember(ScriptedFieldset2.class.getDeclaredField("extensionText"));
+        Assert.assertNotNull(source);
+        DialogField dialogField = source.adaptTo(DialogField.class);
+        Assert.assertEquals("Extension text", dialogField.label());
+        Assert.assertEquals("Has parent interface", dialogField.description());
     }
 
     private static String[] getAnnotationNames(Annotation[] values) {
