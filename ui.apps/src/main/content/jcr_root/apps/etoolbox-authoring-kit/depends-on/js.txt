@@ -26,6 +26,7 @@ js/accessors/dependsOnCoralColorFieldAccessor.js
 js/accessors/dependsOnCoralDatePickerAccessor.js
 js/accessors/dependsOnCoralNumberInputAccessor.js
 js/accessors/dependsOnCoral2AutocompleteAccessor.js
+js/accessors/dependsOnCoralFieldsetAccessor.js
 
 # Actions
 js/actions/dependsOnCoralBasicActions.js

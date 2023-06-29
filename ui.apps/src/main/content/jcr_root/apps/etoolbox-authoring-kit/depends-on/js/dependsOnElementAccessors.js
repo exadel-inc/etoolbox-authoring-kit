@@ -180,7 +180,7 @@
             value ? actors.add(actor) : actors.delete(actor);
             $el.data('disable-actors', actors);
             const state = actors.size > 0;
-            ElementAccessors._findAccessorHandler($el, 'disabled')($el, state);
+            ElementAccessors._findAccessorHandler($el, 'disabled')($el, state, actor);
         }
 
         /**
