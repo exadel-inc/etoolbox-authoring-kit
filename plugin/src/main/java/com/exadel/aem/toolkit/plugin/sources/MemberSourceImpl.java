@@ -20,10 +20,12 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
+import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
@@ -40,6 +42,8 @@ import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
  * class member
  */
 class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
+
+    private static final List<String> NEGATIVE_VALUES = Arrays.asList("false", "0", "0.0", "null", "undefined");
 
     private final Class<?> componentType;
 
@@ -170,6 +174,7 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
         return member != null
             && !(member instanceof Field && member.getDeclaringClass().isInterface())
             && !Modifier.isStatic(member.getModifiers())
+            && isRenderedByCondition()
             && isWidgetAnnotationPresent();
     }
 
@@ -208,6 +213,14 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
         }
         result.append(adaptTo(Data[].class));
         return result;
+    }
+
+    private boolean isRenderedByCondition() {
+        String conditionValue = tryAdaptTo(DialogField.class).map(DialogField::condition).orElse(null);
+        if (StringUtils.isEmpty(conditionValue)) {
+            return true;
+        }
+        return NEGATIVE_VALUES.stream().noneMatch(variant -> variant.equalsIgnoreCase(conditionValue));
     }
 
     /**

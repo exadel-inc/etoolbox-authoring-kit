@@ -131,6 +131,7 @@ public class ScriptedComponent extends ScriptedParent {
     private ScriptedFieldset1 fieldset;
 
     @FieldSet
+    @Data(name = "renderExtraText", value = "false", persist = false)
     private ScriptedFieldset2 fieldset2;
 
     @MultiField(ScriptedMultifieldEntry.class)

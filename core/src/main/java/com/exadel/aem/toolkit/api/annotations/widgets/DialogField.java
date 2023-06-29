@@ -93,4 +93,6 @@ public @interface DialogField {
      * @return String value, or an array of non-blank strings
      */
     String[] validation() default {};
+
+    String condition() default "";
 }

@@ -22,8 +22,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 @Data(name = "inheritedLabel", value = "Extension text", persist = false)
 @Ignore(members = {
     @ClassMember(value = "heading", source = ScriptedFieldset1.class),
-    @ClassMember(value = "getHeading", source = ScriptedFieldset1.class),
-    @ClassMember(value = "text", source = ScriptedFieldset1.class),
+    @ClassMember(value = "getHeading", source = ScriptedFieldset1.class)
 })
 public class ScriptedFieldset2 extends ScriptedFieldset1 {
 
@@ -47,5 +46,9 @@ public class ScriptedFieldset2 extends ScriptedFieldset1 {
     )
     @TextField(value = "@{source.context.class().annotation('AemComponent').path()}")
     private String extensionText;
+
+    @DialogField(condition = "@{data.renderExtraText}")
+    @TextField
+    private String extraText;
 }
 
