@@ -192,13 +192,23 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
     }
 
     /**
-     * {@inheritDoc} This implementation considers the {@link Data} entries attached to the current field/method; to the
-     * class where the current member is defined and all its superclasses/interfaces; to the member of the related class
-     * that triggered rendering of the current class; and to all the ancestors of that class
+     * {@inheritDoc}
+     */
+    @Override
+    <T extends Annotation> T getAnnotation(Class<T> type) {
+        return ((AnnotatedElement) member).getDeclaredAnnotation(type);
+    }
+
+    /**
+     * {@inheritDoc} This implementation considers the {@link Data} entries attached:
+     * <br>- to the current field/method;
+     * <br>- to the class where the current member is defined and all its superclasses/interfaces;
+     * <br>- to the "upstream" member of the related class that triggered rendering of the current class;
+     * <br>- and then to all the ancestors of that "upstream" class
      * @see Sources#fromMember(Member, Class, Member)
      */
     @Override
-    DataStack adaptToDataStack() {
+    DataStack getDataStack() {
         DataStack result = new DataStack();
         if (upstreamMember != null) {
             for (Class<?> ancestor : ClassUtil.getInheritanceTree(upstreamMember.getDeclaringClass())) {

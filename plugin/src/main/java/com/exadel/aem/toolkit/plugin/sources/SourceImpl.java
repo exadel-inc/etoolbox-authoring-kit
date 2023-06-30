@@ -24,10 +24,13 @@ import java.util.Objects;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang3.ClassUtils;
+
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
+import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.metadata.Metadata;
 import com.exadel.aem.toolkit.plugin.metadata.Property;
 import com.exadel.aem.toolkit.plugin.metadata.scripting.DataStack;
@@ -57,9 +60,10 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
     @Override
     public <T> T adaptTo(Class<T> type) {
         T result = Stream.<Supplier<T>>of(
-                () -> adaptToAnnotation(type),
-                () -> adaptToAnnotationArray(type),
-                () -> type == DataStack.class ? type.cast(adaptToDataStack()) : null)
+                () -> type == DataStack.class ? type.cast(getDataStack()) : null,
+                () -> adaptToStoredAnnotation(type),
+                () -> adaptToStoredAnnotationArray(type),
+                () -> adaptToForeignAnnotation(type))
             .map(Supplier::get)
             .filter(Objects::nonNull)
             .findFirst()
@@ -70,14 +74,14 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
         return super.adaptTo(type);
     }
 
-    private <T> T adaptToAnnotation(Class<T> type) {
+    private <T> T adaptToStoredAnnotation(Class<T> type) {
         if (!type.isAnnotation() || !getMetadata().containsKey(type)) {
             return null;
         }
         return type.cast(getMetadata().get(type));
     }
 
-    private <T> T adaptToAnnotationArray(Class<T> type) {
+    private <T> T adaptToStoredAnnotationArray(Class<T> type) {
         if (!type.isArray()) {
             return null;
         }
@@ -109,12 +113,27 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
+    private <T> T adaptToForeignAnnotation(Class<T> type) {
+        return ClassUtils.isAssignable(type, Annotation.class)
+            ? (T) getAnnotation((Class<? extends Annotation>) type)
+            : null;
+    }
+
+    /**
+     * Retrieves an annotation of particular type attached to the underlying entity
+     * @param type {@code Class} of the annotation to get
+     * @param <T>  Annotation type reflected by the {@code type} argument
+     * @return {@code T}-typed annotation object
+     */
+    abstract <T extends Annotation> T getAnnotation(Class<T> type);
+
     /**
      * Retrieves a {@link DataStack} object for the current {@link Source}. The {@code DataStack} is used to
      * interpolate scripting templates
      * @return A non-null {@code DataStack} object. Can be empty if no data was gathered via {@link Data} annotations
      */
-    abstract DataStack adaptToDataStack();
+    abstract DataStack getDataStack();
 
     private Map<Class<?>, Object> getMetadata() {
         if (!metadataProcessed) {
@@ -127,8 +146,9 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
     private static Map<Class<?>, Object> collectMetadata(AnnotatedElement value) {
         Map<Class<?>, Object> result = new LinkedHashMap<>();
         for (Annotation annotation : value.getDeclaredAnnotations()) {
-            if (!annotation.annotationType().getPackage().getName().startsWith(CoreConstants.ROOT_PACKAGE)) {
-                result.put(annotation.annotationType(), annotation);
+            // We do not collect "foreign" annotations
+            if (!annotation.annotationType().getPackage().getName().startsWith(CoreConstants.ROOT_PACKAGE)
+                && !PluginRuntime.context().getReflection().isHandled(annotation)) {
                 continue;
             }
             Metadata entry = Metadata.from(annotation);
@@ -145,6 +165,9 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
     }
 
     private static boolean isRepeatableContainer(Metadata value) {
+        if (value == null) {
+            return false;
+        }
         Property valueProperty = value.hasProperty(CoreConstants.PN_VALUE)
             ? value.getProperty(CoreConstants.PN_VALUE)
             : null;

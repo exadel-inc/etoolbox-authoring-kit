@@ -13,6 +13,8 @@
  */
 package com.exadel.aem.toolkit.plugin.sources;
 
+import java.lang.annotation.Annotation;
+
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
@@ -65,10 +67,18 @@ class ClassSourceImpl extends SourceImpl {
 
     /**
      * {@inheritDoc}
+     */
+    @Override
+    <T extends Annotation> T getAnnotation(Class<T> type) {
+        return value.getDeclaredAnnotation(type);
+    }
+
+    /**
+     * {@inheritDoc}
      * This implementation honors the {@link Data} entries attached to superclasses and interfaces of the current class
      */
     @Override
-    DataStack adaptToDataStack() {
+    DataStack getDataStack() {
         DataStack result = new DataStack();
         for (Class<?> ancestor : ClassUtil.getInheritanceTree(value, false)) {
             result.append(ancestor.getAnnotationsByType(Data.class));
