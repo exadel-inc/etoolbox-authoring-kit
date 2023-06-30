@@ -384,7 +384,7 @@ class InterfaceHandler<T> implements InvocationHandler {
             return Array.newInstance(method.getReturnType().getComponentType(), 0);
         }
         if (method.getReturnType().isAnnotation() && createMissingObjects) {
-            return Metadata.from(method.getReturnType());
+            return Metadata.from((Class<? extends Annotation>) method.getReturnType());
         }
         if (method.getReturnType().equals(String.class)) {
             return StringUtils.EMPTY;
@@ -484,7 +484,7 @@ class InterfaceHandler<T> implements InvocationHandler {
         if (!(existingValue instanceof Metadata)) {
             metadata = existingValue != null
                 ? Metadata.from((Annotation) existingValue)
-                : (Metadata) Metadata.from(currentProperty.getComponentType());
+                : (Metadata) Metadata.from((Class<? extends Annotation>) currentProperty.getComponentType());
             if (mustWriteToArray) {
                 Array.set(properties.get(element.getName()), element.getIndex(), metadata);
             } else {
@@ -506,7 +506,7 @@ class InterfaceHandler<T> implements InvocationHandler {
             Array.set(newArray, i, Array.get(source, i));
         }
         if (componentType.isAnnotation()) {
-            Array.set(newArray, sourceLength, Metadata.from(componentType));
+            Array.set(newArray, sourceLength, Metadata.from((Class<? extends Annotation>) componentType));
         }
         return newArray;
     }

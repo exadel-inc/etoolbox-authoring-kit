@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Spliterator;
 import java.util.stream.Stream;
 
+import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+
 public interface Metadata extends Annotation, Iterable<Property> {
 
     <T extends Annotation> T getAnnotation(Class<T> type);
@@ -53,36 +55,38 @@ public interface Metadata extends Annotation, Iterable<Property> {
 
     Object unsetValue(String path);
 
-    static <T> T from(Class<T> type) {
+    static <T extends Annotation> T from(Class<T> type) {
         return from(type, Collections.emptyMap());
     }
 
     @SuppressWarnings("unchecked")
-    static <T> T from(Class<T> type, Map<String, Object> properties) {
-        Object result = Proxy.newProxyInstance(type.getClassLoader(),
-            new Class[]{type, Metadata.class},
-            new InterfaceHandler<>(type, properties));
-        return (T) result;
-    }
-
-    static <T extends Annotation> T from(T source, Class<T> type) {
-        return type.cast(from(source));
+    static <T extends Annotation> T from(Class<T> type, Map<String, Object> properties) {
+        return (T) from(null, type, properties);
     }
 
     static <T extends Annotation> Metadata from(T source) {
-        return from(source, (Map<String, Object>) null);
+        return from(source, null, null);
     }
 
     static <T extends Annotation> Metadata from(T source, Map<String, Object> properties) {
-        if (source instanceof Metadata && properties == null) {
-            return (Metadata) source;
-        } else if (source instanceof Metadata) {
-            properties.forEach((key, value) -> ((Metadata) source).putValue(key, value));
+        return from(source, null, properties);
+    }
+
+    static <T extends Annotation> Metadata from(T source, Class<T> type, Map<String, Object> properties) {
+        if (source instanceof Metadata) {
+            if (properties != null && !properties.isEmpty()) {
+                properties.forEach((key, value) -> ((Metadata) source).putValue(key, value));
+            }
             return (Metadata) source;
         }
-        Object newInstance = Proxy.newProxyInstance(Metadata.class.getClassLoader(),
-            new Class[]{source.annotationType(), Metadata.class},
-            new InterfaceHandler<>(source, properties));
+        Class<? extends Annotation> effectiveType = source != null ? source.annotationType() : type;
+        InterfaceHandler<T> interfaceHandler = source != null
+            ? new InterfaceHandler<>(source, properties)
+            : new InterfaceHandler<>(type, properties);
+        Object newInstance = Proxy.newProxyInstance(
+            PluginRuntime.context().getReflection().getClassLoader(),
+            new Class[]{effectiveType, Metadata.class},
+            interfaceHandler);
         return (Metadata) newInstance;
     }
 }

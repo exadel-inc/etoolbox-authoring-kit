@@ -142,9 +142,7 @@ public class MetadataTest {
 
     @Test
     public void testNestedAnnotationModification1() throws NoSuchFieldException {
-        RichTextEditor annotation = Metadata.from(
-            getTextField().getAnnotation(RichTextEditor.class),
-            RichTextEditor.class);
+        RichTextEditor annotation = (RichTextEditor) Metadata.from(getTextField().getAnnotation(RichTextEditor.class));
         Assert.assertNotNull(annotation);
         Assert.assertEquals(PasteMode.WORDHTML, annotation.defaultPasteMode());
         Assert.assertFalse(annotation.useFixedInlineToolbar());
@@ -167,7 +165,7 @@ public class MetadataTest {
 
     @Test
     public void testNestedAnnotationModification2() throws NoSuchFieldException {
-        Select annotation = Metadata.from(getOptionField().getAnnotation(Select.class), Select.class);
+        Select annotation = (Select) Metadata.from(getOptionField().getAnnotation(Select.class));
         Assert.assertNotNull(annotation);
         Assert.assertEquals("source1", annotation.optionProvider().value()[0].value());
         Assert.assertEquals("source3_2", annotation.optionProvider().value()[2].attributes()[1]);

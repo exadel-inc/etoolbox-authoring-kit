@@ -320,7 +320,7 @@ public class RichTextEditorHandler implements Handler {
      * @param parent {@code Target} instance representing the Granite node that stores the RTE config
      */
     private void populatePasteRulesNode(Target parent) {
-        HtmlPasteRules rules = Metadata.from(this.rteAnnotation.htmlPasteRules(), HtmlPasteRules.class);
+        HtmlPasteRules rules = (HtmlPasteRules) Metadata.from(this.rteAnnotation.htmlPasteRules());
         Target edit = parent.getOrCreateTarget(DialogConstants.NN_EDIT);
         Target htmlPasteRulesNode = edit.getOrCreateTarget(DialogConstants.NN_HTML_PASTE_RULES);
         List<String> nonDefaultAllowPropsNames = ((Metadata) rules)
