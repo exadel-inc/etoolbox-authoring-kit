@@ -26,7 +26,7 @@
     const $document = $(document);
 
     // Version to track actual DependsOn version from code/browser console
-    ns.version = '2.6.0';
+    ns.version = '2.7.0';
 
     /**
      * DependsOn entry point

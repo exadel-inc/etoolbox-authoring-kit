@@ -16,7 +16,7 @@ Built-in plug-in actions are:
 * `readonly` - set the readonly marker of the field from the Query result.
 * `required` - set the required marker of the field from the Query result.
 * `validate` - set the validation state of the field from the Query result.
-* `disabled` - set the field's disabled state from the Query result.
+* `disabled` - set the field's disabled state from the Query result. Supports multiple actions effect for the same field.
 
 ### Async actions
 
