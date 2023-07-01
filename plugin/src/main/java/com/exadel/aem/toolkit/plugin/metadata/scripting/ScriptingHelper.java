@@ -28,6 +28,7 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.Undefined;
 
+import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.ScriptingException;
@@ -91,6 +92,11 @@ public class ScriptingHelper {
 
         StringBuilder result = new StringBuilder(property.getValue().toString());
         Matcher matcher = SCRIPT_TEMPLATE.matcher(result);
+        if (!matcher.find()) {
+            // This is a complete "scripted" annotation property
+            return runScript(context, scope, result.toString());
+        }
+        matcher.reset();
         while (matcher.find()) {
             String scriptResult = runScript(context, scope, matcher.group(1));
             result.replace(matcher.start(), matcher.end(), scriptResult);
@@ -129,6 +135,10 @@ public class ScriptingHelper {
     private static boolean containsTemplate(Property property) {
         if (!String.class.equals(property.getType())) {
             return false;
+        }
+        PropertyRendering propertyRendering = property.getAnnotation(PropertyRendering.class);
+        if (propertyRendering != null && propertyRendering.scriptedContent()) {
+            return true;
         }
         Object value = property.getValue();
         if (value == null) {

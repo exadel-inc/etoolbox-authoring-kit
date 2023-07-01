@@ -47,7 +47,7 @@ public class ScriptedFieldset2 extends ScriptedFieldset1 {
     @TextField(value = "@{source.context.class().annotation('AemComponent').path()}")
     private String extensionText;
 
-    @DialogField(condition = "@{data.renderExtraText}")
+    @DialogField(condition = "data.renderExtraText")
     @TextField
     private String extraText;
 }

@@ -94,5 +94,11 @@ public @interface DialogField {
      */
     String[] validation() default {};
 
+    /**
+     * When contains a valid script-like expression, defines whether the current field should be rendered depending
+     * on a condition
+     * @return String value (optional)
+     */
+    @PropertyRendering(scriptedContent = true)
     String condition() default "";
 }
