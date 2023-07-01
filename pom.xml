@@ -77,9 +77,6 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
 
-<!--        <sonar.projectKey>${project.artifactId}</sonar.projectKey>-->
-<!--        <sonar.java.binaries>target/classes</sonar.java.binaries>-->
-
         <aem.host>localhost</aem.host>
         <aem.port>4502</aem.port>
     </properties>
@@ -584,6 +581,11 @@
                 <artifactId>mockito-core</artifactId>
                 <version>2.7.22</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.mozilla</groupId>
+                <artifactId>rhino</artifactId>
+                <version>1.7.14</version>
             </dependency>
             <dependency>
                 <groupId>org.osgi</groupId>

@@ -18,17 +18,19 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import javax.script.Bindings;
-import javax.script.ScriptContext;
-import javax.script.ScriptEngine;
-import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
 
 import org.apache.commons.lang3.StringUtils;
-import jdk.nashorn.api.scripting.ClassFilter;
-import jdk.nashorn.api.scripting.NashornScriptEngineFactory;
+import org.mozilla.javascript.ClassShutter;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.ContextFactory;
+import org.mozilla.javascript.RhinoException;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
+import org.mozilla.javascript.Undefined;
 
 import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.plugin.exceptions.ScriptingException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.metadata.Metadata;
 import com.exadel.aem.toolkit.plugin.metadata.Property;
@@ -36,21 +38,21 @@ import com.exadel.aem.toolkit.plugin.sources.ModifiableMemberSource;
 
 public class ScriptingHelper {
 
-    private static final Pattern SCRIPT_TEMPLATE = Pattern.compile("@\\{([^}]*?)}");
-
-    private static final ScriptEngine ENGINE;
-    static {
-        NashornScriptEngineFactory factory = new NashornScriptEngineFactory();
-        ENGINE = factory.getScriptEngine(new RestrictingClassFilter());
-    }
+    private static final ContextFactory CONTEXT_FACTORY = new ContextFactory();
+    private static final ClassShutter DEFAULT_CLASS_SHUTTER = className ->
+        StringUtils.startsWith(className, CoreConstants.ROOT_PACKAGE);
 
     private static final String PN_DATA = "data";
     private static final String PN_SOURCE = "source";
 
+    private static final String PATH_SCRIPT = "<script>";
+
+    private static final Pattern SCRIPT_TEMPLATE = Pattern.compile("@\\{([^}]*?)}");
+
     private ScriptingHelper() {
     }
 
-    public static void interpolate(Metadata value, Source source) {
+    public static synchronized void interpolate(Metadata value, Source source) {
         if (value == null) {
             return;
         }
@@ -62,50 +64,64 @@ public class ScriptingHelper {
             return;
         }
 
-        ScriptContext scriptContext = new SimpleScriptContext();
-        Bindings bindings = getBindings(source);
-        scriptContext.setBindings(bindings, ScriptContext.ENGINE_SCOPE);
-
-        for (Property property : templatedProperties) {
-            String result = interpolate(property, scriptContext);
-            value.putValue(property.getPath(), result);
+        try (Context context = CONTEXT_FACTORY.enterContext()) {
+            context.setLanguageVersion(Context.VERSION_ES6);
+            context.setClassShutter(DEFAULT_CLASS_SHUTTER);
+            Scriptable scope = context.initStandardObjects();
+            ScriptableObject.putProperty(
+                scope,
+                PN_DATA,
+                Context.javaToJS(new MapAdapter(source.adaptTo(DataStack.class).getData()), scope));
+            for (Property property : templatedProperties) {
+                String result = interpolate(source, property, context, scope);
+                value.putValue(property.getPath(), result);
+            }
+        } catch (IllegalStateException e) {
+            PluginRuntime.context().getExceptionHandler().handle(new ScriptingException(e));
         }
     }
 
-    private static String interpolate(Property property, ScriptContext context) {
+    private static String interpolate(Source source, Property property, Context context, Scriptable scope) {
+        ScriptableObject.deleteProperty(scope, PN_SOURCE);
+        AbstractAdapter adapter = extractAdapter(source);
+        if (adapter == null) {
+            return StringUtils.EMPTY;
+        }
+        ScriptableObject.putProperty(scope, PN_SOURCE, Context.javaToJS(adapter, scope));
+
         StringBuilder result = new StringBuilder(property.getValue().toString());
         Matcher matcher = SCRIPT_TEMPLATE.matcher(result);
         while (matcher.find()) {
-            String scriptResult = runScript(matcher.group(1), context);
+            String scriptResult = runScript(context, scope, matcher.group(1));
             result.replace(matcher.start(), matcher.end(), scriptResult);
             matcher.reset();
         }
         return result.toString();
     }
 
-    private static Bindings getBindings(Source source) {
-        Bindings bindings = ENGINE.createBindings();
-        DataStack dataStack = source.adaptTo(DataStack.class);
-        bindings.put(PN_DATA, dataStack.getData());
+    private static AbstractAdapter extractAdapter(Source source) {
         if (source.adaptTo(Member.class) != null) {
             Member reflectedMember = source.adaptTo(Member.class);
-            Member reflectedContextMember = source
+            Member reflectedUpstreamMember = source
                 .tryAdaptTo(ModifiableMemberSource.class)
                 .map(ModifiableMemberSource::getUpstreamMember)
                 .orElse(null);
-            bindings.put(PN_SOURCE, new MemberJsObject(reflectedMember, reflectedContextMember));
+            return new MemberAdapter(reflectedMember, reflectedUpstreamMember, null);
         } else if (source.adaptTo(Class.class) != null) {
-            bindings.put(PN_SOURCE, new ClassJsObject(source.adaptTo(Class.class)));
+            return new ClassAdapter(source.adaptTo(Class.class));
         }
-        return bindings;
+        return null;
     }
 
-    private static String runScript(String script, ScriptContext context) {
+    private static String runScript(Context context, Scriptable scope, String script) {
         try {
-            Object result = ENGINE.eval(script, context);
-            return result != null ? result.toString() : StringUtils.EMPTY;
-        } catch (ScriptException e) {
-            PluginRuntime.context().getExceptionHandler().handle(e);
+            Object result = context.evaluateString(scope, script, PATH_SCRIPT, 0, null);
+            result = Context.jsToJava(result, String.class);
+            return result != null && !Undefined.SCRIPTABLE_UNDEFINED.toString().equals(result.toString())
+                ? result.toString()
+                : StringUtils.EMPTY;
+        } catch (RhinoException e) {
+            PluginRuntime.context().getExceptionHandler().handle(new ScriptingException(e));
         }
         return StringUtils.EMPTY;
     }
@@ -119,16 +135,5 @@ public class ScriptingHelper {
             return false;
         }
         return SCRIPT_TEMPLATE.matcher(value.toString()).find();
-    }
-
-    /* ---------
-       Utilities
-       --------- */
-
-    private static class RestrictingClassFilter implements ClassFilter {
-        @Override
-        public boolean exposeToScripts(String name) {
-            return false;
-        }
     }
 }
