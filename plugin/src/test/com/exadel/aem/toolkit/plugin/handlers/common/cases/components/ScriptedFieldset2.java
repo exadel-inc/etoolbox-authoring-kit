@@ -15,8 +15,11 @@ package com.exadel.aem.toolkit.plugin.handlers.common.cases.components;
 
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
+import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
+import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 
 @Data(name = "inheritedLabel", value = "Extension text", persist = false)
@@ -50,5 +53,20 @@ public class ScriptedFieldset2 extends ScriptedFieldset1 {
     @DialogField(condition = "data.renderExtraText")
     @TextField
     private String extraText;
+
+    @DialogField(label = "Nested multifield 1")
+    @MultiField
+    private NestedFieldset nestedMultifield1;
+
+    @DialogField(label = "Nested multifield 2")
+    @FieldSet(NestedFieldset.class)
+    @Multiple
+    private String nestedMultifield2;
+
+    private static class NestedFieldset {
+        @DialogField(label = "@{data.inheritedLabel}")
+        @TextField
+        private String nestedText;
+    }
 }
 

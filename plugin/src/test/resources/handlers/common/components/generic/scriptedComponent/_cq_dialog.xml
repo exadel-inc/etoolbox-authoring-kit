@@ -230,6 +230,49 @@
                                 renderHidden="{Boolean}false"
                                 required="{Boolean}false"
                                 value="test-component"/>
+                            <nestedMultifield1
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                disabled="{Boolean}false"
+                                fieldLabel="Nested multifield 1"
+                                multifieldSpecial="This is added to Multifields"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false">
+                                <field
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    name="./nestedText"
+                                    disabled="{Boolean}false"
+                                    fieldLabel="Extension text"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false"/>
+                            </nestedMultifield1>
+                            <nestedMultifield2
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                composite="{Boolean}true"
+                                disabled="{Boolean}false"
+                                fieldLabel="Nested multifield 2"
+                                multifieldSpecial="This is added to Multifields"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false">
+                                <field
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/container"
+                                    name="./nestedMultifield2">
+                                    <items
+                                        jcr:primaryType="nt:unstructured">
+                                        <nestedText
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                            name="nestedText"
+                                            disabled="{Boolean}false"
+                                            fieldLabel="Extension text"
+                                            renderHidden="{Boolean}false"
+                                            required="{Boolean}false"/>
+                                    </items>
+                                </field>
+                            </nestedMultifield2>
                         </items>
                     </fieldset2>
                     <moreFieldsets
