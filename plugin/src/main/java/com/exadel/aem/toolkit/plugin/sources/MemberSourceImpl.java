@@ -43,7 +43,7 @@ import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
  */
 class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
 
-    private static final List<String> NEGATIVE_VALUES = Arrays.asList("false", "0", "0.0", "null", "undefined");
+    private static final List<String> FALSY_VALUES = Arrays.asList("false", "0", "0.0", "null", "undefined");
 
     private final Class<?> componentType;
 
@@ -230,7 +230,7 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
         if (StringUtils.isEmpty(conditionValue)) {
             return true;
         }
-        return NEGATIVE_VALUES.stream().noneMatch(variant -> variant.equalsIgnoreCase(conditionValue));
+        return FALSY_VALUES.stream().noneMatch(variant -> variant.equalsIgnoreCase(conditionValue));
     }
 
     /**
