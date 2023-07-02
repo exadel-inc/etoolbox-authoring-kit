@@ -71,6 +71,9 @@ class InterfaceHandler<T> implements InvocationHandler {
     private static final String TYPE_EXCEPTION_TEMPLATE = "Trying to set a value of type %s to property %s";
     private static final String VALUE_EXCEPTION_TEMPLATE = "Invalid value address %s";
 
+    private static final int HASH_INITIAL_NUMBER = 17;
+    private static final int HASH_MULTIPLIER = 37;
+
     private final T source;
     private final Class<?> type;
     private final Map<String, Object> properties;
@@ -376,6 +379,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      *                             ad-hoc object
      * @return A nullable value
      */
+    @SuppressWarnings("unchecked")
     private static Object getDefaultReturnValue(Method method, boolean createMissingObjects) {
         if (method.getDefaultValue() != null) {
             return method.getDefaultValue();
@@ -450,6 +454,7 @@ class InterfaceHandler<T> implements InvocationHandler {
         return null;
     }
 
+    @SuppressWarnings("unchecked")
     private Object putInTree(PropertyPath path, Object value) {
         PropertyPathElement element = path.getElements().remove();
         Property currentProperty = getProperty(path.getPath(), element.getName(), true, false);
@@ -496,6 +501,7 @@ class InterfaceHandler<T> implements InvocationHandler {
         return metadata.putValue(path, value);
     }
 
+    @SuppressWarnings("unchecked")
     private static Object expandArrayIfNeeded(Object source, Class<?> componentType, int index) {
         int sourceLength = (source == null || !source.getClass().isArray()) ? 0 : Array.getLength(source);
         if (index < sourceLength) {
@@ -641,7 +647,7 @@ class InterfaceHandler<T> implements InvocationHandler {
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 37)
+        return new HashCodeBuilder(HASH_INITIAL_NUMBER, HASH_MULTIPLIER)
             .append(source)
             .append(type)
             .append(properties)
@@ -656,18 +662,18 @@ class InterfaceHandler<T> implements InvocationHandler {
 
         private final boolean deepRead;
         private final boolean expandArrays;
-        private final Queue<Property> collection;
+        private final Queue<Property> properties;
 
-        public Iterator(boolean deepRead, boolean expandArrays) {
+        Iterator(boolean deepRead, boolean expandArrays) {
             this.deepRead = deepRead;
             this.expandArrays = expandArrays;
-            this.collection = new LinkedList<>();
-            collect(null, StringUtils.EMPTY, this.collection);
+            this.properties = new LinkedList<>();
+            collect(null, StringUtils.EMPTY, this.properties);
         }
 
         @Override
         public boolean hasNext() {
-            return !collection.isEmpty();
+            return !properties.isEmpty();
         }
 
         @Override
@@ -675,7 +681,7 @@ class InterfaceHandler<T> implements InvocationHandler {
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            return collection.remove();
+            return properties.remove();
         }
 
         private void collect(Annotation target, String pathPrefix, Queue<Property> collection) {
@@ -714,8 +720,8 @@ class InterfaceHandler<T> implements InvocationHandler {
         }
 
         private Object invokeInCurrentObjectSilently(Method method) {
-            if (properties != null && properties.containsKey(method.getName())) {
-                return properties.get(method.getName());
+            if (InterfaceHandler.this.properties != null && InterfaceHandler.this.properties.containsKey(method.getName())) {
+                return InterfaceHandler.this.properties.get(method.getName());
             }
             return source != null ? invokeSilently(method, source) : null;
         }

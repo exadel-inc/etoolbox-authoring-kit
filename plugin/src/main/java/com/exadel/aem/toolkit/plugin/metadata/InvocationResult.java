@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.plugin.metadata;
 
 class InvocationResult {
-    public final static InvocationResult NOT_DONE = new InvocationResult(false, null);
+    public static final InvocationResult NOT_DONE = new InvocationResult(false, null);
 
     private final boolean done;
     private final Object result;

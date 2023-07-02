@@ -33,12 +33,11 @@ class MemberAdapter extends AbstractAdapter implements Annotated, Callable {
     private final Member upstreamMember;
     private final Object declaringClass;
 
-
-    public MemberAdapter(Member value) {
+    MemberAdapter(Member value) {
         this(value, null, null);
     }
 
-    public MemberAdapter(Member reflectedMember, Member upstreamMember, Object declaringClass) {
+    MemberAdapter(Member reflectedMember, Member upstreamMember, Object declaringClass) {
         this.reflectedMember = reflectedMember;
         this.upstreamMember = upstreamMember;
         this.declaringClass = declaringClass;

@@ -103,6 +103,7 @@ public class AllowedChildrenHandler implements Handler {
      * Called from {@link AllowedChildrenHandler#populatePolicies(AllowedChildren[], Target)} to combine
      * the rule's values (i.e., components that are referenced either by path or by class)
      * @param rule {@link AllowedChildren} instance
+     * @return Modified {@link AllowedChildren} instance
      */
     private static AllowedChildren combineValues(AllowedChildren rule) {
         if (ArrayUtils.isEmpty(rule.classes())) {

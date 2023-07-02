@@ -25,7 +25,7 @@ class AnnotationAdapter extends AbstractAdapter implements Annotated {
 
     private final Annotation reflectedAnnotation;
 
-    public AnnotationAdapter(Annotation value) {
+    AnnotationAdapter(Annotation value) {
         this.reflectedAnnotation = value;
     }
 

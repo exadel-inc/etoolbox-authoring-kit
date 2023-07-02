@@ -21,7 +21,7 @@ class MapAdapter extends AbstractAdapter {
 
     private final Map<String, Object> data;
 
-    public MapAdapter(Map<String, Object> data) {
+    MapAdapter(Map<String, Object> data) {
         this.data = data;
     }
 

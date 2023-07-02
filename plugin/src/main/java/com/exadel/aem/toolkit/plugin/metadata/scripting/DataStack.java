@@ -38,7 +38,7 @@ public class DataStack {
         if (ArrayUtils.isEmpty(entries)) {
             return;
         }
-        Arrays.stream(entries).forEach(data -> this.data.put(data.name(), convert(data.value())));
+        Arrays.stream(entries).forEach(entry -> this.data.put(entry.name(), convert(entry.value())));
     }
 
     private static Object convert(String value) {

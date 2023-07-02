@@ -36,8 +36,9 @@ interface Annotated {
         }
         String name = StringUtils.stripStart(String.valueOf(args[0]), CoreConstants.SEPARATOR_AT);
         Annotation annotation = Arrays.stream(getAnnotatedElement().getDeclaredAnnotations())
-                .filter(a -> name.contains(CoreConstants.SEPARATOR_DOT) ? a.annotationType().getName().equals(name) :
-                        a.annotationType().getSimpleName().equals(name))
+                .filter(a -> name.contains(CoreConstants.SEPARATOR_DOT)
+                    ? a.annotationType().getName().equals(name)
+                    : a.annotationType().getSimpleName().equals(name))
                 .findFirst()
                 .orElse(null);
         if (annotation == null) {
@@ -52,8 +53,9 @@ interface Annotated {
         }
         String name = StringUtils.stripStart(String.valueOf(args[0]), CoreConstants.SEPARATOR_AT);
         List<AnnotationAdapter> annotationAdapters = Arrays.stream(getAnnotatedElement().getDeclaredAnnotations())
-            .filter(a -> name.contains(CoreConstants.SEPARATOR_DOT) ? a.annotationType().getName().equals(name) :
-                a.annotationType().getSimpleName().equals(name))
+            .filter(a -> name.contains(CoreConstants.SEPARATOR_DOT)
+                ? a.annotationType().getName().equals(name)
+                : a.annotationType().getSimpleName().equals(name))
             .map(AnnotationAdapter::new)
             .collect(Collectors.toList());
         return new ListAdapter<>(annotationAdapters);
