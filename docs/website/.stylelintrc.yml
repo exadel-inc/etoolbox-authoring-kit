@@ -12,6 +12,10 @@ rules:
   block-opening-brace-space-before:
     - always
     - severity: warning
+  # Disallow uppercase for hex colors
+  color-hex-case: lower
+  # Disallow invalid hex colors
+  color-hex-length: short
   # Disallow invalid hex colors
   color-no-invalid-hex: true
   # Disallow empty comments
@@ -45,6 +49,8 @@ rules:
   # Disallow double-slash comments `(//...)` for clear CSS, as they are not supported by CSS
   # and could lead to unexpected results
   no-invalid-double-slash-comments: true
+  # Disallow a leading zero for fractional numbers less than 1
+  number-leading-zero: never
   # Disallow unknown properties
   property-no-unknown: true
   # Disallow whitespace before the commas of selector lists
