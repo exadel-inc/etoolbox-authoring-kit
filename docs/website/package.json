@@ -12,7 +12,7 @@
     "build:less": "lessc \"src/site.less\" \"dist/bundles/site.css\"",
     "build:ts": "webpack --mode=production",
     "watch:content": "node build/copy.js watch",
-    "watch:eleventy": "npx @11ty/eleventy --serve --port=3005 -- --env=development",
+    "watch:eleventy": "npx @11ty/eleventy --serve --incremental -- --env=development",
     "watch:less": "chokidar --initial \"**/*.less\" -c \"npm run build:less\"",
     "watch:ts": "webpack --watch",
     "lint": "concurrently \"npm:lint:js\" \"npm:lint:css\" \"npm:lint:spaces\"",
@@ -37,7 +37,8 @@
     "smoothscroll-polyfill": "^0.4.4"
   },
   "devDependencies": {
-    "@11ty/eleventy": "^1.0.2",
+    "@11ty/eleventy": "^2.0.1",
+    "@11ty/eleventy-dev-server": "^1.0.3",
     "@types/smoothscroll-polyfill": "^0.3.1",
     "@typescript-eslint/eslint-plugin": "^5.48.1",
     "@typescript-eslint/parser": "^5.48.1",
@@ -60,6 +61,7 @@
     "lintspaces-cli": "^0.7.1",
     "markdown-it-anchor": "^8.6.6",
     "minimatch": "^5.1.2",
+    "out-url": "^1.1.3",
     "postcss": "^8.4.21",
     "postcss-less": "^6.0.0",
     "replace": "^1.2.2",

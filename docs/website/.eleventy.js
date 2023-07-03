@@ -1,5 +1,4 @@
 const fs = require('fs');
-const {isDev} = require('./11ty/env.config');
 
 module.exports = (config) => {
   // Init all 11ty config modules
@@ -29,13 +28,14 @@ module.exports = (config) => {
   });
 
   // Update BS observed directories
-  config.setBrowserSyncConfig({
-    files: [
+  config.setServerOptions({
+    port: 3005,
+    domDiff: true,
+    watch: [
       'dist/bundles/*.js',
       'dist/bundles/*.css',
       'dist/bundles/*.map'
-    ],
-    open: isDev
+    ]
   });
 
   return {
