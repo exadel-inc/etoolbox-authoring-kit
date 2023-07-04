@@ -164,7 +164,7 @@
          * */
         static setDisabled($el, value) {
             ElementAccessors._findAccessorHandler($el, 'disabled')($el, value);
-            // Clear concurrent
+            // Clear other actors
             const actors = $el.data('disable-actors');
             actors && actors.clear();
         }
