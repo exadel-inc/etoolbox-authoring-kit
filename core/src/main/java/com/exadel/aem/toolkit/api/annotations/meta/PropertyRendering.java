@@ -83,13 +83,4 @@ public @interface PropertyRendering {
      * @return {@code Class} reference. One of the JCR-compliant classes must be used
      */
     Class<?> valueType() default _Default.class;
-
-    /**
-     * When set to true, defined that the value of the field must not be rendered directly and must be interpreted as a
-     * script instead. This setting is only effective for {@code String}-typed fields. Technically it has the same
-     * effect as {@code @{...}} brackets around the whole content of the string and eliminates the need to add such
-     * brackets
-     * @return True or false
-     */
-    boolean scriptedContent() default false;
 }
