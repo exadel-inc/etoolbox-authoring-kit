@@ -88,6 +88,12 @@ abstract class OptionProviderHandler {
      * @param parentElement {@code Target} instance to store the option in
      */
     void appendOption(Annotation option, String optionValue, Target parentElement) {
+        Object label = Metadata.from(option).hasProperty(CoreConstants.PN_TEXT)
+            ? Metadata.from(option).getValue(CoreConstants.PN_TEXT)
+            : null;
+        if (label != null && label.toString().isEmpty()) {
+            return;
+        }
         List<Target> existing = parentElement.findChildren(t -> t.getAttribute(CoreConstants.PN_VALUE).equals(optionValue));
         Target item = existing.isEmpty()
             ? parentElement.createTarget(DialogConstants.DOUBLE_QUOTE + optionValue + DialogConstants.DOUBLE_QUOTE)
