@@ -14,9 +14,11 @@
 package com.exadel.aem.toolkit.plugin.metadata.scripting;
 
 import java.lang.reflect.Member;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +30,6 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.mozilla.javascript.Undefined;
 
-import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.ScriptingException;
@@ -36,6 +37,7 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.metadata.Metadata;
 import com.exadel.aem.toolkit.plugin.metadata.Property;
 import com.exadel.aem.toolkit.plugin.sources.ModifiableMemberSource;
+import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 public class ScriptingHelper {
 
@@ -48,7 +50,11 @@ public class ScriptingHelper {
 
     private static final String PATH_SCRIPT = "<script>";
 
-    private static final Pattern SCRIPT_TEMPLATE = Pattern.compile("@\\{([^}]*?)}");
+    private static final String TEMPLATE_START = "$";
+    private static final String TEMPLATE_STRIPPED_SYMBOLS = "@${} ";
+
+    private static final String TOKEN_THIS = "this";
+
 
     private ScriptingHelper() {
     }
@@ -57,24 +63,30 @@ public class ScriptingHelper {
         if (value == null) {
             return;
         }
-        List<Property> templatedProperties = value.stream(true, true)
-            .filter(ScriptingHelper::containsTemplate)
+        List<TemplatedProperty> templatedProperties = value.stream(true, true)
+            .map(TemplatedProperty::from)
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
 
         if (templatedProperties.isEmpty()) {
             return;
         }
 
+        AbstractAdapter adapter = extractAdapter(source);
+        if (adapter == null) {
+            return;
+        }
+
+        DataStack dataStack = source.adaptTo(DataStack.class);
+
         try (Context context = CONTEXT_FACTORY.enterContext()) {
             context.setLanguageVersion(Context.VERSION_ES6);
             context.setClassShutter(DEFAULT_CLASS_SHUTTER);
             Scriptable scope = context.initStandardObjects();
-            ScriptableObject.putProperty(
-                scope,
-                PN_DATA,
-                Context.javaToJS(new MapAdapter(source.adaptTo(DataStack.class).getData()), scope));
-            for (Property property : templatedProperties) {
-                String result = interpolate(source, property, context, scope);
+            ScriptableObject.putProperty(scope, PN_SOURCE, Context.javaToJS(adapter, scope));
+            ScriptableObject.putProperty(scope, PN_DATA, Context.javaToJS(new MapAdapter(dataStack.getData()), scope));
+            for (TemplatedProperty property : templatedProperties) {
+                String result = interpolate(property, context, scope, dataStack);
                 value.putValue(property.getPath(), result);
             }
         } catch (IllegalStateException e) {
@@ -82,27 +94,36 @@ public class ScriptingHelper {
         }
     }
 
-    private static String interpolate(Source source, Property property, Context context, Scriptable scope) {
-        ScriptableObject.deleteProperty(scope, PN_SOURCE);
-        AbstractAdapter adapter = extractAdapter(source);
-        if (adapter == null) {
-            return StringUtils.EMPTY;
-        }
-        ScriptableObject.putProperty(scope, PN_SOURCE, Context.javaToJS(adapter, scope));
+    private static String interpolate(
+        TemplatedProperty templatedProperty,
+        Context context,
+        Scriptable scope,
+        DataStack dataStack) {
 
-        StringBuilder result = new StringBuilder(property.getValue().toString());
-        Matcher matcher = SCRIPT_TEMPLATE.matcher(result);
-        if (!matcher.find()) {
-            // This is a complete "scripted" annotation property
-            return runScript(context, scope, result.toString());
+        String result = templatedProperty.getValue();
+        while (!templatedProperty.getEmbeddings().isEmpty()) {
+            StringBuilder resultBuilder = new StringBuilder(templatedProperty.getValue());
+            Iterator<Embedding> embeddingIterator = ((LinkedList<Embedding>) templatedProperty.getEmbeddings()).descendingIterator();
+            while (embeddingIterator.hasNext()) {
+                Embedding embedding = embeddingIterator.next();
+                List<String> variables = embedding.getVariables();
+                for (String variable : variables) {
+                    if (TOKEN_THIS.equals(variable)) {
+                        continue;
+                    }
+                    Object value = dataStack.getData().get(variable);
+                    ScriptableObject.putProperty(
+                        scope,
+                        variable,
+                        value != null ? Context.javaToJS(value, scope) : Undefined.instance);
+                }
+                String scriptResult = runScript(context, scope, embedding.getScript());
+                resultBuilder.replace(embedding.getStart(), embedding.getEnd(), scriptResult);
+            }
+            result = resultBuilder.toString();
+            templatedProperty.reset(result);
         }
-        matcher.reset();
-        while (matcher.find()) {
-            String scriptResult = runScript(context, scope, matcher.group(1));
-            result.replace(matcher.start(), matcher.end(), scriptResult);
-            matcher.reset();
-        }
-        return result.toString();
+        return result;
     }
 
     private static AbstractAdapter extractAdapter(Source source) {
@@ -132,18 +153,117 @@ public class ScriptingHelper {
         return StringUtils.EMPTY;
     }
 
-    private static boolean containsTemplate(Property property) {
-        if (!String.class.equals(property.getType())) {
-            return false;
+    /* ---------------
+       Utility classes
+       --------------- */
+
+    private static class TemplatedProperty {
+        private String path;
+        private String value;
+        private LinkedList<Embedding> embeddings;
+
+        public String getPath() {
+            return path;
         }
-        PropertyRendering propertyRendering = property.getAnnotation(PropertyRendering.class);
-        if (propertyRendering != null && propertyRendering.scriptedContent()) {
-            return true;
+
+        public String getValue() {
+            return value;
         }
-        Object value = property.getValue();
-        if (value == null) {
-            return false;
+
+        public List<Embedding> getEmbeddings() {
+            return embeddings;
         }
-        return SCRIPT_TEMPLATE.matcher(value.toString()).find();
+
+        public void reset(String content) {
+            value = content;
+            embeddings = new LinkedList<>();
+            SubstringMatcher substringMatcher = new SubstringMatcher(
+                value,
+                DialogConstants.OPENING_CURLY,
+                DialogConstants.CLOSING_CURLY,
+                Arrays.asList(TEMPLATE_START, CoreConstants.SEPARATOR_AT));
+            SubstringMatcher.Substring substring = substringMatcher.next();
+            while (substring != null) {
+                Embedding embedding = new Embedding(substring);
+                if (embedding.isJavaScript()) {
+                    embeddings.add(embedding);
+                }
+                substring = substringMatcher.next();
+            }
+        }
+
+        public static TemplatedProperty from(Property original) {
+            if (!String.class.equals(original.getType())) {
+                return null;
+            }
+            Object value = original.getValue();
+            String stringValue = value != null ? value.toString() : null;
+            boolean hasAtTemplate = stringValue != null
+                && stringValue.contains(TEMPLATE_START + DialogConstants.OPENING_CURLY);
+            boolean hasDollarSignTemplate = stringValue != null
+                && stringValue.contains(CoreConstants.SEPARATOR_AT + DialogConstants.OPENING_CURLY);
+            if (!hasAtTemplate && !hasDollarSignTemplate) {
+                return null;
+            }
+            TemplatedProperty result = new TemplatedProperty();
+            result.path = original.getPath();
+            result.reset(stringValue);
+            return !result.getEmbeddings().isEmpty() ? result : null;
+        }
+    }
+
+    private static class Embedding {
+        private final SubstringMatcher.Substring substring;
+        private final LinkedList<SubstringMatcher.Substring> varTokens;
+
+        public Embedding(SubstringMatcher.Substring substring) {
+            this.substring = substring;
+            this.varTokens = findVariableTokens(substring.getContent());
+        }
+
+        public int getStart() {
+            return substring.getStart();
+        }
+
+        public int getEnd() {
+            return substring.getEnd();
+        }
+
+        public boolean isJavaScript() {
+            return substring.getContent().startsWith(CoreConstants.SEPARATOR_AT)
+                || !varTokens.isEmpty();
+        }
+
+        public String getScript() {
+            String result = substring.getContent();
+            if (!varTokens.isEmpty()) {
+                StringBuilder resultBuilder = new StringBuilder(result);
+                // DescendingIterator is to keep in-string indexes as they are for an unchanged part of the string
+                varTokens.descendingIterator().forEachRemaining(token ->
+                    resultBuilder.replace(token.getStart(), token.getEnd(), token.getContent().substring(1)));
+                result = resultBuilder.toString();
+            }
+            return StringUtils.strip(
+                result.replace(TOKEN_THIS, PN_SOURCE),
+                TEMPLATE_STRIPPED_SYMBOLS);
+        }
+
+        public List<String> getVariables() {
+            return varTokens
+                .stream()
+                .map(token -> token.getContent().substring(1))
+                .collect(Collectors.toList());
+        }
+
+        private static LinkedList<SubstringMatcher.Substring> findVariableTokens(String expression) {
+            LinkedList<SubstringMatcher.Substring> result = new LinkedList<>();
+            SubstringMatcher substringMatcher = new SubstringMatcher(expression, CoreConstants.SEPARATOR_AT);
+            SubstringMatcher.Substring newSubstring = substringMatcher.next();
+            while (newSubstring != null) {
+                result.add(newSubstring);
+                newSubstring = substringMatcher.next();
+            }
+            return result;
+        }
     }
 }
