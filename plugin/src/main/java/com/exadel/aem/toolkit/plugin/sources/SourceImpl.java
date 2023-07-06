@@ -26,6 +26,7 @@ import java.util.stream.Stream;
 
 import org.apache.commons.lang3.ClassUtils;
 
+import com.exadel.aem.toolkit.api.annotations.main.Setting;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.core.CoreConstants;
@@ -180,7 +181,7 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
 
     private static void applyInterpolation(Source source, Map<Class<?>, Object> metadata) {
         for (Object value : metadata.values()) {
-            if (value instanceof Metadata[] && !value.getClass().getComponentType().equals(Data.class)) {
+            if (value instanceof Metadata[] && !value.getClass().getComponentType().equals(Setting.class)) {
                 for (Metadata metadataEntry : (Metadata[]) value) {
                     ScriptingHelper.interpolate(metadataEntry, source);
                 }

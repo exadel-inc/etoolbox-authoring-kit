@@ -24,8 +24,8 @@ import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.exadel.aem.toolkit.api.annotations.main.Setting;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
-import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
@@ -174,7 +174,6 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
         return member != null
             && !(member instanceof Field && member.getDeclaringClass().isInterface())
             && !Modifier.isStatic(member.getModifiers())
-            && isRenderedByCondition()
             && isWidgetAnnotationPresent();
     }
 
@@ -212,25 +211,17 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
         DataStack result = new DataStack();
         if (upstreamMember != null) {
             for (Class<?> ancestor : ClassUtil.getInheritanceTree(upstreamMember.getDeclaringClass())) {
-                result.append(ancestor.getAnnotationsByType(Data.class));
+                result.append(ancestor.getAnnotationsByType(Setting.class));
             }
         }
         for (Class<?> ancestor : ClassUtil.getInheritanceTree(getDeclaringClass())) {
-            result.append(ancestor.getAnnotationsByType(Data.class));
+            result.append(ancestor.getAnnotationsByType(Setting.class));
         }
         if (upstreamMember != null) {
-            result.append(((AnnotatedElement) upstreamMember).getAnnotationsByType(Data.class));
+            result.append(((AnnotatedElement) upstreamMember).getAnnotationsByType(Setting.class));
         }
-        result.append(adaptTo(Data[].class));
+        result.append(adaptTo(Setting[].class));
         return result;
-    }
-
-    private boolean isRenderedByCondition() {
-        String conditionValue = tryAdaptTo(DialogField.class).map(DialogField::condition).orElse(null);
-        if (StringUtils.isEmpty(conditionValue)) {
-            return true;
-        }
-        return FALSY_VALUES.stream().noneMatch(variant -> variant.equalsIgnoreCase(conditionValue));
     }
 
     /**

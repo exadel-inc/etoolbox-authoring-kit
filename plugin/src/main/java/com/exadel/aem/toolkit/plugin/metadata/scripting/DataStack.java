@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.ArrayUtils;
 
-import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
+import com.exadel.aem.toolkit.api.annotations.main.Setting;
 import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 
 public class DataStack {
@@ -34,7 +34,7 @@ public class DataStack {
         return data;
     }
 
-    public void append(Data[] entries) {
+    public void append(Setting[] entries) {
         if (ArrayUtils.isEmpty(entries)) {
             return;
         }
@@ -42,6 +42,9 @@ public class DataStack {
     }
 
     private static Object convert(String value) {
+        if (Boolean.TRUE.toString().equals(value) || Boolean.FALSE.toString().equals(value)) {
+            return Boolean.parseBoolean(value);
+        }
         return StringUtil.isCollection(value)
             ? new ListAdapter<>(StringUtil.parseCollection(value))
             : value;

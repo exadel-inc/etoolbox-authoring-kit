@@ -17,6 +17,7 @@ import java.lang.annotation.Annotation;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.exadel.aem.toolkit.api.annotations.main.Setting;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.metadata.scripting.DataStack;
@@ -81,9 +82,9 @@ class ClassSourceImpl extends SourceImpl {
     DataStack getDataStack() {
         DataStack result = new DataStack();
         for (Class<?> ancestor : ClassUtil.getInheritanceTree(value, false)) {
-            result.append(ancestor.getAnnotationsByType(Data.class));
+            result.append(ancestor.getAnnotationsByType(Setting.class));
         }
-        result.append(adaptTo(Data[].class));
+        result.append(adaptTo(Setting[].class));
         return result;
     }
 }
