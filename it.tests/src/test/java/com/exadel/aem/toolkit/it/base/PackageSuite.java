@@ -131,7 +131,7 @@ public class PackageSuite extends Runner {
         try {
             serviceMethod.invoke(null);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            LOG.error("Could not run @{} method", annotationType.getSimpleName(), e);
+            LOG.error("Could not run #{} method", annotationType.getSimpleName(), e);
         }
     }
 
@@ -155,7 +155,7 @@ public class PackageSuite extends Runner {
         try {
             serviceMethod.invoke(target);
         } catch (IllegalAccessException | InvocationTargetException e) {
-            LOG.error("Could not run @{} method", annotationType.getSimpleName(), e);
+            LOG.error("Could not run #{} method", annotationType.getSimpleName(), e);
         }
     }
 

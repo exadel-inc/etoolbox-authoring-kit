@@ -57,7 +57,7 @@ class Package implements Closeable {
     static final String FILE_NAME = "etoolbox-authoring-kit-tests.zip";
     private static final String ROOT_FOLDER = "package";
 
-    private static final Pattern PATTERN_SYSTEM_PROPERTY = Pattern.compile("@\\{([\\w.-]+)}");
+    private static final Pattern PATTERN_SYSTEM_PROPERTY = Pattern.compile("$\\{([\\w.-]+)}");
 
     private static final String EXCEPTION_COULD_NOT_ASSEMBLE = "Could not assemble static content for the package";
 
