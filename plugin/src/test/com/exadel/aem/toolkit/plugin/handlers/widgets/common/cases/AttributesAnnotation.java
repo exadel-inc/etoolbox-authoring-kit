@@ -27,14 +27,15 @@ import com.exadel.aem.toolkit.plugin.maven.TestConstants;
     title = TestConstants.DEFAULT_COMPONENT_TITLE
 )
 @Dialog
-@Data(name = "class-level", value = "value", persist = false)
 public class AttributesAnnotation {
     @DialogField
     @TextField
     @Attribute(
             id = "field1-id",
             className = "field1-attribute-class",
-            data = @Data(name = "field1-data1", value = "value-data1"))
-    @Data(name = "field1-data2", value = "value-data2")
+            data = {
+                @Data(name = "field1-data1", value = "value-data1"),
+                @Data(name = "field1-data2", value = "value-data2")
+            })
     String field1;
 }

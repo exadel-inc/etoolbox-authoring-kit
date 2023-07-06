@@ -194,8 +194,7 @@ public class ComponentWithRichTextAndExternalClasses {
     private List<SampleMultifieldBase> links;
 
     @FieldSet(namePrefix = PREFIX_FIRST)
-    @Attribute(className = "first-card")
-    @Data(name = "data-name", value = "data-value")
+    @Attribute(className = "first-card", data = @Data(name = "data-name", value = "data-value"))
     @Place(TAB_FEATURED_CARD_1)
     private SampleFieldsetBase1 firstCard;
 
@@ -209,7 +208,7 @@ public class ComponentWithRichTextAndExternalClasses {
     private boolean enableSecondCard;
 
     @FieldSet(namePrefix = PREFIX_SECOND)
-    @Data(name = "second-data-name", value = "second-data-value")
+    @Attribute(data = @Data(name = "second-data-name", value = "second-data-value"))
     @Place(TAB_FEATURED_CARD_2)
     private SampleFieldsetBase1 secondCard;
 

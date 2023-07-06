@@ -396,7 +396,8 @@
                         <items jcr:primaryType="nt:unstructured">
                             <secondCard
                                 jcr:primaryType="nt:unstructured"
-                                sling:resourceType="granite/ui/components/coral/foundation/form/fieldset">
+                                sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
+                                granite:hidden="{Boolean}false">
                                 <granite:data
                                     jcr:primaryType="nt:unstructured"
                                     second-data-name="second-data-value"/>

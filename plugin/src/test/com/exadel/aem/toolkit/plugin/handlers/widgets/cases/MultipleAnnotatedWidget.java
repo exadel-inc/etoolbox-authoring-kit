@@ -60,11 +60,10 @@ public class MultipleAnnotatedWidget {
         emptyText = "empty text",
         value = "default value"
     )
-    @Attribute(id = "text1")
+    @Attribute(id = "text1", data = @Data(name = "key", value = "value"))
     @CustomWidgetAnnotation
     @Multiple
     @DependsOnRef
-    @Data(name = "key", value = "value")
     @Property(name = "customProperty1", value = "custom value 1")
     @Property(name = "customProperty2", value = "custom value 2")
     String text1;

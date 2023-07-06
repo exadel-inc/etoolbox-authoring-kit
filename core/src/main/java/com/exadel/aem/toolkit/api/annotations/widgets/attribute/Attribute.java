@@ -67,10 +67,6 @@ public @interface Attribute {
     /**
      * Optional collection of extra attributes represented as name-value pairs
      * @return {@code @Data} annotation value, or an array of {@code @Data}
-     * @deprecated This property is to be removed from the current place. Since version 2.4.0 you are advised
-     * to specify data attributes directly on a field, method, or class with a standalone statement like {@code
-     * @Data(name="hello", value="world")}
      */
-    @Deprecated
     Data[] data() default {};
 }

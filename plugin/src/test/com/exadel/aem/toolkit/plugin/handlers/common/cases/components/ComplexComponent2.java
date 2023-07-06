@@ -40,6 +40,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.PathField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Switch;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Attribute;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.Autocomplete;
 import com.exadel.aem.toolkit.api.annotations.widgets.autocomplete.AutocompleteDatasource;
@@ -220,7 +221,7 @@ public class ComplexComponent2 {
     @DialogField
     @FieldSet(namePrefix = FEED_1, title = "Feed first")
     @Place(LABEL_TAB_4)
-    @Data(name = "feed-dialog", value = "1")
+    @Attribute(data = @Data(name = "feed-dialog", value = "1"))
     private FeedFieldSet feedFirst;
 
     @DialogField
@@ -240,7 +241,7 @@ public class ComplexComponent2 {
     @DialogField()
     @FieldSet(namePrefix = FEED_2_1, title = "Feed", namePostfix = "/postfix")
     @Place(LABEL_TAB_4)
-    @Data(name = "feed-dialog", value = "2")
+    @Attribute(data = @Data(name = "feed-dialog", value = "2"))
     private FeedFieldSet feed;
 
     @DialogField

@@ -173,7 +173,8 @@
                                     disabled="{Boolean}false"
                                     name="./feedFirst"
                                     renderHidden="{Boolean}false"
-                                    required="{Boolean}false">
+                                    required="{Boolean}false"
+                                    granite:hidden="{Boolean}false">
                                 <granite:data
                                         jcr:primaryType="nt:unstructured"
                                         feed-dialog="1"/>
@@ -327,7 +328,8 @@
                                     disabled="{Boolean}false"
                                     name="./feed"
                                     renderHidden="{Boolean}false"
-                                    required="{Boolean}false">
+                                    required="{Boolean}false"
+                                    granite:hidden="{Boolean}false">
                                 <granite:data
                                         jcr:primaryType="nt:unstructured"
                                         feed-dialog="2"/>
