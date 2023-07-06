@@ -63,10 +63,8 @@ class InterfaceHandler<T> implements InvocationHandler {
     private static final String FIELD_SOURCE = "__source";
     private static final String FIELD_PROPERTIES = "__properties";
 
-    private static final String OPENING_CURLY = "{";
-    private static final String CLOSING_CURLY = "}";
-    private static final String OPENING_SQUARE = "[";
-    private static final String CLOSING_SQUARE = "]";
+    private static final String OPENING_SQUARE = CoreConstants.ARRAY_OPENING;
+    private static final String CLOSING_SQUARE = CoreConstants.ARRAY_CLOSING;
 
     private static final String TYPE_EXCEPTION_TEMPLATE = "Trying to set a value of type %s to property %s";
     private static final String VALUE_EXCEPTION_TEMPLATE = "Invalid value address %s";
@@ -587,7 +585,9 @@ class InterfaceHandler<T> implements InvocationHandler {
         if (source == null && properties.isEmpty()) {
             return String.valueOf(type);
         }
-        StringBuilder result = new StringBuilder(CoreConstants.SEPARATOR_AT).append(type.getName()).append(OPENING_CURLY);
+        StringBuilder result = new StringBuilder(CoreConstants.SEPARATOR_AT)
+            .append(type.getName())
+            .append(DialogConstants.OPENING_CURLY);
         for (Method method : type.getDeclaredMethods()) {
             Object methodValue = source != null ? invokeSilently(method, source) : null;
             methodValue = properties.getOrDefault(method.getName(), methodValue);
@@ -608,7 +608,7 @@ class InterfaceHandler<T> implements InvocationHandler {
             }
             result.append(DialogConstants.SEPARATOR_SEMICOLON);
         }
-        return StringUtils.stripEnd(result.toString(), DialogConstants.SEPARATOR_SEMICOLON) + CLOSING_CURLY;
+        return StringUtils.stripEnd(result.toString(), DialogConstants.SEPARATOR_SEMICOLON) + DialogConstants.CLOSING_CURLY;
     }
 
     private static String toArrayString(Object array) {

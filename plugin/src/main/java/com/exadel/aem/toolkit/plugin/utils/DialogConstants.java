@@ -34,6 +34,9 @@ public class DialogConstants {
     public static final String RELATIVE_PATH_PREFIX = CoreConstants.RELATIVE_PATH_PREFIX;
     public static final String PARENT_PATH_PREFIX = "../";
 
+    public static final String OPENING_CURLY = "{";
+    public static final String CLOSING_CURLY = "}";
+
     public static final String NN_ACCORDION = "accordion";
     public static final String NN_ALLOW_BASICS = "allowBasics";
     public static final String NN_CHARS = "chars";
