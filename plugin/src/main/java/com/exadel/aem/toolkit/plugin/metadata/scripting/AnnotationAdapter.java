@@ -41,7 +41,10 @@ class AnnotationAdapter extends AbstractAdapter implements Annotated {
             return (Callable) (context, scope, thisObj, args) -> getAnnotations(args);
         }
         try {
-            return new MemberAdapter(reflectedAnnotation.annotationType().getDeclaredMethod(name), null, reflectedAnnotation);
+            return new MemberAdapter(
+                reflectedAnnotation.annotationType().getDeclaredMethod(name),
+                null,
+                reflectedAnnotation);
         } catch (NoSuchMethodException e) {
             return null;
         }
