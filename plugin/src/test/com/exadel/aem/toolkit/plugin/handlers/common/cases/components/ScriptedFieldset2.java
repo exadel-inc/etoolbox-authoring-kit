@@ -14,15 +14,15 @@
 package com.exadel.aem.toolkit.plugin.handlers.common.cases.components;
 
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
+import com.exadel.aem.toolkit.api.annotations.main.Setting;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
-import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 
-@Data(name = "inheritedLabel", value = "Extension text", persist = false)
+@Setting(name = "inheritedLabel", value = "Extension text")
 @Ignore(members = {
     @ClassMember(value = "heading", source = ScriptedFieldset1.class),
     @ClassMember(value = "getHeading", source = ScriptedFieldset1.class)
@@ -30,29 +30,25 @@ import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 public class ScriptedFieldset2 extends ScriptedFieldset1 {
 
     @DialogField(
-        label = "Field @{source.name}",
-        description = "In class @{source.class.name}"
+        label = "Field ${ @this.name }",
+        description = "In class ${ @this.class.name }"
     )
     @TextField(
-        value = "Imported @{source.annotation('@DialogField').label()}",
-        emptyText = "@{source.annotations('Data')[0].value()}"
+        value = "Imported ${ @this.annotation('@DialogField').label() }",
+        emptyText = "@{ source.annotations('Setting')[0].value() }"
     )
-    @Data(name = "emptyText", value = "Hello World")
+    @Setting(name = "emptyText", value = "Hello World")
     private String text;
 
     @DialogField(
-        // First, the value will be set to "@{data.inheritedLabel}" as it is pulled from the superclass
+        // First, the value will be set to "${data.inheritedLabel}" as it is pulled from the superclass
         // Second, the "data.inheritedLabel" will be mapped to the value of the @Data annotation above
-        label = "@{source.class.parent.member('text').annotation('DialogField').label()}",
-        description = "@{source.class.ancestors().includes('ScriptedFieldsetInterface') " +
+        label = "${@this.class.parent.member('text').annotation('DialogField').label()}",
+        description = "${@this.class.ancestors().includes('ScriptedFieldsetInterface') " +
             "? 'Has parent interface' : 'Does not have a parent interface'}"
     )
-    @TextField(value = "@{source.context.class().annotation('AemComponent').path()}")
+    @TextField(value = "${@this.context.class().annotation('AemComponent').path()}")
     private String extensionText;
-
-    @DialogField(condition = "data.renderExtraText")
-    @TextField
-    private String extraText;
 
     @DialogField(label = "Nested multifield 1")
     @MultiField
@@ -64,7 +60,7 @@ public class ScriptedFieldset2 extends ScriptedFieldset1 {
     private String nestedMultifield2;
 
     private static class NestedFieldset {
-        @DialogField(label = "@{data.inheritedLabel}")
+        @DialogField(label = "${@inheritedLabel}")
         @TextField
         private String nestedText;
     }

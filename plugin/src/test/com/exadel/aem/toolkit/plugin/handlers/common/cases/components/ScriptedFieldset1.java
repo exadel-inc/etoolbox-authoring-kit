@@ -13,45 +13,45 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.common.cases.components;
 
+import com.exadel.aem.toolkit.api.annotations.main.Setting;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.Heading;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
-import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
 
-@Data(name = "key", value = "scripted{@value}")
-@Data(name = "inheritedValue", value = "From ScriptedFieldset", persist = false)
-@Data(name = "inheritedAutocomplete", value = "From ScriptedFieldset", persist = false)
+@Setting(name = "key", value = "scripted{@value}")
+@Setting(name = "inheritedValue", value = "From ScriptedFieldset")
+@Setting(name = "inheritedAutocomplete", value = "From ScriptedFieldset")
 @SuppressWarnings("unused")
 public class ScriptedFieldset1 implements ScriptedFieldsetInterface {
 
-    @Heading("@{data.greeting || 'Hello world'}")
+    @Heading("${@greeting || 'Hello world'}")
     private String heading;
 
-    @DialogField(label = "@{data.inheritedLabel} field")
+    @DialogField(label = "${@inheritedLabel} field")
     @TextField
-    @Property(name = "@{data.key1}/subnode_1", value = "value")
-    @Property(name = "@{data.key2}/subnode_2", value = "value@{data.index}2")
-    @Data(name = "inheritedLabel", value = "Heading", persist = false)
+    @Property(name = "${@key1}/subnode_1", value = "value")
+    @Property(name = "${@key2}/subnode_2", value = "value${@index}2")
+    @Setting(name = "inheritedLabel", value = "Heading")
     private String getHeading() {
         return heading;
     }
 
     @DialogField(
-        label = "@{data.inheritedLabel}",
-        description = "@{data.inheritedDescription}"
+        label = "${@inheritedLabel}",
+        description = "${@inheritedDescription}"
     )
     @TextField(
-        value = "@{data.inheritedValue}",
-        emptyText = "@{data.inheritedEmptyText}",
-        autocomplete = "@{data.inheritedAutocomplete}")
-    @Data(name = "inheritedAutocomplete", value = "From ScriptedFieldset#text", persist = false)
+        value = "${ @inheritedValue }",
+        emptyText = "${ @inheritedEmptyText }",
+        autocomplete = "${ @inheritedAutocomplete }")
+    @Setting(name = "inheritedAutocomplete", value = "From ScriptedFieldset#text")
     private String text;
 }
 
-@Data(name = "inheritedEmptyText", value = "From ScriptedFieldsetParentInterface", persist = false)
+@Setting(name = "inheritedEmptyText", value = "From ScriptedFieldsetParentInterface")
 interface ScriptedFieldsetParentInterface {
 }
-@Data(name = "inheritedEmptyText", value = "From ScriptedFieldsetInterface", persist = false)
+@Setting(name = "inheritedEmptyText", value = "From ScriptedFieldsetInterface")
 interface ScriptedFieldsetInterface extends ScriptedFieldsetParentInterface {
 }

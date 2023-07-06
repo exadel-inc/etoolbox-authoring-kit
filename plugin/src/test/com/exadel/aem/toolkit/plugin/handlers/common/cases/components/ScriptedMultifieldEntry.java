@@ -20,10 +20,10 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 @SuppressWarnings("unused")
 public class ScriptedMultifieldEntry {
 
-    @Heading("@{data.greeting}")
+    @Heading("${@greeting}")
     private String heading;
 
-    @DialogField(label = "@{data.inheritedLabel}", description = "@{data.missingDescription}")
+    @DialogField(label = "${@inheritedLabel}", description = "${@missingDescription}")
     @TextField
     private String text;
 }

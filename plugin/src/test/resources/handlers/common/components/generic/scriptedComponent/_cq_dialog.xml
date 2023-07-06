@@ -30,9 +30,6 @@
                         renderHidden="{Boolean}false"
                         required="{Boolean}false"
                         useFixedInlineToolbar="{Boolean}false">
-                        <granite:data
-                            jcr:primaryType="nt:unstructured"
-                            rteFeatures="[undo]"/>
                         <uiSettings jcr:primaryType="nt:unstructured">
                             <cui jcr:primaryType="nt:unstructured">
                                 <inline
@@ -140,13 +137,14 @@
                                     targetInternal="manual"/>
                             </links>
                         </htmlRules>
+                        <granite:data
+                            jcr:primaryType="nt:unstructured"
+                            dependsOn="`Hello {@options}`"
+                            dependsOnAction="set"/>
                     </text>
                     <options
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="granite/ui/components/coral/foundation/form/select">
-                        <granite:data
-                            jcr:primaryType="nt:unstructured"
-                            selectedOption="2"/>
                         <items jcr:primaryType="nt:unstructured">
                             <item1
                                 jcr:primaryType="nt:unstructured"
@@ -158,14 +156,13 @@
                                 value="2"
                                 selected="true"/>
                         </items>
+                        <granite:data
+                            jcr:primaryType="nt:unstructured"
+                            dependsOnRef="options"/>
                     </options>
                     <fieldset
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="granite/ui/components/coral/foundation/form/fieldset">
-                        <granite:data
-                            jcr:primaryType="nt:unstructured"
-                            key="scripted{@value}"
-                            greeting="Welcome"/>
                         <items
                             jcr:primaryType="nt:unstructured">
                             <heading
@@ -216,9 +213,6 @@
                                 renderHidden="{Boolean}false"
                                 required="{Boolean}false"
                                 value="Imported Field text">
-                                <granite:data
-                                    jcr:primaryType="nt:unstructured"
-                                    emptyText="Hello World"/>
                             </text>
                             <extensionText
                                 jcr:primaryType="nt:unstructured"

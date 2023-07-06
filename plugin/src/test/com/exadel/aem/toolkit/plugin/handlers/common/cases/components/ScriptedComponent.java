@@ -15,15 +15,18 @@ package com.exadel.aem.toolkit.plugin.handlers.common.cases.components;
 
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
 
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOn;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnActions;
+import com.exadel.aem.toolkit.api.annotations.assets.dependson.DependsOnRef;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.ClassMember;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.main.Setting;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
-import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionProvider;
 import com.exadel.aem.toolkit.api.annotations.widgets.common.OptionSource;
 import com.exadel.aem.toolkit.api.annotations.widgets.property.Property;
@@ -44,15 +47,16 @@ import com.exadel.aem.toolkit.plugin.annotations.cases.NestedAnnotations;
 )
 @Dialog(title = "Scripted Component Dialog")
 @Ignore(members = @ClassMember("moreOptions"))
-@Data(name = "inheritedDescription", value = "From ScriptedComponent", persist = false)
-@Data(name = "inheritedValue", value = "From ParentScriptedComponent", persist = false)
+@Setting(name = "inheritedDescription", value = "From ScriptedComponent")
+@Setting(name = "inheritedValue", value = "From ParentScriptedComponent")
+@SuppressWarnings("unused")
 public class ScriptedComponent extends ScriptedParent {
-    @DialogField(label = "@{data.textFieldTitle || 'Default title'}")
+    @DialogField(label = "${@textFieldTitle || 'Default title'}")
     @RichTextEditor(
             features = {
                     RteFeatures.Popovers.CONTROL_ALL,
-                    "@{!data.rteFeatures || data.rteFeatures.includes('undo') ? 'undo#undo' : ''}",
-                    "@{!data.rteFeatures || data.rteFeatures.includes('redo') ? 'undo#redo' : ''}",
+                    "${!@rteFeatures || @rteFeatures.includes('undo') ? 'undo#undo' : ''}",
+                    "${!@rteFeatures || @rteFeatures.includes('redo') ? 'undo#redo' : ''}",
                     RteFeatures.SEPARATOR,
                     RteFeatures.Popovers.EDIT_ALL,
                     RteFeatures.Popovers.FINDREPLACE_ALL,
@@ -69,7 +73,7 @@ public class ScriptedComponent extends ScriptedParent {
             defaultPasteMode = PasteMode.WORDHTML,
             externalStyleSheets = {
                     "@{data.styleAddress}",
-                    "/etc/clientlibs/myLib/@{data.styleName}.css"
+                    "/etc/clientlibs/myLib/${@styleName}.css"
             },
             maxUndoSteps = 25,
             htmlLinkRules = @HtmlLinkRules(
@@ -80,19 +84,22 @@ public class ScriptedComponent extends ScriptedParent {
             ),
             useFixedInlineToolbar = false
     )
-    @Data(name = "styleAddress", value = "/etc/clientlibs/myLib/style1.css", persist = false)
-    @Data(name = "styleName", value = "style2", persist = false)
-    @Data(name = "rteFeatures", value = "[undo]")
+    @Setting(name = "styleAddress", value = "/etc/clientlibs/myLib/style1.css")
+    @Setting(name = "styleName", value = "style2")
+    @Setting(name = "rteFeatures", value = "[undo]")
+    @DependsOn(action = DependsOnActions.SET, query = "${ @dependsOnEmbed || '`Hello {@options}`'}")
     private String text;
 
     @Select(
         options = {
             @Option(text = "First", value = "1"),
-            @Option(text = "Second", value = "2")
+            @Option(text = "Second", value = "2"),
+            @Option(text = "@{ data.showThirdOption ? 'Third' : ''}", value = "3")
         }
     )
-    @Property(name = "items/item@{data.selectedOption}/selected", value = "true")
-    @Data(name = "selectedOption", value = "2")
+    @Property(name = "items/item${@selectedOption}/selected", value = "true")
+    @Setting(name = "selectedOption", value = "2")
+    @DependsOnRef
     private String options;
 
     @Select(
@@ -124,18 +131,17 @@ public class ScriptedComponent extends ScriptedParent {
     private int numbers;
 
     @FieldSet
-    @Data(name = "greeting", value = "Welcome")
-    @Data(name = "key1", value = ".", persist = false)
-    @Data(name = "key2", value = "sub", persist = false)
-    @Data(name = "inheritedDescription", value = "From ScriptedComponent#fieldset", persist = false)
+    @Setting(name = "greeting", value = "Welcome")
+    @Setting(name = "key1", value = ".")
+    @Setting(name = "key2", value = "sub")
+    @Setting(name = "inheritedDescription", value = "From ScriptedComponent#fieldset")
     private ScriptedFieldset1 fieldset;
 
     @FieldSet
-    @Data(name = "renderExtraText", value = "false", persist = false)
     private ScriptedFieldset2 fieldset2;
 
     @MultiField(ScriptedMultifieldEntry.class)
-    @Data(name = "greeting", value = "Hi there", persist = false)
+    @Setting(name = "greeting", value = "Hi there")
     private String moreFieldsets;
 
     @FieldSet(ScriptedMultifieldEntry.class)
@@ -144,7 +150,8 @@ public class ScriptedComponent extends ScriptedParent {
 
 }
 
-@Data(name = "inheritedLabel", value = "From ParentScriptedComponent", persist = false)
-@Data(name = "inheritedValue", value = "From ParentScriptedComponent", persist = false)
+@Setting(name = "inheritedLabel", value = "From ParentScriptedComponent")
+@Setting(name = "inheritedValue", value = "From ParentScriptedComponent")
+@Setting(name = "showThirdOption", value = "false")
 class ScriptedParent {
 }
