@@ -57,9 +57,10 @@ class Package implements Closeable {
     static final String FILE_NAME = "etoolbox-authoring-kit-tests.zip";
     private static final String ROOT_FOLDER = "package";
 
-    private static final Pattern PATTERN_SYSTEM_PROPERTY = Pattern.compile("$\\{([\\w.-]+)}");
+    private static final Pattern PATTERN_SYSTEM_PROPERTY = Pattern.compile("\\$\\{([\\w.-]+)}");
 
     private static final String EXCEPTION_COULD_NOT_ASSEMBLE = "Could not assemble static content for the package";
+    private static final String EXTENSION_HTML = ".html";
 
     private final Map<String, byte[]> entries = new HashMap<>();
 
@@ -192,8 +193,11 @@ class Package implements Closeable {
             .replace(File.separator, CoreConstants.SEPARATOR_SLASH);
         try {
             String content = IOUtils.toString(path.toUri(), StandardCharsets.UTF_8);
+            if (!path.toString().endsWith(EXTENSION_HTML)) {
+                content = populateProperties(content);
+            }
             if (StringUtils.isNotEmpty(content)) {
-                entries.put(packagePath, populateProperties(content).getBytes(StandardCharsets.UTF_8));
+                entries.put(packagePath, content.getBytes(StandardCharsets.UTF_8));
             }
         } catch (IOException e) {
             LOG.error("Could not read a file at {}", path, e);
@@ -207,6 +211,9 @@ class Package implements Closeable {
      * @return Processed content string
      */
     private String populateProperties(String value) {
+        if (StringUtils.isEmpty(value)) {
+            return StringUtils.EMPTY;
+        }
         StringBuilder result = new StringBuilder(value);
         Matcher matcher = PATTERN_SYSTEM_PROPERTY.matcher(result.toString());
         while (matcher.find()) {
