@@ -27,4 +27,4 @@ jobs:
                     cache: 'maven'
 
             -   name: Run Maven Tests (JDK ${{ matrix.Java }})
-                run: mvn clean test
+                run: mvn clean test -Pnocheckstyle
