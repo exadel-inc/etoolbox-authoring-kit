@@ -28,7 +28,6 @@ import com.exadel.aem.toolkit.api.annotations.main.Setting;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
-import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;

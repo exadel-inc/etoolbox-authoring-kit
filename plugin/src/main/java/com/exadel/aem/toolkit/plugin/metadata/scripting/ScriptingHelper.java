@@ -55,7 +55,6 @@ public class ScriptingHelper {
 
     private static final String TOKEN_THIS = "this";
 
-
     private ScriptingHelper() {
     }
 
@@ -216,7 +215,7 @@ public class ScriptingHelper {
         private final SubstringMatcher.Substring substring;
         private final LinkedList<SubstringMatcher.Substring> varTokens;
 
-        public Embedding(SubstringMatcher.Substring substring) {
+        Embedding(SubstringMatcher.Substring substring) {
             this.substring = substring;
             this.varTokens = findVariableTokens(substring.getContent());
         }

@@ -27,7 +27,6 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.ClassUtils;
 
 import com.exadel.aem.toolkit.api.annotations.main.Setting;
-import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;

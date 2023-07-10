@@ -41,7 +41,7 @@ class SubstringMatcher {
      * @param source The string that is used as the source for matching substrings
      * @param marker Starting token that signifies a substring. A non-empty string is expected
      */
-    public SubstringMatcher(String source, String marker) {
+    SubstringMatcher(String source, String marker) {
         this(source, marker, null);
     }
 
@@ -52,7 +52,7 @@ class SubstringMatcher {
      * @param startToken Specifies where the substring starts. A non-empty string is expected
      * @param endToken   Specifies where the substring ends. A non-empty string is expected
      */
-    public SubstringMatcher(String source, String startToken, String endToken) {
+    SubstringMatcher(String source, String startToken, String endToken) {
         this(source, startToken, endToken, null);
     }
 
@@ -64,7 +64,7 @@ class SubstringMatcher {
      * @param endToken   Specifies where the substring ends. A non-empty string is expected
      * @param prefixes   List of string prefixes that can come before the start token.
      */
-    public SubstringMatcher(String source, String startToken, String endToken, List<String> prefixes) {
+    SubstringMatcher(String source, String startToken, String endToken, List<String> prefixes) {
         this.source = source;
         this.startToken = startToken;
         this.endToken = endToken;
@@ -203,7 +203,7 @@ class SubstringMatcher {
          * @param start    Specifies the starting index of the substring
          * @param endIndex Specifies the ending index of the substring
          */
-        public Substring(String source, int start, int endIndex) {
+        Substring(String source, int start, int endIndex) {
             this.source = source;
             this.start = start;
             this.end = endIndex;
@@ -219,11 +219,11 @@ class SubstringMatcher {
 
         /**
          * Updates the start index of this substring and returns this substring for chaining
-         * @param start Specifies the starting index of the substring
+         * @param value Specifies the starting index of the substring
          * @return This substring with the updated start
          */
-        private Substring adjustStart(int start) {
-            this.start = start;
+        private Substring adjustStart(int value) {
+            this.start = value;
             return this;
         }
 
