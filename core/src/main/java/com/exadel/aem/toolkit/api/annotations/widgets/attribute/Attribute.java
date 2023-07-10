@@ -44,9 +44,9 @@ public @interface Attribute {
 
     /**
      * The HTML {@code class} attribute. With this property, you can assign an arbitrary CSS class, or a set of classes,
-     * space-separated, to the widget's container.
-     * Mind that you can also use a number of <a href="https://opensource.adobe.com/coral-spectrum/dist/documentation/manual/styles.html#css-utility-classes">
-     *     pre-defined utility classes</a>
+     * space-separated, to the widget's container. Mind that you can also use a number of <a
+     * href="https://opensource.adobe.com/coral-spectrum/dist/documentation/manual/styles.html#css-utility-classes">
+     * pre-defined utility classes</a>
      * @return Optional string value
      */
     @PropertyRendering(name = "class")

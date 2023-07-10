@@ -34,7 +34,7 @@ import com.exadel.aem.toolkit.plugin.handlers.editconfig.DropTargetsHandler;
 import com.exadel.aem.toolkit.plugin.handlers.editconfig.FormParametersHandler;
 import com.exadel.aem.toolkit.plugin.handlers.editconfig.InplaceEditingHandler;
 import com.exadel.aem.toolkit.plugin.handlers.editconfig.ListenersHandler;
-import com.exadel.aem.toolkit.plugin.handlers.widgets.common.AttributeAnnotationHandler;
+import com.exadel.aem.toolkit.plugin.handlers.widgets.common.DataAnnotationHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.DialogFieldAnnotationHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.InheritanceHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.MultipleAnnotationHandler;
@@ -47,9 +47,10 @@ import com.exadel.aem.toolkit.plugin.handlers.widgets.common.ResourceTypeHandler
  * @see Source
  * @see Target
  */
-public class HandlerChains {
+public class Handlers {
 
     // Generic handlers
+    public static final BiConsumer<Source, Target> DATA_ANNOTATIONS_HANDLER = new DataAnnotationHandler();
     private static final BiConsumer<Source, Target> CASUAL_ANNOTATIONS_HANDLER = new CasualAnnotationsHandler();
     private static final BiConsumer<Source, Target> PROPERTY_MAPPING_HANDLER = new PropertyMappingHandler();
     private static final BiConsumer<Source, Target> ALLOWED_CHILDREN_HANDLER = new AllowedChildrenHandler();
@@ -70,7 +71,6 @@ public class HandlerChains {
         .build();
 
     // Widget-specific handlers
-    private static final BiConsumer<Source, Target> ATTRIBUTE_ANNOTATION_HANDLER = new AttributeAnnotationHandler();
     private static final BiConsumer<Source, Target> DEPENDS_ON_HANDLER = new DependsOnHandler();
     private static final BiConsumer<Source, Target> DIALOG_FIELD_HANDLER = new DialogFieldAnnotationHandler();
     private static final BiConsumer<Source, Target> MULTIPLE_HANDLER = new MultipleAnnotationHandler();
@@ -81,7 +81,7 @@ public class HandlerChains {
     private static final BiConsumer<Source, Target> MEMBER_HANDLER_CHAIN =
         RESOURCE_TYPE_HANDLER
         .andThen(PROPERTY_MAPPING_HANDLER)
-        .andThen(ATTRIBUTE_ANNOTATION_HANDLER)
+        .andThen(DATA_ANNOTATIONS_HANDLER)
         .andThen(DIALOG_FIELD_HANDLER)
         .andThen(CASUAL_ANNOTATIONS_HANDLER)
         .andThen(DEPENDS_ON_HANDLER)
@@ -109,7 +109,7 @@ public class HandlerChains {
     /**
      * Default (instantiation-restricting) constructor
      */
-    private HandlerChains() {
+    private Handlers() {
     }
 
     /**
@@ -121,6 +121,7 @@ public class HandlerChains {
     public static BiConsumer<Source, Target> forScope(String scope) {
         BiConsumer<Source, Target> uiHandler = UI_HANDLERS.getOrDefault(scope, NOOP_HANDLER);
         return PROPERTY_MAPPING_HANDLER
+            .andThen(DATA_ANNOTATIONS_HANDLER)
             .andThen(uiHandler)
             .andThen(CASUAL_ANNOTATIONS_HANDLER);
     }

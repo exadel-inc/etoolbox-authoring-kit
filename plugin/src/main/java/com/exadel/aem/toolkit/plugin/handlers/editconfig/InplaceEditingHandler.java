@@ -31,8 +31,8 @@ import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.common.InheritanceHandler;
 import com.exadel.aem.toolkit.plugin.handlers.widgets.rte.RichTextEditorHandler;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.metadata.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 
@@ -152,8 +152,7 @@ public class InplaceEditingHandler implements BiConsumer<Source, Target> {
             RichTextEditor rteAnnotation = referencedRteField.adaptTo(RichTextEditor.class);
             target.attributes(
                 rteAnnotation,
-                AnnotationUtil
-                    .getPropertyMappingFilter(rteAnnotation)
+                new RenderingFilter(rteAnnotation)
                     .and(method -> !DialogConstants.PN_USE_FIXED_INLINE_TOOLBAR.equals(method.getName()))
             );
         }
@@ -173,7 +172,9 @@ public class InplaceEditingHandler implements BiConsumer<Source, Target> {
             return null;
         }
         try {
-            return Sources.fromMember(config.richText().value().getDeclaredField(config.richText().field()), config.richText().value());
+            return Sources.fromMember(
+                config.richText().value().getDeclaredField(config.richText().field()),
+                config.richText().value());
         } catch (NoSuchFieldException e) {
             PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(
                     config.richText().value(),

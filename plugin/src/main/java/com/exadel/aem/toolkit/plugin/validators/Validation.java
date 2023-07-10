@@ -14,7 +14,6 @@
 package com.exadel.aem.toolkit.plugin.validators;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,21 +22,21 @@ import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
+import com.exadel.aem.toolkit.plugin.metadata.Property;
 
 /**
  * Performs validation of annotations properties' values using a specific {@link Validator}s
  */
 public class Validation {
-    private static final String LOG_PLAIN_VALUE_PATTERN = "Property '%s' of @%s is set to a wrong value: '%s' provided, %s";
+    private static final String LOG_PLAIN_VALUE_PATTERN = "Property %s is set to a wrong value: '%s' provided, %s";
     private static final String LOG_ANNOTATION_PATTERN = "Annotation @%s(%s) is invalid: %s";
     private static final String ARGUMENT_LIST_OPENER = "(";
     private static final String ARGUMENT_LIST_FINISHER = ")";
 
     private static final Validator NO_RESTRICTION = new PermissiveValidator();
 
-    private Method reflectedMethod;
     private final Validator testRoutine;
+    private String propertyPath;
 
     /**
      * Initializes a class instance
@@ -65,33 +64,16 @@ public class Validation {
 
     /**
      * Retrieves an appropriate {@code Validation} for the specified annotation property
-     * @param type       Annotation type
-     * @param methodName Annotation's property name
+     * @param property {@link Property} instance representing the annotation property
      * @return {@code Validation} instance
      */
-    public static Validation forMethod(Class<? extends Annotation> type, String methodName) {
-        try {
-            return forMethod(type.getDeclaredMethod(methodName));
-        } catch (NoSuchMethodException e) {
-            return new Validation(NO_RESTRICTION);
-        }
-    }
-
-    /**
-     * Retrieves an appropriate {@code Validation} for the specified annotation property
-     * @param method {@code Method} instance representing the annotation property
-     * @return {@code Validation} instance
-     */
-    public static Validation forMethod(Method method) {
+    public static Validation forProperty(Property property) {
         String restriction = null;
-        if (method.isAnnotationPresent(ValueRestriction.class)) {
-            restriction = method.getDeclaredAnnotation(ValueRestriction.class).value();
-        } else if (ClassUtils.isAssignable(MemberUtil.getPlainType(method), Annotation.class)
-                && MemberUtil.getPlainType(method).isAnnotationPresent(ValueRestriction.class)) {
-            restriction = MemberUtil.getPlainType(method).getDeclaredAnnotation(ValueRestriction.class).value();
+        if (property.getAnnotation(ValueRestriction.class) != null) {
+            restriction = property.getAnnotation(ValueRestriction.class).value();
         }
         Validation checker = new Validation(getTestRoutine(restriction));
-        checker.reflectedMethod = method;
+        checker.propertyPath = property.getPath();
         return checker;
     }
 
@@ -148,8 +130,7 @@ public class Validation {
                     testRoutine.getWarningMessage());
         }
         return String.format(LOG_PLAIN_VALUE_PATTERN,
-                reflectedMethod.getName(),
-                reflectedMethod.getDeclaringClass().getSimpleName(),
+                propertyPath,
                 value,
                 testRoutine.getWarningMessage());
     }

@@ -52,64 +52,71 @@ public class ClassUtil {
 
     /**
      * Gets whether the given {@code Class} conforms to one of the provided references that represent package names
-     * @param targetClass The class to check
-     * @param references Zero or more string values; non-blank strings are expected
+     * @param sourceClass The class to check
+     * @param references  Zero or more string values; non-blank strings are expected
      * @return True or false
      */
-    public static boolean matchesReference(Class<?> targetClass, String... references) {
+    public static boolean matchesReference(Class<?> sourceClass, String... references) {
         if (ArrayUtils.isEmpty(references)) {
             return true;
         }
         return Arrays.stream(references)
             .filter(StringUtils::isNotBlank)
             .map(ref -> ref.endsWith(WILDCARD) ? ref.substring(0, ref.length() - WILDCARD.length()) : ref)
-            .anyMatch(ref -> targetClass.getName().startsWith(ref + DialogConstants.SEPARATOR_DOT));
+            .anyMatch(ref -> sourceClass.getName().startsWith(ref + DialogConstants.SEPARATOR_DOT));
     }
 
     /**
-     * Retrieves a sequential list of {@link Source} objects representing manageable members that belong to
-     * a certain {@code Class} and its superclasses
-     * @param targetClass The class to extract sources from
+     * Retrieves a sequential list of {@link Source} objects representing manageable members that belong to a certain
+     * {@code Class} and its superclasses
+     * @param sourceClass The class to extract sources from
      * @return List of {@code Source} objects
      */
-    public static List<Source> getSources(Class<?> targetClass) {
-        return getSources(targetClass, null, true);
+    public static List<Source> getSources(Class<?> sourceClass) {
+        return getSources(sourceClass, null, null, true);
     }
 
     /**
      * Retrieves a list of {@link Source} objects representing manageable members that belong to a certain {@code Class}
      * (and its superclasses) and match the criteria represented by a {@code Predicate}
-     * @param targetClass The class to extract sources from
-     * @param condition   Nullable {@code Predicate<Member>} instance that helps to pick up appropriate fields and
-     *                    methods
-     * @param ordered     True to perform proper sources ordering (considers the {@code @DialogField(ranking=..,)}
-     *                    values, and then the {@code @Place(before/after=...)} instructions). False to skip ordering
+     * @param sourceClass    The class to extract sources from
+     * @param upstreamMember Nullable {@code Member} reference that signifies the context in which the current class
+     *                       members are retrieved. See {@link Sources#fromMember(Member, Class, Member)} for detail
+     * @param condition      Nullable {@code Predicate<Member>} instance that helps to pick up appropriate fields and
+     *                       methods
+     * @param ordered        True to perform proper sources ordering (considers the {@code @DialogField(ranking=..,)}
+     *                       values, and then the {@code @Place(before/after=...)} instructions). False to skip
+     *                       ordering
      * @return List of {@code Source} objects
      */
     @SuppressWarnings("deprecation") // Processing of IgnoreFields is retained for compatibility and will be removed
-                                     // in a version after 2.0.2
-    public static List<Source> getSources(Class<?> targetClass, Predicate<Source> condition, boolean ordered) {
+    // in a version after 2.0.2
+    public static List<Source> getSources(
+        Class<?> sourceClass,
+        Member upstreamMember,
+        Predicate<Source> condition,
+        boolean ordered) {
         List<Source> raw = new ArrayList<>();
         List<ClassMemberSetting> ignoredClassMembers = new ArrayList<>();
 
-        for (Class<?> classEntry : getInheritanceTree(targetClass)) {
+        for (Class<?> classEntry : getInheritanceTree(sourceClass)) {
 
-            Stream<Member> classMembersStream = targetClass.isInterface()
+            Stream<Member> classMembersStream = sourceClass.isInterface()
                 ? Arrays.stream(classEntry.getMethods())
                 : Stream.concat(Arrays.stream(classEntry.getDeclaredFields()), Arrays.stream(classEntry.getDeclaredMethods()));
             List<Source> classMemberSources = classMembersStream
-                .map(member -> Sources.fromMember(member, targetClass))
+                .map(member -> Sources.fromMember(member, sourceClass, upstreamMember))
                 .filter(source -> source.isValid() && (condition == null || condition.test(source)))
                 .collect(Collectors.toList());
             raw.addAll(classMemberSources);
 
             if (classEntry.getAnnotation(Ignore.class) != null && classEntry.getAnnotation(Ignore.class).members().length > 0) {
                 Arrays.stream(classEntry.getAnnotation(Ignore.class).members())
-                    .map(classMember -> new ClassMemberSetting(classMember).populateDefaults(targetClass, classEntry.getName()))
+                    .map(classMember -> new ClassMemberSetting(classMember).populateDefaults(sourceClass, classEntry.getName()))
                     .forEach(ignoredClassMembers::add);
             } else if (classEntry.getAnnotation(IgnoreFields.class) != null) {
                 Arrays.stream(classEntry.getAnnotation(IgnoreFields.class).value())
-                    .map(classMember -> new ClassMemberSetting(classMember).populateDefaults(targetClass))
+                    .map(classMember -> new ClassMemberSetting(classMember).populateDefaults(sourceClass))
                     .forEach(ignoredClassMembers::add);
             }
         }
@@ -125,27 +132,27 @@ public class ClassUtil {
     }
 
     /**
-     * Retrieves a list of ancestors of a specific {@code Class}, target class itself included,
-     * starting from the "top" of the inheritance tree. {@code Object} class is not added to the hierarchy
-     * @param targetClass The class to build the tree upon
+     * Retrieves a list of ancestors of a specific {@code Class}, target class itself included, starting from the "top"
+     * of the inheritance tree. {@code Object} class is not added to the hierarchy
+     * @param sourceClass The class to build the tree upon
      * @return List of {@code Class} objects
      */
-    public static List<Class<?>> getInheritanceTree(Class<?> targetClass) {
-        return getInheritanceTree(targetClass, true);
+    public static List<Class<?>> getInheritanceTree(Class<?> sourceClass) {
+        return getInheritanceTree(sourceClass, true);
     }
 
     /**
      * Retrieves a list of ancestors of a specific {@code Class} starting from the "top" of the inheritance tree. {@code
      * Object} class is not added to the hierarchy
-     * @param targetClass    The class to analyze
+     * @param sourceClass    The class to analyze
      * @param includeCurrent Whether to include the {@code targetClass} itself to the hierarchy
      * @return List of {@code Class} objects
      */
-    public static List<Class<?>> getInheritanceTree(Class<?> targetClass, boolean includeCurrent) {
+    public static List<Class<?>> getInheritanceTree(Class<?> sourceClass, boolean includeCurrent) {
         List<Class<?>> result = new LinkedList<>();
-        Class<?> current = targetClass;
+        Class<?> current = sourceClass;
         while (current != null && !current.equals(Object.class)) {
-            if (!current.equals(targetClass) || includeCurrent) {
+            if (!current.equals(sourceClass) || includeCurrent) {
                 result.add(current);
                 result.addAll(Arrays.asList(current.getInterfaces()));
             }
@@ -157,13 +164,13 @@ public class ClassUtil {
 
     /**
      * Retrieves values of public constant fields originating from the given constant class as a key-value map
-     * @param targetClass {@code Class<?>} object representing the constants class
+     * @param sourceClass {@code Class<?>} object representing the constants class
      * @return {@code Map<String, Object>} containing the key-value pairs. An empty map can be returned if no valid
      * constants found
      */
-    public static Map<String, Object> getConstantValues(Class<?> targetClass) {
+    public static Map<String, Object> getConstantValues(Class<?> sourceClass) {
         Map<String, Object> result = new HashMap<>();
-        for (Field field : targetClass.getDeclaredFields()) {
+        for (Field field : sourceClass.getDeclaredFields()) {
             if (!Modifier.isStatic(field.getModifiers())
                 || !Modifier.isFinal(field.getModifiers())
                 || !Modifier.isPublic(field.getModifiers())) {
@@ -171,7 +178,7 @@ public class ClassUtil {
             }
             Object fieldValue;
             try {
-                fieldValue = field.get(targetClass);
+                fieldValue = field.get(sourceClass);
             } catch (IllegalAccessException e) {
                 fieldValue = null;
             }

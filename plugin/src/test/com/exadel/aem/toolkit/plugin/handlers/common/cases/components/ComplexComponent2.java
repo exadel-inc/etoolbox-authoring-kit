@@ -219,11 +219,9 @@ public class ComplexComponent2 {
     private String textContent;
 
     @DialogField
-    @Attribute(data = {
-            @Data(name = "feed-dialog", value = "1")
-    })
     @FieldSet(namePrefix = FEED_1, title = "Feed first")
     @Place(LABEL_TAB_4)
+    @Attribute(data = @Data(name = "feed-dialog", value = "1"))
     private FeedFieldSet feedFirst;
 
     @DialogField
@@ -241,9 +239,9 @@ public class ComplexComponent2 {
     private boolean enableFeedFirst;
 
     @DialogField()
-    @Attribute(data = {@Data(name = "feed-dialog", value = "2")})
     @FieldSet(namePrefix = FEED_2_1, title = "Feed", namePostfix = "/postfix")
     @Place(LABEL_TAB_4)
+    @Attribute(data = @Data(name = "feed-dialog", value = "2"))
     private FeedFieldSet feed;
 
     @DialogField

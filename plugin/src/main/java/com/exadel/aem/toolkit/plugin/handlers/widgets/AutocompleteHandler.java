@@ -20,7 +20,8 @@ import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.metadata.Metadata;
+import com.exadel.aem.toolkit.plugin.metadata.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
@@ -41,25 +42,25 @@ public class AutocompleteHandler implements Handler {
         target.getOrCreateTarget(CoreConstants.NN_DATASOURCE)
                 .attribute(
                     DialogConstants.PN_SLING_RESOURCE_TYPE,
-                    autocomplete.datasource().annotationType().getAnnotation(ResourceType.class).value())
+                    Metadata.from(autocomplete.datasource()).getAnnotation(ResourceType.class).value())
                 .attributes(
                     autocomplete.datasource(),
-                    AnnotationUtil.getPropertyMappingFilter(autocomplete.datasource()))
+                    new RenderingFilter(autocomplete.datasource()))
                 .getParent()
                 .getOrCreateTarget(DialogConstants.NN_OPTIONS)
                 .attribute(
                     DialogConstants.PN_SLING_RESOURCE_TYPE,
-                    autocomplete.options().annotationType().getAnnotation(ResourceType.class).value())
+                    Metadata.from(autocomplete.options()).getAnnotation(ResourceType.class).value())
                 .attributes(
                     autocomplete.options(),
-                    AnnotationUtil.getPropertyMappingFilter(autocomplete.options()))
+                    new RenderingFilter(autocomplete.options()))
                 .getParent()
                 .getOrCreateTarget(DialogConstants.NN_VALUES)
                 .attribute(
                     DialogConstants.PN_SLING_RESOURCE_TYPE,
-                    autocomplete.values().annotationType().getAnnotation(ResourceType.class).value())
+                    Metadata.from(autocomplete.values()).getAnnotation(ResourceType.class).value())
                 .attributes(
                     autocomplete.values(),
-                    AnnotationUtil.getPropertyMappingFilter(autocomplete.values()));
+                    new RenderingFilter(autocomplete.values()));
     }
 }

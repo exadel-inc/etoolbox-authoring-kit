@@ -44,7 +44,7 @@ import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
 public class ChildrenInjectorTest {
 
-    private static final String MODELS_PACKAGE_NAME = "com.exadel.aem.toolkit.core.injectors.models.children";
+    private static final String MODELS_PACKAGE_NAME = CoreConstants.ROOT_PACKAGE + ".core.injectors.models.children";
 
     private static final List<String> EXPECTED_VALUE_SEQUENCE = Arrays.asList("value1", "value2", "value3", "value4");
     public static final String EXPECTED_TITLE = "key1";

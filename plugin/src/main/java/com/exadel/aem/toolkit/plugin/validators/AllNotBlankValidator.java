@@ -14,12 +14,11 @@
 package com.exadel.aem.toolkit.plugin.validators;
 
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
 
 import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.metadata.Metadata;
 
 /**
  * {@link Validator} implementation for testing that all String-typed annotation properties are not blank
@@ -37,10 +36,9 @@ public class AllNotBlankValidator implements Validator {
         if (!isApplicableTo(value)) {
             return false;
         }
-        Annotation annotation = (Annotation) value;
-        return Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .filter(method -> method.getReturnType().equals(String.class))
-                .allMatch(method -> StringUtils.isNotBlank(AnnotationUtil.getProperty(annotation, method, StringUtils.EMPTY).toString()));
+        return Metadata.from((Annotation) value).stream(false, false)
+            .filter(prop -> String.class.equals(prop.getType()))
+            .allMatch(prop -> prop.getValue() != null && StringUtils.isNotBlank(prop.getValue().toString()));
     }
 
     /**

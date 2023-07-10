@@ -13,16 +13,14 @@
  */
 package com.exadel.aem.toolkit.plugin.maven.xmlcomparator;
 
-import org.apache.commons.lang3.StringUtils;
-
 class XmlComparatorConstants {
 
-    static final int LOG_INDENT_WIDTH = 1;
+    static final int DEFAULT_LOG_INDENT_WIDTH = 1;
     static final int DEFAULT_LOG_TABLE_WIDTH = 80;
+
     static final String LOG_COLUMN_SEPARATOR = " | ";
 
-    static final String LOG_INDENT = StringUtils.repeat(StringUtils.SPACE, LOG_INDENT_WIDTH);
-    static final String SEPARATOR_ATTRIBUTE = "/@";
+    static final String ATTRIBUTE_SEPARATOR = "/@";
 
     private XmlComparatorConstants() {
     }

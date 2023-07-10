@@ -43,6 +43,10 @@ class Line {
         return id;
     }
 
+    public int getLength() {
+        return length;
+    }
+
     public boolean isTopIndent() {
         return topIndent;
     }

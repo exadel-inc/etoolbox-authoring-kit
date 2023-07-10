@@ -52,7 +52,7 @@ public class CasualAnnotationsHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Alternative constructor that accepts the list of handlers to process to be used instead of handlers extracted from
+     * Alternative constructor that accepts the list of handlers that needs to be used instead of handlers extracted from
      * the passed {@code Source}
      * @param handlers Pre-defined handlers list
      */

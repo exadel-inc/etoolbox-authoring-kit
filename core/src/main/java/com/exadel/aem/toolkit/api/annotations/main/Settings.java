@@ -11,25 +11,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.annotations;
+package com.exadel.aem.toolkit.api.annotations.main;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
-
-@Target(ElementType.TYPE)
+/**
+ * Represents a collection of settings that can be used to modify the behavior of a component
+ * @see Setting
+ */
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@AnnotationRendering(properties = "!field3")
-// This will have its scope defined dynamically: when appended to a class already
-// possessing e.g. @Dialog, it will have cq:dialog scope, etc.
-public @interface CustomDialogAnnotationAuto {
+public @interface Settings {
 
-    String field1() default "";
-
-    long field2();
-
-    boolean field3() default false; // will not be rendered
+    /**
+     * Declares the collection of settings
+     * @return One or more {@link Setting} values
+     */
+    Setting[] value();
 }

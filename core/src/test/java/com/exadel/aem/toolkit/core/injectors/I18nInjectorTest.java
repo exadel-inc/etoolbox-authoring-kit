@@ -25,13 +25,14 @@ import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.injectors.models.i18n.I18nInterface;
 import com.exadel.aem.toolkit.core.injectors.models.i18n.Objects;
 import com.exadel.aem.toolkit.core.injectors.models.i18n.Strings;
 
 public class I18nInjectorTest {
 
-    private static final String MODELS_PACKAGE_NAME = "com.exadel.aem.toolkit.core.injectors.models.i18n";
+    private static final String MODELS_PACKAGE_NAME = CoreConstants.ROOT_PACKAGE + ".core.injectors.models.i18n";
 
     private static final String SOURCE_STRING = "Hello world";
     private static final String TRANSLATED_STRING = "Ciao mondo";

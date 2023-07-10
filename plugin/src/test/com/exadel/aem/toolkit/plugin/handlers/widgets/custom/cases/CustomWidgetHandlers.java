@@ -31,9 +31,9 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
-import com.exadel.aem.toolkit.plugin.annotations.CustomNonMappingWidgetAnnotation;
-import com.exadel.aem.toolkit.plugin.annotations.CustomScopedNonMappingWidgetAnnotation;
-import com.exadel.aem.toolkit.plugin.annotations.CustomWidgetAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.cases.CustomNonMappingWidgetAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.cases.CustomScopedNonMappingWidgetAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.cases.CustomWidgetAnnotation;
 
 @SuppressWarnings("unused")
 public class CustomWidgetHandlers {

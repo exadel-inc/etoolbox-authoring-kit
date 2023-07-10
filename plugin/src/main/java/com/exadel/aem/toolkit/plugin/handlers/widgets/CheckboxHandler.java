@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.metadata.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
@@ -49,7 +49,7 @@ public class CheckboxHandler implements Handler {
     public void accept(Source source, Target target) {
         Checkbox checkbox = source.adaptTo(Checkbox.class);
 
-        Predicate<Method> mappingFilter = AnnotationUtil.getPropertyMappingFilter(checkbox);
+        Predicate<Method> mappingFilter = new RenderingFilter(checkbox);
         if (ArrayUtils.isEmpty(checkbox.sublist())) {
             target.attributes(checkbox, mappingFilter);
             setTextAttribute(source, target);
@@ -95,7 +95,7 @@ public class CheckboxHandler implements Handler {
                 Checkbox innerCheckbox = innerSource.adaptTo(Checkbox.class);
                 Target checkboxElement = target.getOrCreateTarget(innerSource.getName())
                         .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CHECKBOX)
-                        .attributes(innerCheckbox, AnnotationUtil.getPropertyMappingFilter(innerCheckbox));
+                        .attributes(innerCheckbox, new RenderingFilter(innerCheckbox));
                 setTextAttribute(innerSource, checkboxElement);
 
                 if (ArrayUtils.isNotEmpty(innerSource.adaptTo(Checkbox.class).sublist())) {

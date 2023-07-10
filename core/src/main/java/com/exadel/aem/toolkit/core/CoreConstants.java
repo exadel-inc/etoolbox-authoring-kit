@@ -20,6 +20,8 @@ package com.exadel.aem.toolkit.core;
  */
 public class CoreConstants {
 
+    public static final String ROOT_PACKAGE = "com.exadel.aem.toolkit";
+
     public static final String NN_DATASOURCE = "datasource";
     public static final String NN_GRANITE_DATA = "granite:data";
     public static final String NN_ITEM = "item";

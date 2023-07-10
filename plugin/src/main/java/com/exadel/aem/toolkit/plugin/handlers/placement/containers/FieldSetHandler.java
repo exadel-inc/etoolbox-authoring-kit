@@ -25,7 +25,9 @@ import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
+import com.exadel.aem.toolkit.plugin.handlers.Handlers;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.sources.Sources;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
@@ -62,6 +64,7 @@ public class FieldSetHandler extends ContainerHandler implements Handler {
             target.namePostfix(fieldSet.namePostfix());
         }
         populateSingleSectionContainer(source, fieldSetEntries, target);
+        Handlers.DATA_ANNOTATIONS_HANDLER.accept(Sources.fromClass(fieldSetType), target);
     }
 
     /**

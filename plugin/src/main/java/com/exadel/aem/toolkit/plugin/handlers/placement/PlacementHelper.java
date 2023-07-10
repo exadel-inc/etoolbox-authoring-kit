@@ -23,7 +23,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.AdaptationBase;
 import com.exadel.aem.toolkit.plugin.adapters.PlaceSetting;
-import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
+import com.exadel.aem.toolkit.plugin.handlers.Handlers;
 import com.exadel.aem.toolkit.plugin.handlers.placement.registries.MembersRegistry;
 import com.exadel.aem.toolkit.plugin.handlers.placement.registries.SectionsRegistry;
 import com.exadel.aem.toolkit.plugin.handlers.placement.sections.Section;
@@ -119,7 +119,7 @@ public class PlacementHelper {
             } else {
                 Target newElement = itemsElement.getOrCreateTarget(NamingUtil.stripGetterPrefix(candidate));
                 PlacementCollisionSolver.checkForCircularPlacement(source, container, candidate, newElement);
-                HandlerChains.forMember().accept(candidate, newElement);
+                Handlers.forMember().accept(candidate, newElement);
             }
         }
     }
@@ -156,7 +156,7 @@ public class PlacementHelper {
             }
             // Run handling strictly after checkout so that the involved handlers are informed on the updates
             // of the sources' states
-            HandlerChains.forMember().accept(candidate, newElement);
+            Handlers.forMember().accept(candidate, newElement);
         }
     }
 

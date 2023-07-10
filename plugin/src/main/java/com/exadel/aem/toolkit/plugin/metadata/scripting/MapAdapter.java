@@ -11,18 +11,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.annotations;
+package com.exadel.aem.toolkit.plugin.metadata.scripting;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import java.util.Map;
 
-import com.exadel.aem.toolkit.api.annotations.meta.DialogAnnotation;
+import org.mozilla.javascript.Scriptable;
 
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.RUNTIME)
-@DialogAnnotation(source = "customDialogProcessing")
-@SuppressWarnings("deprecation")
-public @interface CustomLegacyDialogAnnotation {
+class MapAdapter extends AbstractAdapter {
+
+    private final Map<String, Object> data;
+
+    MapAdapter(Map<String, Object> data) {
+        this.data = data;
+    }
+
+    @Override
+    public Object get(String name, Scriptable start) {
+        if (name != null && data.containsKey(name)) {
+            return data.get(name);
+        }
+        return super.get(name, start);
+    }
 }

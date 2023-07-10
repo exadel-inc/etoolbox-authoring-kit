@@ -17,10 +17,14 @@ import java.lang.annotation.Annotation;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.exadel.aem.toolkit.api.annotations.main.Setting;
+import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.Source;
+import com.exadel.aem.toolkit.plugin.metadata.scripting.DataStack;
+import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 
 /**
- * Implements {@link Source} to expose the metadata that is specific for the underlying Java class
+ * Initializes a {@link Source} instance referencing the managed Java class
  */
 class ClassSourceImpl extends SourceImpl {
 
@@ -31,6 +35,7 @@ class ClassSourceImpl extends SourceImpl {
      * @param value The metadata source
      */
     ClassSourceImpl(Class<?> value) {
+        super(value);
         this.value = value;
     }
 
@@ -46,30 +51,6 @@ class ClassSourceImpl extends SourceImpl {
      * {@inheritDoc}
      */
     @Override
-    Annotation[] getDeclaredAnnotations() {
-        return value != null ? value.getDeclaredAnnotations() : null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <T extends Annotation> T[] getAnnotationsByType(Class<T> annotationClass) {
-        return value != null ? value.getAnnotationsByType(annotationClass) : null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    <T extends Annotation> T getDeclaredAnnotation(Class<T> annotationClass) {
-        return value != null ? value.getDeclaredAnnotation(annotationClass) : null;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
     public boolean isValid() {
         return value != null;
     }
@@ -78,10 +59,32 @@ class ClassSourceImpl extends SourceImpl {
      * {@inheritDoc}
      */
     @Override
-    public <T> T adaptTo(Class<T> adaptation) {
-        if (Class.class.equals(adaptation)) {
-            return adaptation.cast(value);
+    public <T> T adaptTo(Class<T> type) {
+        if (Class.class.equals(type)) {
+            return type.cast(value);
         }
-        return super.adaptTo(adaptation);
+        return super.adaptTo(type);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <T extends Annotation> T getAnnotation(Class<T> type) {
+        return value.getDeclaredAnnotation(type);
+    }
+
+    /**
+     * {@inheritDoc}
+     * This implementation honors the {@link Setting} entries attached to superclasses and interfaces of the current class
+     */
+    @Override
+    DataStack getDataStack() {
+        DataStack result = new DataStack();
+        for (Class<?> ancestor : ClassUtil.getInheritanceTree(value, false)) {
+            result.append(ancestor.getAnnotationsByType(Setting.class));
+        }
+        result.append(adaptTo(Setting[].class));
+        return result;
     }
 }

@@ -44,23 +44,22 @@ public @interface RichTextEditor {
     boolean useFixedInlineToolbar() default true;
 
     /**
-     * Represents the set of "features" (i.e. plugins, corresponding toolbar icons, and relevant logic) for this RichTextEditor
-     * when in "windowed" (non-fullscreen) mode.
-     * Most common values are exposed by {@link RteFeatures}
+     * Represents the set of "features" (i.e., plugins, corresponding toolbar icons, and relevant logic) for this
+     * RichTextEditor when in "windowed" (non-fullscreen) mode. Most common values are exposed by {@link RteFeatures}
      * @return String value, or an array of strings.
      */
     String[] features() default {};
 
     /**
-     * Represents the set of "features" (i.e. plugins, corresponding toolbar icons, and relevant logic) for this RichTextEditor
-     * when in fullscreen mode. If this value is not specified, the same set of features is used for either mode.
-     * Most common values are exposed by {@link RteFeatures}
+     * Represents the set of "features" (i.e. plugins, corresponding toolbar icons, and relevant logic) for this
+     * RichTextEditor when in fullscreen mode. If this value is not specified, the same set of features is used for
+     * either mode. Most common values are exposed by {@link RteFeatures}
      * @return String value, or an array of strings.
      */
     String[] fullscreenFeatures() default {};
 
     /**
-     * Represents the collection of {@link IconMapping}s to modify display of the toolbar
+     * Represents the collection of {@link IconMapping}s to modify the display of the toolbar
      * @return {@code @IconMapping} value, or an array of such values
      */
     IconMapping[] icons() default {};
@@ -72,7 +71,7 @@ public @interface RichTextEditor {
     ParagraphFormat[] formats() default {};
 
     /**
-     * Represents collection of {@link Characters} to populate the "Insert symbol" popup window
+     * Represents a collection of {@link Characters} to populate the "Insert symbol" popup window
      * @return {@code @Characters} value, or an array of such values
      */
     Characters[] specialCharacters() default {};
@@ -89,15 +88,15 @@ public @interface RichTextEditor {
 
     /**
      * Defines the rules applied to HTML links within this RichTextEditor
-     * @see HtmlLinkRules
      * @return Valid {@code HtmlLinkRules} annotation
+     * @see HtmlLinkRules
      */
     HtmlLinkRules htmlLinkRules() default @HtmlLinkRules;
 
     /**
      * Defines the rules that are in effect when pasting clipboard content to this RichTextEditor
-     * @see HtmlPasteRules
      * @return Valid {@code HtmlPasteRules} annotation
+     * @see HtmlPasteRules
      */
     HtmlPasteRules htmlPasteRules() default @HtmlPasteRules;
 
@@ -116,7 +115,8 @@ public @interface RichTextEditor {
     Style[] styles() default {};
 
     /**
-     * Defines a maximal amount of operations managed by the "undo" plugin (max clicks of "undo" button) in this RichTextEditor
+     * Defines a maximal amount of operations managed by the "undo" plugin (max clicks of "undo" button) in this
+     * RichTextEditor
      * @return Long value, non-negative
      */
     @ValueRestriction(ValueRestrictions.NON_NEGATIVE)

@@ -37,9 +37,9 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.Style;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
-import com.exadel.aem.toolkit.plugin.annotations.CustomLegacyDialogAnnotation;
-import com.exadel.aem.toolkit.plugin.annotations.CustomWidgetAnnotation;
-import com.exadel.aem.toolkit.plugin.annotations.CustomWidgetAnnotationAuto;
+import com.exadel.aem.toolkit.plugin.annotations.cases.CustomLegacyDialogAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.cases.CustomWidgetAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.cases.CustomWidgetAnnotationAuto;
 
 @AemComponent(
     path = DEFAULT_COMPONENT_NAME,
@@ -60,10 +60,7 @@ public class MultipleAnnotatedWidget {
         emptyText = "empty text",
         value = "default value"
     )
-    @Attribute(
-        id = "text1",
-        data = @Data(name = "key", value = "value")
-    )
+    @Attribute(id = "text1", data = @Data(name = "key", value = "value"))
     @CustomWidgetAnnotation
     @Multiple
     @DependsOnRef

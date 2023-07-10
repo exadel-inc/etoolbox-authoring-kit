@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.Characters;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.ParagraphFormat;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.textarea.TextArea;
-import com.exadel.aem.toolkit.plugin.annotations.CustomWidgetAnnotationAuto;
+import com.exadel.aem.toolkit.plugin.annotations.cases.CustomWidgetAnnotationAuto;
 
 @SuppressWarnings("unused")
 public class ValidatorTestCases {

@@ -16,6 +16,7 @@ package com.exadel.aem.toolkit.plugin.handlers.common;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -35,6 +36,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.DialogHandler;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.metadata.Metadata;
 
 /**
  * Modifies a DOM {@code Document} with XML-specific routines and data. This is intended
@@ -145,8 +147,8 @@ public class DomHandler {
                                      // in a version after 2.0.2
     private static List<DialogAnnotation> getLegacyDialogAnnotations(Class<?> componentClass) {
         return Arrays.stream(componentClass.getDeclaredAnnotations())
-            .filter(annotation -> annotation.annotationType().getDeclaredAnnotation(DialogAnnotation.class) != null)
-            .map(annotation -> annotation.annotationType().getDeclaredAnnotation(DialogAnnotation.class))
+            .map(annotation -> Metadata.from(annotation).getAnnotation(DialogAnnotation.class))
+            .filter(Objects::nonNull)
             .collect(Collectors.toList());
     }
 }

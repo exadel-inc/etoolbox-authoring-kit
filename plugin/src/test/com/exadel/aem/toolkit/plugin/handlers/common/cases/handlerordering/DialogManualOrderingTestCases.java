@@ -20,7 +20,7 @@ import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.annotations.DialogAnnotationForOrderingTest;
+import com.exadel.aem.toolkit.plugin.annotations.cases.DialogAnnotationForOrderingTest;
 
 @SuppressWarnings("unused")
 // Expected order 2 -> 3 -> 1

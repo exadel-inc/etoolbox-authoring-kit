@@ -14,24 +14,90 @@
 package com.exadel.aem.toolkit.plugin.sources;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Field;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.exadel.aem.toolkit.api.annotations.main.Setting;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
+import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
+import com.exadel.aem.toolkit.plugin.metadata.Metadata;
+import com.exadel.aem.toolkit.plugin.metadata.scripting.DataStack;
+import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
+import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 
 /**
  * Presents an abstract implementation of {@link Source} that exposes the metadata that is specific for the underlying
  * class member
  */
-abstract class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
+class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
 
+    private static final List<String> FALSY_VALUES = Arrays.asList("false", "0", "0.0", "null", "undefined");
+
+    private final Class<?> componentType;
+
+    private final Member member;
+    private Class<?> declaringClass;
     private Class<?> reportingClass;
+    private Member upstreamMember;
+
+    private String name;
+
+    /**
+     * Initializes a {@link Source} instance referencing the managed Java class member
+     * @param member Reference to the class member
+     */
+    MemberSourceImpl(Member member) {
+        super((AnnotatedElement) member);
+        this.member = member;
+        name = member.getName();
+        declaringClass = member.getDeclaringClass();
+        reportingClass = member.getDeclaringClass();
+        componentType = MemberUtil.getComponentType(member);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setName(String value) {
+        name = value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Class<?> getDeclaringClass() {
+        return declaringClass;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setDeclaringClass(Class<?> value) {
+        declaringClass = value;
+    }
 
     /**
      * {@inheritDoc}
@@ -52,21 +118,38 @@ abstract class MemberSourceImpl extends SourceImpl implements ModifiableMemberSo
     /**
      * {@inheritDoc}
      */
-    @SuppressWarnings("deprecation") // Usage of Multifield#field is retained for compatibility and will be removed after 2.0.2
+    @Override
+    public Member getUpstreamMember() {
+        return this.upstreamMember;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void setUpstreamMember(Member value) {
+        this.upstreamMember = value;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @SuppressWarnings("deprecation")
+    // The usage of {@code Multifield#field} is retained for compatibility and will be removed after 2.0.2
     @Override
     public Class<?> getValueType() {
         // Retrieve the "immediate" return type
-        Class<?> result = getPlainReturnType();
-        // Then switch to directly specified type, if any
-        if (getDeclaredAnnotation(MultiField.class) != null
-            && getDeclaredAnnotation(MultiField.class).value() != _Default.class) {
-            result = getDeclaredAnnotation(MultiField.class).value();
-        } else if (getDeclaredAnnotation(MultiField.class) != null
-            && getDeclaredAnnotation(MultiField.class).field() != _Default.class) {
-            result = getDeclaredAnnotation(MultiField.class).field();
-        } else if (getDeclaredAnnotation(FieldSet.class) != null
-            && getDeclaredAnnotation(FieldSet.class).value() != _Default.class) {
-            result = getDeclaredAnnotation(FieldSet.class).value();
+        Class<?> result = componentType;
+        // Then switch to the directly specified type, if any
+        if (adaptTo(MultiField.class) != null
+            && adaptTo(MultiField.class).value() != _Default.class) {
+            result = adaptTo(MultiField.class).value();
+        } else if (adaptTo(MultiField.class) != null
+            && adaptTo(MultiField.class).field() != _Default.class) {
+            result = adaptTo(MultiField.class).field();
+        } else if (adaptTo(FieldSet.class) != null
+            && adaptTo(FieldSet.class).value() != _Default.class) {
+            result = adaptTo(FieldSet.class).value();
         }
         return result;
     }
@@ -84,19 +167,74 @@ abstract class MemberSourceImpl extends SourceImpl implements ModifiableMemberSo
     }
 
     /**
-     * Retrieves the return type of the underlying Java class member (field or method). If the class member returns
-     * an array value, or a collection, the type of array/collection element is returned.
-     * @return Non-null {@code Class} reference
+     * {@inheritDoc}
      */
-    abstract Class<?> getPlainReturnType();
+    @Override
+    public boolean isValid() {
+        return member != null
+            && !(member instanceof Field && member.getDeclaringClass().isInterface())
+            && !Modifier.isStatic(member.getModifiers())
+            && isWidgetAnnotationPresent();
+    }
 
     /**
-     * Gets whether the current class member has a widget annotation - the one with {@code sling:resourceType} specified
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T adaptTo(Class<T> type) {
+        boolean canCastToField = member instanceof Field && (type.equals(Field.class) || type.equals(Member.class));
+        boolean canCastToMethod = member instanceof Method && (type.equals(Method.class) || type.equals(Member.class));
+        if (canCastToField || canCastToMethod) {
+            return type.cast(member);
+        }
+        return super.adaptTo(type);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    <T extends Annotation> T getAnnotation(Class<T> type) {
+        return ((AnnotatedElement) member).getDeclaredAnnotation(type);
+    }
+
+    /**
+     * {@inheritDoc} This implementation considers the {@link Setting} entries attached:
+     * <br>- to the current field/method;
+     * <br>- to the class where the current member is defined and all its superclasses/interfaces;
+     * <br>- to the "upstream" member of the related class that triggered rendering of the current class;
+     * <br>- and then to all the ancestors of that "upstream" class
+     * @see Sources#fromMember(Member, Class, Member)
+     */
+    @Override
+    DataStack getDataStack() {
+        DataStack result = new DataStack();
+        if (upstreamMember != null) {
+            for (Class<?> ancestor : ClassUtil.getInheritanceTree(upstreamMember.getDeclaringClass())) {
+                result.append(ancestor.getAnnotationsByType(Setting.class));
+            }
+        }
+        for (Class<?> ancestor : ClassUtil.getInheritanceTree(getDeclaringClass())) {
+            result.append(ancestor.getAnnotationsByType(Setting.class));
+        }
+        if (upstreamMember != null) {
+            result.append(((AnnotatedElement) upstreamMember).getAnnotationsByType(Setting.class));
+        }
+        result.append(adaptTo(Setting[].class));
+        return result;
+    }
+
+    /**
+     * Gets whether the current class member has a widget annotation - the one with {@code sling:resourceType}
+     * specified
      * @return True or false
      */
-    boolean isWidgetAnnotationPresent() {
+    private boolean isWidgetAnnotationPresent() {
         return Arrays.stream(adaptTo(Annotation[].class))
-            .anyMatch(annotation -> annotation.annotationType().isAnnotationPresent(ResourceType.class)
-                && StringUtils.isNotBlank(annotation.annotationType().getDeclaredAnnotation(ResourceType.class).value()));
+            .anyMatch(annotation -> {
+                Metadata metadata = Metadata.from(annotation);
+                ResourceType resourceType = metadata.getAnnotation(ResourceType.class);
+                return resourceType != null && StringUtils.isNotBlank(resourceType.value());
+            });
     }
 }

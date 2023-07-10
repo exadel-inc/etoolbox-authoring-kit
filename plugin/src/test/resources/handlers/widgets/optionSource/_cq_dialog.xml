@@ -33,7 +33,7 @@
                             path2="\[{&quot;jcr:title&quot;:&quot;RED&quot;,&quot;getValue&quot;:&quot;#ff0000&quot;},{&quot;jcr:title&quot;:&quot;ORANGE&quot;,&quot;getValue&quot;:&quot;&quot;},{&quot;jcr:title&quot;:&quot;YELLOW&quot;,&quot;getValue&quot;:&quot;&quot;},{&quot;jcr:title&quot;:&quot;GREEN&quot;,&quot;getValue&quot;:&quot;#00ff00&quot;},{&quot;jcr:title&quot;:&quot;BLUE&quot;,&quot;getValue&quot;:&quot;#0000ff&quot;},{&quot;jcr:title&quot;:&quot;INDIGO&quot;,&quot;getValue&quot;:&quot;&quot;},{&quot;jcr:title&quot;:&quot;VIOLET&quot;,&quot;getValue&quot;:&quot;&quot;}\]"
                             valueMember2="getValue"
 
-                            path3="\[{&quot;jcr:title&quot;:&quot;RED&quot;,&quot;getValue&quot;:&quot;#ff0000&quot;},{&quot;jcr:title&quot;:&quot;ORANGE&quot;,&quot;getValue&quot;:&quot;&quot;},{&quot;jcr:title&quot;:&quot;YELLOW&quot;,&quot;getValue&quot;:&quot;&quot;},{&quot;jcr:title&quot;:&quot;GREEN&quot;,&quot;getValue&quot;:&quot;#00ff00&quot;},{&quot;jcr:title&quot;:&quot;BLUE&quot;,&quot;getValue&quot;:&quot;#0000ff&quot;},{&quot;jcr:title&quot;:&quot;INDIGO&quot;,&quot;getValue&quot;:&quot;&quot;},{&quot;jcr:title&quot;:&quot;VIOLET&quot;,&quot;getValue&quot;:&quot;&quot;}\]"
+                            path3="/content/lists/fallback-colors"
                             fallback3="{Boolean}true"
                             valueMember3="getValue"
 

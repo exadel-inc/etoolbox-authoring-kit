@@ -27,7 +27,6 @@ import java.util.stream.Stream;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import com.google.common.collect.ImmutableMap;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -43,7 +42,8 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.utils.PatternUtil;
 import com.exadel.aem.toolkit.plugin.exceptions.ExtensionApiException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.metadata.Metadata;
+import com.exadel.aem.toolkit.plugin.metadata.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.utils.ArrayUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.StringUtil;
@@ -88,11 +88,17 @@ abstract class OptionProviderHandler {
      * @param parentElement {@code Target} instance to store the option in
      */
     void appendOption(Annotation option, String optionValue, Target parentElement) {
+        Object label = Metadata.from(option).hasProperty(CoreConstants.PN_TEXT)
+            ? Metadata.from(option).getValue(CoreConstants.PN_TEXT)
+            : null;
+        if (label != null && label.toString().isEmpty()) {
+            return;
+        }
         List<Target> existing = parentElement.findChildren(t -> t.getAttribute(CoreConstants.PN_VALUE).equals(optionValue));
         Target item = existing.isEmpty()
             ? parentElement.createTarget(DialogConstants.DOUBLE_QUOTE + optionValue + DialogConstants.DOUBLE_QUOTE)
             : parentElement.getTarget(DialogConstants.DOUBLE_QUOTE + optionValue + DialogConstants.DOUBLE_QUOTE);
-        item.attributes(option, AnnotationUtil.getPropertyMappingFilter(option));
+        item.attributes(option, new RenderingFilter(option));
     }
 
     /* ----------------------
@@ -124,7 +130,7 @@ abstract class OptionProviderHandler {
         Target datasourceElement = target
             .getOrCreateTarget(CoreConstants.NN_DATASOURCE)
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, RESOURCE_TYPE_PREFIX + ResourceTypes.OPTION_PROVIDER)
-            .attributes(optionProvider, AnnotationUtil.getPropertyMappingFilter(optionProvider));
+            .attributes(optionProvider, new RenderingFilter(optionProvider));
         if (ArrayUtils.isNotEmpty(optionProvider.prepend())) {
             datasourceElement.attribute(CoreConstants.PN_PREPEND, ArrayUtil.flatten(optionProvider.prepend()));
         }
@@ -158,11 +164,10 @@ abstract class OptionProviderHandler {
         if (StringUtils.isBlank(original.fallback())) {
             return Stream.of(original);
         }
-        Map<String, Object> newProperties = ImmutableMap.of(
-            CoreConstants.PN_PATH, original.fallback(),
-            PROPERTY_IS_FALLBACK, true);
-        OptionSource newInstance = AnnotationUtil.createInstance(OptionSource.class, original, newProperties);
-        return Stream.of(original, newInstance);
+        Metadata newInstance = Metadata.from(original);
+        newInstance.putValue(CoreConstants.PN_VALUE, original.fallback());
+        newInstance.putValue(PROPERTY_IS_FALLBACK, true);
+        return Stream.of(original, (OptionSource) newInstance);
     }
 
     /**

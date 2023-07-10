@@ -42,7 +42,7 @@ import com.exadel.aem.toolkit.core.injectors.models.child.InjectedWithSelection;
 
 public class ChildInjectorTest {
 
-    private static final String MODELS_PACKAGE_NAME = "com.exadel.aem.toolkit.core.injectors.models.child";
+    private static final String MODELS_PACKAGE_NAME = CoreConstants.ROOT_PACKAGE + ".core.injectors.models.child";
     public static final String MODELS_RESOURCES_FOLDER = "/com/exadel/aem/toolkit/core/injectors/childInjector.json";
 
     private static final String EXPECTED_RESOURCE_TYPE = "etoolbox-authoring-kit/lists/components/content/listItem";

@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.placement.containers;
 
+import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -108,19 +109,26 @@ abstract class ContainerHandler {
             }
 
             // Then, retrieve members for the current class, filter applied without ordering.
-            // If this class is not an underlying class of e.g. a FieldSet or MultiField-annotated member, but the
-            // "surrounding" class within which the current member is declared -- then we must use the set of members
-            // that are already attached to the target, and not collect the available members once more
-            List<Source> renderedMembers = isDeclaringClass
-                ? target
+            List<Source> renderedMembers;
+            if (isDeclaringClass) {
+                // If this class is not an underlying class of e.g. a FieldSet or MultiField-annotated member, but the
+                // "surrounding" class within which the current member is declared -- then we must use the set of members
+                // that are already attached to the target, and not collect the available members once more
+                renderedMembers = target
                     .getRoot()
                     .adaptTo(RootTarget.class)
                     .getMembers()
                     .getAllAvailable()
                     .stream()
                     .filter(nonIgnoredMembersFilter)
-                    .collect(Collectors.toList())
-                : ClassUtil.getSources(hostClass, nonIgnoredMembersFilter, false);
+                    .collect(Collectors.toList());
+            } else {
+                renderedMembers = ClassUtil.getSources(
+                    hostClass,
+                    host.adaptTo(Member.class),
+                    nonIgnoredMembersFilter,
+                    false);
+            }
             result.addAll(renderedMembers);
         }
 

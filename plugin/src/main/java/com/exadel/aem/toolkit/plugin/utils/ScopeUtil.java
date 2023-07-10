@@ -32,6 +32,7 @@ import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
+import com.exadel.aem.toolkit.plugin.metadata.Metadata;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
 
 /**
@@ -75,15 +76,16 @@ public class ScopeUtil {
      * Gets whether the given scope matches the provided {@code Annotation}
      * @param scope      Non-null string value representing a scope
      * @param annotation Non-null {@code Annotation} instance
-     * @param context    Array of sibling annotations to decide on the scope of the current annotation if set to default,
-     *                   nullable
+     * @param context    A nullable array of sibling annotations to decide on the scope of the current annotation if set
+     *                   to default
      * @return True or false
      */
     public static boolean fits(String scope, Annotation annotation, Annotation[] context) {
-        if (!annotation.annotationType().isAnnotationPresent(AnnotationRendering.class)) {
+        AnnotationRendering annotationRendering = Metadata.from(annotation).getAnnotation(AnnotationRendering.class);
+        if (annotationRendering == null) {
             return false;
         }
-        String[] scopes = annotation.annotationType().getDeclaredAnnotation(AnnotationRendering.class).scope();
+        String[] scopes = annotationRendering.scope();
         if (scopes.length == 1 && scopes[0].equals(Scopes.DEFAULT) && ArrayUtils.isNotEmpty(context)) {
             scopes = designate(Arrays.stream(context).map(Annotation::annotationType).toArray(Class<?>[]::new));
         }
@@ -104,33 +106,35 @@ public class ScopeUtil {
     }
 
     /**
-     * Picks up an appropriate scope value judging by the annotation types provided. If one of the annotation types is that
-     * of an entry-point annotation, such as {@link AemComponent}, {@link Dialog}, {@link EditConfig}, etc., the corresponding
-     * scope is returned (first choice). Otherwise, if the annotation types provided all have {@link AnnotationRendering meta-annotation}
-     * and share the same {@code scope} value, the scope which is common for all of them is returned (second choice).
-     * Else, the default scope is returned
-     * @param annotationTypes Non-null array of {@code Class} references representing annotation types
-     * @return Array of strings representing valid scopes. Default is the array containing the single "default scope" entry
+     * Picks up an appropriate scope value judging by the annotation types provided. If one of the annotation types is
+     * that of an entry-point annotation, such as {@link AemComponent}, {@link Dialog}, {@link EditConfig}, etc., the
+     * corresponding scope is returned (first choice).
+     * Otherwise, if the annotation types provided all have {@link AnnotationRendering meta-annotation} and share the
+     * same {@code scope} value, the scope which is common for all of them is returned (second choice). Else, the
+     * default scope is returned
+     * @param types Non-null array of {@code Class} references representing annotation types
+     * @return Array of strings representing valid scopes. Default is the array containing the single "default scope"
+     * entry
      */
-    public static String[] designate(Class<?>[] annotationTypes) {
-        if (ArrayUtils.isEmpty(annotationTypes)) {
+    public static String[] designate(Class<?>[] types) {
+        if (ArrayUtils.isEmpty(types)) {
             return new String[] {Scopes.DEFAULT};
         }
-        if (ArrayUtils.contains(annotationTypes, Dialog.class) && !ArrayUtils.contains(annotationTypes, DesignDialog.class)) {
+        if (ArrayUtils.contains(types, Dialog.class) && !ArrayUtils.contains(types, DesignDialog.class)) {
             return new String[] {Scopes.CQ_DIALOG};
         }
         for (Class<?> annotationType : ENTRY_POINT_ANNOTATION_TYPES) {
-            if (ArrayUtils.contains(annotationTypes, annotationType)) {
+            if (ArrayUtils.contains(types, annotationType)) {
                 return annotationType.getDeclaredAnnotation(AnnotationRendering.class).scope();
             }
         }
-        List<String> scopesByAnnotationRendering = Arrays.stream(annotationTypes)
+        List<String> scopesByAnnotationRendering = Arrays.stream(types)
             .flatMap(annotationType -> annotationType.isAnnotationPresent(AnnotationRendering.class)
                 ? Arrays.stream(annotationType.getDeclaredAnnotation(AnnotationRendering.class).scope())
                 : Stream.of(Scopes.DEFAULT))
             .distinct()
             .collect(Collectors.toList());
-        if (annotationTypes.length == 1 || scopesByAnnotationRendering.size() == 1) {
+        if (types.length == 1 || scopesByAnnotationRendering.size() == 1) {
             return scopesByAnnotationRendering.toArray(new String[0]);
         }
         return new String[] {Scopes.DEFAULT};
