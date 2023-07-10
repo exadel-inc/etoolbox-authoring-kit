@@ -76,7 +76,7 @@ class ClassSourceImpl extends SourceImpl {
 
     /**
      * {@inheritDoc}
-     * This implementation honors the {@link Data} entries attached to superclasses and interfaces of the current class
+     * This implementation honors the {@link Setting} entries attached to superclasses and interfaces of the current class
      */
     @Override
     DataStack getDataStack() {
