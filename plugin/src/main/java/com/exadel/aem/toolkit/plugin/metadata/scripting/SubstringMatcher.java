@@ -20,6 +20,9 @@ import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
+/**
+ * Parses a string of text and extracts substring starting (and, optionally, ending) with a given token
+ */
 class SubstringMatcher {
 
     private static final List<Character> QUOTE_CHARS = Arrays.asList('\'', '"', '`');
@@ -33,14 +36,34 @@ class SubstringMatcher {
     private String lastMatch;
     private int cursor;
 
-    public SubstringMatcher(String source, String startToken) {
-        this(source, startToken, null);
+    /**
+     * Creates a new {@link SubstringMatcher} instance from the specified source string and the marker of substrings
+     * @param source The string that is used as the source for matching substrings
+     * @param marker Starting token that signifies a substring. A non-empty string is expected
+     */
+    public SubstringMatcher(String source, String marker) {
+        this(source, marker, null);
     }
 
+    /**
+     * Creates a new {@link SubstringMatcher} instance from the specified source string, and also start token and end
+     * token that delimit substrings
+     * @param source     The string that is used as the source for matching substrings
+     * @param startToken Specifies where the substring starts. A non-empty string is expected
+     * @param endToken   Specifies where the substring ends. A non-empty string is expected
+     */
     public SubstringMatcher(String source, String startToken, String endToken) {
         this(source, startToken, endToken, null);
     }
 
+    /**
+     * Creates a new instance from the specified source string, start token, and end token that delimit substrings and
+     * possible prefixes that precede the start token
+     * @param source     The string that is used as the source for matching substrings
+     * @param startToken Specifies where the substring starts. A non-empty string is expected
+     * @param endToken   Specifies where the substring ends. A non-empty string is expected
+     * @param prefixes   List of string prefixes that can come before the start token.
+     */
     public SubstringMatcher(String source, String startToken, String endToken, List<String> prefixes) {
         this.source = source;
         this.startToken = startToken;
@@ -48,6 +71,11 @@ class SubstringMatcher {
         this.prefixes = prefixes;
     }
 
+    /**
+     * Retrieves the next substring from the source that starts and ends with the specified tokens. Checks for an active
+     * prefix if set for the instance
+     * @return The next available {@link Substring}, or {@code null} if none available
+     */
     public Substring next() {
         if (cursor > source.length() || StringUtils.isEmpty(startToken)) {
             return null;
@@ -61,7 +89,7 @@ class SubstringMatcher {
                 .stream()
                 .filter(prefix ->
                     nextSubstring.getStart() >= prefix.length()
-                    && source.startsWith(prefix, nextSubstring.getStart() - prefix.length()))
+                        && source.startsWith(prefix, nextSubstring.getStart() - prefix.length()))
                 .findFirst()
                 .orElse(null);
             if (activePrefix == null) {
@@ -76,6 +104,10 @@ class SubstringMatcher {
             : next();
     }
 
+    /**
+     * Retrieves the next substring from the source that is enclosed by the start and end token
+     * @return The next available {@link Substring}, or {@code null} if none available
+     */
     private Substring nextSubstring() {
         advanceBeyond(startToken);
         if (cursor > source.length()) {
@@ -99,6 +131,10 @@ class SubstringMatcher {
         return new Substring(source, startPosition, cursor);
     }
 
+    /**
+     * Retrieves the next word from the source that is preceded by the given start token
+     * @return The next available {@link Substring}, or {@code null} if none available
+     */
     private Substring nextWord() {
         advanceBeyond(startToken);
         if (cursor > source.length()) {
@@ -117,6 +153,10 @@ class SubstringMatcher {
         return new Substring(source, startPosition, endPosition);
     }
 
+    /**
+     * Moves the beyond any of the provided tokens if found in the source string, and handles escaped and quoted tokens
+     * @param anyOfTokens Token values that the cursor should move past
+     */
     private void advanceBeyond(String... anyOfTokens) {
         Pair<String, Integer> nextToken = Arrays
             .stream(anyOfTokens)
@@ -148,30 +188,57 @@ class SubstringMatcher {
         cursor = nextToken.getLeft().length() + nextToken.getRight();
     }
 
+    /**
+     * Represents a portion of the source string from a specified start index to an end index Start index is inclusive,
+     * while the end index is exclusive
+     */
     public static class Substring {
         private final String source;
         private int start;
         private final int end;
 
+        /**
+         * Creates a new instance with the specified source, start index, and end index
+         * @param source   The string that is used as the source for matching substrings
+         * @param start    Specifies the starting index of the substring
+         * @param endIndex Specifies the ending index of the substring
+         */
         public Substring(String source, int start, int endIndex) {
             this.source = source;
             this.start = start;
             this.end = endIndex;
         }
 
+        /**
+         * Retrieves the starting index of this substring (inclusive)
+         * @return Integer value
+         */
         public int getStart() {
             return start;
         }
 
+        /**
+         * Updates the start index of this substring and returns this substring for chaining
+         * @param start Specifies the starting index of the substring
+         * @return This substring with the updated start
+         */
         private Substring adjustStart(int start) {
             this.start = start;
             return this;
         }
 
+        /**
+         * Retrieves the ending index of this substring (exclusive)
+         * @return Integer value
+         */
         public int getEnd() {
             return end;
         }
 
+        /**
+         * Retrieves the content from the source string enclosed by this substring
+         * @return A new string that is a substring of the source string
+         */
         public String getContent() {
             return source.substring(start, end);
         }
