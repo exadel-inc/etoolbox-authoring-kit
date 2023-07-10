@@ -132,7 +132,7 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
     /**
      * Retrieves a {@link DataStack} object for the current {@link Source}. The {@code DataStack} is used to
      * interpolate scripting templates
-     * @return A non-null {@code DataStack} object. Can be empty if no data was gathered via {@link Data} annotations
+     * @return A non-null {@code DataStack} object. Can be empty if no data was gathered via {@link Setting} annotations
      */
     abstract DataStack getDataStack();
 
