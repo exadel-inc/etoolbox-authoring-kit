@@ -199,9 +199,9 @@ public class ScriptingHelper {
             Object value = original.getValue();
             String stringValue = value != null ? value.toString() : null;
             boolean hasAtTemplate = stringValue != null
-                && stringValue.contains(TEMPLATE_START + DialogConstants.OPENING_CURLY);
-            boolean hasDollarSignTemplate = stringValue != null
                 && stringValue.contains(CoreConstants.SEPARATOR_AT + DialogConstants.OPENING_CURLY);
+            boolean hasDollarSignTemplate = stringValue != null
+                && stringValue.contains(TEMPLATE_START + DialogConstants.OPENING_CURLY);
             if (!hasAtTemplate && !hasDollarSignTemplate) {
                 return null;
             }
