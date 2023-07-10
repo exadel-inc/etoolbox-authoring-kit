@@ -199,7 +199,7 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
     }
 
     /**
-     * {@inheritDoc} This implementation considers the {@link Data} entries attached:
+     * {@inheritDoc} This implementation considers the {@link Setting} entries attached:
      * <br>- to the current field/method;
      * <br>- to the class where the current member is defined and all its superclasses/interfaces;
      * <br>- to the "upstream" member of the related class that triggered rendering of the current class;
