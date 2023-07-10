@@ -34,15 +34,15 @@ public interface ModifiableMemberSource extends EmbeddedMemberSource {
     void setName(String value);
 
     /**
-     * Assigns the {@code Class} that the underlying Java field or method will be considered belonging to. They mostly
-     * use it for implementing member "replacing"/"moving" logic
+     * Assigns the {@code Class} that the underlying Java field or method will be considered belonging to. The routine
+     * is mostly used for implementing member "replacing"/"moving" logic
      * @param value {@code Class} reference
      */
     void setDeclaringClass(Class<?> value);
 
     /**
-     * Assigns the {@code Class} that the underlying Java field or method will be considered "reported by". They use it
-     * for placing ToolKit widgets in proper containers
+     * Assigns the {@code Class} that the underlying Java field or method will be considered "reported by". The routine
+     * is used for placing ToolKit widgets in proper containers
      * @param value {@code Class} reference
      */
     void setReportingClass(Class<?> value);
