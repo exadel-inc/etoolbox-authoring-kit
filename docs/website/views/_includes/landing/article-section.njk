@@ -6,21 +6,11 @@
     <p class="article-description">{{ landing.articles.description }}</p>
   </div>
   <div class="article-content">
-    <div class="article-item article-first">
-      {{ article(articles[0], true) }}
-    </div>
-    <div class="article-item article-second">
-      {{ article(articles[1]) }}
-    </div>
-    <div class="article-item article-third">
-      {{ article(articles[2]) }}
-    </div>
-    <div class="article-item article-fourth">
-      {{ article(articles[3]) }}
-    </div>
-    <div class="article-item article-fifth">
-      {{ article(articles[4]) }}
-    </div>
+    {% for articleItem in articles | limit(5) %}
+      <div class="article-item article-{{ loop.index }}">
+        {{ article(articleItem, true if loop.index === 1 else false) }}
+      </div>
+    {% endfor %}
   </div>
   <div class="article-btn">
     <a href="{{ landing.urls.articleExadelUrl }}" target="_blank" class="btn btn-secondary">{{ landing.articles.moreText }}</a>
