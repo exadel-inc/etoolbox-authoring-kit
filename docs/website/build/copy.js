@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const del = require('del');
-const glob = require('glob');
+const {glob} = require('glob');
 const chokidar = require('chokidar');
 
 const INPUT_DIR = path.resolve(__dirname, '../../content');

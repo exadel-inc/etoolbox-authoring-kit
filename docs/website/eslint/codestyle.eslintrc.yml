@@ -161,7 +161,7 @@ rules:
 
   # Warn about duplicate imports
   'no-duplicate-imports': off
-  '@typescript-eslint/no-duplicate-imports': warn
+  'import/no-duplicates': warn
 
   # Allow unnecessary parentheses
   'no-extra-parens': off
