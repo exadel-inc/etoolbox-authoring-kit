@@ -1,4 +1,4 @@
-@import (reference) "../../common/variables.less";
+@import (reference) '../../common/variables.less';
 
 .banner {
   display: flex;
@@ -26,7 +26,9 @@
     width: 100%;
     padding: 50px 0;
     z-index: 1;
-    text-shadow: 1px 1px 2px #fff, 0 0 1em #fff;
+    text-shadow:
+      1px 1px 2px #fff,
+      0 0 1em #fff;
 
     @media @md-xl {
       width: 75%;
@@ -51,7 +53,7 @@
   &-btns-container {
     display: flex;
     flex-wrap: wrap;
-    margin: -.5rem;
+    margin: -0.5rem;
     text-shadow: none;
 
     @media @xs-sm {
@@ -59,8 +61,8 @@
     }
 
     .btn {
-      margin: .5rem;
-      box-shadow: 0 0 30px 2px rgba(255,255,255, .8);
+      margin: 0.5rem;
+      box-shadow: 0 0 30px 2px rgba(255, 255, 255, 0.8);
     }
   }
 
@@ -120,6 +122,6 @@
   }
 
   &-waves > svg {
-    transform: translate3d(0,0,0);
+    transform: translate3d(0, 0, 0);
   }
 }

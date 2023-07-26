@@ -1,4 +1,4 @@
-@import (reference) "../../common/variables.less";
+@import (reference) '../../common/variables.less';
 
 .bv {
   &-container {
@@ -27,7 +27,7 @@
   &-block {
     display: flex;
     align-items: center;
-    padding: .5rem 0;
+    padding: 0.5rem 0;
     flex: 1 1 23%;
   }
 
@@ -50,11 +50,11 @@
       transform-origin: bottom left;
 
       // TODO: make more explicit
-      transform: rotate(.46rad);
-      height: sqrt(50*50 + 100*100);
+      transform: rotate(0.46rad);
+      height: sqrt(50 * 50 + 100 * 100);
       @media @md-xl {
-        transform: rotate(.3666rad);
-        height: sqrt(50*50 + 130*130);
+        transform: rotate(0.3666rad);
+        height: sqrt(50 * 50 + 130 * 130);
       }
     }
   }

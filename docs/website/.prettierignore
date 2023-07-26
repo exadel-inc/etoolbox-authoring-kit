@@ -1,0 +1,24 @@
+# We are not using prittier for anuthing except less files for now
+!**/*.less
+
+# IDE
+.idea
+*.iml
+*.ipr
+*.iws
+.DS_Store
+
+# Libs
+node_modules
+
+# Build output
+target
+dist
+
+# Logs & Tmp
+npm-debug.log
+.gitconfig
+
+# Jest & Sonar
+/.report
+/.scannerwork
