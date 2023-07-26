@@ -68,7 +68,7 @@ public class EnumValueInjector extends BaseInjector<EnumValue> {
      * {@inheritDoc}
      */
     @Override
-    Object getValue(Object adaptable, String name, Type type, EnumValue annotation) {
+    Object getValue(Object adaptable, String name, Type type, EnumValue annotation, AnnotatedElement element) {
         String effectiveName = StringUtils.defaultIfEmpty(annotation.name(), name);
         String valueMember = annotation.valueMember();
         return getValue(adaptable, effectiveName, valueMember, type);

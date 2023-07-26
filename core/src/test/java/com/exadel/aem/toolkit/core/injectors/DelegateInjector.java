@@ -72,7 +72,7 @@ public class DelegateInjector implements Injector {
             return ((RequestParamInjector) delegate).getValue(
                 AdaptationUtil.getRequest(adaptable),
                 effectiveName,
-                type);
+                type, annotatedElement);
         }
 
         if (delegate instanceof RequestSelectorsInjector) {

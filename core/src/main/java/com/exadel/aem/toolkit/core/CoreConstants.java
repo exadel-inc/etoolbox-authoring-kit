@@ -29,6 +29,7 @@ public class CoreConstants {
 
     public static final String PN_APPEND = "append";
     public static final String PN_CHECKED = "checked";
+    public static final String PN_DEFAULT_VALUE = "defaultValue";
     public static final String PN_ITEM_RESOURCE_TYPE = "itemResourceType";
     public static final String PN_LIMIT = "limit";
     public static final String PN_LIST_ITEM = "listItem";

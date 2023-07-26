@@ -18,6 +18,7 @@ import javax.inject.Named;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
@@ -33,6 +34,10 @@ public class LongArrays extends RequestAdapterBase<Long[]> {
     @RequestProperty
     private long[] value;
 
+    @Default(longValues = {10L, 11L, 12L})
+    @RequestProperty
+    private long[] defaultValue;
+
     @Self
     private Supplier supplier;
 
@@ -43,6 +48,10 @@ public class LongArrays extends RequestAdapterBase<Long[]> {
 
     public Long[] getValue() {
         return ArrayUtils.toObject(value);
+    }
+
+    public long[] getDefaultValue() {
+        return defaultValue;
     }
 
     @Override

@@ -89,7 +89,7 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
      * {@inheritDoc}
      */
     @Override
-    public Object getValue(Object adaptable, String name, Type type, EToolboxList annotation) {
+    public Object getValue(Object adaptable, String name, Type type, EToolboxList annotation, AnnotatedElement element) {
         ResourceResolver resourceResolver = AdaptationUtil.getResourceResolver(adaptable);
         if (resourceResolver == null) {
             return null;

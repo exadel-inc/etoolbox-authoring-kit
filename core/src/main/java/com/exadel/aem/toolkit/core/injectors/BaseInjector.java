@@ -68,7 +68,7 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
             return null;
         }
 
-        Object value = getValue(adaptable, name, type, annotation);
+        Object value = getValue(adaptable, name, type, annotation, element);
         if (Objects.isNull(value)) {
             logNullValue(element, annotation);
         }
@@ -85,7 +85,7 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
      * @param annotation Annotation handled by the current injector
      * @return A nullable value
      */
-    abstract Object getValue(Object adaptable, String name, Type type, T annotation);
+    abstract Object getValue(Object adaptable, String name, Type type, T annotation, AnnotatedElement element);
 
     /**
      * When overridden in an injector class, retrieves the annotation processed by this particular injector. Takes into

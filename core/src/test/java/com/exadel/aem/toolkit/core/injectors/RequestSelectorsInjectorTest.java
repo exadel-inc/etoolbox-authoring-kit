@@ -57,8 +57,18 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
     }
 
     @Test
+    public void shouldInjectDefaultString() {
+        super.shouldInjectDefaultString();
+    }
+
+    @Test
     public void shouldInjectStringArray() {
         super.shouldInjectStringArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
+    }
+
+    @Test
+    public void shouldInjectDefaultStringArray() {
+        super.shouldInjectDefaultStringArray();
     }
 
     @Test
@@ -72,8 +82,18 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
     }
 
     @Test
+    public void shouldInjectDefaultInteger() {
+        super.shouldInjectDefaultInteger();
+    }
+
+    @Test
     public void shouldInjectIntegerArray() {
         super.shouldInjectIntegerArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
+    }
+
+    @Test
+    public void shouldInjectDefaultIntegerArray() {
+        super.shouldInjectDefaultIntegerArray();
     }
 
     @Test
@@ -92,8 +112,18 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
     }
 
     @Test
+    public void shouldInjectDefaultLong() {
+        super.shouldInjectDefaultLong();
+    }
+
+    @Test
     public void shouldInjectLongArray() {
         super.shouldInjectLongArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
+    }
+
+    @Test
+    public void shouldInjectDefaultLongArray() {
+        super.shouldInjectDefaultLongArray();
     }
 
     @Test
@@ -112,8 +142,18 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
     }
 
     @Test
+    public void shouldInjectDefaultBoolean() {
+        super.shouldInjectDefaultBoolean();
+    }
+
+    @Test
     public void shouldInjectBooleanArray() {
         super.shouldInjectBooleanArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
+    }
+
+    @Test
+    public void shouldInjectDefaultBooleanArray() {
+        super.shouldInjectDefaultBooleanArray();
     }
 
     @Test
