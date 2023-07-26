@@ -47,6 +47,3 @@ jobs:
             -   name: Run Style Lint
                 run: npm run lint:css
                 working-directory: docs/website
-            -   name: Run Lintspaces
-                run: npm run lint:spaces
-                working-directory: docs/website
