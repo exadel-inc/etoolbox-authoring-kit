@@ -44,7 +44,7 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * Implements {@link InvocationHandler} to provide a {@link Metadata} instance that exposes the properties of a
- * {@code T}-typed source object (usually, an annotation
+ * {@code T}-typed source object (usually, an annotation)
  * @param <T> Type of the source object
  */
 class MetadataHandler<T> implements InvocationHandler {
@@ -735,7 +735,7 @@ class MetadataHandler<T> implements InvocationHandler {
     /**
      * Called by a property-assigning routine to validate that the value to assign to a property is of the same type as
      * the property itself
-     * @param element The {@link PropertyPathElement} instance that manifests the terminal (last-in-the path) member
+     * @param element The {@link PropertyPathElement} instance that manifests the terminal (last-in-the-path) member
      *                within the source object to assign the value to
      * @param path    The {@link PropertyPath} instance that manifests the path within the source object
      * @param value   The value to assign
@@ -748,7 +748,7 @@ class MetadataHandler<T> implements InvocationHandler {
     /**
      * Called by a property-assigning routine to validate that the value to assign to a property is of the same type as
      * the property itself
-     * @param element     The {@link PropertyPathElement} instance that manifests the terminal (last-in-the path) member
+     * @param element     The {@link PropertyPathElement} instance that manifests the terminal (last-in-the-path) member
      *                    within the source object to assign the value to
      * @param path        The {@link PropertyPath} instance that manifests the path within the source object
      * @param value       The value to assign
@@ -786,7 +786,7 @@ class MetadataHandler<T> implements InvocationHandler {
     /**
      * Called by a property-assigning routine to validate that the index of the array-typed property is within the
      * bounds of the array
-     * @param element A {@link PropertyPathElement} instance that signifies the terminal (last-in-the path) member
+     * @param element A {@link PropertyPathElement} instance that signifies the terminal (last-in-the-path) member
      *                within the source object to assign the value to. It is expected to bear a valid index which is
      *                used for validation of {@code target}
      * @param path    The {@link PropertyPath} instance that manifests the path within the source object
