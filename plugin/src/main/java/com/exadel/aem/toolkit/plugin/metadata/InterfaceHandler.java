@@ -44,7 +44,7 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * Implements {@link InvocationHandler} to provide a {@link Metadata} instance that exposes the properties of a
- * {@code T}-typed source object (usually, an annotation
+ * {@code T}-typed source object (usually, an annotation)
  * @param <T> Type of the source object
  */
 class InterfaceHandler<T> implements InvocationHandler {
