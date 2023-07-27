@@ -94,7 +94,6 @@ public class ScriptedComponent extends ScriptedParent {
         options = {
             @Option(text = "First", value = "1"),
             @Option(text = "Second", value = "2"),
-            @Option(text = "@{ data.showThirdOption ? 'Third' : ''}", value = "3")
         }
     )
     @Property(name = "items/item${@selectedOption}/selected", value = "true")
@@ -152,6 +151,5 @@ public class ScriptedComponent extends ScriptedParent {
 
 @Setting(name = "inheritedLabel", value = "From ParentScriptedComponent")
 @Setting(name = "inheritedValue", value = "From ParentScriptedComponent")
-@Setting(name = "showThirdOption", value = "false")
 class ScriptedParent {
 }
