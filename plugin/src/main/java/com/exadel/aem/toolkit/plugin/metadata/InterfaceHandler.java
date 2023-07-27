@@ -204,7 +204,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
      */
     private <A extends Annotation> InvocationResult tryInvokeGetAnnotation(Method method, Object[] args) {
-        if (matchesNameAndArguments(method, args, METHOD_GET_ANNOTATION, Class.class)) {
+        if (matchesNameAndArgumentTypes(method, args, METHOD_GET_ANNOTATION, Class.class)) {
             @SuppressWarnings("unchecked")
             Annotation result = type.getDeclaredAnnotation((Class<A>) args[0]);
             return InvocationResult.done(result);
@@ -223,7 +223,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
      */
     private <A extends Annotation> InvocationResult tryInvokeGetAnyAnnotation(Method method, Object[] args) {
-        if (matchesNameAndArguments(method, args, METHOD_GET_ANY_ANNOTATION, Class[].class)) {
+        if (matchesNameAndArgumentTypes(method, args, METHOD_GET_ANY_ANNOTATION, Class[].class)) {
             for (Class<?> cls : (Class<?>[]) args[0]) {
                 @SuppressWarnings("unchecked")
                 Annotation result = type.getDeclaredAnnotation((Class<A>) cls);
@@ -245,10 +245,10 @@ class InterfaceHandler<T> implements InvocationHandler {
      * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
      */
     private InvocationResult tryInvokeHasProperty(Method method, Object[] args) {
-        if (matchesNameAndArguments(method, args, METHOD_HAS_PROPERTY, String.class)) {
+        if (matchesNameAndArgumentTypes(method, args, METHOD_HAS_PROPERTY, String.class)) {
             Property result = getProperty((String) args[0], false);
             return InvocationResult.done(result.getValue() != null);
-        } else if (matchesNameAndArguments(method, args, METHOD_HAS_PROPERTY, PropertyPath.class)) {
+        } else if (matchesNameAndArgumentTypes(method, args, METHOD_HAS_PROPERTY, PropertyPath.class)) {
             Property result = getProperty((PropertyPath) args[0], false);
             return InvocationResult.done(result.getValue() != null);
         }
@@ -265,10 +265,10 @@ class InterfaceHandler<T> implements InvocationHandler {
      * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
      */
     private InvocationResult tryInvokeGetValue(Method method, Object[] args) {
-        if (matchesNameAndArguments(method, args, METHOD_GET, String.class)) {
+        if (matchesNameAndArgumentTypes(method, args, METHOD_GET, String.class)) {
             Property result = getProperty((String) args[0], false);
             return InvocationResult.done(result.getValue());
-        } else if (matchesNameAndArguments(method, args, METHOD_GET, PropertyPath.class)) {
+        } else if (matchesNameAndArgumentTypes(method, args, METHOD_GET, PropertyPath.class)) {
             Property result = getProperty((PropertyPath) args[0], false);
             return InvocationResult.done(result.getValue());
         }
@@ -285,10 +285,10 @@ class InterfaceHandler<T> implements InvocationHandler {
      * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
      */
     private InvocationResult tryInvokeGetProperty(Method method, Object[] args) {
-        if (matchesNameAndArguments(method, args, METHOD_GET_PROPERTY, String.class)) {
+        if (matchesNameAndArgumentTypes(method, args, METHOD_GET_PROPERTY, String.class)) {
             Property result = getProperty((String) args[0], true);
             return InvocationResult.done(result);
-        } else if (matchesNameAndArguments(method, args, METHOD_GET_PROPERTY, PropertyPath.class)) {
+        } else if (matchesNameAndArgumentTypes(method, args, METHOD_GET_PROPERTY, PropertyPath.class)) {
             Property result = getProperty((PropertyPath) args[0], true);
             return InvocationResult.done(result);
         }
@@ -305,10 +305,10 @@ class InterfaceHandler<T> implements InvocationHandler {
      * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
      */
     private InvocationResult tryInvokePutValue(Method method, Object[] args) {
-        if (matchesNameAndArguments(method, args, METHOD_PUT, String.class, Object.class)) {
+        if (matchesNameAndArgumentTypes(method, args, METHOD_PUT, String.class, Object.class)) {
             Object result = putValue((String) args[0], args[1]);
             return InvocationResult.done(result);
-        } else if (matchesNameAndArguments(method, args, METHOD_PUT, PropertyPath.class, Object.class)) {
+        } else if (matchesNameAndArgumentTypes(method, args, METHOD_PUT, PropertyPath.class, Object.class)) {
             Object result = putValue((PropertyPath) args[0], args[1]);
             return InvocationResult.done(result);
         }
@@ -325,7 +325,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
      */
     private InvocationResult tryInvokeUnsetValue(Method method, Object[] args) {
-        if (matchesNameAndArguments(method, args, METHOD_UNSET, String.class)) {
+        if (matchesNameAndArgumentTypes(method, args, METHOD_UNSET, String.class)) {
             Object result = putValue((String) args[0], null);
             return InvocationResult.done(result);
         }
@@ -341,8 +341,8 @@ class InterfaceHandler<T> implements InvocationHandler {
      * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
      */
     private InvocationResult tryInvokeIterator(Method method, Object[] args) {
-        if (matchesNameAndArguments(method, args, METHOD_ITERATOR)
-            || matchesNameAndArguments(method, args, METHOD_ITERATOR, boolean.class, boolean.class)) {
+        if (matchesNameAndArgumentTypes(method, args, METHOD_ITERATOR)
+            || matchesNameAndArgumentTypes(method, args, METHOD_ITERATOR, boolean.class, boolean.class)) {
             Iterator result = getIterator(args);
             return InvocationResult.done(result);
         }
@@ -358,7 +358,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
      */
     private InvocationResult tryInvokeForEach(Method method, Object[] args) {
-        if (matchesNameAndArguments(method, args, METHOD_FOR_EACH, Consumer.class)) {
+        if (matchesNameAndArgumentTypes(method, args, METHOD_FOR_EACH, Consumer.class)) {
             @SuppressWarnings("unchecked")
             Consumer<? super Property> consumer = (Consumer<? super Property>) args[0];
             new Iterator(false, false).forEachRemaining(consumer);
@@ -376,8 +376,8 @@ class InterfaceHandler<T> implements InvocationHandler {
      * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
      */
     private InvocationResult tryInvokeSpliterator(Method method, Object[] args) {
-        if (matchesNameAndArguments(method, args, METHOD_SPLITERATOR)
-            || matchesNameAndArguments(method, args, METHOD_SPLITERATOR, boolean.class, boolean.class)) {
+        if (matchesNameAndArgumentTypes(method, args, METHOD_SPLITERATOR)
+            || matchesNameAndArgumentTypes(method, args, METHOD_SPLITERATOR, boolean.class, boolean.class)) {
             Spliterator<Property> result = getSpliterator(args);
             return InvocationResult.done(result);
         }
@@ -393,8 +393,8 @@ class InterfaceHandler<T> implements InvocationHandler {
      * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
      */
     private InvocationResult tryInvokeStream(Method method, Object[] args) {
-        if (matchesNameAndArguments(method, args, METHOD_STREAM)
-            || matchesNameAndArguments(method, args, METHOD_STREAM, boolean.class, boolean.class)) {
+        if (matchesNameAndArgumentTypes(method, args, METHOD_STREAM)
+            || matchesNameAndArgumentTypes(method, args, METHOD_STREAM, boolean.class, boolean.class)) {
             Spliterator<Property> spliterator = getSpliterator(args);
             Stream<Property> stream = StreamSupport.stream(spliterator, false);
             return InvocationResult.done(stream);
@@ -402,7 +402,15 @@ class InterfaceHandler<T> implements InvocationHandler {
         return InvocationResult.NOT_DONE;
     }
 
-    private static boolean matchesNameAndArguments(Method method, Object[] args, String name, Class<?>... argTypes) {
+    /**
+     * Tests whether the provided method and arguments correspond to the given method and argument types
+     * @param method   The method to check
+     * @param args     An array of objects containing the values of the arguments passed in the method invocation
+     * @param name     The name of the method to match
+     * @param argTypes The types of arguments to match
+     * @return True or false
+     */
+    private static boolean matchesNameAndArgumentTypes(Method method, Object[] args, String name, Class<?>... argTypes) {
         if (!StringUtils.equals(method.getName(), name)) {
             return false;
         }
