@@ -17,14 +17,25 @@ import java.util.Map;
 
 import org.mozilla.javascript.Scriptable;
 
+/**
+ * Extends {@link AbstractAdapter} to expose {@code Map} objects to the {@code Rhino} engine
+ */
 class MapAdapter extends AbstractAdapter {
 
     private final Map<String, Object> data;
 
+    /**
+     * Initializes a class instance storing a reference to the {@code Map} that serves as the data source for an inline
+     * script
+     * @param data {@code Map} instance
+     */
     MapAdapter(Map<String, Object> data) {
         this.data = data;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object get(String name, Scriptable start) {
         if (name != null && data.containsKey(name)) {

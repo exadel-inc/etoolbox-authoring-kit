@@ -46,7 +46,8 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
     private boolean metadataProcessed = false;
 
     /**
-     * Initializes a {@link SourceImpl} object that contains a reference to a Java entity capable of exposing annotations
+     * Initializes a {@link SourceImpl} object that contains a reference to a Java entity capable of exposing
+     * annotations
      * @param annotated A {@link AnnotatedElement} instance, such as a method, a field, or a class
      */
     SourceImpl(AnnotatedElement annotated) {
@@ -74,6 +75,13 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
         return super.adaptTo(type);
     }
 
+    /**
+     * Called by {@link SourceImpl#adaptTo(Class)} to test whether it is possible to retrieve an annotation of the given
+     * type stored in the current object's {@link Metadata} registry
+     * @param type {@code Class} reference that represents the annotation type
+     * @param <T>  Type of the annotation to retrieve
+     * @return An annotation instance; or else {@code null}
+     */
     private <T> T adaptToStoredAnnotation(Class<T> type) {
         if (!type.isAnnotation() || !getMetadata().containsKey(type)) {
             return null;
@@ -81,6 +89,13 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
         return type.cast(getMetadata().get(type));
     }
 
+    /**
+     * Called by {@link SourceImpl#adaptTo(Class)} to test whether it is possible to retrieve an array of annotations of
+     * the given type stored in the current object's {@link Metadata} registry
+     * @param type {@code Class} reference that represents the annotation type
+     * @param <T>  Type of the annotation to retrieve
+     * @return An array of annotations; or else {@code null}
+     */
     private <T> T adaptToStoredAnnotationArray(Class<T> type) {
         if (!type.isArray()) {
             return null;
@@ -113,6 +128,13 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
         return null;
     }
 
+    /**
+     * Called by {@link SourceImpl#adaptTo(Class)} to test whether it is possible to retrieve an annotation of the given
+     * type that is mediated by the current object's {@link Metadata} registry
+     * @param type {@code Class} reference that represents the annotation type
+     * @param <T>  Type of the annotation to retrieve
+     * @return An annotation instance; or else {@code null}
+     */
     @SuppressWarnings("unchecked")
     private <T> T adaptToForeignAnnotation(Class<T> type) {
         return ClassUtils.isAssignable(type, Annotation.class)
@@ -121,7 +143,7 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
     }
 
     /**
-     * Retrieves an annotation of particular type attached to the underlying entity
+     * Retrieves an annotation of a particular type attached to the underlying entity
      * @param type {@code Class} of the annotation to get
      * @param <T>  Annotation type reflected by the {@code type} argument
      * @return {@code T}-typed annotation object
@@ -129,12 +151,17 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
     abstract <T extends Annotation> T getAnnotation(Class<T> type);
 
     /**
-     * Retrieves a {@link DataStack} object for the current {@link Source}. The {@code DataStack} is used to
-     * interpolate scripting templates
+     * Retrieves a {@link DataStack} object for the current {@link Source}. The {@code DataStack} is used to interpolate
+     * scripting templates
      * @return A non-null {@code DataStack} object. Can be empty if no data was gathered via {@link Setting} annotations
      */
     abstract DataStack getDataStack();
 
+    /**
+     * Retrieves the current object's {@link Metadata} registry. If requested for the first type, interpolates inline
+     * script templates in the metadata objects' values with the ToolKit's scripting engine
+     * @return A non-null {@code Map} object; can be empty
+     */
     private Map<Class<?>, Object> getMetadata() {
         if (!metadataProcessed) {
             metadataProcessed = true;
@@ -143,6 +170,12 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
         return metadata;
     }
 
+    /**
+     * Collects metadata from the provided {@link AnnotatedElement} instance
+     * @param value The {@code AnnotatedElement} to process
+     * @return A non-null {@code Map} object; can be empty
+     * @see Metadata
+     */
     private static Map<Class<?>, Object> collectMetadata(AnnotatedElement value) {
         Map<Class<?>, Object> result = new LinkedHashMap<>();
         for (Annotation annotation : value.getDeclaredAnnotations()) {
@@ -164,6 +197,11 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
         return result;
     }
 
+    /**
+     * Tests whether the provided {@link Metadata} object represents a repeatable annotation container
+     * @param value The {@code Metadata} to test
+     * @return True or false
+     */
     private static boolean isRepeatableContainer(Metadata value) {
         if (value == null) {
             return false;
@@ -178,6 +216,11 @@ abstract class SourceImpl extends AdaptationBase<Source> implements Source {
             && valueProperty.getComponentType().isAnnotationPresent(Repeatable.class);
     }
 
+    /**
+     * Interpolates inline script templates in the metadata objects' values with the ToolKit's scripting engine
+     * @param source   The {@link Source} instance to use as the interpolation context
+     * @param metadata The {@code Map} of metadata objects to process
+     */
     private static void applyInterpolation(Source source, Map<Class<?>, Object> metadata) {
         for (Object value : metadata.values()) {
             if (value instanceof Metadata[] && !value.getClass().getComponentType().equals(Setting.class)) {

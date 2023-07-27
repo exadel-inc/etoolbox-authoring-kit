@@ -23,14 +23,15 @@ import com.exadel.aem.toolkit.api.annotations.main.Setting;
 import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 
 /**
- * Accumulates settings that can modify the component's rendering
+ * Accumulates settings that can modify the way Granite UI components are rendered by the ToolKit via inline scripting
+ * templates
  */
 public class DataStack {
 
     private final Map<String, Object> data;
 
     /**
-     * Initializes a new empty {@link DataStack}
+     * Initializes an empty {@link DataStack} object
      */
     public DataStack() {
         data = new HashMap<>();
@@ -56,11 +57,9 @@ public class DataStack {
     }
 
     /**
-     * This method converts the value of a setting object into the appropriate type. If the {@code value} is a
-     * stringified boolean constant, it will be converted to a boolean object. If the {@code value} represents a
-     * stringified collection, it will be parsed into a collection-like object. Otherwise, it will be kept as a string
-     * @param value Value of the setting. Not intended to be null
-     * @return The converted value of the setting
+     * Converts the value of a setting object into the appropriate type. Parses boolean-line and list-like string values
+     * @param value Raw setting value
+     * @return Converted value
      */
     private static Object convert(String value) {
         if (Boolean.TRUE.toString().equals(value) || Boolean.FALSE.toString().equals(value)) {

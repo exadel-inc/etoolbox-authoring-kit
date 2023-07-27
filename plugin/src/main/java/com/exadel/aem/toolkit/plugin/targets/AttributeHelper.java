@@ -15,7 +15,6 @@ package com.exadel.aem.toolkit.plugin.targets;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -33,7 +32,6 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.plugin.metadata.Metadata;
 import com.exadel.aem.toolkit.plugin.metadata.Property;
-import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
 import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 import com.exadel.aem.toolkit.plugin.validators.Validation;
 
@@ -239,9 +237,9 @@ public class AttributeHelper<T, V> {
     }
 
     /**
-     * Casts a generic value to the array possessing entries of current instance's type
+     * Casts a generic value to the array possessing entries of the current instance's type
      * @param value Raw value
-     * @return Array of type-casted values
+     * @return An array of type-casted values
      */
     private static Object[] castToArray(Object value) {
         Object[] result = new Object[Array.getLength(value)];
@@ -252,7 +250,7 @@ public class AttributeHelper<T, V> {
     }
 
     /**
-     * Applies an optional user-set transformation to the provided attribute value casted to string
+     * Applies an optional user-set transformation to the provided attribute value cast to string
      * @param transformation {@link StringTransformation} variant
      * @param value          Raw string value
      * @return Transformed string value
@@ -270,7 +268,8 @@ public class AttributeHelper<T, V> {
 
     /**
      * Retrieves an {@link AttributeHelper.Builder} aimed at creating a helper object for manipulation with XML
-     * elements. This is mainly to be used with notation such as {@code AttributeSettingHelper.forXmlTarget().forAnnotationProperty(...)}
+     * elements. This is mainly to be used with notation such as
+     * {@code AttributeSettingHelper.forXmlTarget().forAnnotationProperty(...)}
      * @return {@link AttributeHelper.Builder} instance
      */
     public static Builder<Element> forXmlTarget() {
@@ -356,14 +355,10 @@ public class AttributeHelper<T, V> {
         }
 
         /**
-         * Gets whether a specific annotation property/method can be rendered to XML
-         * @param method {@code Method} instance representing an annotation property
+         * Gets whether a specific annotation property can be rendered to XML
+         * @param property A {@link Property} instance that manifests an annotation method
          * @return True or false
          */
-        private static boolean fits(Method method) {
-            return fits(ClassUtils.primitiveToWrapper(getWrappedValueType(method)));
-        }
-
         private static boolean fits(Property property) {
             return fits(getWrappedValueType(property));
         }
@@ -382,17 +377,9 @@ public class AttributeHelper<T, V> {
 
         /**
          * Retrieves an eligible object type for a method ({@code Enum}s being cast to {@code String}s)
-         * @param method {@code Method} instance representing an annotation property
+         * @param property A {@link Property} instance that manifests an annotation property
          * @return Object type
          */
-        private static Class<?> getWrappedValueType(Method method) {
-            Class<?> effectiveType = MemberUtil.getComponentType(method);
-            if (effectiveType.isEnum()) {
-                return String.class;
-            }
-            return ClassUtils.primitiveToWrapper(effectiveType);
-        }
-
         private static Class<?> getWrappedValueType(Property property) {
             Class<?> effectiveType = property.getComponentType();
             if (effectiveType.isEnum()) {

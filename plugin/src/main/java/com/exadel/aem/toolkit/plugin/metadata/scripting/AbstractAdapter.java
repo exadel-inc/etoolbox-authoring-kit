@@ -15,13 +15,24 @@ package com.exadel.aem.toolkit.plugin.metadata.scripting;
 
 import org.mozilla.javascript.ScriptableObject;
 
+/**
+ * Represents a basic object used by the {@code Rhino} engine to expose Java objects leveraging reflective operations to
+ * inline scripts
+ * @see ScriptingHelper
+ */
 abstract class AbstractAdapter extends ScriptableObject {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getClassName() {
         return getClass().getSimpleName();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getDefaultValue(Class<?> typeHint) {
         if (String.class.equals(typeHint)) {

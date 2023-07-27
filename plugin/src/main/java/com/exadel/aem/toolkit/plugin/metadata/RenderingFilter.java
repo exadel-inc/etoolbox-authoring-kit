@@ -31,16 +31,29 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.utils.ArrayUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
+/**
+ * Implements {@link Predicate} to filter methods entitled for rendering in the {@code Granite UI} dialogs.
+ * This filter uses a list of mappings obtained from the annotations of the method.
+ */
 public class RenderingFilter implements Predicate<Method> {
 
     public static final Predicate<?> EMPTY = arg -> true;
 
     private final List<String> mappings;
 
+    /**
+     * Initializes a new instance of {@link RenderingFilter} using the data from the provided {@code Annotation}
+     * @param annotation The {@link Annotation} from which the mappings are derived
+     */
     public RenderingFilter(Annotation annotation) {
         mappings = getMappings(annotation);
     }
 
+    /**
+     * Applies the filter to the provided {@code Method}
+     * @param value The {@code Method} to test
+     * @return {@code true} if the method passes the filter, {@code false} otherwise
+     */
     @Override
     @SuppressWarnings({"squid:S1874", "deprecation"})
     // Processing of IgnorePropertyMapping is retained for compatibility and will be removed in a version after 2.0.2
@@ -48,6 +61,12 @@ public class RenderingFilter implements Predicate<Method> {
         return test(value.getName(), value.getAnnotation(IgnorePropertyMapping.class) != null);
     }
 
+    /**
+     * Applies the filter to the provided {@code Method}
+     * @param name The name of the method to test
+     * @param ignoreMappingIsSet Indicates if the ignore mapping is set for this method
+     * @return {@code true} if the method name passes the filter, {@code false} otherwise
+     */
     private boolean test(String name, boolean ignoreMappingIsSet) {
         if (mappings.isEmpty() || mappings.contains(DialogConstants.VALUE_NONE)) {
             return false;
@@ -61,6 +80,11 @@ public class RenderingFilter implements Predicate<Method> {
 
     }
 
+    /**
+     * Retrieves the mappings from the provided {@code Annotation}
+     * @param annotation The {@link Annotation} from which the mappings are derived
+     * @return A {@code List} of mappings
+     */
     @SuppressWarnings("deprecation")
     // Processing of PropertyMapping is retained for compatibility and will be removed in a version after 2.0.2
     private static List<String> getMappings(Annotation annotation) {

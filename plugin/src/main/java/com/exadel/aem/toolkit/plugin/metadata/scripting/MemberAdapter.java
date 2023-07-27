@@ -23,7 +23,11 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.plugin.sources.ModifiableMemberSource;
 
+/**
+ * Extends {@link AbstractAdapter} to expose {@link Member} objects to the {@code Rhino} engine
+ */
 class MemberAdapter extends AbstractAdapter implements Annotated, Callable {
 
     private static final String PN_CLASS = "class";
@@ -33,21 +37,41 @@ class MemberAdapter extends AbstractAdapter implements Annotated, Callable {
     private final Member upstreamMember;
     private final Object declaringClass;
 
+    /**
+     * Initializes a class instance storing a reference to the {@code Member} that serves as the data source for an
+     * inline script
+     * @param value {@code Member} instance
+     */
     MemberAdapter(Member value) {
         this(value, null, null);
     }
 
+    /**
+     * Initializes a class instance storing a reference to the {@code Member} that serves as the data source for an
+     * inline script
+     * @param reflectedMember The {@code Member} instance that stands for "current" member
+     * @param upstreamMember  The {@code Member} instance that corresponds in meaning to
+     *                        {@link ModifiableMemberSource#getUpstreamMember()}
+     * @param declaringClass  The {@code Class} instance that corresponds in meaning to
+     *                        {@link ModifiableMemberSource#getDeclaringClass()}
+     */
     MemberAdapter(Member reflectedMember, Member upstreamMember, Object declaringClass) {
         this.reflectedMember = reflectedMember;
         this.upstreamMember = upstreamMember;
         this.declaringClass = declaringClass;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AnnotatedElement getAnnotatedElement() {
         return (AnnotatedElement) reflectedMember;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object get(String name, Scriptable start) {
         if (CoreConstants.PN_NAME.equals(name)) {
@@ -68,6 +92,9 @@ class MemberAdapter extends AbstractAdapter implements Annotated, Callable {
         return super.get(name, start);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getDefaultValue(Class<?> typeHint) {
         if (String.class.equals(typeHint)) {
@@ -76,6 +103,9 @@ class MemberAdapter extends AbstractAdapter implements Annotated, Callable {
         return super.getDefaultValue(typeHint);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object call(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
         if (!(reflectedMember instanceof Method)) {
