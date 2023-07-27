@@ -29,6 +29,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.adapters.DateTimeSetting;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.metadata.Metadata;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.validators.Validation;
 
@@ -39,7 +40,8 @@ import com.exadel.aem.toolkit.plugin.validators.Validation;
 @Handles(DatePicker.class)
 public class DatePickerHandler implements Handler {
     private static final String INVALID_FORMAT_EXCEPTION_TEMPLATE = "Invalid %s '%s' for @DatePicker field '%s'";
-    private static final String INVALID_VALUE_EXCEPTION_TEMPLATE = "Property '%s' of @DatePicker does not correspond to specified valueFormat";
+    private static final String INVALID_VALUE_EXCEPTION_TEMPLATE = "Property '%s' of @DatePicker does not correspond "
+        + "to the specified value format";
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
@@ -48,29 +50,29 @@ public class DatePickerHandler implements Handler {
      */
     @Override
     public void accept(Source source, Target target) {
-        DatePicker datePickerAttribute = source.adaptTo(DatePicker.class);
+        DatePicker datePicker = source.adaptTo(DatePicker.class);
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME;
 
-        // check specified typeHint, report if invalid
-        if (datePickerAttribute.typeHint() == TypeHint.STRING) {
-            target.attribute(DialogConstants.PN_TYPE_HINT, datePickerAttribute.typeHint().toString());
-        } else if (datePickerAttribute.typeHint() != TypeHint.NONE) {
+        // Check the specified {@code typeHint}, report if invalid
+        if (datePicker.typeHint() == TypeHint.STRING) {
+            target.attribute(DialogConstants.PN_TYPE_HINT, datePicker.typeHint().toString());
+        } else if (datePicker.typeHint() != TypeHint.NONE) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(
                     INVALID_FORMAT_EXCEPTION_TEMPLATE,
                     "typeHint",
-                    datePickerAttribute.typeHint(),
+                    datePicker.typeHint(),
                     target.getName()));
             return;
         }
-        // for a String-storing source, check and process specified valueFormat, report if invalid
-        if (datePickerAttribute.typeHint() == TypeHint.STRING
-            && !StringUtils.isEmpty(datePickerAttribute.valueFormat())) {
+        // For a String-storing source, check specified {@code valueFormat}, report if invalid
+        if (datePicker.typeHint() == TypeHint.STRING
+            && !StringUtils.isEmpty(datePicker.valueFormat())) {
             try {
-                // Java DateTimeFormatter interprets D as 'day of year', unlike Coral engine,
-                // so a replacement made here to make sure 'DD' as in 'YYYY-MM-DD' is not passed to formatter.
+                // Java DateTimeFormatter interprets D as "day of the year", unlike the Granite engine,
+                // so a replacement is made here to make sure "DD" as in "YYYY-MM-DD" is not passed to the formatter.
                 // Another replacement is for treating timezone literals that can be surrounded by arbitrary symbols
                 // but need to be surrounded with apostrophes in Java 1.8+
-                String patchedValueFormat = datePickerAttribute.valueFormat()
+                String patchedValueFormat = datePicker.valueFormat()
                         .replaceAll("\\bD{1,2}\\b", "dd")
                         .replaceAll("\\W*([TZ])\\W*", "'$1'");
                 dateTimeFormatter = DateTimeFormatter.ofPattern(patchedValueFormat);
@@ -78,21 +80,26 @@ public class DatePickerHandler implements Handler {
                 PluginRuntime.context().getExceptionHandler().handle(new ValidationException(
                         INVALID_FORMAT_EXCEPTION_TEMPLATE,
                         "valueFormat",
-                        datePickerAttribute.valueFormat(),
+                        datePicker.valueFormat(),
                         target.getName()));
                 return;
             }
         }
-        // store values with specified or default formatting
-        storeDateValue(datePickerAttribute.minDate(), target, DialogConstants.PN_MIN_DATE, dateTimeFormatter);
-        storeDateValue(datePickerAttribute.maxDate(), target, DialogConstants.PN_MAX_DATE, dateTimeFormatter);
+        // Validate inputs because otherwise can cause a formatting exception
+        Validation.forProperty(Metadata.from(datePicker).getProperty(DialogConstants.PN_MIN_DATE))
+            .test(datePicker.minDate());
+        Validation.forProperty(Metadata.from(datePicker).getProperty(DialogConstants.PN_MAX_DATE))
+            .test(datePicker.maxDate());
+        // Store values with specified or default formatting
+        storeDateValue(datePicker.minDate(), target, DialogConstants.PN_MIN_DATE, dateTimeFormatter);
+        storeDateValue(datePicker.maxDate(), target, DialogConstants.PN_MAX_DATE, dateTimeFormatter);
     }
 
     /**
      * Writes formatted {@link DateTimeValue} attribute to node
      * @param value     The {@code DateTimeValue} to store
      * @param target    {@link Target} to store data in
-     * @param attribute Name of date-preserving attribute
+     * @param attribute Name of the date-preserving attribute
      * @param formatter {@link DateTimeFormatter} instance
      */
     private void storeDateValue(
@@ -101,9 +108,6 @@ public class DatePickerHandler implements Handler {
             String attribute,
             DateTimeFormatter formatter
     ) {
-        if (!Validation.forMethod(DatePicker.class, attribute).test(value)) {
-            return;
-        }
         DateTimeSetting dateTimeSetting = new DateTimeSetting(value);
         if (dateTimeSetting.isEmpty()) {
             return;

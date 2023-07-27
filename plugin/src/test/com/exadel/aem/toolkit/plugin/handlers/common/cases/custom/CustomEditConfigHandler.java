@@ -17,7 +17,7 @@ import com.exadel.aem.toolkit.api.handlers.Handler;
 import com.exadel.aem.toolkit.api.handlers.Handles;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.annotations.CustomEditConfigAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.cases.CustomEditConfigAnnotation;
 
 @Handles(value = CustomEditConfigAnnotation.class)
 @SuppressWarnings("unused") // Used by ToolKit logic

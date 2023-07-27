@@ -14,10 +14,9 @@
 package com.exadel.aem.toolkit.plugin.sources;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
 import java.lang.reflect.Member;
-import java.lang.reflect.Method;
 
+import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 
 /**
@@ -49,10 +48,22 @@ public class Sources {
      * @return {@code Source} instance
      */
     public static Source fromMember(Member value, Class<?> reportingClass) {
-        ModifiableMemberSource result = value instanceof Field
-            ? new FieldSourceImpl((Field) value)
-            : new MethodSourceImpl((Method) value);
+        return fromMember(value, reportingClass, null);
+    }
+
+    /**
+     * Creates a {@link Source} facade for a Java class member
+     * @param value          {@code Method} or a {@code Field} for which a source facade is created
+     * @param reportingClass Optional {@code Class<?>} pointer determining the class that "reports" to the ToolKit Maven
+     *                       plugin about the current member. See {@link MemberSource#getReportingClass()}
+     * @param upstreamMember Optional {@code Member} reference that triggered rendering of the class that contains the
+     *                       current member. See {@link ModifiableMemberSource#getUpstreamMember()} ()}
+     * @return {@code Source} instance
+     */
+    public static Source fromMember(Member value, Class<?> reportingClass, Member upstreamMember) {
+        ModifiableMemberSource result = new MemberSourceImpl(value);
         result.setReportingClass(reportingClass);
+        result.setUpstreamMember(upstreamMember);
         return result;
     }
 

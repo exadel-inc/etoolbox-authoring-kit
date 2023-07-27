@@ -11,17 +11,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.annotations;
+package com.exadel.aem.toolkit.plugin.exceptions;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+/**
+ * Represents the plugin-specific exception due to failure while running an embedded script in a task such as annotation
+ * property interpolation
+ */
+public class ScriptingException extends RuntimeException {
 
-import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
-
-@Target({ElementType.FIELD,ElementType.METHOD})
-@Retention(RetentionPolicy.RUNTIME)
-@ResourceType("test")
-public @interface WidgetAnnotationForOrderingTest {
+    /**
+     * Initializes a class instance with a reference to the exception cause specified
+     * @param cause Non-null {@code Exception} object
+     */
+    public ScriptingException(Exception cause) {
+        super(cause);
+    }
 }

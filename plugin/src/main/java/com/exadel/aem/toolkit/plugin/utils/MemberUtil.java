@@ -42,7 +42,7 @@ public class MemberUtil {
      * @param member The member to analyze, a {@link Field} or {@link Method} reference expected
      * @return Appropriate {@code Class} instance or null if an invalid {@code Member} provided
      */
-    public static Class<?> getPlainType(Member member) {
+    public static Class<?> getComponentType(Member member) {
         if (!(member instanceof Field) && !(member instanceof Method)) {
             return null;
         }
@@ -67,15 +67,18 @@ public class MemberUtil {
      */
     private static Class<?> getGenericType(Member member, Class<?> defaultValue) {
         try {
-            ParameterizedType fieldGenericType = member instanceof Field
-                ? (ParameterizedType) ((Field) member).getGenericType()
-                : (ParameterizedType) ((Method) member).getGenericReturnType();
-            Type[] typeArguments = fieldGenericType.getActualTypeArguments();
+            Type genericType = member instanceof Field
+                ? ((Field) member).getGenericType()
+                : ((Method) member).getGenericReturnType();
+            if (!(genericType instanceof ParameterizedType)) {
+                return defaultValue;
+            }
+            Type[] typeArguments = ((ParameterizedType) genericType).getActualTypeArguments();
             if (ArrayUtils.isEmpty(typeArguments)) {
                 return defaultValue;
             }
-            return (Class<?>) typeArguments[0];
-        } catch (TypeNotPresentException | MalformedParameterizedTypeException e) {
+            return typeArguments[0] instanceof Class ? (Class<?>) typeArguments[0] : defaultValue;
+        } catch (TypeNotPresentException | MalformedParameterizedTypeException | ClassCastException e) {
             return defaultValue;
         }
     }

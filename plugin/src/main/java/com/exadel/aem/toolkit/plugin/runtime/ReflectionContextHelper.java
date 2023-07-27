@@ -37,6 +37,7 @@ import org.reflections.util.ConfigurationBuilder;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
+import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.annotations.meta.Validator;
 import com.exadel.aem.toolkit.api.handlers.Handler;
@@ -58,7 +59,9 @@ import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
  */
 public class ReflectionContextHelper {
 
-    private org.reflections.Reflections reflections;
+    private Reflections reflections;
+
+    private ClassLoader classLoader;
 
     private List<ComponentSource> components;
 
@@ -70,6 +73,19 @@ public class ReflectionContextHelper {
      * Default (instantiation-restricting) constructor
      */
     private ReflectionContextHelper() {
+    }
+
+    /* ----------------
+       Common accessors
+       ---------------- */
+
+    /**
+     * Retrieves the {@link ClassLoader} that was used to instantiate source Java classes and handlers for the current
+     * instance. this classloader can be further used for creating metadata proxies and similar tasks
+     * @return {@code ClassLoader} instance
+     */
+    public ClassLoader getClassLoader() {
+        return classLoader;
     }
 
     /* -----------------------------
@@ -145,6 +161,20 @@ public class ReflectionContextHelper {
     /* -------------------
        Retrieving handlers
        ------------------- */
+
+    /**
+     * Gets whether the given annotation has a managed handler or a meta-annotation. This method is useful for
+     * distinguishing between ToolKit-relevant annotations (including custom ones that reside in user's own namespace)
+     * and "foreign" annotations
+     * @param annotation {@link Annotation} object
+     * @return True or false
+     */
+    public boolean isHandled(Annotation annotation) {
+        return annotation.annotationType().isAnnotationPresent(AnnotationRendering.class)
+            || getHandlers()
+            .stream()
+            .anyMatch(handler -> isHandlerMatches(handler, null, new Class<?>[]{annotation.annotationType()}));
+    }
 
     /**
      * Retrieves a list of {@link Handler} instances that match the provided annotations and scope. The list is ordered
@@ -239,7 +269,7 @@ public class ReflectionContextHelper {
         if (handlerScopes.length == 1 && handlerScopes[0].equals(Scopes.DEFAULT)) {
             handlerScopes = ScopeUtil.designate(annotationTypes);
         }
-        boolean isMatchByScope = ScopeUtil.fits(scope, handlerScopes);
+        boolean isMatchByScope = scope == null || ScopeUtil.fits(scope, handlerScopes);
 
         return isMatchByType && isMatchByScope;
     }
@@ -332,19 +362,22 @@ public class ReflectionContextHelper {
      * @return {@link ReflectionContextHelper} instance
      */
     public static ReflectionContextHelper fromCodeScope(List<String> elements) {
-        URL[] urls = new URL[]{};
+        URL[] urls = new URL[0];
         if (elements != null) {
             urls = elements.stream()
                 .map(File::new)
                 .map(File::toURI)
                 .map(ReflectionContextHelper::toUrl)
-                .filter(Objects::nonNull).toArray(URL[]::new);
+                .filter(Objects::nonNull)
+                .toArray(URL[]::new);
         }
+        URLClassLoader classLoader = new URLClassLoader(urls, ReflectionContextHelper.class.getClassLoader());
         Reflections reflections = new Reflections(new ConfigurationBuilder()
-            .addClassLoader(new URLClassLoader(urls, ReflectionContextHelper.class.getClassLoader()))
+            .addClassLoader(classLoader)
             .setUrls(urls)
             .setScanners(new TypeAnnotationsScanner(), new SubTypesScanner()));
         ReflectionContextHelper newInstance = new ReflectionContextHelper();
+        newInstance.classLoader = classLoader;
         newInstance.reflections = reflections;
         return newInstance;
     }

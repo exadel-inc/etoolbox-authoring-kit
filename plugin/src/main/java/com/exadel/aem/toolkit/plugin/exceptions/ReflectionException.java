@@ -14,12 +14,20 @@
 package com.exadel.aem.toolkit.plugin.exceptions;
 
 /**
- * Represents the plugin-specific exception due to one of exceptions produced by {@code java.lang.reflect} routines
+ * Represents the plugin-specific exception due to one of the exceptions produced by {@code java.lang.reflect} routines
  */
 public class ReflectionException extends RuntimeException {
 
     /**
-     * Initializes a class instance with an exception message and cause specified
+     * Initializes a class instance with an exception message specified
+     * @param value String value, non-blank
+     */
+    public ReflectionException(String value) {
+        super(value);
+    }
+
+    /**
+     * Initializes a class instance with an exception message and a cause specified
      * @param value String value, non-blank
      * @param cause Non-null {@code Exception} object
      */

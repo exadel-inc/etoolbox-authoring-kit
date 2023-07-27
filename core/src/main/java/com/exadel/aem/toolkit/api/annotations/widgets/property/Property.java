@@ -29,9 +29,9 @@ import java.lang.annotation.Target;
 public @interface Property {
 
     /**
-     * Indicates the attribute name
-     * Relative path can be defined in such a way that the substring before the ultimate `/`
-     * represents the path, and the substring after the ultimate `/` represents the property name.
+     * Indicates the attribute name and/or path. A relative path can be defined in such a way that the substring before
+     * the ultimate {@code /} represents the path, and the substring after the ultimate {@code /} represents the
+     * property name
      * @return String value, non-blank
      */
     String name();

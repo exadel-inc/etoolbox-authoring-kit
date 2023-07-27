@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.api.runtime.Injected;
 import com.exadel.aem.toolkit.api.runtime.RuntimeContext;
-import com.exadel.aem.toolkit.plugin.annotations.CustomLegacyDialogAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.cases.CustomLegacyDialogAnnotation;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 @Handles(value = CustomLegacyDialogAnnotation.class)

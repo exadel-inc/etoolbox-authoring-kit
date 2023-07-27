@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.injectors.models.lists.CustomListItem;
 import com.exadel.aem.toolkit.core.injectors.models.lists.CustomListItems;
 import com.exadel.aem.toolkit.core.injectors.models.lists.CustomListItemsMap;
@@ -41,7 +42,7 @@ import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 
 public class EToolboxListInjectorTest {
 
-    private static final String MODELS_PACKAGE_NAME = "com.exadel.aem.toolkit.core.injectors.models.lists";
+    private static final String MODELS_PACKAGE_NAME = CoreConstants.ROOT_PACKAGE + ".core.injectors.models.lists";
 
     public static final String SIMPLE_LIST_PATH = "/content/etoolbox-lists/contentList";
     public static final String CUSTOM_LIST_PATH = "/content/etoolbox-lists/customContentList";

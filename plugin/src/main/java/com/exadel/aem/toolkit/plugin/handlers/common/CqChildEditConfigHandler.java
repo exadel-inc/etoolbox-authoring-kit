@@ -21,9 +21,10 @@ import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
-import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
+import com.exadel.aem.toolkit.plugin.handlers.Handlers;
+import com.exadel.aem.toolkit.plugin.metadata.Metadata;
+import com.exadel.aem.toolkit.plugin.metadata.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
@@ -53,14 +54,16 @@ public class CqChildEditConfigHandler implements BiConsumer<Source, Target> {
     private static void populateChildEditConfig(ChildEditConfig childEditConfig, Target target) {
         target
             .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
-            .attributes(childEditConfig, AnnotationUtil.getPropertyMappingFilter(childEditConfig));
+            .attributes(childEditConfig, new RenderingFilter(childEditConfig));
         // Herewith we create a "proxied" @EditConfig object out of the provided @ChildEditConfig
         // with "dropTargets" and "listeners" methods of @EditConfig populated with  @ChildEditConfig values
-        EditConfig derivedEditConfig = AnnotationUtil.createInstance(EditConfig.class, ImmutableMap.of(
-            METHOD_DROP_TARGETS, childEditConfig.dropTargets(),
-            METHOD_LISTENERS, childEditConfig.listeners()
-        ));
+        EditConfig derivedEditConfig = Metadata.from(
+            EditConfig.class,
+            ImmutableMap.of(
+                METHOD_DROP_TARGETS, childEditConfig.dropTargets(),
+                METHOD_LISTENERS, childEditConfig.listeners()
+            ));
 
-        HandlerChains.forEditConfig().accept(Sources.fromAnnotation(derivedEditConfig), target);
+        Handlers.forEditConfig().accept(Sources.fromAnnotation(derivedEditConfig), target);
     }
 }

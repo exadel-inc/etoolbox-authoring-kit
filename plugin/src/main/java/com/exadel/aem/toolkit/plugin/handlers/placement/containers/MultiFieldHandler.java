@@ -25,7 +25,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.InvalidLayoutException;
-import com.exadel.aem.toolkit.plugin.handlers.HandlerChains;
+import com.exadel.aem.toolkit.plugin.handlers.Handlers;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
@@ -88,7 +88,7 @@ public class MultiFieldHandler extends ContainerHandler implements Handler {
      * @param target Current {@link Target} instance
      */
     private void placeOne(Source source, Target target) {
-        HandlerChains.forMember().accept(source, target.getOrCreateTarget(DialogConstants.NN_FIELD));
+        Handlers.forMember().accept(source, target.getOrCreateTarget(DialogConstants.NN_FIELD));
     }
 
     /**

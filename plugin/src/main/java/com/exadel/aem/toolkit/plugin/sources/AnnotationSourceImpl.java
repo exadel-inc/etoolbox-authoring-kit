@@ -55,13 +55,13 @@ class AnnotationSourceImpl extends AdaptationBase<Source> implements Source {
      * {@inheritDoc}
      */
     @Override
-    public <A> A adaptTo(Class<A> adaptation) {
-        if (adaptation == null) {
+    public <A> A adaptTo(Class<A> type) {
+        if (type == null) {
             return null;
         }
-        if (adaptation.isAnnotation() && value != null && adaptation.equals(value.annotationType())) {
-            return adaptation.cast(value);
+        if (type.isAnnotation() && value != null && type.equals(value.annotationType())) {
+            return type.cast(value);
         }
-        return super.adaptTo(adaptation);
+        return super.adaptTo(type);
     }
 }

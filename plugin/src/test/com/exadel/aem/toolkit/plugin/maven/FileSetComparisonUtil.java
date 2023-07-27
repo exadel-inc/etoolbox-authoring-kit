@@ -25,9 +25,6 @@ import com.exadel.aem.toolkit.plugin.maven.xmlcomparator.XmlComparator;
 
 class FileSetComparisonUtil {
     private static final Logger LOG = LoggerFactory.getLogger(FileSetComparisonUtil.class);
-    private static final int LOG_INDENT = 2;
-    private static final int LOG_TABLE_WIDTH = 110;
-    private static final String LOG_COLUMN_SEPARATOR = " | ";
 
     private FileSetComparisonUtil() {
     }
@@ -45,15 +42,15 @@ class FileSetComparisonUtil {
         for (String fileName : fileNames) {
             String actualContent = actualFiles.get(fileName);
             String expectedContent = expectedFiles.get(fileName);
-            XmlComparator xmlComparer = new XmlComparator(
+            XmlComparator xmlComparator = new XmlComparator(
                 resourcePath + File.separator + fileName,
                 expectedContent,
                 actualContent);
-            if (xmlComparer.isEqual()) {
+            if (xmlComparator.isEqual()) {
                 continue;
             }
             try {
-                xmlComparer.logDiff();
+                xmlComparator.logDiff();
             } catch (Exception ex) {
                 LOG.error("Could not implement XML files comparison", ex);
             }

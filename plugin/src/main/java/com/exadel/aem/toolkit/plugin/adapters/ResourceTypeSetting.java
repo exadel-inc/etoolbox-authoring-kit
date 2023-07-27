@@ -14,7 +14,6 @@
 package com.exadel.aem.toolkit.plugin.adapters;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -25,7 +24,8 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.handlers.Adapts;
 import com.exadel.aem.toolkit.api.handlers.Source;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.metadata.Metadata;
+import com.exadel.aem.toolkit.plugin.metadata.Property;
 
 /**
  * Implements {@link Adapts} for extracting appropriate {@code sling:resourceType} value from a {@link Source} object
@@ -72,7 +72,7 @@ public class ResourceTypeSetting {
      */
     private static String getValueByResourceTypeAnnotation(Annotation[] annotations) {
         return Arrays.stream(annotations)
-            .map(annotation -> annotation.annotationType().getDeclaredAnnotation(ResourceType.class))
+            .map(annotation -> Metadata.from(annotation).getAnnotation(ResourceType.class))
             .filter(Objects::nonNull)
             .map(ResourceType::value)
             .findFirst()
@@ -87,14 +87,15 @@ public class ResourceTypeSetting {
      */
     private static String getValueByAnnotationProperty(Annotation[] annotations) {
         for (Annotation annotation : annotations) {
-            Method resourceTypeMethod = Arrays.stream(annotation.annotationType().getDeclaredMethods())
-                .filter(method -> method.getDeclaredAnnotation(PropertyRendering.class) != null)
+            Property property = Metadata.from(annotation)
+                .stream(false, false)
+                .filter(prop -> prop.getAnnotation(PropertyRendering.class) != null)
                 .findFirst()
                 .orElse(null);
-            if (resourceTypeMethod != null) {
-                return AnnotationUtil.getProperty(annotation, resourceTypeMethod, StringUtils.EMPTY).toString();
+            if (property != null) {
+                return property.getValue() != null ? property.getValue().toString() : null;
             }
         }
-        return StringUtils.EMPTY;
+        return null;
     }
 }

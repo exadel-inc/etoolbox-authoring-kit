@@ -44,7 +44,7 @@ import com.exadel.aem.toolkit.api.annotations.widgets.rte.RichTextEditor;
 import com.exadel.aem.toolkit.api.annotations.widgets.rte.RteFeatures;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Option;
 import com.exadel.aem.toolkit.api.annotations.widgets.select.Select;
-import com.exadel.aem.toolkit.plugin.annotations.CustomEditConfigAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.cases.CustomEditConfigAnnotation;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 
 @AemComponent(

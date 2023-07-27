@@ -14,7 +14,6 @@
 package com.exadel.aem.toolkit.plugin.runtime;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -41,10 +40,10 @@ import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
 import com.exadel.aem.toolkit.api.annotations.widgets.attribute.Data;
 import com.exadel.aem.toolkit.api.runtime.XmlUtility;
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
-import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.metadata.Metadata;
+import com.exadel.aem.toolkit.plugin.metadata.Property;
+import com.exadel.aem.toolkit.plugin.metadata.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.targets.AttributeHelper;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 import com.exadel.aem.toolkit.plugin.utils.StringUtil;
@@ -176,11 +175,10 @@ public class XmlContextHelper implements XmlUtility {
             return null;
         }
         Element newNode = createNodeElement(nameProvider.apply(source));
-        Arrays.stream(source.annotationType().getDeclaredMethods())
-            .forEach(method -> AttributeHelper.forXmlTarget().forAnnotationProperty(source, method).setTo(newNode));
+        Metadata.from(source).forEach(property ->
+            AttributeHelper.forXmlTarget().forAnnotationProperty(source, property).setTo(newNode));
         return newNode;
     }
-
 
     /*
         Element naming
@@ -325,27 +323,26 @@ public class XmlContextHelper implements XmlUtility {
                                      String name,
                                      Annotation source,
                                      BinaryOperator<String> attributeMerger) {
-        try {
-            Method sourceMethod = source.annotationType().getDeclaredMethod(name);
-            if (!AnnotationUtil.propertyIsNotDefault(source, sourceMethod)) {
-                return;
-            }
-            PropertyRendering propertyRendering = sourceMethod.getAnnotation(PropertyRendering.class);
-            String effectiveName = name;
-            if (propertyRendering != null) {
-                effectiveName = StringUtils.defaultIfBlank(propertyRendering.name(), name);
-            }
-            AttributeHelper
-                .forXmlTarget()
-                .forAnnotationProperty(source, sourceMethod)
-                .withName(effectiveName)
-                .withMerger(attributeMerger)
-                .setTo(elementSupplier.get());
-        } catch (NoSuchMethodException e) {
-            PluginRuntime.context().getExceptionHandler().handle(new ReflectionException(source.getClass(), name));
+        Property property = Metadata.from(source)
+            .stream()
+            .filter(prop -> StringUtils.equals(name, prop.getName()))
+            .findFirst()
+            .orElse(null);
+        if (property == null || property.valueIsDefault()) {
+            return;
         }
+        PropertyRendering propertyRendering = property.getAnnotation(PropertyRendering.class);
+        String effectiveName = name;
+        if (propertyRendering != null) {
+            effectiveName = StringUtils.defaultIfBlank(propertyRendering.name(), name);
+        }
+        AttributeHelper
+            .forXmlTarget()
+            .forAnnotationProperty(source, property)
+            .withName(effectiveName)
+            .withMerger(attributeMerger)
+            .setTo(elementSupplier.get());
     }
-
 
     /*
         Mapping annotation properties
@@ -364,9 +361,10 @@ public class XmlContextHelper implements XmlUtility {
      */
     @Override
     public void mapProperties(Element element, Annotation annotation, String scope) {
-        List<String> skippedFields = Arrays.stream(annotation.annotationType().getDeclaredMethods())
-            .filter(m -> !fitsInScope(m, scope))
-            .map(Method::getName)
+        List<String> skippedFields = Metadata.from(annotation)
+            .stream()
+            .filter(prop -> !fitsInScope(prop, scope))
+            .map(Property::getName)
             .collect(Collectors.toList());
         mapProperties(element, annotation, skippedFields);
     }
@@ -376,52 +374,49 @@ public class XmlContextHelper implements XmlUtility {
      */
     @Override
     public void mapProperties(Element element, Annotation annotation, List<String> skipped) {
-        if (!annotation.annotationType().isAnnotationPresent(AnnotationRendering.class)
-            && !annotation.annotationType().isAnnotationPresent(PropertyMapping.class)) {
+        Annotation prefixHolder = Metadata.from(annotation)
+            .getAnyAnnotation(AnnotationRendering.class, PropertyMapping.class);
+        if (prefixHolder == null) {
             return;
         }
-        String prefix = annotation.annotationType().isAnnotationPresent(AnnotationRendering.class)
-            ? annotation.annotationType().getDeclaredAnnotation(AnnotationRendering.class).prefix()
-            : annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class).prefix();
+        String prefix = String.valueOf(Metadata.from(prefixHolder).getValue(DialogConstants.PN_PREFIX));
         String nodePrefix = prefix.contains(CoreConstants.SEPARATOR_SLASH)
             ? StringUtils.substringBeforeLast(prefix, CoreConstants.SEPARATOR_SLASH)
             : StringUtils.EMPTY;
 
         Element effectiveElement = getRequiredElement(element, nodePrefix);
 
-        Arrays.stream(annotation.annotationType().getDeclaredMethods())
-            .filter(AnnotationUtil.getPropertyMappingFilter(annotation))
-            .filter(m -> !skipped.contains(m.getName()))
-            .forEach(m -> populateProperty(m, effectiveElement, annotation));
+        RenderingFilter renderingFilter = new RenderingFilter(annotation);
+        Metadata.from(annotation)
+            .stream()
+            .filter(property -> property.matches(renderingFilter))
+            .filter(property -> !skipped.contains(property.getName()))
+            .forEach(property -> populateProperty(property, nodePrefix, effectiveElement, annotation));
     }
 
     /**
      * Sets value of a particular {@code Annotation} property to an {@code Element} node
-     * @param method     {@code Method} instance representing a property of an annotation
+     * @param property   {@link Property} instance representing a property of an annotation
+     * @param prefix     String that prepends the rendered property name
      * @param element    Element node
      * @param annotation Annotation to look for a value in
      */
-    private static void populateProperty(Method method, Element element, Annotation annotation) {
-        String name = method.getName();
+    private static void populateProperty(Property property, String prefix, Element element, Annotation annotation) {
+        String name = property.getName();
         boolean ignorePrefix = false;
-        if (method.isAnnotationPresent(PropertyRendering.class)) {
-            PropertyRendering propertyRendering = method.getAnnotation(PropertyRendering.class);
+        PropertyRendering propertyRendering = property.getAnnotation(PropertyRendering.class);
+        if (propertyRendering != null) {
             name = StringUtils.defaultIfBlank(propertyRendering.name(), name);
             ignorePrefix = propertyRendering.ignorePrefix();
         }
-        String prefix = annotation.annotationType().isAnnotationPresent(AnnotationRendering.class)
-            ? annotation.annotationType().getDeclaredAnnotation(AnnotationRendering.class).prefix()
-            : annotation.annotationType().getDeclaredAnnotation(PropertyMapping.class).prefix();
-        String namePrefix = prefix.contains(CoreConstants.SEPARATOR_SLASH)
-            ? StringUtils.substringAfterLast(prefix, CoreConstants.SEPARATOR_SLASH)
-            : prefix;
+
         if (!ignorePrefix && StringUtils.isNotBlank(prefix)) {
-            name = namePrefix + name;
+            name = prefix + name;
         }
         BinaryOperator<String> merger = XmlContextHelper::mergeStringAttributes;
         AttributeHelper
             .forXmlTarget()
-            .forAnnotationProperty(annotation, method)
+            .forAnnotationProperty(annotation, property)
             .withName(name)
             .withMerger(merger)
             .setTo(element);
@@ -445,16 +440,17 @@ public class XmlContextHelper implements XmlUtility {
     /**
      * Gets whether this annotation method falls within the specified scope. True if no scope specified for method (that
      * is, the method is applicable to any scope
-     * @param method {@code Method} instance representing a property of an annotation
+     * @param property {@link Property} instance representing a property of the annotation
      * @param scope  String representing a valid scope
      * @return True or false
      * @see com.exadel.aem.toolkit.api.annotations.meta.Scopes
      */
-    private static boolean fitsInScope(Method method, String scope) {
-        if (!method.isAnnotationPresent(PropertyRendering.class)) {
+    private static boolean fitsInScope(Property property, String scope) {
+        PropertyRendering propertyRendering = property.getAnnotation(PropertyRendering.class);
+        if (propertyRendering == null) {
             return true;
         }
-        return Arrays.asList(method.getAnnotation(PropertyRendering.class).scope()).contains(scope);
+        return Arrays.asList(propertyRendering.scope()).contains(scope);
     }
 
 

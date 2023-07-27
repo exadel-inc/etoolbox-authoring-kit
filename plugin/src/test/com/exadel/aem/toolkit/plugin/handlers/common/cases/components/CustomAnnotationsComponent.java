@@ -17,15 +17,15 @@ import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
-import com.exadel.aem.toolkit.plugin.annotations.CustomDialogAnnotationAuto;
-import com.exadel.aem.toolkit.plugin.annotations.CustomLegacyDialogAnnotation;
-import com.exadel.aem.toolkit.plugin.annotations.CustomNonMappingWidgetAnnotation;
-import com.exadel.aem.toolkit.plugin.annotations.CustomScopedNonMappingWidgetAnnotation;
-import com.exadel.aem.toolkit.plugin.annotations.CustomWidgetAnnotation;
-import com.exadel.aem.toolkit.plugin.annotations.CustomWidgetAnnotationAuto;
-import com.exadel.aem.toolkit.plugin.annotations.CustomWidgetAutoOrder;
-import com.exadel.aem.toolkit.plugin.annotations.DialogAnnotationForOrderingTest;
-import com.exadel.aem.toolkit.plugin.annotations.WidgetAnnotationForOrderingTest;
+import com.exadel.aem.toolkit.plugin.annotations.cases.CustomDialogAnnotationAuto;
+import com.exadel.aem.toolkit.plugin.annotations.cases.CustomLegacyDialogAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.cases.CustomNonMappingWidgetAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.cases.CustomScopedNonMappingWidgetAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.cases.CustomWidgetAnnotation;
+import com.exadel.aem.toolkit.plugin.annotations.cases.CustomWidgetAnnotationAuto;
+import com.exadel.aem.toolkit.plugin.annotations.cases.CustomWidgetAutoOrder;
+import com.exadel.aem.toolkit.plugin.annotations.cases.DialogAnnotationForOrderingTest;
+import com.exadel.aem.toolkit.plugin.annotations.cases.WidgetAnnotationForOrderingTest;
 
 @AemComponent(
     path = "test-component",

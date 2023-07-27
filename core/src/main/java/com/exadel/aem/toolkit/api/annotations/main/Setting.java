@@ -11,14 +11,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.annotations;
+package com.exadel.aem.toolkit.api.annotations.main;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.TYPE)
+/**
+ * Signifies a generic setting that is used to modify the behavior of a component. Developers are advised to use this
+ * entity in custom annotations and handlers where they need a dictionary of arbitrary options
+ * @see Settings
+ */
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface DialogAnnotationForOrderingTest {
+@Repeatable(Settings.class)
+public @interface Setting {
+
+    /**
+     * Indicates the setting name
+     * @return String value, non-blank
+     */
+    String name();
+
+    /**
+     * Indicates the setting value
+     * @return String value
+     */
+    String value();
 }

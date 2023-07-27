@@ -21,7 +21,7 @@ import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-public class PluginContextRule implements TestRule {
+public abstract class PluginContextRule implements TestRule {
 
     private static final String PLUGIN_MODULE_TARGET = Paths.get("target", "classes").toAbsolutePath().toString();
     private static final String PLUGIN_MODULE_TEST_TARGET = Paths.get( "target", "test-classes").toAbsolutePath().toString();
@@ -41,14 +41,18 @@ public class PluginContextRule implements TestRule {
             && description.getTestClass().getAnnotation(ThrowsPluginException.class) == null) {
             return statement;
         }
-        exceptionHandler.unmute();
+        if (exceptionHandler != null) {
+            exceptionHandler.unmute();
+        }
         return new Statement() {
             @Override
             public void evaluate() throws Throwable {
                 try {
                     statement.evaluate();
                 } finally {
-                    exceptionHandler.mute();
+                    if (exceptionHandler != null) {
+                        exceptionHandler.mute();
+                    }
                 }
             }
         };
@@ -69,5 +73,9 @@ public class PluginContextRule implements TestRule {
 
     public static void closeContext() {
         PluginRuntime.close();
+    }
+
+    protected static boolean isContextInitialized() {
+        return exceptionHandler != null;
     }
 }

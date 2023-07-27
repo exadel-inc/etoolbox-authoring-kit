@@ -35,7 +35,9 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
-import com.exadel.aem.toolkit.plugin.utils.AnnotationUtil;
+import com.exadel.aem.toolkit.plugin.metadata.Metadata;
+import com.exadel.aem.toolkit.plugin.metadata.Property;
+import com.exadel.aem.toolkit.plugin.metadata.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 import com.exadel.aem.toolkit.plugin.validators.CharactersObjectValidator;
@@ -206,6 +208,9 @@ public class RichTextEditorHandler implements Handler {
     ) {
         RteNodeWithListBuilder nodeBuilder = featureItem.left;
         String feature = featureItem.right;
+        if (StringUtils.isBlank(feature)) {
+            return;
+        }
         if (FEATURE_TOKEN_PATTERN.matcher(feature).matches()) {
             // single#feature
             nodeBuilder.store(null, feature);
@@ -245,7 +250,7 @@ public class RichTextEditorHandler implements Handler {
         Arrays.stream(rteAnnotation.icons()).forEach(
             iconMapping -> icons
                 .getOrCreateTarget(iconMapping.command())
-                .attributes(iconMapping, AnnotationUtil.getPropertyMappingFilter(iconMapping)));
+                .attributes(iconMapping, new RenderingFilter(iconMapping)));
     }
 
     /**
@@ -266,9 +271,7 @@ public class RichTextEditorHandler implements Handler {
                 paragraphFormat ->
                     formats
                         .getOrCreateTarget(paragraphFormat.tag())
-                        .attributes(
-                            paragraphFormat,
-                            AnnotationUtil.getPropertyMappingFilter(paragraphFormat))
+                        .attributes(paragraphFormat, new RenderingFilter(paragraphFormat))
             );
     }
 
@@ -280,17 +283,19 @@ public class RichTextEditorHandler implements Handler {
     private void getSpecialCharactersNode(Target parent) {
         Target charsConfigNode = parent.getOrCreateTarget(DialogConstants.NN_SPECIAL_CHARS_CONFIG).getOrCreateTarget(DialogConstants.NN_CHARS);
         CharactersObjectValidator validator = new CharactersObjectValidator();
+        @SuppressWarnings("SimplifyStreamApiCallChains")
         Annotation[] validCharactersAnnotations = Arrays.stream(rteAnnotation.specialCharacters())
-            .map(validator::getFilteredInstance)
+            .map(source -> {
+                validator.filter(source);
+                return source;
+            })
             .toArray(Annotation[]::new);
         Arrays.stream(validCharactersAnnotations).forEach(annotation -> Validation.forType(annotation.annotationType()).test(annotation));
         Arrays.stream(validCharactersAnnotations).forEach(
             annotation ->
                 charsConfigNode
                     .getOrCreateTarget(getCharactersTagName((Characters) annotation))
-                    .attributes(
-                        annotation,
-                        AnnotationUtil.getPropertyMappingFilter(annotation))
+                    .attributes(annotation, new RenderingFilter(annotation))
         );
     }
 
@@ -307,7 +312,7 @@ public class RichTextEditorHandler implements Handler {
         }
         Arrays.stream(rteAnnotation.styles()).forEach(style ->
             styles.getOrCreateTarget(style.cssName())
-                .attributes(style, AnnotationUtil.getPropertyMappingFilter(style)));
+                .attributes(style, new RenderingFilter(style)));
     }
 
     /**
@@ -315,10 +320,13 @@ public class RichTextEditorHandler implements Handler {
      * @param parent {@code Target} instance representing the Granite node that stores the RTE config
      */
     private void populatePasteRulesNode(Target parent) {
-        HtmlPasteRules rules = this.rteAnnotation.htmlPasteRules();
+        HtmlPasteRules rules = (HtmlPasteRules) Metadata.from(this.rteAnnotation.htmlPasteRules());
         Target edit = parent.getOrCreateTarget(DialogConstants.NN_EDIT);
         Target htmlPasteRulesNode = edit.getOrCreateTarget(DialogConstants.NN_HTML_PASTE_RULES);
-        List<String> nonDefaultAllowPropsNames = AnnotationUtil.getNonDefaultProperties(rules).keySet().stream()
+        List<String> nonDefaultAllowPropsNames = ((Metadata) rules)
+            .stream(false, false)
+            .filter(prop -> !prop.valueIsDefault())
+            .map(Property::getName)
             .filter(name -> HTML_PASTE_RULES_ALLOW_PATTERN.matcher(name).matches())
             .map(name -> HTML_PASTE_RULES_ALLOW_PATTERN.matcher(name).replaceAll("$1").toLowerCase())
             .filter(propName -> {
@@ -355,7 +363,8 @@ public class RichTextEditorHandler implements Handler {
      */
     private void populateHtmlLinkRules(Target parent) {
         HtmlLinkRules rulesAnnotation = this.rteAnnotation.htmlLinkRules();
-        if (!AnnotationUtil.isNotDefault(rulesAnnotation)) {
+        boolean hasAllDefaultValues = Metadata.from(rulesAnnotation).stream().allMatch(Property::valueIsDefault);
+        if (hasAllDefaultValues) {
             return;
         }
         parent.getOrCreateTarget(DialogConstants.NN_HTML_RULES)

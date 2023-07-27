@@ -49,27 +49,28 @@ import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 public class ComponentWithTabsAndInnerClass {
 
     @DialogField(
-            label = "Field 1",
-            description = "This is the first field.",
-            wrapperClass = "my-class",
-            renderHidden = true)
+        label = "Field 1",
+        description = "This is the first field.",
+        wrapperClass = "my-class",
+        renderHidden = true)
     @TextField
     @Attribute(
-            id = "field1-id",
-            className = "field1-attribute-class",
-            data = {
-                    @Data(name = "field1-data1", value = "value-data1"),
-                    @Data(name = "field1-data2", value = "value-data2")
-            })
+        id = "field1-id",
+        className = "field1-attribute-class",
+        data = {
+            @Data(name = "field1-data1", value = "value-data1"),
+            @Data(name = "field1-data2", value = "value-data2")
+        }
+    )
     @Place(LABEL_TAB_1)
     String field1;
 
-    @DialogField(label="Field 2")
+    @DialogField(label = "Field 2")
     @PathField(rootPath = "/content")
     @Place(LABEL_TAB_2)
     String field2;
 
-    @DialogField(label="Field 2.1", wrapperClass = "my-wrapper-class")
+    @DialogField(label = "Field 2.1", wrapperClass = "my-wrapper-class")
     @TextField
     @Place(LABEL_TAB_3)
     String field3;
@@ -83,7 +84,7 @@ public class ComponentWithTabsAndInnerClass {
     @Place(LABEL_TAB_2)
     FieldSetExample fieldSet;
 
-    public static class FieldSetExample{
+    public static class FieldSetExample {
         @DialogField
         @TextField
         String field6;
@@ -94,21 +95,21 @@ public class ComponentWithTabsAndInnerClass {
 
         @DialogField
         @RadioGroup(buttons = {
-                @RadioButton(text = "Button 1", value = "1"),
-                @RadioButton(text = "Button 2", value = "2"),
-                @RadioButton(text = "Button 3", value = "3")
+            @RadioButton(text = "Button 1", value = "1"),
+            @RadioButton(text = "Button 2", value = "2"),
+            @RadioButton(text = "Button 3", value = "3")
         })
         String field8;
     }
 
     @DialogField(label = "Rating")
     @Select(options = {
-            @Option(text = "1 star", value = "1"),
-            @Option(text = "2 star", value = "2"),
-            @Option(text = "3 star", value = "3"),
-            @Option(text = "4 star", value = "4"),
-            @Option(text = "5 star", value = "5")
-    }, emptyText = "Select rating" )
+        @Option(text = "1 star", value = "1"),
+        @Option(text = "2 star", value = "2"),
+        @Option(text = "3 star", value = "3"),
+        @Option(text = "4 star", value = "4"),
+        @Option(text = "5 star", value = "5")
+    }, emptyText = "Select rating")
     @Place(LABEL_TAB_3)
     String dropdown;
 }

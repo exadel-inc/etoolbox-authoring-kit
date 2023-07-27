@@ -37,10 +37,12 @@ import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentW
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComponentWithoutDialog;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.CustomAnnotationsComponent;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.MultiColumnDialog;
+import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ScriptedComponent;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.viewpattern.component1.ComplexComponentHolder;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
+import com.exadel.aem.toolkit.plugin.maven.ThrowsPluginException;
 
 public class ComponentsTest {
 
@@ -83,6 +85,7 @@ public class ComponentsTest {
     }
 
     @Test
+    @ThrowsPluginException
     public void testComplexComponent2() {
         pluginContext.test(ComplexComponent2.class);
     }
@@ -105,6 +108,11 @@ public class ComponentsTest {
             ComplexComponentHolder.class,
             targetPath,
             fileSystem -> writeFile(fileSystem.getPath(TestConstants.PACKAGE_ROOT_PATH, TestConstants.DEFAULT_COMPONENT_NAME, ".content.xml"), outdatedContentXml));
+    }
+
+    @Test
+    public void testScriptingSupport() {
+        pluginContext.test(ScriptedComponent.class);
     }
 
     private static String readFile(Path path) {

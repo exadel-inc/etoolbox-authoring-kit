@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.TestConstants;
 import com.exadel.aem.toolkit.core.injectors.models.enums.Colors;
 import com.exadel.aem.toolkit.core.injectors.models.enums.EnumArrays;
@@ -23,7 +24,7 @@ import com.exadel.aem.toolkit.core.injectors.models.enums.Enums;
 
 public class EnumValueInjectorTest {
 
-    private static final String MODELS_PACKAGE_NAME = "com.exadel.aem.toolkit.core.injectors.models.enums";
+    private static final String MODELS_PACKAGE_NAME = CoreConstants.ROOT_PACKAGE + ".core.injectors.models.enums";
 
     private static final Colors EXPECTED_COLOR = Colors.YELLOW;
     private static final Colors[] EXPECTED_COLOR_ARRAY = new Colors[] {Colors.YELLOW, Colors.ORANGE};

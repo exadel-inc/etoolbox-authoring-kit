@@ -23,6 +23,7 @@ import org.xmlunit.diff.ComparisonType;
 
 class LineUtil {
 
+    private static final String PROPERTY_INDENT = "xmlcomparator.indent";
     private static final String PROPERTY_WIDTH = "xmlcomparator.width";
 
     private LineUtil() {
@@ -98,9 +99,9 @@ class LineUtil {
         String actualXPath) {
 
         if (comparisonType == ComparisonType.ATTR_NAME_LOOKUP) {
-            if (StringUtils.contains(expectedXPath, XmlComparatorConstants.SEPARATOR_ATTRIBUTE)) {
+            if (StringUtils.contains(expectedXPath, XmlComparatorConstants.ATTRIBUTE_SEPARATOR)) {
                 highlight(expectedLines, expectedXPath);
-            } else if (StringUtils.contains(actualXPath, XmlComparatorConstants.SEPARATOR_ATTRIBUTE)) {
+            } else if (StringUtils.contains(actualXPath, XmlComparatorConstants.ATTRIBUTE_SEPARATOR)) {
                 highlight(actualLines, actualXPath);
             }
 
@@ -146,11 +147,21 @@ class LineUtil {
        Common utils
        ------------ */
 
+    public static int getIndentWidth() {
+        return NumberUtils.toInt(
+            System.getProperty(PROPERTY_INDENT),
+            XmlComparatorConstants.DEFAULT_LOG_INDENT_WIDTH);
+    }
+
+    public static String getIndent() {
+        return StringUtils.repeat(StringUtils.SPACE, getIndentWidth());
+    }
+
     public static int getLogColumnWidth() {
         int logTableWidth = NumberUtils.toInt(
             System.getProperty(PROPERTY_WIDTH),
             XmlComparatorConstants.DEFAULT_LOG_TABLE_WIDTH);
-        return (logTableWidth - XmlComparatorConstants.LOG_INDENT_WIDTH - XmlComparatorConstants.LOG_COLUMN_SEPARATOR.length()) / 2;
+        return (logTableWidth - getIndentWidth() - XmlComparatorConstants.LOG_COLUMN_SEPARATOR.length()) / 2;
     }
 
 }

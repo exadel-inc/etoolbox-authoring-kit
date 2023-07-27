@@ -31,6 +31,7 @@ import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
 import com.exadel.aem.toolkit.api.markers._Super;
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.MemberRankingSetting;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
@@ -39,7 +40,7 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
  */
 public class OrderingUtil {
 
-    private static final String BUILTIN_HANDLERS_ROOT = "com.exadel.aem.toolkit.plugin.handlers";
+    private static final String BUILTIN_HANDLERS_ROOT = CoreConstants.ROOT_PACKAGE + ".plugin.handlers";
 
     /**
      * Default (instantiation-restricting) constructor

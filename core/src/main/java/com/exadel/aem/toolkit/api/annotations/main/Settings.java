@@ -11,14 +11,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.annotations;
+package com.exadel.aem.toolkit.api.annotations.main;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target(ElementType.FIELD)
+/**
+ * Represents a collection of settings that can be used to modify the behavior of a component
+ * @see Setting
+ */
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@SuppressWarnings("unused")
-public @interface CustomNonMappingWidgetAnnotation {}
+public @interface Settings {
+
+    /**
+     * Declares the collection of settings
+     * @return One or more {@link Setting} values
+     */
+    Setting[] value();
+}

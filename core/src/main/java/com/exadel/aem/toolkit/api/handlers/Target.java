@@ -344,12 +344,38 @@ public interface Target {
     Target attribute(String name, Date[] value);
 
     /**
+     * Creates a new attribute of the current instance and stores the provided arbitrary value. The value is cast to one
+     * of the allowed types which are basically the data types supported by JCR. Call to this method can be trailed by
+     * other method calls
+     * @param name  Name of the attribute, non-null string
+     * @param value Value of the attribute
+     * @return Current instance
+     */
+    Target attribute(String name, Object value);
+
+    /**
+     * Creates a new attribute of the current instance and stores the provided arbitrary array. The value is cast to one
+     * of the allowed types which are basically the data types supported by JCR. Call to this method can be trailed by
+     * other method calls
+     * @param name  Name of the attribute, non-null string
+     * @param value Value of the attribute
+     * @return Current instance
+     */
+    Target attribute(String name, Object[] value);
+
+    /**
      * Assigns attributes to the current instance based on the provided {@code Map}. Call to this method can be trailed
      * by other method calls
      * @param value {@code Map} containing of name-value pairs
      * @return Current instance
      */
-    Target attributes(Map<String, Object> value);
+    default Target attributes(Map<String, Object> value) {
+        if (value == null) {
+            return this;
+        }
+        value.forEach(this::attribute);
+        return this;
+    }
 
     /**
      * Assigns attributes to the current instance based on the provided {@code Annotation} object. Properties of the
