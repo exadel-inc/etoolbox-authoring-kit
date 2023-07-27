@@ -359,10 +359,6 @@ public class AttributeHelper<T, V> {
          * @param property A {@link Property} instance that manifests an annotation method
          * @return True or false
          */
-        private static boolean fits(Method method) {
-            return fits(ClassUtils.primitiveToWrapper(getWrappedValueType(method)));
-        }
-
         private static boolean fits(Property property) {
             return fits(getWrappedValueType(property));
         }
@@ -384,14 +380,6 @@ public class AttributeHelper<T, V> {
          * @param property A {@link Property} instance that manifests an annotation property
          * @return Object type
          */
-        private static Class<?> getWrappedValueType(Method method) {
-            Class<?> effectiveType = MemberUtil.getComponentType(method);
-            if (effectiveType.isEnum()) {
-                return String.class;
-            }
-            return ClassUtils.primitiveToWrapper(effectiveType);
-        }
-
         private static Class<?> getWrappedValueType(Property property) {
             Class<?> effectiveType = property.getComponentType();
             if (effectiveType.isEnum()) {
