@@ -786,7 +786,7 @@ class InterfaceHandler<T> implements InvocationHandler {
     /**
      * Called by a property-assigning routine to validate that the index of the array-typed property is within the
      * bounds of the array
-     * @param element A {@link PropertyPathElement} instance that signifies the terminal (last-in-the path) member
+     * @param element A {@link PropertyPathElement} instance that signifies the terminal (last-in-the-path) member
      *                within the source object to assign the value to. It is expected to bear a valid index which is
      *                used for validation of {@code target}
      * @param path    The {@link PropertyPath} instance that manifests the path within the source object
