@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npm run build:prepare && concurrently --kill-others \"npm:watch:content\" \"npm:watch:less\" \"npm:watch:ts\" \"npm:watch:eleventy\"",
     "build": "npm run clean && npm run build:prepare && concurrently \"npm:build:less\" \"npm:build:ts\" && npm run build:eleventy",
-    "clean": "rimraf dist/**",
+    "clean": "rimraf \"dist\"",
     "build:prepare": "node \"build/copy.js\"",
     "build:eleventy": "npx @11ty/eleventy -- --env=production",
     "build:less": "lessc \"src/site.less\" \"dist/bundles/site.css\"",
