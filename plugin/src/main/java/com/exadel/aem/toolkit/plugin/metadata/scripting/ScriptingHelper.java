@@ -39,6 +39,9 @@ import com.exadel.aem.toolkit.plugin.metadata.Property;
 import com.exadel.aem.toolkit.plugin.sources.ModifiableMemberSource;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
+/**
+ * Contains utility methods for interpolating inline scripting templates in ToolKit's API members, such as annotations
+ */
 public class ScriptingHelper {
 
     private static final ContextFactory CONTEXT_FACTORY = new ContextFactory();
@@ -55,9 +58,18 @@ public class ScriptingHelper {
 
     private static final String TOKEN_THIS = "this";
 
+    /**
+     * Default (instantiation-restricted) constructor
+     */
     private ScriptingHelper() {
     }
 
+    /**
+     * Replaces inline scripting templates in the provided {@link Metadata} instance with corresponding computed values
+     * using the provided {@link Source} as the context
+     * @param value  {@code Metadata} instance to process
+     * @param source {@code Source} instance to be used as the data context
+     */
     public static synchronized void interpolate(Metadata value, Source source) {
         if (value == null) {
             return;
@@ -71,7 +83,7 @@ public class ScriptingHelper {
             return;
         }
 
-        AbstractAdapter adapter = extractAdapter(source);
+        AbstractAdapter adapter = getAdapter(source);
         if (adapter == null) {
             return;
         }
@@ -93,6 +105,16 @@ public class ScriptingHelper {
         }
     }
 
+    /**
+     * Replaces inline scripting templates in the provided {@link TemplatedProperty} with computed values. The action is
+     * done with {@code Rhino engine}'s context and scope. The result is assembled back into the string property value
+     * @param templatedProperty The {@code TemplatedProperty} to process
+     * @param context           {@link Context} instance used for the script evaluation
+     * @param scope             {@link Scriptable} instance used for the script evaluation
+     * @param dataStack         {@link DataStack} instance that represents user-set values that are considered while
+     *                          interpolating the property value
+     * @return A non-null string value
+     */
     private static String interpolate(
         TemplatedProperty templatedProperty,
         Context context,
@@ -102,7 +124,8 @@ public class ScriptingHelper {
         String result = templatedProperty.getValue();
         while (!templatedProperty.getEmbeddings().isEmpty()) {
             StringBuilder resultBuilder = new StringBuilder(templatedProperty.getValue());
-            Iterator<Embedding> embeddingIterator = ((LinkedList<Embedding>) templatedProperty.getEmbeddings()).descendingIterator();
+            LinkedList<Embedding> embeddings = (LinkedList<Embedding>) templatedProperty.getEmbeddings();
+            Iterator<Embedding> embeddingIterator = embeddings.descendingIterator();
             while (embeddingIterator.hasNext()) {
                 Embedding embedding = embeddingIterator.next();
                 List<String> variables = embedding.getVariables();
@@ -125,7 +148,15 @@ public class ScriptingHelper {
         return result;
     }
 
-    private static AbstractAdapter extractAdapter(Source source) {
+    /**
+     * Retrieves the {@link AbstractAdapter} instance for the provided {@link Source}. The {@code adapter} instance is
+     * used to conveniently access properties of the script-processable object from within the script logic
+     * @param source {@code Source} instance to process
+     * @return {@code AbstractAdapter} instance, or {@code null} if the provided {@code Source} is not manageable by the
+     * scripting engine
+     * @see AbstractAdapter
+     */
+    private static AbstractAdapter getAdapter(Source source) {
         if (source.adaptTo(Member.class) != null) {
             Member reflectedMember = source.adaptTo(Member.class);
             Member reflectedUpstreamMember = source
@@ -139,6 +170,13 @@ public class ScriptingHelper {
         return null;
     }
 
+    /**
+     * Evaluates the provided {@code JavaScript}-coded string using the provided {@code Context} and scope
+     * @param context {@link Context} instance used for the script evaluation
+     * @param scope   {@link Scriptable} instance used for the script evaluation
+     * @param script  The script to evaluate
+     * @return A non-null string value representing the result of the evaluation
+     */
     private static String runScript(Context context, Scriptable scope, String script) {
         try {
             Object result = context.evaluateString(scope, script, PATH_SCRIPT, 0, null);
@@ -156,23 +194,45 @@ public class ScriptingHelper {
        Utility classes
        --------------- */
 
+    /**
+     * Represents a property object that can be derived from a common {@link Property} instance and encapsulates a
+     * particular property path, value, and the sequence of scripting templates found in the value
+     */
     private static class TemplatedProperty {
         private String path;
         private String value;
         private LinkedList<Embedding> embeddings;
 
+        /**
+         * Retrieves the property path
+         * @return A non-blank string value
+         */
         public String getPath() {
             return path;
         }
 
+        /**
+         * Retrieves the property value
+         * @return A non-blank string value
+         */
         public String getValue() {
             return value;
         }
 
+        /**
+         * Retrieves the sequence of {@link Embedding} objects that represent inline templates found in the property
+         * value
+         * @return {@code List} instance
+         */
         public List<Embedding> getEmbeddings() {
             return embeddings;
         }
 
+        /**
+         * Extracts the sequence of {@link Embedding} objects from the provided property value and stores into the
+         * current instance
+         * @param content The property value to process; a non-blank string is expected
+         */
         public void reset(String content) {
             value = content;
             embeddings = new LinkedList<>();
@@ -191,6 +251,12 @@ public class ScriptingHelper {
             }
         }
 
+        /**
+         * Creates a new {@code TemplatedProperty} instance from the provided {@link Property} object
+         * @param original The {@code Property} to process
+         * @return {@code TemplatedProperty} instance, or {@code null} if the provided {@code Property} does not contain
+         * a string value or it does not contain any inline templates
+         */
         public static TemplatedProperty from(Property original) {
             if (!String.class.equals(original.getType())) {
                 return null;
@@ -211,28 +277,54 @@ public class ScriptingHelper {
         }
     }
 
+    /**
+     * Represents a substring within a {@link Property} value that represents an inline scripting template
+     * @see SubstringMatcher
+     * @see TemplatedProperty
+     */
     private static class Embedding {
         private final SubstringMatcher.Substring substring;
         private final LinkedList<SubstringMatcher.Substring> varTokens;
 
+        /**
+         * Initializes a new {@code Embedding} instance from the provided {@link SubstringMatcher.Substring} object
+         * @param substring The {@code Substring} to process
+         */
         Embedding(SubstringMatcher.Substring substring) {
             this.substring = substring;
             this.varTokens = findVariableTokens(substring.getContent());
         }
 
+        /**
+         * Retrieves the start index of the inline script within the property value
+         * @return Integer value
+         */
         public int getStart() {
             return substring.getStart();
         }
 
+        /**
+         * Retrieves the end index of the inline script within the property value
+         * @return Integer value
+         */
         public int getEnd() {
             return substring.getEnd();
         }
 
+        /**
+         * Determines if the inline script is a JavaScript expression. If {@code false} is returned, a
+         * {@code Granite EL} expression is implied
+         * @return True or false
+         */
         public boolean isJavaScript() {
             return substring.getContent().startsWith(CoreConstants.SEPARATOR_AT)
                 || !varTokens.isEmpty();
         }
 
+        /**
+         * Retrieves the inline script content
+         * @return A non-blank string value
+         */
         public String getScript() {
             String result = substring.getContent();
             if (!varTokens.isEmpty()) {
@@ -247,6 +339,10 @@ public class ScriptingHelper {
                 TEMPLATE_STRIPPED_SYMBOLS);
         }
 
+        /**
+         * Retrieves the list of variable names found in the inline script
+         * @return A non-null {@code List} instance; can be empty
+         */
         public List<String> getVariables() {
             return varTokens
                 .stream()
@@ -254,6 +350,12 @@ public class ScriptingHelper {
                 .collect(Collectors.toList());
         }
 
+        /**
+         * Retrieves the list of {@link SubstringMatcher.Substring} objects that represent variable tokens found in the
+         * inline script
+         * @param expression The inline script to process
+         * @return A non-null {@code List} instance
+         */
         private static LinkedList<SubstringMatcher.Substring> findVariableTokens(String expression) {
             LinkedList<SubstringMatcher.Substring> result = new LinkedList<>();
             SubstringMatcher substringMatcher = new SubstringMatcher(expression, CoreConstants.SEPARATOR_AT);

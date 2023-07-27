@@ -25,6 +25,9 @@ import org.mozilla.javascript.Scriptable;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
 
+/**
+ * Extends {@link AbstractAdapter} to expose {@link Class} objects to the {@code Rhino} engine
+ */
 class ClassAdapter extends AbstractAdapter implements Annotated, Callable {
 
     private static final String METHOD_ANCESTORS = "ancestors";
@@ -33,15 +36,26 @@ class ClassAdapter extends AbstractAdapter implements Annotated, Callable {
 
     private final Class<?> reflectedClass;
 
+    /**
+     * Initializes a class instance storing a reference to the {@code Class} that serves as the data source for an
+     * inline script
+     * @param value {@code Class} instance
+     */
     ClassAdapter(Class<?> value) {
         reflectedClass = value;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public AnnotatedElement getAnnotatedElement() {
         return reflectedClass;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object get(String name, Scriptable start) {
         if (CoreConstants.PN_NAME.equals(name)) {
@@ -65,10 +79,24 @@ class ClassAdapter extends AbstractAdapter implements Annotated, Callable {
         return super.get(name, start);
     }
 
+    /**
+     * Gets the name of the underlying {@code Class} instance for use with inline scripts
+     * @return String value
+     */
     public String getName() {
         return reflectedClass.getSimpleName();
     }
 
+    /**
+     * Gets the list of {@code Class} objects representing the inheritance tree of the underlying {@code Class}
+     * instance. The signature of this method is per the contract of {@code Rhino} engine's {@link Callable}
+     * @param context The {@code Context} instance
+     * @param scope   The {@code Scriptable} instance representing the script scope
+     * @param thisObj The {@code Scriptable} instance representing the object standing for {@code this} in a JavaScript
+     *                snippet
+     * @param args    The arguments of the method call
+     * @return List of {@code Class} objects wrapped into {@link ListAdapter} for use with inline scripts
+     */
     private Object getAncestors(Context context, Scriptable scope, Scriptable thisObj, Object[] args) {
         List<ClassAdapter> classAdapters = ClassUtil.getInheritanceTree(reflectedClass, false)
             .stream()
@@ -77,6 +105,16 @@ class ClassAdapter extends AbstractAdapter implements Annotated, Callable {
         return new ListAdapter<>(classAdapters, (adapter, name) -> StringUtils.equals(adapter.getName(), String.valueOf(name)));
     }
 
+    /**
+     * Gets the {@link MemberAdapter} instance representing the field or method of the underlying {@code Class}
+     * instance. The signature of this method is per the contract of {@code Rhino} engine's {@link Callable}
+     * @param context The {@code Context} instance
+     * @param scope   The {@code Scriptable} instance representing the script scope
+     * @param thisObj The {@code Scriptable} instance representing the object standing for {@code this} in a JavaScript
+     *                snippet
+     * @param args    The arguments of the method call
+     * @return {@code MemberAdapter} object, or {@code null} if matching member is not found
+     */
     private Object getMember(Context context, Scriptable scope, Scriptable thisObj, Object[] args) {
         if (args == null || args.length < 1 || args[0] == null) {
             return null;
@@ -88,12 +126,15 @@ class ClassAdapter extends AbstractAdapter implements Annotated, Callable {
             try {
                 return new MemberAdapter(reflectedClass.getDeclaredMethod(name));
             } catch (NoSuchMethodException nsm) {
-                // Exception is plausible here
+                // An exception is plausible here
                 return null;
             }
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object getDefaultValue(Class<?> typeHint) {
         if (String.class.equals(typeHint)) {
@@ -102,6 +143,9 @@ class ClassAdapter extends AbstractAdapter implements Annotated, Callable {
         return super.getDefaultValue(typeHint);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object call(Context cx, Scriptable scope, Scriptable thisObj, Object[] args) {
         return this;

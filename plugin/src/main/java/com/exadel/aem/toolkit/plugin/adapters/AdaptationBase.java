@@ -37,7 +37,7 @@ public abstract class AdaptationBase<T> {
     private Map<Class<?>, Object> adaptations;
 
     /**
-     * Initializes the instance with the reference to the class exposing the generic type of the adaptable
+     * Initializes the instance with a class reference that manifests the generic type of the adaptable
      * @param reflectedClass {@code Class} reference, such as {@link Source} or {@link Target}
      */
     protected AdaptationBase(Class<T> reflectedClass) {
@@ -78,8 +78,8 @@ public abstract class AdaptationBase<T> {
     /**
      * Retrieves whether the given adaptation is actual for the current instance
      * @param adaptation {@code Class} reference indicating the desired data type
-     * @return True if the current instance can be cast to the given class in principle otr the adaptation medium has
-     * already been initialized; otherwise, false
+     * @return {@code True} if the current instance can be cast to the given class in principle or the adaptation medium
+     * has already been initialized; otherwise, {@code false}
      */
     public boolean hasAdaptation(Class<?> adaptation) {
         if (ClassUtils.isAssignable(getClass(), adaptation)) {
@@ -88,14 +88,25 @@ public abstract class AdaptationBase<T> {
         return getAdaptation(adaptation) != null;
     }
 
-    protected <A> A getAdaptation(Class<A> type) {
+    /**
+     * Retrieves the previously cached adaptation of the given type
+     * @return A nullable object
+     * @param type {@code Class} reference indicating the required data type
+     * @param <A> The type of the resulting value
+     */
+    private <A> A getAdaptation(Class<A> type) {
         if (adaptations != null && adaptations.containsKey(type)) {
             return type.cast(adaptations.get(type));
         }
         return null;
     }
 
-    protected void storeAdaptation(Class<?> type, Object value) {
+    /**
+     * Stores the provided adaptation result into the adaptations cache
+     * @param type {@code Class} reference indicating the required data type
+     * @param value Adaptation value
+     */
+    private void storeAdaptation(Class<?> type, Object value) {
         if (adaptations == null) {
             adaptations = new HashMap<>();
         }

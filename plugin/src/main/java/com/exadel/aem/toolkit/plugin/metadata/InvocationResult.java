@@ -13,25 +13,47 @@
  */
 package com.exadel.aem.toolkit.plugin.metadata;
 
+/**
+ * Represents a result of a method invocation as performed by a {@link InterfaceHandler}
+ * @see InterfaceHandler
+ */
 class InvocationResult {
     public static final InvocationResult NOT_DONE = new InvocationResult(false, null);
 
     private final boolean done;
     private final Object result;
 
+    /**
+     * Initializes a class instance with a flag specializing if the invocation took place
+     * @param done   The flag specifying whether the invocation succeeded
+     * @param result The invocation result
+     */
     private InvocationResult(boolean done, Object result) {
         this.done = done;
         this.result = result;
     }
 
+    /**
+     * Determines whether the invocation was successful
+     * @return True or false
+     */
     public boolean isDone() {
         return done;
     }
 
+    /**
+     * Retrieves the invocation result
+     * @return An arbitrary nullable value
+     */
     public Object getResult() {
         return result;
     }
 
+    /**
+     * Creates a new {@code InvocationResult} instance with the specified result
+     * @param result The invocation result
+     * @return {@link InvocationResult} instance
+     */
     public static InvocationResult done(Object result) {
         return new InvocationResult(true, result);
     }

@@ -42,6 +42,11 @@ import com.exadel.aem.toolkit.plugin.exceptions.ReflectionException;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
+/**
+ * Implements {@link InvocationHandler} to provide a {@link Metadata} instance that exposes the properties of a
+ * {@code T}-typed source object (usually, an annotation
+ * @param <T> Type of the source object
+ */
 class InterfaceHandler<T> implements InvocationHandler {
 
     private static final String METHOD_ANNOTATION_TYPE = "annotationType";
@@ -76,10 +81,21 @@ class InterfaceHandler<T> implements InvocationHandler {
     private final Class<?> type;
     private final Map<String, Object> properties;
 
+    /**
+     * Constructs an instance of {@code InterfaceHandler} class with its type and the dictionary of property values set
+     * @param type       Type of the source object
+     * @param properties Dictionary of property values
+     */
     InterfaceHandler(Class<T> type, Map<String, Object> properties) {
         this(null, type, properties);
     }
 
+    /**
+     * Constructs an instance of {@code InterfaceHandler} class with the source object and the dictionary of property
+     * values set
+     * @param source     The object used as the source of property values
+     * @param properties Dictionary of property values used to override and/or supplement those of the source object
+     */
     InterfaceHandler(T source, Map<String, Object> properties) {
         this(
             source,
@@ -87,6 +103,13 @@ class InterfaceHandler<T> implements InvocationHandler {
             properties);
     }
 
+    /**
+     * Constructs an instance of {@code InterfaceHandler} class with the source object, its type, and the dictionary of
+     * property values set
+     * @param source     The object used as the source of property values
+     * @param type       Type of the source object
+     * @param properties Dictionary of property values used to override and/or supplement those of the source object
+     */
     private InterfaceHandler(T source, Class<?> type, Map<String, Object> properties) {
         this.source = source;
         this.type = type;
@@ -116,6 +139,16 @@ class InterfaceHandler<T> implements InvocationHandler {
         return getProperty(method.getName(), method.getName(), true, true).getValue();
     }
 
+    /**
+     * Called from {@link InterfaceHandler#invoke(Object, Method, Object[])} to check if the method requested for
+     * invocation is one of the standard OOTB methods of a Java object, and if so, retrieves the return value of such a
+     * method
+     * @param method The method to check
+     * @param args   An array of objects containing the values of the arguments passed to
+     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     * @return {@code InvocationResult} instance containing either the return value or the
+     * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
+     */
     private InvocationResult tryInvokeStandardMember(Method method, Object[] args) {
         if (method.getName().equals(METHOD_ANNOTATION_TYPE)) {
             return InvocationResult.done(type);
@@ -132,25 +165,44 @@ class InterfaceHandler<T> implements InvocationHandler {
         return InvocationResult.NOT_DONE;
     }
 
+    /**
+     * Called from {@link InterfaceHandler#invoke(Object, Method, Object[])} to check if the method requested for
+     * invocation is one of the methods handled by the current class, and if so, retrieves the return value of such a
+     * method
+     * @param method The method to check
+     * @param args   An array of objects containing the values of the arguments passed to
+     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     * @return Either an {@code InvocationResult} instance containing the return value or the
+     * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
+     */
     private InvocationResult tryInvokeMetadataMember(Method method, Object[] args) {
         return Stream.<BiFunction<Method, Object[], InvocationResult>>of(
-            this::tryInvokeGetAnnotation,
-            this::tryInvokeGetAnyAnnotation,
-            this::tryInvokeHasProperty,
-            this::tryInvokeGetValue,
-            this::tryInvokeGetProperty,
-            this::tryInvokePutValue,
-            this::tryInvokeUnsetValue,
-            this::tryInvokeIterator,
-            this::tryInvokeForEach,
-            this::tryInvokeSpliterator,
-            this::tryInvokeStream)
+                this::tryInvokeGetAnnotation,
+                this::tryInvokeGetAnyAnnotation,
+                this::tryInvokeHasProperty,
+                this::tryInvokeGetValue,
+                this::tryInvokeGetProperty,
+                this::tryInvokePutValue,
+                this::tryInvokeUnsetValue,
+                this::tryInvokeIterator,
+                this::tryInvokeForEach,
+                this::tryInvokeSpliterator,
+                this::tryInvokeStream)
             .map(func -> func.apply(method, args))
             .filter(InvocationResult::isDone)
             .findFirst()
             .orElse(InvocationResult.NOT_DONE);
     }
 
+    /**
+     * Tests if the requested method is {@code getAnnotation()} and retrieves the annotation value
+     * @param method The method to check
+     * @param args   An array of objects containing the values of the arguments passed to
+     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     * @param <A>    Type of the annotation
+     * @return Either an {@code InvocationResult} instance containing the return value or the
+     * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
+     */
     private <A extends Annotation> InvocationResult tryInvokeGetAnnotation(Method method, Object[] args) {
         if (matchesNameAndArguments(method, args, METHOD_GET_ANNOTATION, Class.class)) {
             @SuppressWarnings("unchecked")
@@ -160,6 +212,16 @@ class InterfaceHandler<T> implements InvocationHandler {
         return InvocationResult.NOT_DONE;
     }
 
+    /**
+     * Tests if the requested method is {@code getAnyAnnotation()} and retrieves the matching annotation value. Consumes
+     * an array of annotation types
+     * @param method The method to check
+     * @param args   An array of objects containing the values of the arguments passed to
+     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     * @param <A>    Type of the annotation
+     * @return Either an {@code InvocationResult} instance containing the return value or the
+     * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
+     */
     private <A extends Annotation> InvocationResult tryInvokeGetAnyAnnotation(Method method, Object[] args) {
         if (matchesNameAndArguments(method, args, METHOD_GET_ANY_ANNOTATION, Class[].class)) {
             for (Class<?> cls : (Class<?>[]) args[0]) {
@@ -174,6 +236,14 @@ class InterfaceHandler<T> implements InvocationHandler {
         return InvocationResult.NOT_DONE;
     }
 
+    /**
+     * Tests if the requested method is {@code hasProperty()} and retrieves whether the given property is present
+     * @param method The method to check
+     * @param args   An array of objects containing the values of the arguments passed to
+     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     * @return Either an {@code InvocationResult} instance containing the return value or the
+     * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
+     */
     private InvocationResult tryInvokeHasProperty(Method method, Object[] args) {
         if (matchesNameAndArguments(method, args, METHOD_HAS_PROPERTY, String.class)) {
             Property result = getProperty((String) args[0], false);
@@ -185,6 +255,15 @@ class InterfaceHandler<T> implements InvocationHandler {
         return InvocationResult.NOT_DONE;
     }
 
+    /**
+     * Tests if the requested method is {@code getValue()} and retrieves the value of a property of the source object by
+     * the given name or path
+     * @param method The method to check
+     * @param args   An array of objects containing the values of the arguments passed to
+     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     * @return {@code InvocationResult} instance containing either the return value or the
+     * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
+     */
     private InvocationResult tryInvokeGetValue(Method method, Object[] args) {
         if (matchesNameAndArguments(method, args, METHOD_GET, String.class)) {
             Property result = getProperty((String) args[0], false);
@@ -196,6 +275,15 @@ class InterfaceHandler<T> implements InvocationHandler {
         return InvocationResult.NOT_DONE;
     }
 
+    /**
+     * Tests if the requested method is {@code getProperty()} and retrieves the property of the source object by the
+     * given name or path
+     * @param method The method to check
+     * @param args   An array of objects containing the values of the arguments passed to
+     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     * @return {@code InvocationResult} instance containing either the return value or the
+     * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
+     */
     private InvocationResult tryInvokeGetProperty(Method method, Object[] args) {
         if (matchesNameAndArguments(method, args, METHOD_GET_PROPERTY, String.class)) {
             Property result = getProperty((String) args[0], true);
@@ -207,6 +295,15 @@ class InterfaceHandler<T> implements InvocationHandler {
         return InvocationResult.NOT_DONE;
     }
 
+    /**
+     * Tests if the requested method is {@code putValue()} and assigns a value to the property of the source object by
+     * the given name or path
+     * @param method The method to check
+     * @param args   An array of objects containing the values of the arguments passed to
+     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     * @return {@code InvocationResult} instance containing either the return value of the method called or the
+     * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
+     */
     private InvocationResult tryInvokePutValue(Method method, Object[] args) {
         if (matchesNameAndArguments(method, args, METHOD_PUT, String.class, Object.class)) {
             Object result = putValue((String) args[0], args[1]);
@@ -218,6 +315,15 @@ class InterfaceHandler<T> implements InvocationHandler {
         return InvocationResult.NOT_DONE;
     }
 
+    /**
+     * Tests if the requested method is {@code unsetValue()} and clears the "overriding" value previously assigned to a
+     * property of the source object
+     * @param method The method to check
+     * @param args   An array of objects containing the values of the arguments passed to
+     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     * @return {@code InvocationResult} instance containing either the return value of the method called or the
+     * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
+     */
     private InvocationResult tryInvokeUnsetValue(Method method, Object[] args) {
         if (matchesNameAndArguments(method, args, METHOD_UNSET, String.class)) {
             Object result = putValue((String) args[0], null);
@@ -226,6 +332,14 @@ class InterfaceHandler<T> implements InvocationHandler {
         return InvocationResult.NOT_DONE;
     }
 
+    /**
+     * Tests if the requested method is {@code iterator()} and performs appropriate invocation
+     * @param method The method to check
+     * @param args   An array of objects containing the values of the arguments passed to
+     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     * @return {@code InvocationResult} instance containing either the return value of the method called or the
+     * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
+     */
     private InvocationResult tryInvokeIterator(Method method, Object[] args) {
         if (matchesNameAndArguments(method, args, METHOD_ITERATOR)
             || matchesNameAndArguments(method, args, METHOD_ITERATOR, boolean.class, boolean.class)) {
@@ -235,6 +349,14 @@ class InterfaceHandler<T> implements InvocationHandler {
         return InvocationResult.NOT_DONE;
     }
 
+    /**
+     * Tests if the requested method is {@code forEach()} and performs appropriate invocation
+     * @param method The method to check
+     * @param args   An array of objects containing the values of the arguments passed to
+     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     * @return {@code InvocationResult} instance containing either the return value of the method called or the
+     * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
+     */
     private InvocationResult tryInvokeForEach(Method method, Object[] args) {
         if (matchesNameAndArguments(method, args, METHOD_FOR_EACH, Consumer.class)) {
             @SuppressWarnings("unchecked")
@@ -245,6 +367,14 @@ class InterfaceHandler<T> implements InvocationHandler {
         return InvocationResult.NOT_DONE;
     }
 
+    /**
+     * Tests if the requested method is {@code spliterator()} and performs appropriate invocation
+     * @param method The method to check
+     * @param args   An array of objects containing the values of the arguments passed to
+     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     * @return {@code InvocationResult} instance containing either the return value of the method called or the
+     * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
+     */
     private InvocationResult tryInvokeSpliterator(Method method, Object[] args) {
         if (matchesNameAndArguments(method, args, METHOD_SPLITERATOR)
             || matchesNameAndArguments(method, args, METHOD_SPLITERATOR, boolean.class, boolean.class)) {
@@ -254,6 +384,14 @@ class InterfaceHandler<T> implements InvocationHandler {
         return InvocationResult.NOT_DONE;
     }
 
+    /**
+     * Tests if the requested method is {@code stream()} and performs appropriate invocation
+     * @param method The method to check
+     * @param args   An array of objects containing the values of the arguments passed to
+     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     * @return {@code InvocationResult} instance containing either the return value of the method called or the
+     * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
+     */
     private InvocationResult tryInvokeStream(Method method, Object[] args) {
         if (matchesNameAndArguments(method, args, METHOD_STREAM)
             || matchesNameAndArguments(method, args, METHOD_STREAM, boolean.class, boolean.class)) {
@@ -287,6 +425,14 @@ class InterfaceHandler<T> implements InvocationHandler {
        <Iterable> logic
        --------------- */
 
+    /**
+     * Retrieves an {@link Iterator} instance that can be used to iterate through the properties of the source object
+     * @param args An array of objects containing the values of the arguments passed to
+     *             {@link InterfaceHandler#invoke(Object, Method, Object[])}. We expect the 0th argument to be the flag
+     *             determining whether array values should be iterated as separate entities, or else the array is
+     *             yielded as is
+     * @return {@code Iterator} instance
+     */
     private Iterator getIterator(Object[] args) {
         boolean deepRead = false;
         boolean expandArrays = false;
@@ -303,6 +449,13 @@ class InterfaceHandler<T> implements InvocationHandler {
         return new Iterator(deepRead, expandArrays);
     }
 
+    /**
+     * Retrieves an {@link Spliterator} instance that can be used to iterate through the properties of the source
+     * object
+     * @param args An array of objects containing per the contract of the
+     *             {@link InterfaceHandler#invoke(Object, Method, Object[])} method
+     * @return {@code Spliterator} instance
+     */
     private Spliterator<Property> getSpliterator(Object[] args) {
         Iterator iterator = getIterator(args);
         return Spliterators.spliteratorUnknownSize(iterator, 0);
@@ -312,10 +465,24 @@ class InterfaceHandler<T> implements InvocationHandler {
        <Metadata> #get logic
        ----------------------- */
 
+    /**
+     * Retrieves a {@link Property} object by the given path
+     * @param path           The path within the current object to construct the property from
+     * @param throwOnMissing {@code True} to throw an exception if the property is not found
+     * @return A nullable {@code Property} object
+     */
     private Property getProperty(String path, boolean throwOnMissing) {
         return getProperty(PropertyPath.parse(path), throwOnMissing);
     }
 
+    /**
+     * Retrieves a {@link Property} object by the given path
+     * @param path           The {@link PropertyPath} instance that manifests the path within the current object to
+     *                       construct the property from
+     * @param throwOnMissing {@code True} to throw an exception if the property is not found
+     * @return A nullable {@code Property} object
+     * @see PropertyPath
+     */
     private Property getProperty(PropertyPath path, boolean throwOnMissing) {
         PropertyPathElement element = path.getElements().remove();
         String name = element.getName();
@@ -342,6 +509,15 @@ class InterfaceHandler<T> implements InvocationHandler {
         return result;
     }
 
+    /**
+     * Retrieves a {@link Property} object by the given path
+     * @param path                   The "complete" path within the current object to construct the property from
+     * @param name                   A string representing the current path chunk
+     * @param throwOnMissingMethod   {@code True} to throw an exception if the property is not found
+     * @param substituteMissingValue {@code True} to substitute a {@code }
+     * @return A nullable {@code Property} object
+     * @see PropertyPath
+     */
     private Property getProperty(String path, String name, boolean throwOnMissingMethod, boolean substituteMissingValue) {
         try {
             Method method = type.getDeclaredMethod(name);
@@ -367,14 +543,14 @@ class InterfaceHandler<T> implements InvocationHandler {
 
     /**
      * Retrieves a default value for a method based on the method return type. This method mainly address the case when
-     * a {@link Metadata} is created from just type and aims to make sure that as many annotation properties as
-     * possible do not return {@code null}. Note: currently this method is not comprehensive since it does not cover all
-     * the possible annotation properties' types
+     * a {@link Metadata} is created from just type and aims to make sure that as many annotation properties as possible
+     * do not return {@code null}. Note: currently this method is not comprehensive since it does not cover all the
+     * possible annotation properties' types
      * @param method               {@code Method} instance
      * @param createMissingObjects {@code True} to generate missing objects, such as nested arrays of annotation
-     *                             instances. Useful when querying annotation data but must be turned off when
-     *                             data is being stored. In the latter case, the stored data will end up in a "detached"
-     *                             ad-hoc object
+     *                             instances. Useful when querying annotation data but must be turned off when data is
+     *                             being stored. In the latter case, the stored data will end up in a "detached" ad-hoc
+     *                             object
      * @return A nullable value
      */
     @SuppressWarnings("unchecked")
@@ -416,10 +592,22 @@ class InterfaceHandler<T> implements InvocationHandler {
        <Metadata> #put logic
        ----------------------- */
 
+    /**
+     * Assigns a value to the property of the source object by the given path
+     * @param path  The path that manifests a property of the current object
+     * @param value The value to assign
+     * @return The value assigned
+     */
     private Object putValue(String path, Object value) {
         return putValue(PropertyPath.parse(path), value);
     }
 
+    /**
+     * Assigns a value to the property of the source object by the given path
+     * @param path  {@link PropertyPath} instance that manifests a property of the current object
+     * @param value The value to assign
+     * @return The value assigned
+     */
     private Object putValue(PropertyPath path, Object value) {
         if (path.getElements().size() > 1) {
             return putInTree(path, value);
@@ -437,7 +625,7 @@ class InterfaceHandler<T> implements InvocationHandler {
                 || !validateArrayBounds(element, path, currentProperty.getValue())) {
                 return null;
             }
-            Object modifiedValue = expandArrayIfNeeded(
+            Object modifiedValue = appendToArrayIfNeeded(
                 currentProperty.getValue(),
                 currentProperty.getComponentType(),
                 element.getIndex());
@@ -452,6 +640,13 @@ class InterfaceHandler<T> implements InvocationHandler {
         return null;
     }
 
+    /**
+     * Called by {@link InterfaceHandler#putValue(PropertyPath, Object)} to assign a value to a property of the source
+     * manifested by a compound (tree-like) path
+     * @param path  {@link PropertyPath} instance that manifests a property of the current object
+     * @param value The value to assign
+     * @return The value assigned
+     */
     @SuppressWarnings("unchecked")
     private Object putInTree(PropertyPath path, Object value) {
         PropertyPathElement element = path.getElements().remove();
@@ -468,7 +663,7 @@ class InterfaceHandler<T> implements InvocationHandler {
                 || !validateArrayBounds(element, path, currentProperty.getValue())) {
                 return null;
             }
-            existingValue = expandArrayIfNeeded(
+            existingValue = appendToArrayIfNeeded(
                 currentProperty.getValue(),
                 currentProperty.getComponentType(),
                 element.getIndex());
@@ -499,8 +694,18 @@ class InterfaceHandler<T> implements InvocationHandler {
         return metadata.putValue(path, value);
     }
 
+    /**
+     * Called by a property-assigning routine to convert the provided source object into an array or else extend the
+     * provided array and append to it a new {@link Metadata} object (probably a proxied annotation) built upon the
+     * given {@code contentType}. This method can be used to construct a new metadata instance and fill in its
+     * array-typed properties via notation like {@code /my/property[0] = "value", /my/property[1} = "value2, etc
+     * @param source        The array-typed object to modify
+     * @param componentType The type of an element of the array
+     * @param index         The index of the element to modify
+     * @return The modified array or the original object if not of an array type or else the index is invalid
+     */
     @SuppressWarnings("unchecked")
-    private static Object expandArrayIfNeeded(Object source, Class<?> componentType, int index) {
+    private static Object appendToArrayIfNeeded(Object source, Class<?> componentType, int index) {
         int sourceLength = (source == null || !source.getClass().isArray()) ? 0 : Array.getLength(source);
         if (index < sourceLength) {
             return source;
@@ -519,10 +724,29 @@ class InterfaceHandler<T> implements InvocationHandler {
        Validation logic
        ---------------- */
 
+    /**
+     * Called by a property-assigning routine to validate that the value to assign to a property is of the same type as
+     * the property itself
+     * @param element The {@link PropertyPathElement} instance that manifests the terminal (last-in-the path) member
+     *                within the source object to assign the value to
+     * @param path    The {@link PropertyPath} instance that manifests the path within the source object
+     * @param value   The value to assign
+     * @return True or false
+     */
     private boolean validateValueType(PropertyPathElement element, PropertyPath path, Object value) {
         return validateValueType(element, path, value, false);
     }
 
+    /**
+     * Called by a property-assigning routine to validate that the value to assign to a property is of the same type as
+     * the property itself
+     * @param element     The {@link PropertyPathElement} instance that manifests the terminal (last-in-the path) member
+     *                    within the source object to assign the value to
+     * @param path        The {@link PropertyPath} instance that manifests the path within the source object
+     * @param value       The value to assign
+     * @param lookUpArray {@code True} to test the component type of the array-typed property
+     * @return True or false
+     */
     private boolean validateValueType(PropertyPathElement element, PropertyPath path, Object value, boolean lookUpArray) {
         if (value == null) {
             return true;
@@ -551,6 +775,16 @@ class InterfaceHandler<T> implements InvocationHandler {
         return result;
     }
 
+    /**
+     * Called by a property-assigning routine to validate that the index of the array-typed property is within the
+     * bounds of the array
+     * @param element A {@link PropertyPathElement} instance that signifies the terminal (last-in-the path) member
+     *                within the source object to assign the value to. It is expected to bear a valid index which is
+     *                used for validation of {@code target}
+     * @param path    The {@link PropertyPath} instance that manifests the path within the source object
+     * @param target  The array-typed or else convertible to array value which is checked with the index
+     * @return True if the index falls within the array bounds or else false
+     */
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private static boolean validateArrayBounds(PropertyPathElement element, PropertyPath path, Object target) {
         int length = (target == null || !target.getClass().isArray()) ? 0 : Array.getLength(target);
@@ -568,6 +802,13 @@ class InterfaceHandler<T> implements InvocationHandler {
        Silent invocation
        ----------------- */
 
+    /**
+     * Invokes the given method on the source object and returns the result or else {@code null} if the invocation
+     * failed with an exception
+     * @param method The method to invoke
+     * @param source The source object to invoke the method on
+     * @return A nullable value
+     */
     private static Object invokeSilently(Method method, Object source) {
         try {
             return method.invoke(source);
@@ -580,6 +821,9 @@ class InterfaceHandler<T> implements InvocationHandler {
        Serialization
        ------------- */
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String toString() {
         if (source == null && properties.isEmpty()) {
@@ -611,6 +855,11 @@ class InterfaceHandler<T> implements InvocationHandler {
         return StringUtils.stripEnd(result.toString(), DialogConstants.SEPARATOR_SEMICOLON) + DialogConstants.CLOSING_CURLY;
     }
 
+    /**
+     * Called by {@link InterfaceHandler#toString()} to convert the given array to a string representation
+     * @param array The array to convert
+     * @return A string representation of the array; can be an empty string but never {@code null}
+     */
     private static String toArrayString(Object array) {
         StringBuilder result = new StringBuilder(OPENING_SQUARE);
         for (int i = 0; i < Array.getLength(array); i++) {
@@ -629,6 +878,9 @@ class InterfaceHandler<T> implements InvocationHandler {
        Standard method overrides
        ------------------------- */
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -645,6 +897,9 @@ class InterfaceHandler<T> implements InvocationHandler {
             .isEquals();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public int hashCode() {
         return new HashCodeBuilder(HASH_INITIAL_NUMBER, HASH_MULTIPLIER)
@@ -658,12 +913,21 @@ class InterfaceHandler<T> implements InvocationHandler {
        Utility classes
        --------------- */
 
+    /**
+     * Implements {@link java.util.Iterator} to provide sequential access to properties of an object (usually a proxied
+     * annotation), including (optionally) nested properties and array elements
+     */
     private class Iterator implements java.util.Iterator<Property> {
 
         private final boolean deepRead;
         private final boolean expandArrays;
         private final Queue<Property> properties;
 
+        /**
+         * Constructs a new {@code Iterator} instance
+         * @param deepRead     {@code True} to read nested properties
+         * @param expandArrays {@code True} to expand array elements into separate elements of iteration
+         */
         Iterator(boolean deepRead, boolean expandArrays) {
             this.deepRead = deepRead;
             this.expandArrays = expandArrays;
@@ -671,11 +935,17 @@ class InterfaceHandler<T> implements InvocationHandler {
             collect(null, StringUtils.EMPTY, this.properties);
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public boolean hasNext() {
             return !properties.isEmpty();
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public Property next() {
             if (!hasNext()) {
@@ -684,6 +954,13 @@ class InterfaceHandler<T> implements InvocationHandler {
             return properties.remove();
         }
 
+        /**
+         * Analyzes the given annotation and adds its properties to the given queue
+         * @param target     The annotation to analyze
+         * @param pathPrefix The part of the path to prepend to the property names. Usually signifies nested properties
+         * @param collection The queue to add the properties to. It will be afterwards iterated with
+         *                   {@link Iterator#next()}
+         */
         private void collect(Annotation target, String pathPrefix, Queue<Property> collection) {
             Method[] methods = target != null
                 ? target.annotationType().getDeclaredMethods()
@@ -693,6 +970,14 @@ class InterfaceHandler<T> implements InvocationHandler {
             }
         }
 
+        /**
+         * Adds a property manifested by the given {@code Annotation} and {@code Method} the given queue
+         * @param target     The annotation being analyzed
+         * @param method     The method to retrieve a value from
+         * @param pathPrefix The part of the path to prepend to the property names. Usually signifies nested properties
+         * @param collection The queue to add the properties to. It will be afterwards iterated with
+         *                   {@link Iterator#next()}
+         */
         private void collect(Annotation target, Method method, String pathPrefix, Queue<Property> collection) {
             String path = joinPathChunks(pathPrefix, method.getName());
             Class<?> propertyType = method.getReturnType();
@@ -719,6 +1004,12 @@ class InterfaceHandler<T> implements InvocationHandler {
             }
         }
 
+        /**
+         * Invokes the given method on the source object and returns the result or else {@code null} if the invocation
+         * fails
+         * @param method The method to invoke
+         * @return A nullable value
+         */
         private Object invokeInCurrentObjectSilently(Method method) {
             if (InterfaceHandler.this.properties != null && InterfaceHandler.this.properties.containsKey(method.getName())) {
                 return InterfaceHandler.this.properties.get(method.getName());
@@ -726,6 +1017,12 @@ class InterfaceHandler<T> implements InvocationHandler {
             return source != null ? invokeSilently(method, source) : null;
         }
 
+        /**
+         * Joins two property path chunks with a slash
+         * @param left  The left part of the path
+         * @param right The right part of the path
+         * @return A string representing the joined path
+         */
         private String joinPathChunks(String left, String right) {
             return left
                 + (StringUtils.isNoneEmpty(left, right) ? CoreConstants.SEPARATOR_SLASH : StringUtils.EMPTY)

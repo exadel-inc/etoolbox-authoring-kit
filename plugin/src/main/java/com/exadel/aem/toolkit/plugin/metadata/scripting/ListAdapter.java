@@ -22,6 +22,10 @@ import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.Undefined;
 
+/**
+ * Extends {@link AbstractAdapter} to expose {@code List} objects to the {@code Rhino} engine
+ * @param <T> Type of the {@code List} items
+ */
 class ListAdapter<T> extends AbstractAdapter {
 
     private static final String METHOD_INCLUDES = "includes";
@@ -29,20 +33,37 @@ class ListAdapter<T> extends AbstractAdapter {
     private final List<T> items = new ArrayList<>();
     private final BiPredicate<T, Object> matcher;
 
+    /**
+     * Initializes a class instance storing a reference to the {@code List} that serves as the data source for an inline
+     * script
+     * @param items {@code List} instance
+     */
     ListAdapter(List<T> items) {
         this(items, null);
     }
 
+    /**
+     * Initializes a class instance storing a reference to the {@code List} that serves as the data source for an inline
+     * script
+     * @param items   {@code List} instance
+     * @param matcher {@code BiPredicate} instance used to realize the "{@code includes}" logic
+     */
     ListAdapter(List<T> items, BiPredicate<T, Object> matcher) {
         this.items.addAll(items);
         this.matcher = matcher;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getClassName() {
         return ListAdapter.class.getSimpleName();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object get(String name, Scriptable start) {
         if (METHOD_INCLUDES.equals(name)) {
@@ -51,11 +72,17 @@ class ListAdapter<T> extends AbstractAdapter {
         return super.get(name, start);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object get(int index, Scriptable start) {
         return index >= 0 && index < items.size() ? items.get(index) : Undefined.SCRIPTABLE_UNDEFINED;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @SuppressWarnings("unchecked")
     public void put(int index, Scriptable start, Object value) {
@@ -64,6 +91,16 @@ class ListAdapter<T> extends AbstractAdapter {
         }
     }
 
+    /**
+     * Tests whether a provided item is included in a list of values represented by this {@code ListAdapter}. The
+     * signature of this method is per the contract of {@code Rhino} engine's {@link Callable}
+     * @param context The {@code Context} instance
+     * @param scope   The {@code Scriptable} instance representing the script scope
+     * @param thisObj The {@code Scriptable} instance representing the object standing for {@code this} in a JavaScript
+     *                snippet
+     * @param args    The arguments of the method call
+     * @return True or false
+     */
     @SuppressWarnings("unchecked")
     public Object includes(Context context, Scriptable scope, Scriptable thisObj, Object[] args) {
         if (args == null || args.length < 1) {

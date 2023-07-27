@@ -21,14 +21,33 @@ import org.mozilla.javascript.Scriptable;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 
+/**
+ * Extends {@link AbstractAdapter} to expose {@link Annotation} objects to the {@code Rhino} engine
+ */
 class AnnotationAdapter extends AbstractAdapter implements Annotated {
 
     private final Annotation reflectedAnnotation;
 
+    /**
+     * Initializes a class instance storing a reference to the {@code Annotation} that serves as the data source for an
+     * inline script
+     * @param value {@code Annotation} instance
+     */
     AnnotationAdapter(Annotation value) {
         this.reflectedAnnotation = value;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public AnnotatedElement getAnnotatedElement() {
+        return reflectedAnnotation.annotationType();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object get(String name, Scriptable start) {
         if (CoreConstants.PN_NAME.equals(name)) {
@@ -48,10 +67,5 @@ class AnnotationAdapter extends AbstractAdapter implements Annotated {
         } catch (NoSuchMethodException e) {
             return null;
         }
-    }
-
-    @Override
-    public AnnotatedElement getAnnotatedElement() {
-        return reflectedAnnotation.annotationType();
     }
 }
