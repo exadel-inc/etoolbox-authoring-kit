@@ -14,8 +14,8 @@
 package com.exadel.aem.toolkit.plugin.metadata;
 
 /**
- * Represents a result of a method invocation as performed by a {@link InterfaceHandler}
- * @see InterfaceHandler
+ * Represents a result of a method invocation as performed by a {@link MetadataHandler}
+ * @see MetadataHandler
  */
 class InvocationResult {
     public static final InvocationResult NOT_DONE = new InvocationResult(false, null);

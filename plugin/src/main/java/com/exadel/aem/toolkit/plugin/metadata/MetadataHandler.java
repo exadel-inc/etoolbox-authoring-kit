@@ -47,7 +47,7 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
  * {@code T}-typed source object (usually, an annotation
  * @param <T> Type of the source object
  */
-class InterfaceHandler<T> implements InvocationHandler {
+class MetadataHandler<T> implements InvocationHandler {
 
     private static final String METHOD_ANNOTATION_TYPE = "annotationType";
     private static final String METHOD_EQUALS = "equals";
@@ -86,7 +86,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * @param type       Type of the source object
      * @param properties Dictionary of property values
      */
-    InterfaceHandler(Class<T> type, Map<String, Object> properties) {
+    MetadataHandler(Class<T> type, Map<String, Object> properties) {
         this(null, type, properties);
     }
 
@@ -96,7 +96,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * @param source     The object used as the source of property values
      * @param properties Dictionary of property values used to override and/or supplement those of the source object
      */
-    InterfaceHandler(T source, Map<String, Object> properties) {
+    MetadataHandler(T source, Map<String, Object> properties) {
         this(
             source,
             source instanceof Annotation ? ((Annotation) source).annotationType() : source.getClass(),
@@ -110,7 +110,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * @param type       Type of the source object
      * @param properties Dictionary of property values used to override and/or supplement those of the source object
      */
-    private InterfaceHandler(T source, Class<?> type, Map<String, Object> properties) {
+    private MetadataHandler(T source, Class<?> type, Map<String, Object> properties) {
         this.source = source;
         this.type = type;
         this.properties = new HashMap<>();
@@ -140,12 +140,12 @@ class InterfaceHandler<T> implements InvocationHandler {
     }
 
     /**
-     * Called from {@link InterfaceHandler#invoke(Object, Method, Object[])} to check if the method requested for
+     * Called from {@link MetadataHandler#invoke(Object, Method, Object[])} to check if the method requested for
      * invocation is one of the standard OOTB methods of a Java object, and if so, retrieves the return value of such a
      * method
      * @param method The method to check
      * @param args   An array of objects containing the values of the arguments passed to
-     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     *               {@link MetadataHandler#invoke(Object, Method, Object[])}
      * @return {@code InvocationResult} instance containing either the return value or the
      * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
      */
@@ -166,12 +166,12 @@ class InterfaceHandler<T> implements InvocationHandler {
     }
 
     /**
-     * Called from {@link InterfaceHandler#invoke(Object, Method, Object[])} to check if the method requested for
+     * Called from {@link MetadataHandler#invoke(Object, Method, Object[])} to check if the method requested for
      * invocation is one of the methods handled by the current class, and if so, retrieves the return value of such a
      * method
      * @param method The method to check
      * @param args   An array of objects containing the values of the arguments passed to
-     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     *               {@link MetadataHandler#invoke(Object, Method, Object[])}
      * @return Either an {@code InvocationResult} instance containing the return value or the
      * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
      */
@@ -198,7 +198,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * Tests if the requested method is {@code getAnnotation()} and retrieves the annotation value
      * @param method The method to check
      * @param args   An array of objects containing the values of the arguments passed to
-     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     *               {@link MetadataHandler#invoke(Object, Method, Object[])}
      * @param <A>    Type of the annotation
      * @return Either an {@code InvocationResult} instance containing the return value or the
      * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
@@ -217,7 +217,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * an array of annotation types
      * @param method The method to check
      * @param args   An array of objects containing the values of the arguments passed to
-     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     *               {@link MetadataHandler#invoke(Object, Method, Object[])}
      * @param <A>    Type of the annotation
      * @return Either an {@code InvocationResult} instance containing the return value or the
      * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
@@ -240,7 +240,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * Tests if the requested method is {@code hasProperty()} and retrieves whether the given property is present
      * @param method The method to check
      * @param args   An array of objects containing the values of the arguments passed to
-     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     *               {@link MetadataHandler#invoke(Object, Method, Object[])}
      * @return Either an {@code InvocationResult} instance containing the return value or the
      * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
      */
@@ -260,7 +260,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * the given name or path
      * @param method The method to check
      * @param args   An array of objects containing the values of the arguments passed to
-     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     *               {@link MetadataHandler#invoke(Object, Method, Object[])}
      * @return {@code InvocationResult} instance containing either the return value or the
      * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
      */
@@ -280,7 +280,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * given name or path
      * @param method The method to check
      * @param args   An array of objects containing the values of the arguments passed to
-     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     *               {@link MetadataHandler#invoke(Object, Method, Object[])}
      * @return {@code InvocationResult} instance containing either the return value or the
      * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
      */
@@ -300,7 +300,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * the given name or path
      * @param method The method to check
      * @param args   An array of objects containing the values of the arguments passed to
-     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     *               {@link MetadataHandler#invoke(Object, Method, Object[])}
      * @return {@code InvocationResult} instance containing either the return value of the method called or the
      * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
      */
@@ -320,7 +320,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * property of the source object
      * @param method The method to check
      * @param args   An array of objects containing the values of the arguments passed to
-     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     *               {@link MetadataHandler#invoke(Object, Method, Object[])}
      * @return {@code InvocationResult} instance containing either the return value of the method called or the
      * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
      */
@@ -336,7 +336,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * Tests if the requested method is {@code iterator()} and performs appropriate invocation
      * @param method The method to check
      * @param args   An array of objects containing the values of the arguments passed to
-     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     *               {@link MetadataHandler#invoke(Object, Method, Object[])}
      * @return {@code InvocationResult} instance containing either the return value of the method called or the
      * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
      */
@@ -353,7 +353,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * Tests if the requested method is {@code forEach()} and performs appropriate invocation
      * @param method The method to check
      * @param args   An array of objects containing the values of the arguments passed to
-     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     *               {@link MetadataHandler#invoke(Object, Method, Object[])}
      * @return {@code InvocationResult} instance containing either the return value of the method called or the
      * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
      */
@@ -371,7 +371,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * Tests if the requested method is {@code spliterator()} and performs appropriate invocation
      * @param method The method to check
      * @param args   An array of objects containing the values of the arguments passed to
-     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     *               {@link MetadataHandler#invoke(Object, Method, Object[])}
      * @return {@code InvocationResult} instance containing either the return value of the method called or the
      * {@link InvocationResult#NOT_DONE} which tells that invocation attempts should continue
      */
@@ -388,7 +388,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * Tests if the requested method is {@code stream()} and performs appropriate invocation
      * @param method The method to check
      * @param args   An array of objects containing the values of the arguments passed to
-     *               {@link InterfaceHandler#invoke(Object, Method, Object[])}
+     *               {@link MetadataHandler#invoke(Object, Method, Object[])}
      * @return {@code InvocationResult} instance containing either the return value of the method called or the
      * {@link InvocationResult#NOT_DONE} which effectively tells that invocation attempts should continue
      */
@@ -436,7 +436,7 @@ class InterfaceHandler<T> implements InvocationHandler {
     /**
      * Retrieves an {@link Iterator} instance that can be used to iterate through the properties of the source object
      * @param args An array of objects containing the values of the arguments passed to
-     *             {@link InterfaceHandler#invoke(Object, Method, Object[])}. We expect the 0th argument to be the flag
+     *             {@link MetadataHandler#invoke(Object, Method, Object[])}. We expect the 0th argument to be the flag
      *             determining whether array values should be iterated as separate entities, or else the array is
      *             yielded as is
      * @return {@code Iterator} instance
@@ -461,7 +461,7 @@ class InterfaceHandler<T> implements InvocationHandler {
      * Retrieves an {@link Spliterator} instance that can be used to iterate through the properties of the source
      * object
      * @param args An array of objects containing per the contract of the
-     *             {@link InterfaceHandler#invoke(Object, Method, Object[])} method
+     *             {@link MetadataHandler#invoke(Object, Method, Object[])} method
      * @return {@code Spliterator} instance
      */
     private Spliterator<Property> getSpliterator(Object[] args) {
@@ -649,7 +649,7 @@ class InterfaceHandler<T> implements InvocationHandler {
     }
 
     /**
-     * Called by {@link InterfaceHandler#putValue(PropertyPath, Object)} to assign a value to a property of the source
+     * Called by {@link MetadataHandler#putValue(PropertyPath, Object)} to assign a value to a property of the source
      * manifested by a compound (tree-like) path
      * @param path  {@link PropertyPath} instance that manifests a property of the current object
      * @param value The value to assign
@@ -864,9 +864,9 @@ class InterfaceHandler<T> implements InvocationHandler {
     }
 
     /**
-     * Called by {@link InterfaceHandler#toString()} to convert the given array to a string representation
+     * Called by {@link MetadataHandler#toString()} to convert the given array to a string representation
      * @param array The array to convert
-     * @return A string representation of the array; can be an empty string but never {@code null}
+     * @return A string representation of the array
      */
     private static String toArrayString(Object array) {
         StringBuilder result = new StringBuilder(OPENING_SQUARE);
@@ -1019,8 +1019,8 @@ class InterfaceHandler<T> implements InvocationHandler {
          * @return A nullable value
          */
         private Object invokeInCurrentObjectSilently(Method method) {
-            if (InterfaceHandler.this.properties != null && InterfaceHandler.this.properties.containsKey(method.getName())) {
-                return InterfaceHandler.this.properties.get(method.getName());
+            if (MetadataHandler.this.properties != null && MetadataHandler.this.properties.containsKey(method.getName())) {
+                return MetadataHandler.this.properties.get(method.getName());
             }
             return source != null ? invokeSilently(method, source) : null;
         }

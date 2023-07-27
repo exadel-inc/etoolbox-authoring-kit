@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 /**
  * Represents a generic metadata object intended to retrieve, modify, and store Java annotations properties via
  * invocation handling
- * @see InterfaceHandler
+ * @see MetadataHandler
  * @see Property
  */
 public interface Metadata extends Annotation, Iterable<Property> {
@@ -205,9 +205,9 @@ public interface Metadata extends Annotation, Iterable<Property> {
             return (Metadata) source;
         }
         Class<? extends Annotation> effectiveType = source != null ? source.annotationType() : type;
-        InterfaceHandler<T> interfaceHandler = source != null
-            ? new InterfaceHandler<>(source, properties)
-            : new InterfaceHandler<>(type, properties);
+        MetadataHandler<T> interfaceHandler = source != null
+            ? new MetadataHandler<>(source, properties)
+            : new MetadataHandler<>(type, properties);
         Object newInstance = Proxy.newProxyInstance(
             PluginRuntime.context().getReflection().getClassLoader(),
             new Class[]{effectiveType, Metadata.class},
