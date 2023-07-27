@@ -25,8 +25,8 @@ import org.mozilla.javascript.Callable;
 import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
- * Represents a mix-in object used with {@link AbstractAdapter}-based objects to expose Java objects leveraging
- * reflective operations to
+ * Represents a mix-in used with {@link AbstractAdapter}-based objects to expose results or reflective operations with
+ * annotations
  * @see ScriptingHelper
  */
 interface Annotated {
