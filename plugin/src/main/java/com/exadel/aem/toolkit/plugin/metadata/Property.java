@@ -67,7 +67,7 @@ public class Property {
     }
 
     /**
-     * Retrieves the component type of the property's value. This information  is must know, e.g., if the value is of an
+     * Retrieves the component type of the property's value. This information is must know, e.g., if the value is of an
      * array type
      * @return The {@link Class} object that represents the component type of the property's value if it is an array or
      * the "direct" type of the property's value otherwise. Returns {@code null} if the value is {@code null}
