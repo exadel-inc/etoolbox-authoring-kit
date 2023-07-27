@@ -748,7 +748,7 @@ class InterfaceHandler<T> implements InvocationHandler {
     /**
      * Called by a property-assigning routine to validate that the value to assign to a property is of the same type as
      * the property itself
-     * @param element     The {@link PropertyPathElement} instance that manifests the terminal (last-in-the path) member
+     * @param element     The {@link PropertyPathElement} instance that manifests the terminal (last-in-the-path) member
      *                    within the source object to assign the value to
      * @param path        The {@link PropertyPath} instance that manifests the path within the source object
      * @param value       The value to assign
