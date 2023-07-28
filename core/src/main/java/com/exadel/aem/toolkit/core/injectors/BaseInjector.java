@@ -15,14 +15,21 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Array;
 import java.lang.reflect.Member;
 import java.lang.reflect.Type;
 import java.util.Objects;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
+import com.exadel.aem.toolkit.core.injectors.utils.CastResult;
+import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.slf4j.Logger;
@@ -68,12 +75,17 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
             return null;
         }
 
-        Object value = getValue(adaptable, name, type, annotation, element);
+        Object value = getValue(adaptable, name, type, annotation);
         if (Objects.isNull(value)) {
             logNullValue(element, annotation);
         }
+        boolean isFallbackValue = value instanceof CastResult && ((CastResult) value).isFallback();
+        if ((value == null || isFallbackValue) && element.isAnnotationPresent(Default.class)) {
+            value = getDefaultValue(element.getDeclaredAnnotation(Default.class));
+            value = CastUtil.toType(value, type);
+        }
 
-        return value;
+        return value instanceof CastResult ? ((CastResult) value).getValue() : value;
     }
 
     /**
@@ -85,7 +97,7 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
      * @param annotation Annotation handled by the current injector
      * @return A nullable value
      */
-    abstract Object getValue(Object adaptable, String name, Type type, T annotation, AnnotatedElement element);
+    abstract Object getValue(Object adaptable, String name, Type type, T annotation);
 
     /**
      * When overridden in an injector class, retrieves the annotation processed by this particular injector. Takes into
@@ -110,6 +122,26 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
             LOG.debug(INJECTION_ERROR_MESSAGE, annotation, className, memberName);
         } else {
             LOG.debug(BRIEF_INJECTION_ERROR_MESSAGE, annotation);
+        }
+    }
+
+    private Object getDefaultValue(Default defaultAnnotation) {
+        if (ArrayUtils.isNotEmpty(defaultAnnotation.values())) {
+            return defaultAnnotation.values();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.booleanValues())) {
+            return defaultAnnotation.booleanValues();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.doubleValues())) {
+            return defaultAnnotation.doubleValues();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.floatValues())) {
+            return defaultAnnotation.floatValues();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.intValues())) {
+            return defaultAnnotation.intValues();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.longValues())) {
+            return defaultAnnotation.longValues();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.shortValues())) {
+            return defaultAnnotation.shortValues();
+        } else {
+            return new String[0];
         }
     }
 }

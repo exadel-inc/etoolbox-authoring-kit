@@ -50,7 +50,7 @@ public class BooleanArrays extends RequestAdapterBase<Boolean[]> {
         return ArrayUtils.toObject(value);
     }
 
-    public boolean[] isDefaultValue() {
+    public boolean[] getDefaultValue() {
         return defaultValue;
     }
 

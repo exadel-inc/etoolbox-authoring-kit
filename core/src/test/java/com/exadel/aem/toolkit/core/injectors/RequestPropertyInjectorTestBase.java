@@ -244,7 +244,7 @@ abstract class RequestPropertyInjectorTestBase {
     void shouldInjectDefaultInteger() {
         Integers model = context.request().adaptTo(Integers.class);
         assertNotNull(model);
-        assertEquals(Integer.valueOf(EXPECTED_DEFAULT_INTEGER), model.getDefaultValue());
+        assertEquals(EXPECTED_DEFAULT_INTEGER, model.getDefaultValue());
     }
 
     void shouldInjectIntegerArray() {
@@ -611,7 +611,7 @@ abstract class RequestPropertyInjectorTestBase {
     void shouldInjectDefaultBoolean() {
         Booleans model = context.request().adaptTo(Booleans.class);
         assertNotNull(model);
-        assertTrue(model.isDefaultValue());
+        assertTrue(model.getDefaultValue());
     }
 
     void shouldInjectBooleanArray() {
@@ -644,7 +644,7 @@ abstract class RequestPropertyInjectorTestBase {
     void shouldInjectDefaultBooleanArray() {
         BooleanArrays model = context.request().adaptTo(BooleanArrays.class);
         assertNotNull(model);
-        assertArrayEquals(EXPECTED_DEFAULT_BOOLEAN_ARRAY, model.isDefaultValue());
+        assertArrayEquals(EXPECTED_DEFAULT_BOOLEAN_ARRAY, model.getDefaultValue());
     }
 
     void shouldInjectBooleanCollection() {

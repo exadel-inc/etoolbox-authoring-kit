@@ -69,7 +69,7 @@ public class RequestSelectorsInjector extends BaseInjector<RequestSelectors> {
         Object adaptable,
         String name,
         Type type,
-        RequestSelectors annotation, AnnotatedElement element) {
+        RequestSelectors annotation) {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {

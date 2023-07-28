@@ -49,7 +49,7 @@ public class Booleans extends RequestAdapterBase<Boolean> {
         return value;
     }
 
-    public boolean isDefaultValue() {
+    public boolean getDefaultValue() {
         return defaultValue;
     }
 

@@ -54,7 +54,7 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
      * {@inheritDoc}
      */
     @Override
-    public Object getValue(Object adaptable, String name, Type type, RequestAttribute annotation, AnnotatedElement element) {
+    public Object getValue(Object adaptable, String name, Type type, RequestAttribute annotation) {
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
             return null;

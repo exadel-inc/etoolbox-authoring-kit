@@ -14,11 +14,17 @@
 package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
+import com.exadel.aem.toolkit.core.injectors.utils.CastResult;
+import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
+
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
@@ -62,39 +68,89 @@ public class DelegateInjector implements Injector {
         String effectiveName = StringUtils.defaultIfBlank(requestProperty.name(), name);
 
         if (delegate instanceof RequestAttributeInjector) {
-            return ((RequestAttributeInjector) delegate).getValue(
+            Object value = ((RequestAttributeInjector) delegate).getValue(
                 AdaptationUtil.getRequest(adaptable),
                 effectiveName,
                 type);
+            boolean isFallbackValue = value instanceof CastResult && ((CastResult) value).isFallback();
+            if ((value == null || isFallbackValue) && annotatedElement.isAnnotationPresent(Default.class)) {
+                value = getDefaultValue(annotatedElement.getDeclaredAnnotation(Default.class));
+                value = CastUtil.toType(value, type);
+            }
+            return value instanceof CastResult ? ((CastResult) value).getValue() : value;
         }
 
         if (delegate instanceof RequestParamInjector) {
-            return ((RequestParamInjector) delegate).getValue(
+            Object value = ((RequestParamInjector) delegate).getValue(
                 AdaptationUtil.getRequest(adaptable),
                 effectiveName,
-                type, annotatedElement);
+                type);
+            boolean isFallbackValue = value instanceof CastResult && ((CastResult) value).isFallback();
+            if ((value == null || isFallbackValue) && annotatedElement.isAnnotationPresent(Default.class)) {
+                value = getDefaultValue(annotatedElement.getDeclaredAnnotation(Default.class));
+                value = CastUtil.toType(value, type);
+            }
+            return value instanceof CastResult ? ((CastResult) value).getValue() : value;
         }
 
         if (delegate instanceof RequestSelectorsInjector) {
-            return ((RequestSelectorsInjector) delegate).getValue(
+            Object value = ((RequestSelectorsInjector) delegate).getValue(
                 AdaptationUtil.getRequest(adaptable),
                 type);
+            boolean isFallbackValue = value instanceof CastResult && ((CastResult) value).isFallback();
+            if ((value == null || isFallbackValue) && annotatedElement.isAnnotationPresent(Default.class)) {
+                value = getDefaultValue(annotatedElement.getDeclaredAnnotation(Default.class));
+                value = CastUtil.toType(value, type);
+            }
+            return value instanceof CastResult ? ((CastResult) value).getValue() : value;
         }
 
         if (delegate instanceof RequestSuffixInjector) {
-            return ((RequestSuffixInjector) delegate).getValue(
+            Object value = ((RequestSuffixInjector) delegate).getValue(
                 AdaptationUtil.getRequest(adaptable),
                 type);
+            boolean isFallbackValue = value instanceof CastResult && ((CastResult) value).isFallback();
+            if ((value == null || isFallbackValue) && annotatedElement.isAnnotationPresent(Default.class)) {
+                value = getDefaultValue(annotatedElement.getDeclaredAnnotation(Default.class));
+                value = CastUtil.toType(value, type);
+            }
+            return value instanceof CastResult ? ((CastResult) value).getValue() : value;
         }
 
         if (delegate instanceof EnumValueInjector) {
-            return ((EnumValueInjector) delegate).getValue(
+            Object value = ((EnumValueInjector) delegate).getValue(
                 adaptable,
                 effectiveName,
                 StringUtils.EMPTY,
                 type);
+            boolean isFallbackValue = value instanceof CastResult && ((CastResult) value).isFallback();
+            if ((value == null || isFallbackValue) && annotatedElement.isAnnotationPresent(Default.class)) {
+                value = getDefaultValue(annotatedElement.getDeclaredAnnotation(Default.class));
+                value = CastUtil.toType(value, type);
+            }
+            return value instanceof CastResult ? ((CastResult) value).getValue() : value;
         }
 
         return null;
+    }
+
+    private Object getDefaultValue(Default defaultAnnotation) {
+        if (ArrayUtils.isNotEmpty(defaultAnnotation.values())) {
+            return defaultAnnotation.values();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.booleanValues())) {
+            return defaultAnnotation.booleanValues();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.doubleValues())) {
+            return defaultAnnotation.doubleValues();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.floatValues())) {
+            return defaultAnnotation.floatValues();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.intValues())) {
+            return defaultAnnotation.intValues();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.longValues())) {
+            return defaultAnnotation.longValues();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.shortValues())) {
+            return defaultAnnotation.shortValues();
+        } else {
+            return new String[0];
+        }
     }
 }

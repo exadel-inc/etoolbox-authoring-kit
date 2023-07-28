@@ -18,12 +18,10 @@ import java.lang.reflect.Type;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.request.RequestParameterMap;
-import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
@@ -73,13 +71,13 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
         Object adaptable,
         String name,
         Type type,
-        RequestParam annotation, AnnotatedElement element) {
+        RequestParam annotation) {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
             return null;
         }
-        return getValue(request, annotation.name().isEmpty() ? name : annotation.name(), type, element);
+        return getValue(request, annotation.name().isEmpty() ? name : annotation.name(), type);
     }
 
     /**
@@ -89,7 +87,7 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
      * @param type    Type of the returned value
      * @return A nullable value
      */
-    Object getValue(SlingHttpServletRequest request, String name, Type type, AnnotatedElement element) {
+    Object getValue(SlingHttpServletRequest request, String name, Type type) {
         if (RequestParameter.class.equals(type) || Object.class.equals(type)) {
             return request.getRequestParameter(name);
         } else if (TypeUtil.isArrayOfType(type, RequestParameter.class)) {
@@ -102,10 +100,7 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
 
         Class<?> elementType = TypeUtil.getElementType(type);
         if (ClassUtils.isPrimitiveOrWrapper(elementType) || ClassUtils.isAssignable(elementType, String.class)) {
-            Default defaultAnnotation = element.getDeclaredAnnotation(Default.class);
-            String[] requestParameterValues = getRequestParameterValues(request, name);
-            Object values = ArrayUtils.isEmpty(requestParameterValues) && defaultAnnotation != null ? getDefaultValue(defaultAnnotation) : requestParameterValues;
-            return CastUtil.toType(values, type);
+            return CastUtil.toType(getRequestParameterValues(request, name), type);
         }
 
         return null;
@@ -126,25 +121,4 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
             .filter(StringUtils::isNotEmpty)
             .toArray(String[]::new);
     }
-
-    private Object getDefaultValue(Default defaultAnnotation) {
-         if (ArrayUtils.isNotEmpty(defaultAnnotation.values())) {
-             return defaultAnnotation.values();
-         } else if (ArrayUtils.isNotEmpty(defaultAnnotation.booleanValues())) {
-             return defaultAnnotation.booleanValues();
-         } else if (ArrayUtils.isNotEmpty(defaultAnnotation.doubleValues())) {
-             return defaultAnnotation.doubleValues();
-             } else if (ArrayUtils.isNotEmpty(defaultAnnotation.floatValues())) {
-             return defaultAnnotation.floatValues();
-         } else if (ArrayUtils.isNotEmpty(defaultAnnotation.intValues())) {
-             return defaultAnnotation.intValues();
-         } else if (ArrayUtils.isNotEmpty(defaultAnnotation.longValues())) {
-             return defaultAnnotation.longValues();
-         } else if (ArrayUtils.isNotEmpty(defaultAnnotation.shortValues())) {
-             return defaultAnnotation.shortValues();
-         } else {
-             return new String[0];
-         }
-    }
-
 }

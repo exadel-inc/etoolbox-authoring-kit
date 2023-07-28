@@ -69,7 +69,7 @@ public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
         Object adaptable,
         String name,
         Type type,
-        RequestSuffix annotation, AnnotatedElement element) {
+        RequestSuffix annotation) {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
