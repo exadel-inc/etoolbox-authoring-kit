@@ -1,4 +1,4 @@
-# We are not using prittier for anuthing except less files for now
+# We are not using prettier for anything except less files for now
 !**/*.less
 
 # IDE
