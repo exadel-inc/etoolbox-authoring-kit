@@ -1,4 +1,4 @@
-@import (reference) "../../common/variables.less";
+@import (reference) '../../common/variables.less';
 
 eak-sidebar {
   display: block;
@@ -6,7 +6,7 @@ eak-sidebar {
   position: fixed;
   top: @header-height-mobile;
   z-index: 10;
-  box-shadow: 0 5px 8px 0 rgba(0, 66, 94, .5);
+  box-shadow: 0 5px 8px 0 rgba(0, 66, 94, 0.5);
   /* stylelint-disable */
   height: calc(~'100vh - @{header-height-mobile}');
   height: calc(~'var(--100vh, 100vh) - @{header-height-mobile}');
@@ -14,13 +14,19 @@ eak-sidebar {
   max-width: 0;
 
   &[animation] {
-    transition: max-width .5s ease-in-out, visibility .5s linear;
+    transition:
+      max-width 0.5s ease-in-out,
+      visibility 0.5s linear;
+
     &.open {
-      transition: max-width .5s ease-in-out, visibility 0s linear;
+      transition:
+        max-width 0.5s ease-in-out,
+        visibility 0s linear;
     }
   }
 
-  &, & .sidebar-content {
+  &,
+  & .sidebar-content {
     width: 100vw;
     @media @sm {
       width: 20rem;
@@ -34,6 +40,7 @@ eak-sidebar {
     &:not(.eak-sidebar) {
       display: none;
     }
+
     visibility: hidden;
     &.open {
       visibility: visible;
@@ -63,6 +70,6 @@ eak-sidebar {
   }
 }
 
-@import "./sidebar-content.less";
-@import "./sidebar-primary-nav.less";
-@import "./sidebar-seccondary-nav.less";
+@import './sidebar-content.less';
+@import './sidebar-primary-nav.less';
+@import './sidebar-seccondary-nav.less';

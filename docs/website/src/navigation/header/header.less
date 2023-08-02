@@ -1,4 +1,4 @@
-@import (reference) "../../common/variables.less";
+@import (reference) '../../common/variables.less';
 
 .header {
   z-index: 11;
@@ -70,7 +70,7 @@
     margin-left: auto;
     justify-self: flex-end;
     @media @md-xl {
-        display: none;
+      display: none;
     }
   }
 
@@ -126,23 +126,20 @@
     border-top: 2px solid @nav-accent;
     border-bottom: 2px solid @nav-accent;
 
-    transition: border .5s ease-in-out;
+    transition: border 0.5s ease-in-out;
 
     &::before,
     &::after {
       content: '';
       display: block;
-      width: 100%;
-      height: 2px;
-
       position: absolute;
       top: 50%;
       left: 50%;
-
-      background: @nav-accent;
+      width: 100%;
+      border-top: 2px solid @nav-accent;
 
       transform: translate(-50%, -50%);
-      transition: transform .5s ease-in-out;
+      transition: transform 0.5s ease-in-out;
     }
 
     &[active] {
@@ -172,7 +169,8 @@
     }
   }
 
-  &-short-name, &-long-name {
+  &-short-name,
+  &-long-name {
     font-size: 1.125rem;
     font-weight: 500;
   }

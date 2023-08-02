@@ -1,8 +1,4 @@
 module.exports = (config) => {
-  config.addFilter('sortByOrder', (values) => {
-      return values.sort((a,b) => a.data.orderVal - b.data.orderVal)
-  });
-  
   /** Generic sort njk filter */
   const sortFilter = (comparer) => (values) => {
     if (!values || !Array.isArray(values)) {
@@ -21,5 +17,6 @@ module.exports = (config) => {
   const orderComparer = (a, b) => (a.data.order || 0) - (b.data.order || 0);
 
   config.addFilter('sortByName', sortFilter(nameComparer));
+  config.addFilter('sortByOrder', sortFilter(orderComparer));
   config.addFilter('sortByNameAndOrder', sortFilter(compose(orderComparer, nameComparer)));
 };

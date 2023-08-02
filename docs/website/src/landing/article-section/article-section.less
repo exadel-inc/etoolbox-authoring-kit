@@ -1,4 +1,4 @@
-@import (reference) "../../common/variables.less";
+@import (reference) '../../common/variables.less';
 
 .article {
   margin-bottom: 100px;
@@ -28,8 +28,8 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-template-areas:
-        "first second third"
-        "first fourth fifth";
+        'first second third'
+        'first fourth fifth';
       margin-bottom: 50px;
       grid-gap: 10px;
     }
@@ -121,19 +121,19 @@
     }
   }
 
-  &-first {
+  &-1 {
     grid-area: first;
   }
-  &-second {
+  &-2 {
     grid-area: second;
   }
-  &-third {
+  &-3 {
     grid-area: third;
   }
-  &-fourth {
+  &-4 {
     grid-area: fourth;
   }
-  &-fifth {
+  &-5 {
     grid-area: fifth;
   }
 

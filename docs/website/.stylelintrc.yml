@@ -1,25 +1,27 @@
+plugins:
+  - stylelint-prettier
+
 # Use LESS preprocessor
 customSyntax: postcss-less
 
 rules:
+  # Prettier integration
+  prettier/prettier:
+    - true
+    - severity: warning
+
   # Disallow unknown at-rules
   at-rule-no-unknown: true
   # Warn about empty selectors
   block-no-empty:
     - true
     - severity: warning
-  # Warn that require a single space before the opening brace of blocks
-  block-opening-brace-space-before:
-    - always
-    - severity: warning
+  # Disallow invalid hex colors
+  color-hex-length: short
   # Disallow invalid hex colors
   color-no-invalid-hex: true
   # Disallow empty comments
   comment-no-empty: true
-  # Warn that require a single space after the colon of declarations
-  declaration-colon-space-after:
-    - always-single-line
-    - severity: warning
   # Warn about duplicate properties within declaration blocks
   declaration-block-no-duplicate-properties:
     - true
@@ -40,21 +42,11 @@ rules:
   no-empty-source:
     - true
     - severity: warning
-  # Disallow extra semicolons
-  no-extra-semicolons: true
   # Disallow double-slash comments `(//...)` for clear CSS, as they are not supported by CSS
   # and could lead to unexpected results
   no-invalid-double-slash-comments: true
   # Disallow unknown properties
   property-no-unknown: true
-  # Disallow whitespace before the commas of selector lists
-  selector-list-comma-space-before: never
-  # Use lowercase for pseudo-class selectors
-  selector-pseudo-class-case: lower
-  # Disallow whitespace on the inside of the parentheses within pseudo-class selectors
-  selector-pseudo-class-parentheses-space-inside: never
-  # Use lowercase for pseudo-element selectors
-  selector-pseudo-element-case: lower
   # Use double colon notation for applicable pseudo-elements
   selector-pseudo-element-colon-notation: double
   # Disallow unknown pseudo-class selectors
@@ -70,8 +62,8 @@ rules:
     - true
     - ignore:
         - custom-elements
-  # Zero unit recommended to not be provided
-  length-zero-no-unit:
+  # Warn about newlines (unescaped) in strings
+  string-no-newline:
     - true
     - severity: warning
   # Disallow unknown units

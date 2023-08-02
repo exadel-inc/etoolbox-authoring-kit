@@ -4,7 +4,7 @@
   {% include 'navigation/header.njk' %}
   {% include 'navigation/sidebar.njk' %}
   <main class="esl-scrollable-content">
-    <div class="content {{ containerCls or 'container markdown-container' }}">
+    <div class="content mb-4 {{ containerCls or 'container markdown-container' }}">
       {% set fullPage = collections.content | findByPage(page) %}
       {% if fullPage %}
         <div class="content-page-title">
@@ -17,9 +17,6 @@
 
       {{ content | safe or 'No content.' }}
     </div>
-    <footer class="footer-compact container-fluid">
-      {% include 'navigation/footer-compact.njk' %}
-    </footer>
   </main>
   <esl-scrollbar target="::prev" class="main-scroll"></esl-scrollbar>
   <div class="header-shadow"></div>

@@ -19,7 +19,6 @@ module.exports = {
       loader: 'ts-loader',
       options: {
         compilerOptions: {
-          target: 'ES6',
           declaration: false
         }
       }

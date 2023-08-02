@@ -7,16 +7,16 @@ const {markdown} = require('./markdown.lib');
 const {github, rewriteRules, urlPrefix} = require('./site.config');
 
 const recursiveCheckLinks = (arr, link, element, key) => {
-    arr.forEach((el) => {
-        if (el.hasOwnProperty('fileName') && el.fileName === link) {
-            element.setAttribute('href', `/${[key]}/${link.replace('.md', '')}`);
-        }
-        if (!el.hasOwnProperty('fileName') && Object.keys(el).length === 1) {
-            const elKey = Object.keys(el)[0];
-            const newKey =  key + '/' + elKey;
-            recursiveCheckLinks(el[elKey], link,element, newKey);
-        }
-    })
+  arr.forEach((el) => {
+    if (el.hasOwnProperty('fileName') && el.fileName === link) {
+      element.setAttribute('href', `/${[key]}/${link.replace('.md', '')}`);
+    }
+    if (!el.hasOwnProperty('fileName') && Object.keys(el).length === 1) {
+      const elKey = Object.keys(el)[0];
+      const newKey =  key + '/' + elKey;
+      recursiveCheckLinks(el[elKey], link,element, newKey);
+    }
+  })
 }
 
 class MDRenderer {
@@ -86,13 +86,13 @@ class MDRenderer {
   }
 
   static changeImgPath(dom) {
-      const imgArr = dom.querySelectorAll('img');
-      const imgPath = '/assets/img';
-      imgArr.forEach(elem => {
-          const srcLink = elem.getAttribute('src');
-          if(srcLink.startsWith('../img/')) elem.setAttribute('src', srcLink.replace('../img', imgPath ));
-          if(srcLink.startsWith('./docs/img/')) elem.setAttribute('src', srcLink.replace('./docs/img', imgPath));
-      });
+    const imgArr = dom.querySelectorAll('img');
+    const imgPath = '/assets/img';
+    imgArr.forEach(elem => {
+      const srcLink = elem.getAttribute('src');
+      if(srcLink.startsWith('../img/')) elem.setAttribute('src', srcLink.replace('../img', imgPath ));
+      if(srcLink.startsWith('./docs/img/')) elem.setAttribute('src', srcLink.replace('./docs/img', imgPath));
+    });
   }
 }
 
