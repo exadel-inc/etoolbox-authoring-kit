@@ -11,7 +11,7 @@ const TIMESTAMP_PATH = path.join(OUTPUT_DIR, '/timestamp.tmp');
 
 const DELAY = 2000;
 
-console.log(`Searching for files in ${INPUT_DIR}`);
+console.log(`Searching for files in '${INPUT_DIR}' :`);
 
 const getContent = async (inputPath) => {
   const file = await fs.promises.readFile(inputPath);
@@ -42,14 +42,12 @@ const updateTimestamp = async () => {
 (async () => {
   await del(OUTPUT_DIR);
 
-  glob(INPUT_GLOB, {cwd: INPUT_DIR}, async (_err, files) => {
-    await Promise.all(
-      files.map(async (fileName) => {
-        const { inputPath, outputPath } = getPaths(fileName);
-        return createFileCopy(inputPath, outputPath);
-      })
-    );
-  });
+  const filePaths = glob.sync(INPUT_GLOB, {cwd: INPUT_DIR});
+  for (const filePath of filePaths) {
+    const { inputPath, outputPath } = getPaths(filePath);
+    await createFileCopy(inputPath, outputPath);
+    console.log(`\t - ${filePath} - copied`);
+  }
 })();
 
 if (process.argv.includes('watch')) {
