@@ -71,27 +71,24 @@ public class CastUtil {
         if (value == null) {
             return null;
         }
-
-        if (value.getClass().isArray() && Array.getLength(value) == 0) {
-            return new CastResult(null, true);
-        }
+        boolean fallback = value.getClass().isArray() && Array.getLength(value) == 0;
 
         Class<?> elementType = TypeUtil.getElementType(type);
 
         if (TypeUtil.isArray(type)) {
-            return new CastResult(toArray(value, elementType, converter), false);
+            return new CastResult(toArray(value, elementType, converter), fallback);
         }
 
         if (TypeUtil.isSupportedCollection(type, true)) {
             return Set.class.equals(TypeUtil.getRawType(type))
-                ? new CastResult(toCollection(value, elementType, converter, LinkedHashSet::new), false)
-                : new CastResult(toCollection(value, elementType, converter, ArrayList::new), false);
+                ? new CastResult(toCollection(value, elementType, converter, LinkedHashSet::new), fallback)
+                : new CastResult(toCollection(value, elementType, converter, ArrayList::new), fallback);
         }
 
         if (Object.class.equals(type)) {
-            return new CastResult(converter.apply(value, type), false);
+            return new CastResult(converter.apply(value, type), fallback);
         }
-        return new CastResult(converter.apply(extractFirstElement(value), type), false);
+        return new CastResult(converter.apply(extractFirstElement(value), type), fallback);
     }
 
     /**

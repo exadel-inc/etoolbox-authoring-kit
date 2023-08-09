@@ -15,18 +15,13 @@ package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Array;
 import java.lang.reflect.Member;
 import java.lang.reflect.Type;
 import java.util.Objects;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
-import com.exadel.aem.toolkit.core.injectors.utils.CastResult;
-import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
-
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.ClassUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.Default;
@@ -34,6 +29,9 @@ import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.exadel.aem.toolkit.core.injectors.utils.CastResult;
+import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
 
 /**
  * Represents a base for a Sling injector. A descendant of this class must extract an annotation from a Java class
@@ -76,16 +74,16 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
         }
 
         Object value = getValue(adaptable, name, type, annotation);
+        Object effectiveValue = value instanceof CastResult ? ((CastResult) value).getValue() : value;
         if (Objects.isNull(value)) {
             logNullValue(element, annotation);
         }
-        boolean isFallbackValue = value instanceof CastResult && ((CastResult) value).isFallback();
-        if ((value == null || isFallbackValue) && element.isAnnotationPresent(Default.class)) {
-            value = getDefaultValue(element.getDeclaredAnnotation(Default.class));
-            value = CastUtil.toType(value, type);
+        boolean isFallback = value instanceof CastResult && ((CastResult) value).isFallback();
+        if (effectiveValue == null || isFallback) {
+            Object defaultValue = getDefaultValue(element.getDeclaredAnnotation(Default.class));
+            effectiveValue = CastUtil.toType(defaultValue, type).getValue();
         }
-
-        return value instanceof CastResult ? ((CastResult) value).getValue() : value;
+        return effectiveValue;
     }
 
     /**
