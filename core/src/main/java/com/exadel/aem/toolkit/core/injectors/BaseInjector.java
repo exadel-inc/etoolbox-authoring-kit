@@ -74,12 +74,16 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
         }
 
         Object value = getValue(adaptable, name, type, annotation);
-        Object effectiveValue = value instanceof CastResult ? ((CastResult) value).getValue() : value;
         if (Objects.isNull(value)) {
             logNullValue(element, annotation);
         }
+        return populateDefaultValue(value, type, element);
+    }
+
+    protected Object populateDefaultValue(Object value, Type type, AnnotatedElement element) {
+        Object effectiveValue = value instanceof CastResult ? ((CastResult) value).getValue() : value;
         boolean isFallback = value instanceof CastResult && ((CastResult) value).isFallback();
-        if (effectiveValue == null || isFallback) {
+        if ((effectiveValue == null || isFallback) && element.isAnnotationPresent(Default.class)) {
             Object defaultValue = getDefaultValue(element.getDeclaredAnnotation(Default.class));
             effectiveValue = CastUtil.toType(defaultValue, type).getValue();
         }

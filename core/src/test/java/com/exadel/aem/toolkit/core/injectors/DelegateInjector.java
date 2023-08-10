@@ -14,17 +14,11 @@
 package com.exadel.aem.toolkit.core.injectors;
 
 import java.lang.reflect.AnnotatedElement;
-import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
-import com.exadel.aem.toolkit.core.injectors.utils.CastResult;
-import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
-
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.osgi.framework.Constants;
@@ -68,89 +62,49 @@ public class DelegateInjector implements Injector {
         String effectiveName = StringUtils.defaultIfBlank(requestProperty.name(), name);
 
         if (delegate instanceof RequestAttributeInjector) {
-            Object value = ((RequestAttributeInjector) delegate).getValue(
+            RequestAttributeInjector requestAttributeInjector = (RequestAttributeInjector) delegate;
+            Object value = requestAttributeInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
                 effectiveName,
                 type);
-            boolean isFallbackValue = value instanceof CastResult && ((CastResult) value).isFallback();
-            if ((value == null || isFallbackValue) && annotatedElement.isAnnotationPresent(Default.class)) {
-                value = getDefaultValue(annotatedElement.getDeclaredAnnotation(Default.class));
-                value = CastUtil.toType(value, type);
-            }
-            return value instanceof CastResult ? ((CastResult) value).getValue() : value;
+            return requestAttributeInjector.populateDefaultValue(value, type, annotatedElement);
         }
 
         if (delegate instanceof RequestParamInjector) {
-            Object value = ((RequestParamInjector) delegate).getValue(
+            RequestParamInjector requestParamInjector = (RequestParamInjector) delegate;
+            Object value = requestParamInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
                 effectiveName,
                 type);
-            boolean isFallbackValue = value instanceof CastResult && ((CastResult) value).isFallback();
-            if ((value == null || isFallbackValue) && annotatedElement.isAnnotationPresent(Default.class)) {
-                value = getDefaultValue(annotatedElement.getDeclaredAnnotation(Default.class));
-                value = CastUtil.toType(value, type);
-            }
-            return value instanceof CastResult ? ((CastResult) value).getValue() : value;
+            return requestParamInjector.populateDefaultValue(value, type, annotatedElement);
         }
 
         if (delegate instanceof RequestSelectorsInjector) {
-            Object value = ((RequestSelectorsInjector) delegate).getValue(
+            RequestSelectorsInjector requestSelectorsInjector = (RequestSelectorsInjector) delegate;
+            Object value = requestSelectorsInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
                 type);
-            boolean isFallbackValue = value instanceof CastResult && ((CastResult) value).isFallback();
-            if ((value == null || isFallbackValue) && annotatedElement.isAnnotationPresent(Default.class)) {
-                value = getDefaultValue(annotatedElement.getDeclaredAnnotation(Default.class));
-                value = CastUtil.toType(value, type);
-            }
-            return value instanceof CastResult ? ((CastResult) value).getValue() : value;
+            return requestSelectorsInjector.populateDefaultValue(value, type, annotatedElement);
         }
 
         if (delegate instanceof RequestSuffixInjector) {
-            Object value = ((RequestSuffixInjector) delegate).getValue(
+            RequestSuffixInjector requestSuffixInjector = (RequestSuffixInjector) delegate;
+            Object value = requestSuffixInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
                 type);
-            boolean isFallbackValue = value instanceof CastResult && ((CastResult) value).isFallback();
-            if ((value == null || isFallbackValue) && annotatedElement.isAnnotationPresent(Default.class)) {
-                value = getDefaultValue(annotatedElement.getDeclaredAnnotation(Default.class));
-                value = CastUtil.toType(value, type);
-            }
-            return value instanceof CastResult ? ((CastResult) value).getValue() : value;
+            return requestSuffixInjector.populateDefaultValue(value, type, annotatedElement);
         }
 
         if (delegate instanceof EnumValueInjector) {
-            Object value = ((EnumValueInjector) delegate).getValue(
+            EnumValueInjector enumValueInjector = (EnumValueInjector) delegate;
+            Object value = enumValueInjector.getValue(
                 adaptable,
                 effectiveName,
                 StringUtils.EMPTY,
                 type);
-            boolean isFallbackValue = value instanceof CastResult && ((CastResult) value).isFallback();
-            if ((value == null || isFallbackValue) && annotatedElement.isAnnotationPresent(Default.class)) {
-                value = getDefaultValue(annotatedElement.getDeclaredAnnotation(Default.class));
-                value = CastUtil.toType(value, type);
-            }
-            return value instanceof CastResult ? ((CastResult) value).getValue() : value;
+            return enumValueInjector.populateDefaultValue(value, type, annotatedElement);
         }
 
         return null;
-    }
-
-    private Object getDefaultValue(Default defaultAnnotation) {
-        if (ArrayUtils.isNotEmpty(defaultAnnotation.values())) {
-            return defaultAnnotation.values();
-        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.booleanValues())) {
-            return defaultAnnotation.booleanValues();
-        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.doubleValues())) {
-            return defaultAnnotation.doubleValues();
-        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.floatValues())) {
-            return defaultAnnotation.floatValues();
-        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.intValues())) {
-            return defaultAnnotation.intValues();
-        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.longValues())) {
-            return defaultAnnotation.longValues();
-        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.shortValues())) {
-            return defaultAnnotation.shortValues();
-        } else {
-            return new String[0];
-        }
     }
 }
