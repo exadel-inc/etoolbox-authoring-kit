@@ -2,7 +2,6 @@ landing:
   urls:
     installationUrl: content/getting-started/installation
     docsUrl: https://javadoc.io/doc/com.exadel.etoolbox/etoolbox-authoring-kit-core/latest/index.html
-    articleExadelUrl: https://exadel.com/news/tag/exadel-authoring-kit-for-aem/
 
   marquee:
     logo: landing/banner.svg
@@ -85,11 +84,12 @@ landing:
     description: >
       Insights on AEM and Adobe Experience Manager use cases with technical tips and tricks
       from the creators of MarTech solutions
+    cta: https://exadel.com/news/?categories%5B0%5D=aem
+    ctaText: See more
 
-    feed: 'https://exadel.com/news/tag/exadel-authoring-kit-for-aem/feed/'
+    feed: https://exadel.com/news/feed?categories%5B0%5D=aem
     baseUrl: 'https://exadel.com'
     count: 5
-    moreText: See more
 
     fallback:
       image: './assets/landing/article-section/img.jpg'
