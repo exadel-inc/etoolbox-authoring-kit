@@ -121,6 +121,10 @@ public class OrderingUtil {
                         ),
                         list);
                     list.get(i).setBefore(before);
+                    list.get(i).setPlaceAnnotated(true);
+                    if (before != null) {
+                        before.setAfter(list.get(i));
+                    }
                 }
                 ClassMember classMemberAfter = place.after();
                 if (StringUtils.isNotBlank(classMemberAfter.value())) {
@@ -131,7 +135,24 @@ public class OrderingUtil {
                         ),
                         list);
                     list.get(i).setAfter(after);
+                    list.get(i).setPlaceAnnotated(true);
+                    if (after != null) {
+                        after.setBefore(list.get(i));
+                    }
                 }
+            }
+        }
+
+        for (int i = 1; i < list.size(); i++) {
+            Orderable<Source> current = list.get(i);
+            Orderable<Source> previous = list.get(i - 1);
+            if (current.isPlaceAnnotated() || previous.isPlaceAnnotated()) {
+                continue;
+            }
+            if ((current.getAfter() == null || current.getAfter().equals(previous))
+                && (previous.getBefore() == null || previous.getBefore().equals(current))) {
+                current.setAfter(previous);
+                previous.setBefore(current);
             }
         }
 

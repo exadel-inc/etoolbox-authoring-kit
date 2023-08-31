@@ -23,6 +23,7 @@ class Orderable<T> {
     private final T value;
     private final String id;
     private final int rank;
+    private boolean placeAnnotated;
 
     private Orderable<T> before;
     private Orderable<T> after;
@@ -121,6 +122,22 @@ class Orderable<T> {
      */
     public void setPosition(int position) {
         this.positionInAllNodes = position;
+    }
+
+    /**
+     * Gets whether the field was annotated with Place annotation
+     * @return boolean value
+     */
+    public boolean isPlaceAnnotated() {
+        return placeAnnotated;
+    }
+
+    /**
+     * Sets the flag that field annotated with Place annotation
+     * @param placeAnnotated Boolean value signifying the field is annotated with Place annotation
+     */
+    public void setPlaceAnnotated(boolean placeAnnotated) {
+        this.placeAnnotated = placeAnnotated;
     }
 
     /**
