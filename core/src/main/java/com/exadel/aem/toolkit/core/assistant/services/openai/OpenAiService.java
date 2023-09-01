@@ -228,6 +228,11 @@ public class OpenAiService implements AssistantService {
             ? CacheUtil.getSolution(args.get(ResourceResolver.class.getName(), ResourceResolver.class), args)
             : null;
         if (cachedSolution != null) {
+            try {
+                Thread.sleep(CACHE_READ_DELAY);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             return cachedSolution;
         }
 

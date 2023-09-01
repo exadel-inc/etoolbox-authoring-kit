@@ -365,6 +365,9 @@ class PageFacility extends OpenAiFacility {
                 if ("targets".equals(name)) {
                     return downloadTasks;
                 }
+                if ("cache".equals(name)) {
+                    return true;
+                }
                 return super.getAttribute(name);
             }
         });

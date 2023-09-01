@@ -45,6 +45,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.ModifiableValueMap;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 import org.osgi.service.component.annotations.Activate;
@@ -52,6 +54,7 @@ import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.day.cq.dam.api.Asset;
 import com.day.cq.dam.api.AssetManager;
 import com.day.cq.dam.commons.util.DamUtil;
 
@@ -112,7 +115,8 @@ public class ImportService implements AssistantService {
     @SuppressWarnings("java:S3398") // All "download" methods are kept together for better readability
     private Map<String, Object> downloadAssets(
         ResourceResolver resourceResolver,
-        Map<?, ?> targets) throws AssistantException {
+        Map<?, ?> targets,
+        boolean useCache) throws AssistantException {
 
         if (MapUtils.isEmpty(targets)) {
             return Collections.emptyMap();
@@ -120,21 +124,22 @@ public class ImportService implements AssistantService {
         Map<String, Object> result = new HashMap<>();
         if (targets.size() == 1) {
             Map.Entry<?, ?> nextTarget = targets.entrySet().iterator().next();
-            result.put(
+            DownloadAssetResult downloadAssetResult = downloadAsset(
+                resourceResolver,
                 String.valueOf(nextTarget.getKey()),
-                downloadAsset(
-                    resourceResolver,
-                    String.valueOf(nextTarget.getKey()),
-                    String.valueOf(nextTarget.getValue()))
-                    .getDestination());
+                String.valueOf(nextTarget.getValue()),
+                useCache);
+            result.put(String.valueOf(nextTarget.getKey()), downloadAssetResult.getDestination());
             return result;
         }
         List<CompletableFuture<DownloadAssetResult>> tasks = new ArrayList<>();
         for (Map.Entry<?, ?> nextDestination : targets.entrySet()) {
-            tasks.add(downloadAssetAsync(
+            CompletableFuture<DownloadAssetResult> newTask = downloadAssetAsync(
                 resourceResolver,
                 String.valueOf(nextDestination.getKey()),
-                String.valueOf(nextDestination.getValue())));
+                String.valueOf(nextDestination.getValue()),
+                useCache);
+            tasks.add(newTask);
         }
         CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0])).join();
         for (CompletableFuture<DownloadAssetResult> task : tasks) {
@@ -159,11 +164,12 @@ public class ImportService implements AssistantService {
     private CompletableFuture<DownloadAssetResult> downloadAssetAsync(
         ResourceResolver resourceResolver,
         String url,
-        String destination) {
+        String destination,
+        boolean useCache) {
         return CompletableFuture.supplyAsync(
             () -> {
                 try {
-                    return downloadAsset(resourceResolver, url, destination);
+                    return downloadAsset(resourceResolver, url, destination, useCache);
                 } catch (AssistantException e) {
                     LOG.error(e.getMessage());
                 }
@@ -172,10 +178,21 @@ public class ImportService implements AssistantService {
             threadPoolExecutor);
     }
 
-    private DownloadAssetResult downloadAsset(ResourceResolver resourceResolver, String url, String destination) throws AssistantException {
+    private DownloadAssetResult downloadAsset(
+        ResourceResolver resourceResolver,
+        String url,
+        String destination,
+        boolean useCache) throws AssistantException {
         String damAddress = getDamAddress(resourceResolver, destination);
+        if (useCache) {
+            String damAddressParent = StringUtils.substringBeforeLast(damAddress, CoreConstants.SEPARATOR_SLASH);
+            DownloadAssetResult cachedResult = getCachedAsset(resourceResolver, url, damAddressParent);
+            if (cachedResult != null) {
+                return cachedResult;
+            }
+        }
         try {
-            return downloadAsset(url, damAddress, entity -> store(resourceResolver, entity, damAddress));
+            return downloadAsset(url, damAddress, entity -> store(resourceResolver, entity, url, damAddress));
         } catch (IOException e) {
             String exceptionMessage = String.format(EXCEPTION_COULD_NOT_IMPORT, url, destination);
             throw new AssistantException(exceptionMessage, e);
@@ -212,7 +229,24 @@ public class ImportService implements AssistantService {
         throw new IOException(EXCEPTION_NO_RESPONSE);
     }
 
-    private void store(ResourceResolver resourceResolver, HttpEntity entity, String destination) throws IOException {
+    private DownloadAssetResult getCachedAsset(ResourceResolver resourceResolver, String url, String folder) {
+        Resource parent = resourceResolver.getResource(folder);
+        if (parent == null) {
+            return null;
+        }
+        for (Resource nextChild : parent.getChildren()) {
+            Resource metadata = nextChild.getChild("jcr:content/metadata");
+            if (metadata != null && url.equals(metadata.getValueMap().get("src", String.class))) {
+                return new DownloadAssetResult(
+                        url,
+                        metadata.getValueMap().get("dam:MIMEtype", String.class),
+                        nextChild.getPath());
+            }
+        }
+        return null;
+    }
+
+    private void store(ResourceResolver resourceResolver, HttpEntity entity, String source, String destination) throws IOException {
         AssetManager assetManager = resourceResolver.adaptTo(AssetManager.class);
         if (assetManager == null) {
             throw new IOException(EXCEPTION_MISSING_ASSET_MANAGER);
@@ -224,7 +258,16 @@ public class ImportService implements AssistantService {
             if (resourceResolver.getResource(destination) != null) {
                 assetManager.removeAssetForBinary(DamUtil.assetToBinaryPath(destination));
             }
-            assetManager.createAsset(destination, entity.getContent(), getMimeType(entity), true);
+            Asset asset = assetManager.createAsset(destination, entity.getContent(), getMimeType(entity), true);
+            ModifiableValueMap metadataMap = Optional
+                .ofNullable(asset.adaptTo(Resource.class))
+                .map(resource -> resource.getChild("jcr:content/metadata"))
+                .map(resource -> resource.adaptTo(ModifiableValueMap.class))
+                .orElse(null);
+            if (metadataMap != null) {
+                metadataMap.put("src", source);
+                resourceResolver.commit();
+            }
         } catch (Exception e) {
             throw new IOException(e);
         }
@@ -300,7 +343,7 @@ public class ImportService implements AssistantService {
                 DownloadAssetResult result = downloadAsset(
                     url,
                     damAddress,
-                    entity -> store(request.getResourceResolver(), entity, damAddress));
+                    entity -> store(request.getResourceResolver(), entity, url, damAddress));
                 Map<String, Object> solutionValueMap = new HashMap<>();
                 solutionValueMap.put(CoreConstants.PN_TYPE, result.getMimeType());
                 solutionValueMap.put(CoreConstants.PN_PATH, damAddress);
@@ -332,7 +375,8 @@ public class ImportService implements AssistantService {
             try {
                 Map<String, Object> downloadedResults = downloadAssets(
                     request.getResourceResolver(),
-                    (Map<?, ?>) request.getAttribute("targets"));
+                    (Map<?, ?>) request.getAttribute("targets"),
+                    request.getAttribute("cache") instanceof Boolean && (boolean) request.getAttribute("cache"));
                 return Solution
                     .from(getArguments(request))
                     .withValueMap(downloadedResults);
