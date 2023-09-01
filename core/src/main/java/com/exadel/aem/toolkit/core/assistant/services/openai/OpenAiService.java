@@ -72,6 +72,8 @@ import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 public class OpenAiService implements AssistantService {
     private static final Logger LOG = LoggerFactory.getLogger(OpenAiService.class);
 
+    private static final int CACHE_READ_DELAY = 500;
+
     private static final String PN_CHOICES = "choices";
     private static final String PN_CONTENT = "content";
     private static final String PN_DATA = "data";
@@ -82,6 +84,9 @@ public class OpenAiService implements AssistantService {
     private static final String PN_ROLE = "role";
     private static final String PN_URL = "url";
 
+    private static final String ROLE_SYSTEM = "system";
+    private static final String ROLE_USER = "user";
+
     private static final String VALUE_LENGTH = "length";
 
     private static final String HTTP_HEADER_BEARER = "Bearer ";
@@ -89,7 +94,6 @@ public class OpenAiService implements AssistantService {
     private static final String EXCEPTION_REQUEST_FAILED = "OpenAI service request to {} failed";
     private static final String EXCEPTION_COULD_NOT_COMPLETE_ASYNC = "Could not complete request";
     private static final String EXCEPTION_TIMEOUT = "Connection to {} timed out after {} ms";
-    private static final String ROLE_USER = "user";
 
     private static final String PATTERN_LEADING_NON_ALPHABETIC = "^\\W+";
     private static final String PATTERN_LEADING_TAG = "^<\\w+>";
@@ -98,6 +102,7 @@ public class OpenAiService implements AssistantService {
 
     private static final String LOGO_RESOURCE = "assistant/logo-openai";
     private static final String LOGO;
+
     static {
         URL logoUrl = OpenAiService.class.getClassLoader().getResource(LOGO_RESOURCE);
         String logo = null;
@@ -214,7 +219,8 @@ public class OpenAiService implements AssistantService {
     }
 
     private Solution execute(String endpoint, ValueMap args, Function<ValueMap, String> payloadFactory) {
-        String effectiveEndpoint = OpenAiServiceConfig.DEFAULT_CHAT_MODEL.equals(args.get(OpenAiConstants.PN_MODEL, String.class))
+        String model = args.get(OpenAiConstants.PN_MODEL, String.class);
+        String effectiveEndpoint = StringUtils.containsAny(model, "gpt-3.5", "gpt-4")
             ? config.chatEndpoint()
             : endpoint;
 
@@ -277,8 +283,7 @@ public class OpenAiService implements AssistantService {
     }
 
     private String getCompletionRequestPayload(ValueMap args) {
-        boolean isChat = OpenAiServiceConfig.DEFAULT_CHAT_MODEL.equals(args.get(OpenAiConstants.PN_MODEL, String.class));
-        return isChat
+        return isChatEndpoint(args)
             ? getChatRequestPayload(args)
             : getInstructCompletionRequestPayload(args);
     }
@@ -298,8 +303,7 @@ public class OpenAiService implements AssistantService {
     }
 
     private String getEditRequestPayload(ValueMap args) {
-        boolean isChat = OpenAiServiceConfig.DEFAULT_CHAT_MODEL.equals(args.get(OpenAiConstants.PN_MODEL, String.class));
-        return isChat
+        return isChatEndpoint(args)
             ? getChatRequestPayload(args)
             : getInstructEditRequestPayload(args);
     }
@@ -322,6 +326,8 @@ public class OpenAiService implements AssistantService {
         Map<String, Object> properties = new HashMap<>();
         properties.put(OpenAiConstants.PN_MODEL, args.get(OpenAiConstants.PN_MODEL, String.class));
         properties.put(PN_MESSAGES, getChatPrompt(instruction + StringUtils.SPACE + args.get(CoreConstants.PN_TEXT)));
+        properties.put(OpenAiConstants.PN_MAX_TOKENS, args.get(OpenAiConstants.PN_MAX_TOKENS, config.textLength()));
+        properties.put(OpenAiConstants.PN_CHOICES_COUNT, args.get(OpenAiConstants.PN_CHOICES_COUNT, config.choices()));
         return ObjectConversionUtil.toJson(properties);
 
     }
@@ -333,6 +339,11 @@ public class OpenAiService implements AssistantService {
         properties.put(CoreConstants.PN_SIZE, args.getOrDefault(CoreConstants.PN_SIZE, config.imageSize()));
         properties.put(OpenAiConstants.PN_CHOICES_COUNT, args.get(OpenAiConstants.PN_CHOICES_COUNT, config.choices()));
         return ObjectConversionUtil.toJson(properties);
+    }
+
+    private static boolean isChatEndpoint(ValueMap args) {
+        String model = args.get(OpenAiConstants.PN_MODEL, String.class);
+        return StringUtils.containsAny(model, "gpt-3.5", "gpt-4");
     }
 
     private static Solution parseOpenAiResponse(
@@ -402,10 +413,16 @@ public class OpenAiService implements AssistantService {
        --------------- */
 
     private static List<Map<String, String>> getChatPrompt(String prompt) {
-        Map<String, String> content = new LinkedHashMap<>();
-        content.put(PN_ROLE, ROLE_USER);
-        content.put(PN_CONTENT, prompt);
-        return Collections.singletonList(content);
+        List<Map<String, String>> result = new ArrayList<>();
+        Map<String, String> message = new LinkedHashMap<>();
+        message.put(PN_ROLE, ROLE_SYSTEM);
+        message.put(PN_CONTENT, "You are a competent and eloquent journalist who writes for the web");
+        result.add(message);
+        message = new LinkedHashMap<>();
+        message.put(PN_ROLE, ROLE_USER);
+        message.put(PN_CONTENT, prompt);
+        result.add(message);
+        return result;
     }
 
     private static String sanitizeTextOutput(String value) {

@@ -33,16 +33,18 @@ abstract class OpenAiFacility extends SimpleFacility {
         .builder()
         .id(OpenAiConstants.PN_MODEL)
         .title("Model")
-        .option(OpenAiServiceConfig.DEFAULT_COMPLETION_MODEL, "DaVinci: Most capable, slower")
-        .option("text-curie-001", "Curie: Capable, agile")
-        .option("text-babbage-001", "Babbage: For straightforward tasks, very fast")
-        .option("text-ada-001", "Ada: For simplistic tasks, fastest")
+        .option("gpt-4", "GPT-4")
+        .option(OpenAiServiceConfig.DEFAULT_COMPLETION_MODEL, "GPT-3 DaVinci")
+        .option("text-curie-001", "GPT-3 Curie")
+        .option("text-babbage-001", "GPT-3 Babbage")
+        .option("text-ada-001", "GPT-3 Ada")
         .defaultValue(OpenAiServiceConfig.DEFAULT_COMPLETION_MODEL)
         .build();
     private static final Setting EDIT_MODEL_SETTING = Setting
         .builder()
         .id(OpenAiConstants.PN_MODEL)
         .title("Model")
+        .option("gpt-4", "GPT-4")
         .option(OpenAiServiceConfig.DEFAULT_EDIT_MODEL, "DaVinci")
         .defaultValue(OpenAiServiceConfig.DEFAULT_EDIT_MODEL)
         .build();

@@ -54,7 +54,7 @@ class TargetingFacility extends OpenAiFacility {
 
         PROFILE_SETTINGS = new ArrayList<>();
         PROFILE_SETTINGS.add(PROMPT_SETTING);
-        PROFILE_SETTINGS.addAll(EDIT_SETTINGS);
+        PROFILE_SETTINGS.addAll(COMPLETION_SETTINGS);
     }
 
     public TargetingFacility(OpenAiService service) {
