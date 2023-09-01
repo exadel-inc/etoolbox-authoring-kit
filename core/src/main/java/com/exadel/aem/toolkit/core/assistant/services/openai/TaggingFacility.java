@@ -35,6 +35,8 @@ import com.exadel.aem.toolkit.core.assistant.utils.VersionableValueMap;
 
 class TaggingFacility extends OpenAiFacility {
 
+    private static final int TAG_LENGTH_THRESHOLD = 50;
+
     private static final Pattern PATTERN_TAG_SPLIT = Pattern.compile("\\n|<br>|,\\s+");
     private static final String PATTERN_NUMBERED_TAG = "^\\d+\\.\\s*";
     private static final String PATTERN_BULLETED_TAG = " -";
@@ -115,6 +117,7 @@ class TaggingFacility extends OpenAiFacility {
                 .map(text -> StringUtils.strip(text, PATTERN_BULLETED_TAG))
                 .map(text -> StringUtils.removePattern(text, PATTERN_NUMBERED_TAG))
                 .filter(StringUtils::isNotEmpty)
+                .filter(text -> text.length() <= TAG_LENGTH_THRESHOLD)
                 .distinct()
                 .sorted()
                 .map(keyword -> !keyword.startsWith(HASH) ? HASH + keyword : keyword)
