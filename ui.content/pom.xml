@@ -7,11 +7,11 @@
 
     <parent>
         <groupId>com.exadel.etoolbox</groupId>
-        <artifactId>etoolbox-authoring-kit</artifactId>
+        <artifactId>etoolbox-authoring-kit-plus</artifactId>
         <version>2.4.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>etoolbox-authoring-kit-ui.content</artifactId>
+    <artifactId>etoolbox-authoring-kit-plus-ui.content</artifactId>
 
     <name>Exadel Toolbox Authoring Kit - UI Content</name>
     <description>Presents assets designed for the /conf and /content sections of an AEM instance</description>
