@@ -48,11 +48,6 @@ public class SmartSearchService implements AssistantService {
     }
 
     @Override
-    public boolean isEnabled() {
-        return true;
-    }
-
-    @Override
     public List<Facility> getFacilities() {
         return facilities;
     }

@@ -113,8 +113,8 @@ public class FacilityCollector implements Collector<Facility, List<Facility>, Li
      * @throws NullPointerException if either of the arguments is null.
      */
     private static boolean isAdjacentById(Facility first, Facility second) {
-        boolean isSimilarStructure = StringUtils.countMatches(first.getId(), CoreConstants.SEPARATOR_DOT) ==
-            StringUtils.countMatches(second.getId(), CoreConstants.SEPARATOR_DOT);
+        boolean isSimilarStructure = StringUtils.countMatches(first.getId(), CoreConstants.SEPARATOR_DOT)
+            == StringUtils.countMatches(second.getId(), CoreConstants.SEPARATOR_DOT);
         if (isSimilarStructure) {
             return StringUtils.equals(
                 StringUtils.substringBeforeLast(first.getId(), CoreConstants.SEPARATOR_DOT),
