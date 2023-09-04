@@ -143,19 +143,6 @@ public class OrderingUtil {
             }
         }
 
-        for (int i = 1; i < list.size(); i++) {
-            Orderable<Source> current = list.get(i);
-            Orderable<Source> previous = list.get(i - 1);
-            if (current.isPlaceAnnotated() || previous.isPlaceAnnotated()) {
-                continue;
-            }
-            if ((current.getAfter() == null || current.getAfter().equals(previous))
-                && (previous.getBefore() == null || previous.getBefore().equals(current))) {
-                current.setAfter(previous);
-                previous.setBefore(current);
-            }
-        }
-
         return new TopologicalSorter<>(list)
             .topologicalSort()
             .stream()

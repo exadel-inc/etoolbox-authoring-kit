@@ -42,31 +42,35 @@ class TopologicalSorter<T> {
      * @return List of entities with the sorting applied
      */
     public List<Orderable<T>> topologicalSort() {
-        Deque<Orderable<T>> deque = new LinkedList<>();
+        List<Orderable<T>> deque = new ArrayList<>();
 
         for (int i = 0; i < this.nodes.size(); i++) {
             Orderable<T> orderable = nodes.get(i);
-            if (!deque.contains(orderable)) {
-                deque.add(orderable);
-            }
+            Deque<Orderable<T>> temp = new LinkedList<>();
 
             Deque<Orderable<T>> after = after(orderable, new ArrayList<>());
             while (!after.isEmpty()) {
                 Orderable<T> tOrderable = after.removeLast();
-                if (!deque.contains(tOrderable)) {
-                    deque.addFirst(tOrderable);
+                if (!deque.contains(tOrderable) && !temp.contains(tOrderable)) {
+                    temp.addFirst(tOrderable);
                 }
-
             }
+
             Deque<Orderable<T>> before = before(orderable, new ArrayList<>());
             while (!before.isEmpty()) {
                 Orderable<T> tOrderable = before.removeFirst();
-                if (!deque.contains(tOrderable)) {
-                    deque.addLast(tOrderable);
+                if (!deque.contains(tOrderable) && !temp.contains(tOrderable)) {
+                    temp.addLast(tOrderable);
                 }
             }
+
+            if (!deque.contains(orderable)) {
+                temp.addLast(orderable);
+            }
+
+            deque.addAll(temp);
         }
-        return new ArrayList<>(deque);
+        return deque;
     }
 
     /**
