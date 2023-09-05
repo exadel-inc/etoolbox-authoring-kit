@@ -28,18 +28,18 @@ public class TopologicalSorterTest {
 
     private static final List<String> CYCLED_GRAPH_SEQUENCE_2 = Arrays.asList(
         "Handler0",
-        "Handler5",
-        "Handler6",
         "Handler1",
         "Handler2",
         "Handler3",
-        "Handler4");
+        "Handler6",
+        "Handler4",
+        "Handler5");
 
     private static final List<String> CYCLED_GRAPH_SEQUENCE_1 = Arrays.asList(
         "Handler0",
         "Handler1",
-        "Handler2",
         "Handler4",
+        "Handler2",
         "Handler3");
 
     private static final List<String> SIMPLE_CYCLED_GRAPH_SEQUENCE = Arrays.asList(
@@ -58,16 +58,16 @@ public class TopologicalSorterTest {
         "Handler6");
 
     private static final List<String> REGULAR_GRAPH_SEQUENCE_2 = Arrays.asList(
-        "Handler1",
         "Handler3",
-        "Handler8",
-        "Handler9",
         "Handler2",
-        "Handler5",
-        "Handler4",
         "Handler6",
         "Handler0",
-        "Handler7");
+        "Handler1",
+        "Handler4",
+        "Handler9",
+        "Handler5",
+        "Handler7",
+        "Handler8");
 
     // Test, that size will be equal to initial size and ordered list consists of unique nodes
     @Test
@@ -85,10 +85,15 @@ public class TopologicalSorterTest {
         List<Orderable<String>> list = getList(5);
 
         list.get(0).setBefore(list.get(1));
+        list.get(1).setAfter(list.get(0));
         list.get(1).setBefore(list.get(2));
+        list.get(2).setAfter(list.get(1));
         list.get(4).setAfter(list.get(1));
+        list.get(1).setBefore(list.get(4));
         list.get(2).setBefore(list.get(3));
+        list.get(3).setAfter(list.get(2));
         list.get(3).setBefore(list.get(1));
+        list.get(1).setAfter(list.get(3));
 
         List<String> answer = getSortedByValues(list);
 
@@ -101,12 +106,19 @@ public class TopologicalSorterTest {
         List<Orderable<String>> list = getList(7);
 
         list.get(0).setBefore(list.get(1));
+        list.get(1).setAfter(list.get(0));
         list.get(1).setBefore(list.get(2));
+        list.get(2).setAfter(list.get(1));
         list.get(2).setBefore(list.get(3));
+        list.get(3).setAfter(list.get(2));
         list.get(3).setBefore(list.get(4));
+        list.get(4).setAfter(list.get(3));
         list.get(1).setAfter(list.get(3));
+        list.get(3).setBefore(list.get(1));
         list.get(5).setBefore(list.get(1));
+        list.get(1).setAfter(list.get(5));
         list.get(6).setBefore(list.get(1));
+        list.get(1).setAfter(list.get(6));
 
         List<String> answer = getSortedByValues(list);
 
@@ -131,13 +143,18 @@ public class TopologicalSorterTest {
     public void testExampleGraph1() {
         List<Orderable<String>> list = getList(10);
 
-        list.get(1).setBefore(list.get(0));
         list.get(2).setBefore(list.get(6));
+        list.get(6).setAfter(list.get(2));
         list.get(3).setBefore(list.get(2));
+        list.get(2).setAfter(list.get(3));
         list.get(4).setAfter(list.get(2));
+        list.get(2).setBefore(list.get(4));
         list.get(6).setBefore(list.get(0));
+        list.get(0).setAfter(list.get(6));
         list.get(7).setAfter(list.get(6));
+        list.get(6).setBefore(list.get(7));
         list.get(9).setBefore(list.get(5));
+        list.get(5).setAfter(list.get(9));
 
         List<Orderable<String>> answer = getTopologicalSorted(list);
         List<String> answerValues = getSortedByValues(list);
