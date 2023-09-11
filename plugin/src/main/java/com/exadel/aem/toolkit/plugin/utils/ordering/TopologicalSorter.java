@@ -82,6 +82,9 @@ class TopologicalSorter<T> {
      */
     private Deque<Orderable<T>> after(Orderable<T> orderable, List<Orderable<T>> values) {
         Deque<Orderable<T>> deque = new LinkedList<>();
+        if (orderable == null) {
+            return deque;
+        }
         for (int i = orderable.getAfter().size() - 1; i >= 0; i--) {
             Orderable<T> orderable1 = orderable.getAfter().get(i);
             if (!values.contains(orderable1)) {
@@ -105,6 +108,9 @@ class TopologicalSorter<T> {
      */
     private Deque<Orderable<T>> before(Orderable<T> orderable, List<Orderable<T>> values) {
         Deque<Orderable<T>> deque = new LinkedList<>();
+        if (orderable == null) {
+            return deque;
+        }
         for (int i = orderable.getBefore().size() - 1; i >= 0; i--) {
             Orderable<T> orderable1 = orderable.getBefore().get(i);
             if (!values.contains(orderable1)) {
