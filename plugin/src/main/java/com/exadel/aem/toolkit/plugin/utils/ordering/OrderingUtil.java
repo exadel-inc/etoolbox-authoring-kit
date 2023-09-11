@@ -78,11 +78,11 @@ public class OrderingUtil {
             Handles handles = orderableHandlers.get(i).getValue().getClass().getDeclaredAnnotation(Handles.class);
             if (!_Default.class.equals(handles.before())) {
                 Orderable<T> before = findSibling(handles.before().getName(), orderableHandlers);
-                orderableHandlers.get(i).setBefore(before);
+                orderableHandlers.get(i).getBefore().add(before);
             }
             if (!_Default.class.equals(handles.after())) {
                 Orderable<T> after = findSibling(handles.after().getName(), orderableHandlers);
-                orderableHandlers.get(i).setAfter(after);
+                orderableHandlers.get(i).getAfter().add(after);
             }
         }
 
@@ -120,10 +120,9 @@ public class OrderingUtil {
                             sources.get(i).adaptTo(MemberSource.class).getDeclaringClass()
                         ),
                         list);
-                    list.get(i).setBefore(before);
-                    list.get(i).setPlaceAnnotated(true);
+                    list.get(i).getBefore().add(before);
                     if (before != null) {
-                        before.setAfter(list.get(i));
+                        before.getAfter().add(list.get(i));
                     }
                 }
                 ClassMember classMemberAfter = place.after();
@@ -134,10 +133,9 @@ public class OrderingUtil {
                             sources.get(i).adaptTo(MemberSource.class).getDeclaringClass()
                         ),
                         list);
-                    list.get(i).setAfter(after);
-                    list.get(i).setPlaceAnnotated(true);
+                    list.get(i).getAfter().add(after);
                     if (after != null) {
-                        after.setBefore(list.get(i));
+                        after.getBefore().add(list.get(i));
                     }
                 }
             }

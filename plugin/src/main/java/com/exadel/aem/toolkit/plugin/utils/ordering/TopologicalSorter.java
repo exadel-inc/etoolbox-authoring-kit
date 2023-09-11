@@ -82,11 +82,14 @@ class TopologicalSorter<T> {
      */
     private Deque<Orderable<T>> after(Orderable<T> orderable, List<Orderable<T>> values) {
         Deque<Orderable<T>> deque = new LinkedList<>();
-        if (orderable.getAfter() != null && !values.contains(orderable)) {
-            values.add(orderable);
-            Deque<Orderable<T>> after = after(orderable.getAfter(), values);
-            while (!after.isEmpty()) {
-                deque.addFirst(after.removeLast());
+        for (int i = orderable.getAfter().size() - 1; i >= 0; i--) {
+            Orderable<T> orderable1 = orderable.getAfter().get(i);
+            if (!values.contains(orderable1)) {
+                values.add(orderable1);
+                Deque<Orderable<T>> after = after(orderable1, values);
+                while (!after.isEmpty()) {
+                    deque.addFirst(after.removeLast());
+                }
             }
         }
         deque.addLast(orderable);
@@ -102,11 +105,14 @@ class TopologicalSorter<T> {
      */
     private Deque<Orderable<T>> before(Orderable<T> orderable, List<Orderable<T>> values) {
         Deque<Orderable<T>> deque = new LinkedList<>();
-        if (orderable.getBefore() != null && !values.contains(orderable)) {
-            values.add(orderable);
-            Deque<Orderable<T>> before = before(orderable.getBefore(), values);
-            while (!before.isEmpty()) {
-                deque.addLast(before.removeFirst());
+        for (int i = orderable.getBefore().size() - 1; i >= 0; i--) {
+            Orderable<T> orderable1 = orderable.getBefore().get(i);
+            if (!values.contains(orderable1)) {
+                values.add(orderable1);
+                Deque<Orderable<T>> before = before(orderable1, values);
+                while (!before.isEmpty()) {
+                    deque.addLast(before.removeFirst());
+                }
             }
         }
         deque.addFirst(orderable);
