@@ -122,7 +122,7 @@ public class OrderingUtil {
                         list);
                     list.get(i).getBefore().add(before);
                     if (before != null) {
-                        before.getAfter().add(list.get(i));
+                        before.getAfter().add(0, list.get(i));
                     }
                 }
                 ClassMember classMemberAfter = place.after();
