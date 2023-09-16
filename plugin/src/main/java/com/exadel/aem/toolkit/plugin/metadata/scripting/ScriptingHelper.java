@@ -48,7 +48,7 @@ public class ScriptingHelper {
     private static final ClassShutter DEFAULT_CLASS_SHUTTER = className ->
         StringUtils.startsWith(className, CoreConstants.ROOT_PACKAGE);
 
-    private static final String PN_DATA = "data";
+    private static final String PN_SETTINGS = "settings";
     private static final String PN_SOURCE = "source";
 
     private static final String PATH_SCRIPT = "<script>";
@@ -95,7 +95,7 @@ public class ScriptingHelper {
             context.setClassShutter(DEFAULT_CLASS_SHUTTER);
             Scriptable scope = context.initStandardObjects();
             ScriptableObject.putProperty(scope, PN_SOURCE, Context.javaToJS(adapter, scope));
-            ScriptableObject.putProperty(scope, PN_DATA, Context.javaToJS(new MapAdapter(dataStack.getData()), scope));
+            ScriptableObject.putProperty(scope, PN_SETTINGS, Context.javaToJS(new MapAdapter(dataStack.getData()), scope));
             for (TemplatedProperty property : templatedProperties) {
                 String result = interpolate(property, context, scope, dataStack);
                 value.putValue(property.getPath(), result);
@@ -266,7 +266,7 @@ public class ScriptingHelper {
             boolean hasAtTemplate = stringValue != null
                 && stringValue.contains(CoreConstants.SEPARATOR_AT + DialogConstants.OPENING_CURLY);
             boolean hasDollarSignTemplate = stringValue != null
-                && stringValue.contains(TEMPLATE_START + DialogConstants.OPENING_CURLY);
+                && stringValue.contains(DialogConstants.TEMPLATE_START);
             if (!hasAtTemplate && !hasDollarSignTemplate) {
                 return null;
             }

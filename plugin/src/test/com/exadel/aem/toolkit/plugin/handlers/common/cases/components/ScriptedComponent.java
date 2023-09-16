@@ -72,7 +72,7 @@ public class ScriptedComponent extends ScriptedParent {
             },
             defaultPasteMode = PasteMode.WORDHTML,
             externalStyleSheets = {
-                    "@{data.styleAddress}",
+                    "@{settings.styleAddress}",
                     "/etc/clientlibs/myLib/${@styleName}.css"
             },
             maxUndoSteps = 25,
