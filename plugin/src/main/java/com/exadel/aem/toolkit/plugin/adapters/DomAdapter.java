@@ -26,7 +26,7 @@ import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
 import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 /**
- * Implements {@link Adapts} for rendering a {@link Target} instance into a DOM {@code Document}
+ * Adapts a {@link Target} instance to perform rendering it into a DOM {@code Document}
  */
 @Adapts(Target.class)
 public class DomAdapter {

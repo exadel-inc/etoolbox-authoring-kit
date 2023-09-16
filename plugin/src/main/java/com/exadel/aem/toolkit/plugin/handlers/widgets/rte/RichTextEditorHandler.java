@@ -124,7 +124,7 @@ public class RichTextEditorHandler implements Handler {
             Arrays.stream(annotation.fullscreenFeatures()).map(feature -> new ImmutablePair<>(fullScreenBuilder, feature))
         ).forEach(featureItem -> processFeatureItem(featureItem, tableEditBuilder, pluginsBuilder));
 
-        // build uiSettings node with sub-nodes, append conditionally if not empty
+        // build the ./uiSettings node with sub-nodes, append conditionally if not empty
         Target uiSettings = target.getOrCreateTarget(DialogConstants.NN_UI_SETTINGS);
         Target cui = uiSettings.getOrCreateTarget(DialogConstants.NN_CUI);
         inlineBuilder.build(cui);
@@ -149,15 +149,16 @@ public class RichTextEditorHandler implements Handler {
         tableEditBuilder.build(cui);
         getIconsNode(cui);
 
-        // In case ./cui node has been added any children, append it to ./uiSettings and then append ./uiSettings
+        // In case any children have been added to the ./cui node, append it to ./uiSettings and then append ./uiSettings
         // to the root target
         if (annotation.externalStyleSheets().length != 0) {
             target.attribute(
                 DialogConstants.PN_EXTERNAL_STYLESHEETS,
                 Arrays.asList(annotation.externalStyleSheets()).toString().replace(" ", ""));
         }
-        // Build rtePlugins node, merge it to existing target structure (to pick up child nodes that may have already been populated)
-        // then populate rtePlugins node with the context rteAnnotation fields, then merge again
+        // Build the "rtePlugins" node. Merge it to the existing target structure (to pick up child nodes that may have
+        // already been populated). Then populate the rtePlugins node with the context rteAnnotation fields,
+        // then merge again
         Target rtePlugins = pluginsBuilder.build(target);
         getFormatNode(rtePlugins.getOrCreateTarget(DialogConstants.NN_PARAFORMAT));
         getSpecialCharactersNode(rtePlugins.getOrCreateTarget(DialogConstants.NN_MISCTOOLS));
@@ -342,7 +343,7 @@ public class RichTextEditorHandler implements Handler {
             .collect(Collectors.toList());
         if (!nonDefaultAllowPropsNames.isEmpty()) {
             Target allowBasicsNode = htmlPasteRulesNode.getOrCreateTarget(DialogConstants.NN_ALLOW_BASICS);
-            // default values are all 'true', so non-defaults are 'false'
+            // default values are all {@code true}, so non-defaults are {@code false}
             nonDefaultAllowPropsNames.forEach(fieldName -> allowBasicsNode.attribute(fieldName, false));
         }
         String blockTags = rules.allowedBlockTags().length == 0
@@ -380,7 +381,7 @@ public class RichTextEditorHandler implements Handler {
     }
 
     /**
-     * Gets whether a certain feature exists in the feature set
+     * Gets whether the given feature exists in the feature set
      * @param value Feature token
      * @return True or false
      */
@@ -423,8 +424,8 @@ public class RichTextEditorHandler implements Handler {
     }
 
     /**
-     * Gets a string representation of a {@link Characters} object for use with the child targets creation. The return
-     * value differs depending on whether it is a character range or a particular entity
+     * Gets a string representation of a {@link Characters} object that is used when child {@code Target}s are created.
+     * The return value differs depending on whether it is a character range or a particular entity
      * @param characters {@code Characters} annotation
      * @return String value
      */

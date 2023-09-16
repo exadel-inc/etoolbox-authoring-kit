@@ -38,7 +38,7 @@ public @interface NumberField {
     /**
      * When set to a non-blank string, maps to the {@code value} attribute of this Granite UI component's node.
      * Used to define a default value for a NumberField
-     * @return String value, castable to a number
+     * @return String value that can be cast to a number
      */
     @ValueRestriction(ValueRestrictions.NUMBER)
     String value() default "0";
