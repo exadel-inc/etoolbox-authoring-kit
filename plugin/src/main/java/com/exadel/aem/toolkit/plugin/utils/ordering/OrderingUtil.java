@@ -79,10 +79,16 @@ public class OrderingUtil {
             if (!_Default.class.equals(handles.before())) {
                 Orderable<T> before = findSibling(handles.before().getName(), orderableHandlers);
                 orderableHandlers.get(i).getBefore().add(before);
+                if (before != null) {
+                    before.getAfter().add(orderableHandlers.get(i));
+                }
             }
             if (!_Default.class.equals(handles.after())) {
                 Orderable<T> after = findSibling(handles.after().getName(), orderableHandlers);
                 orderableHandlers.get(i).getAfter().add(after);
+                if (after != null) {
+                    after.getBefore().add(0, orderableHandlers.get(i));
+                }
             }
         }
 
@@ -122,7 +128,7 @@ public class OrderingUtil {
                         list);
                     list.get(i).getBefore().add(before);
                     if (before != null) {
-                        before.getAfter().add(0, list.get(i));
+                        before.getAfter().add(list.get(i));
                     }
                 }
                 ClassMember classMemberAfter = place.after();
@@ -135,7 +141,7 @@ public class OrderingUtil {
                         list);
                     list.get(i).getAfter().add(after);
                     if (after != null) {
-                        after.getBefore().add(list.get(i));
+                        after.getBefore().add(0, list.get(i));
                     }
                 }
             }

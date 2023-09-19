@@ -92,9 +92,18 @@ class TopologicalSorter<T> {
                 while (!after.isEmpty()) {
                     deque.addFirst(after.removeLast());
                 }
+                Deque<Orderable<T>> before = before(orderable1, values);
+                while (!before.isEmpty()) {
+                    Orderable<T> tOrderable = before.removeFirst();
+                    if (!deque.contains(tOrderable)) {
+                        deque.addLast(tOrderable);
+                    }
+                }
             }
         }
-        deque.addLast(orderable);
+        if (!deque.contains(orderable)) {
+            deque.addLast(orderable);
+        }
         return deque;
     }
 
@@ -113,13 +122,22 @@ class TopologicalSorter<T> {
         for (Orderable<T> orderable1 : orderable.getBefore()) {
             if (!values.contains(orderable1)) {
                 values.add(orderable1);
+                Deque<Orderable<T>> after = after(orderable1, values);
+                while (!after.isEmpty()) {
+                    deque.addFirst(after.removeLast());
+                }
                 Deque<Orderable<T>> before = before(orderable1, values);
                 while (!before.isEmpty()) {
-                    deque.addLast(before.removeFirst());
+                    Orderable<T> tOrderable = before.removeFirst();
+                    if (!deque.contains(tOrderable)) {
+                        deque.addLast(tOrderable);
+                    }
                 }
             }
         }
-        deque.addFirst(orderable);
+        if (!deque.contains(orderable)) {
+            deque.addFirst(orderable);
+        }
         return deque;
     }
 }
