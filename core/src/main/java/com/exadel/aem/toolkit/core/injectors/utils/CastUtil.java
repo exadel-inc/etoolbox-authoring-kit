@@ -20,9 +20,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
+import javax.annotation.Nonnull;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -50,45 +52,47 @@ public class CastUtil {
     /**
      * Attempts to cast the given value to the provided {@code Type}. Designed for use with Sling injectors
      * @param value An arbitrary value
-     * @param type  A {@link Type} reference; usually reflects the type of Java class member
-     * @return Transformed value; returns null in case type casting is not possible
+     * @param type  A {@link Type} reference. Usually reflects the type of Java class member
+     * @return A {@link Defaultable} instance containing the transformed value; can contain {@code null} if type casting
+     * was not possible
      */
-    public static CastResult toType(Object value, Type type) {
+    @Nonnull
+    public static Defaultable toType(Object value, Type type) {
         return toType(value, type, CastUtil::toInstanceOfType);
     }
 
     /**
      * Attempts to cast the given value to the provided {@code Type}. Designed for use with Sling injectors
      * @param value     An arbitrary value
-     * @param type      A {@link Type} reference; usually reflects the type of Java class member
+     * @param type      A {@link Type} reference. Usually reflects the type of Java class member
      * @param converter A function that we use to convert a single entry of the provided value into the given type.
-     *                  Considering the given value is an array or collection, the {@code converter} must provide
-     *                  processing for every separate array's (collection's) element. If the given value is a singleton
-     *                  object or primitive, the {@code converter} processes it as is
-     * @return Transformed value; returns null in case type casting is not possible
+     *                  Considering the given value is an array or collection, the {@code converter} must process every
+     *                  separate array's (collection's) element. If the given value is a singleton object or primitive,
+     *                  the {@code converter} processes it as is
+     * @return A {@link Defaultable} instance containing the transformed value; can contain {@code null} if type casting
+     * was not possible
      */
-    public static CastResult toType(Object value, Type type, BiFunction<Object, Type, Object> converter) {
+    @Nonnull
+    public static Defaultable toType(Object value, Type type, BiFunction<Object, Type, Object> converter) {
         if (value == null) {
-            return null;
+            return Defaultable.EMPTY;
         }
-        boolean fallback = value.getClass().isArray() && Array.getLength(value) == 0;
-
         Class<?> elementType = TypeUtil.getElementType(type);
 
         if (TypeUtil.isArray(type)) {
-            return new CastResult(toArray(value, elementType, converter), fallback);
+            return Defaultable.of(toArray(value, elementType, converter));
         }
 
         if (TypeUtil.isSupportedCollection(type, true)) {
             return Set.class.equals(TypeUtil.getRawType(type))
-                ? new CastResult(toCollection(value, elementType, converter, LinkedHashSet::new), fallback)
-                : new CastResult(toCollection(value, elementType, converter, ArrayList::new), fallback);
+                ? Defaultable.of(toCollection(value, elementType, converter, LinkedHashSet::new))
+                : Defaultable.of(toCollection(value, elementType, converter, ArrayList::new));
         }
 
         if (Object.class.equals(type)) {
-            return new CastResult(converter.apply(value, type), fallback);
+            return Defaultable.of(converter.apply(value, type));
         }
-        return new CastResult(converter.apply(extractFirstElement(value), type), fallback);
+        return Defaultable.of(converter.apply(extractFirstElement(value), type));
     }
 
     /**
@@ -97,27 +101,16 @@ public class CastUtil {
      * @param value     An arbitrary non-null value
      * @param type      {@link Type} reference; usually reflects the type of Java class member
      * @param converter A function that we use to convert a single entry of the provided value into the given type
-     * @return A non-null array instance; contains nullable entries
+     * @return A non-null array instance. Does not include entries that could not be converted. Therefore, the size of
+     * the returned array may be less than the size of the source value
      */
+    @SuppressWarnings("unchecked")
     private static Object toArray(Object value, Class<?> type, BiFunction<Object, Type, Object> converter) {
-        int length = 1;
-        if (value.getClass().isArray()) {
-            length = Array.getLength(value);
-        } else if (value instanceof Collection) {
-            length = ((Collection<?>) value).size();
-        }
-        Object result = Array.newInstance(type, length);
-        if (value.getClass().isArray()) {
-            for (int i = 0; i < length; i++) {
-                Array.set(result, i, toType(Array.get(value, i), type, converter).getValue());
-            }
-        } else if (value instanceof Collection) {
-            int i = 0;
-            for (Object entry : (Collection<?>) value) {
-                Array.set(result, i++, converter.apply(entry, type));
-            }
-        } else {
-            Array.set(result, 0, converter.apply(value, type));
+        List<Object> convertedValues = (List<Object>) toCollection(value, type, converter, ArrayList::new);
+        Object result = Array.newInstance(type, convertedValues.size());
+        int i = 0;
+        for (Object converted : convertedValues) {
+            Array.set(result, i++, converted);
         }
         return result;
     }
@@ -128,7 +121,8 @@ public class CastUtil {
      * @param type      {@link Type} reference; usually reflects the type of Java class member
      * @param converter A function that we use to convert a single entry of the provided value into the given type
      * @param factory   A reference to the routine that produces a particular {@code List} or {@code Set} instance
-     * @return A non-null {@code List} or {@code Set} instance; contains nullable entries
+     * @return A non-null {@code List} or {@code Set} instance. Does not include entries that could not be converted.
+     * Therefore, the size of the returned array may be less than the size of the source value
      */
     private static Object toCollection(
         Object value,
@@ -140,14 +134,23 @@ public class CastUtil {
         if (value.getClass().isArray()) {
             int length = Array.getLength(value);
             for (int i = 0; i < length; i++) {
-                result.add(converter.apply(Array.get(value, i), type));
+                Object converted = converter.apply(Array.get(value, i), type);
+                if (Defaultable.isNotDefault(converted)) {
+                    result.add(Defaultable.unwrap(converted));
+                }
             }
         } else if (value instanceof Collection) {
             for (Object entry : (Collection<?>) value) {
-                result.add(converter.apply(entry, type));
+                Object converted = converter.apply(entry, type);
+                if (Defaultable.isNotDefault(converted)) {
+                    result.add(Defaultable.unwrap(converted));
+                }
             }
         } else {
-            result.add(converter.apply(value, type));
+            Object converted = converter.apply(value, type);
+            if (Defaultable.isNotDefault(converted)) {
+                result.add(Defaultable.unwrap(converted));
+            }
         }
         return result;
     }
@@ -179,18 +182,19 @@ public class CastUtil {
      * @param value An arbitrary non-null value
      * @param type  {@link Type} reference. When passed to this method, {@code type} is expected to be singular (not an
      *              array or collection)
-     * @return Usually, a transformed value. Returns an original one if type casting is not possible or not needed
+     * @return A {@link Defaultable} object which usually includes the transformed value. However, it may contain an
+     * original one if type casting is not possible or not needed
      */
-    private static Object toInstanceOfType(Object value, Type type) {
+    private static Defaultable toInstanceOfType(Object value, Type type) {
         if (value == null || value.getClass().equals(type) || type instanceof ParameterizedType) {
-            return value;
+            return Defaultable.of(value);
         }
         assert type instanceof Class<?>;
 
         if ((StringUtils.equalsIgnoreCase(value.toString(), Boolean.TRUE.toString())
             || StringUtils.equalsIgnoreCase(value.toString(), Boolean.FALSE.toString()))
             && ClassUtils.primitiveToWrapper((Class<?>) type).equals(Boolean.class)) {
-            return Boolean.parseBoolean(value.toString().toLowerCase());
+            return Defaultable.of(Boolean.parseBoolean(value.toString().toLowerCase()));
         }
         Object effectiveValue = value;
         if (value instanceof String && NumberUtils.isCreatable(value.toString())) {
@@ -206,7 +210,7 @@ public class CastUtil {
             return toNumeric(effectiveValue, type);
         }
         if (ClassUtils.isAssignable(effectiveValue.getClass(), (Class<?>) type)) {
-            return ((Class<?>) type).cast(effectiveValue);
+            return Defaultable.of(((Class<?>) type).cast(effectiveValue));
         }
         return getDefaultValue(type);
     }
@@ -216,60 +220,72 @@ public class CastUtil {
      * and the receiving type is {@code long}
      * @param value An arbitrary object
      * @param type  {@link Type} reference; usually reflects the type of Java class member
-     * @return Usually, a transformed value. Returns an original one if type casting is not possible, or {@code 0} if
-     * {@code null} was passed
+     * @return A {@link Defaultable} object which usually includes the transformed value. However, it may contain an
+     * original one if type casting is not possible or not needed
      */
-    private static Object toNumeric(Object value, Type type) {
+    private static Defaultable toNumeric(Object value, Type type) {
         if (ClassUtils.isAssignable((Class<?>) type, Integer.class)) {
-            return value != null ? toInt(value) : 0;
+            return value != null ? toInt(value) : Defaultable.fallback(0);
         }
         if (ClassUtils.isAssignable((Class<?>) type, Long.class)) {
-            return value != null ? toLong(value) : 0L;
+            return value != null ? toLong(value) : Defaultable.fallback(0L);
         }
         if (ClassUtils.isAssignable((Class<?>) type, Double.class)) {
-            return value != null ? toDouble(value) : 0d;
+            return value != null ? toDouble(value) : Defaultable.fallback(0d);
         }
-        return value;
+        return Defaultable.of(value);
     }
 
     /**
      * Attempts to cast the given value to {@code int}
      * @param value An arbitrary non-null value. Java primitive number or a boxed number is expected
-     * @return A transformed value or {@code 0}
+     * @return A {@link Defaultable} instance that either contains the transformed value or {@code 0} as the fallback
      */
-    private static int toInt(Object value) {
+    private static Defaultable toInt(Object value) {
         if (ClassUtils.isAssignable(value.getClass(), Integer.class)) {
-            return (int) value;
+            return Defaultable.of(value);
         }
         if (ClassUtils.isAssignable(value.getClass(), Byte.class)) {
-            return ((Byte) value).intValue();
+            return Defaultable.of(((Byte) value).intValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Short.class)) {
-            return ((Short) value).intValue();
+            return Defaultable.of(((Short) value).intValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Long.class)) {
-            return ((Long) value).intValue();
+            return Defaultable.of(((Long) value).intValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Float.class)) {
-            return ((Float) value).intValue();
+            return Defaultable.of(((Float) value).intValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Double.class)) {
-            return ((Double) value).intValue();
+            return Defaultable.of(((Double) value).intValue());
         }
-        return 0;
+        return Defaultable.fallback(0);
     }
 
     /**
      * Attempts to cast the given value to {@code long}
      * @param value An arbitrary non-null value. Java primitive number or a boxed number is expected
-     * @return A transformed value or {@code 0}
+     * @return A {@link Defaultable} instance that either contains the transformed value or {@code 0L} as the fallback
      */
-    private static long toLong(Object value) {
+    private static Defaultable toLong(Object value) {
         if (ClassUtils.isAssignable(value.getClass(), Long.class)) {
-            return (long) value;
+            return Defaultable.of(value);
+        }
+        if (ClassUtils.isAssignable(value.getClass(), Byte.class)) {
+            return Defaultable.of(((Byte) value).longValue());
+        }
+        if (ClassUtils.isAssignable(value.getClass(), Short.class)) {
+            return Defaultable.of(((Short) value).longValue());
+        }
+        if (ClassUtils.isAssignable(value.getClass(), Integer.class)) {
+            return Defaultable.of(((Integer) value).longValue());
+        }
+        if (ClassUtils.isAssignable(value.getClass(), Float.class)) {
+            return Defaultable.of(((Float) value).longValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Double.class)) {
-            return ((Double) value).longValue();
+            return Defaultable.of(((Double) value).longValue());
         }
         return toInt(value);
     }
@@ -277,33 +293,42 @@ public class CastUtil {
     /**
      * Attempts to cast the given value to {@code double}
      * @param value An arbitrary non-null value, a Java primitive number, or a boxed number is expected
-     * @return A transformed value or {@code 0}
+     * @return A {@link Defaultable} instance that either contains the transformed value or {@code 0d} as the fallback
      */
-    private static double toDouble(Object value) {
+    private static Defaultable toDouble(Object value) {
         if (ClassUtils.isAssignable(value.getClass(), Double.class)) {
-            return (double) value;
+            return Defaultable.of(value);
         }
-        if (ClassUtils.isAssignable(value.getClass(), Float.class)) {
-            return ((Float) value).doubleValue();
+        if (ClassUtils.isAssignable(value.getClass(), Byte.class)) {
+            return Defaultable.of(((Byte) value).doubleValue());
+        }
+        if (ClassUtils.isAssignable(value.getClass(), Short.class)) {
+            return Defaultable.of(((Short) value).doubleValue());
+        }
+        if (ClassUtils.isAssignable(value.getClass(), Integer.class)) {
+            return Defaultable.of(((Integer) value).doubleValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Long.class)) {
-            return ((Long) value).doubleValue();
+            return Defaultable.of(((Long) value).doubleValue());
+        }
+        if (ClassUtils.isAssignable(value.getClass(), Float.class)) {
+            return Defaultable.of(((Float) value).doubleValue());
         }
         return toInt(value);
     }
 
     /**
-     * Retrieves the default value for the given Java type by creating an empty array of that type. The return value is
-     * going to be {@code 0} for the numeric fields (incl. boxed fields), {@code false} for the booleans (incl. boxed
-     * ones), and {@code null} for the reference types
+     * Retrieves the default value for the given Java type by creating an empty array. The return value is going to be
+     * {@code 0} for the numeric fields (incl. boxed fields), {@code false} for the booleans (incl. boxed ones), and
+     * {@code null} for the reference types
      * @param type The type of the field
-     * @return The default value for the type
+     * @return A {@link Defaultable} instance in the "fallback" state that contains the default value for the given type
      */
-    private static Object getDefaultValue(Type type) {
+    private static Defaultable getDefaultValue(Type type) {
         Class<?> elementaryType = ClassUtils.wrapperToPrimitive((Class<?>) type);
         if (elementaryType == null) {
             elementaryType = (Class<?>) type;
         }
-        return Array.get(Array.newInstance(elementaryType, 1), 0);
+        return Defaultable.fallback(Array.get(Array.newInstance(elementaryType, 1), 0));
     }
 }
