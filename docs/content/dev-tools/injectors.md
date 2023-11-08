@@ -338,3 +338,15 @@ public class SampleModel {
 Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
 constructor, write it like `(@I18N @Named String argument)` and annotate the constructor itself with `@Inject`.
 
+## Use Sling's @Default where appropriate
+
+The *ToolKit*'s injector annotations work well with the standard [@Default](https://sling.apache.org/documentation/bundles/models.html#defaults-1) annotation. This way, you can specify a default value for a class member in case the corresponding resource property is not present or is empty. For the values specified insider `@Default`, the same (generous) type casting rules apply as for "usual" cases. You may, for example, want to inject query parameters into a _List_-typed field. If the parameters are missing from the request, you are still able to populate the _List_ with the array of default values.
+
+```java
+public class SampleModel {
+    // ...
+    @RequestParam
+    @Default(values = {"/content/path1", "/content/path2"})
+    private List<String> paths;
+}
+```
