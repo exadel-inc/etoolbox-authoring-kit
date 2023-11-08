@@ -25,6 +25,7 @@ import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.Defaultable;
 
 /**
  * This is a testing scope injector that hooks on {@link RequestProperty} to make it possible to use the same testcase
@@ -61,50 +62,41 @@ public class DelegateInjector implements Injector {
         RequestProperty requestProperty = annotatedElement.getAnnotation(RequestProperty.class);
         String effectiveName = StringUtils.defaultIfBlank(requestProperty.name(), name);
 
+        Defaultable value = null;
         if (delegate instanceof RequestAttributeInjector) {
             RequestAttributeInjector requestAttributeInjector = (RequestAttributeInjector) delegate;
-            Object value = requestAttributeInjector.getValue(
+            value = Defaultable.of(requestAttributeInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
                 effectiveName,
-                type);
-            return requestAttributeInjector.populateDefaultValue(value, type, annotatedElement);
-        }
+                type));
 
-        if (delegate instanceof RequestParamInjector) {
+        } else if (delegate instanceof RequestParamInjector) {
             RequestParamInjector requestParamInjector = (RequestParamInjector) delegate;
-            Object value = requestParamInjector.getValue(
+            value = Defaultable.of(requestParamInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
                 effectiveName,
-                type);
-            return requestParamInjector.populateDefaultValue(value, type, annotatedElement);
-        }
+                type));
 
-        if (delegate instanceof RequestSelectorsInjector) {
+        } else if (delegate instanceof RequestSelectorsInjector) {
             RequestSelectorsInjector requestSelectorsInjector = (RequestSelectorsInjector) delegate;
-            Object value = requestSelectorsInjector.getValue(
+            value = Defaultable.of(requestSelectorsInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
-                type);
-            return requestSelectorsInjector.populateDefaultValue(value, type, annotatedElement);
-        }
+                type));
 
-        if (delegate instanceof RequestSuffixInjector) {
+        } else if (delegate instanceof RequestSuffixInjector) {
             RequestSuffixInjector requestSuffixInjector = (RequestSuffixInjector) delegate;
-            Object value = requestSuffixInjector.getValue(
+            value = Defaultable.of(requestSuffixInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
-                type);
-            return requestSuffixInjector.populateDefaultValue(value, type, annotatedElement);
-        }
+                type));
 
-        if (delegate instanceof EnumValueInjector) {
+        } else if (delegate instanceof EnumValueInjector) {
             EnumValueInjector enumValueInjector = (EnumValueInjector) delegate;
-            Object value = enumValueInjector.getValue(
+            value = Defaultable.of(enumValueInjector.getValue(
                 adaptable,
                 effectiveName,
                 StringUtils.EMPTY,
-                type);
-            return enumValueInjector.populateDefaultValue(value, type, annotatedElement);
+                type));
         }
-
-        return null;
+        return BaseInjector.defaultIfEmpty(value, type, annotatedElement);
     }
 }

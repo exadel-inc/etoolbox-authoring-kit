@@ -34,8 +34,8 @@ public class Longs extends RequestAdapterBase<Long> {
     @RequestProperty
     private Long value;
 
-    @Default(longValues = 10L)
     @RequestProperty
+    @Default(longValues = 10L)
     private Long defaultValue;
 
     @Self

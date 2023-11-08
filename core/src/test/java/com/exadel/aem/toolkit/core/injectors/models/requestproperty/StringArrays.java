@@ -33,8 +33,8 @@ public class StringArrays extends RequestAdapterBase<String[]> {
     @RequestProperty
     private String[] value;
 
-    @Default(values = {"Default", "values"})
     @RequestProperty
+    @Default(values = {"Default", "values"})
     private String[] defaultValue;
 
     @Self

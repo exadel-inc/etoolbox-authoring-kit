@@ -39,7 +39,7 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
     private static final String[] STRINGIFIED_FLOAT_ARRAY = new String[] {"-42.1", "43.2d", "NaN", "44"};
     private static final List<String> STRINGIFIED_FLOAT_COLLECTION = Arrays.asList(STRINGIFIED_FLOAT_ARRAY);
 
-    private static final Integer[] EXPECTED_INTEGER_ARRAY = new Integer[] {-42, 43, 0, 44};
+    private static final Integer[] EXPECTED_INTEGER_ARRAY = new Integer[] {-42, 43, 44};
     private static final List<Integer> EXPECTED_INTEGER_COLLECTION = Arrays.asList(EXPECTED_INTEGER_ARRAY);
 
     /* -----------

@@ -34,8 +34,8 @@ public class LongArrays extends RequestAdapterBase<Long[]> {
     @RequestProperty
     private long[] value;
 
-    @Default(longValues = {10L, 11L, 12L})
     @RequestProperty
+    @Default(longValues = {10L, 11L, 12L})
     private long[] defaultValue;
 
     @Self
