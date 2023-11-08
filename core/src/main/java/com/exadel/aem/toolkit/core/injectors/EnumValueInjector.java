@@ -33,6 +33,7 @@ import org.osgi.service.component.annotations.Component;
 import com.exadel.aem.toolkit.api.annotations.injectors.EnumValue;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.Defaultable;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
@@ -67,11 +68,13 @@ public class EnumValueInjector extends BaseInjector<EnumValue> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
-    Object getValue(Object adaptable, String name, Type type, EnumValue annotation) {
+    Defaultable getValue(Object adaptable, String name, Type type, EnumValue annotation) {
         String effectiveName = StringUtils.defaultIfEmpty(annotation.name(), name);
         String valueMember = annotation.valueMember();
-        return getValue(adaptable, effectiveName, valueMember, type);
+        Object value = getValue(adaptable, effectiveName, valueMember, type);
+        return Defaultable.of(value);
     }
 
     /**
@@ -145,7 +148,7 @@ public class EnumValueInjector extends BaseInjector<EnumValue> {
     /**
      * Returns whether the given enum constant corresponds to the provided value because it is the value of the
      * specified constant's method/field
-     * @param enumConstant An enum that we test for a correspondence
+     * @param enumConstant An enum that we test for the correspondence
      * @param memberName   The name of the constant's field or method that is queried to compare with the given value
      * @param value        The value used for the comparison
      * @return True or false
@@ -175,7 +178,7 @@ public class EnumValueInjector extends BaseInjector<EnumValue> {
     }
 
     /**
-     * Retrieves the value of a field from an enum constant object without throwing ex exception
+     * Retrieves the value of a field from an enum constant object without throwing an exception
      * @param value The enum constant whose field value is being retrieved
      * @param name  The name of the field that we want to retrieve
      * @return A string value if was able to find the requested field and query for its value; otherwise, {@code null}

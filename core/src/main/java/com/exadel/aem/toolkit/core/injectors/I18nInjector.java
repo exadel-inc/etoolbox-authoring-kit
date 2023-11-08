@@ -39,6 +39,7 @@ import com.day.cq.i18n.I18n;
 
 import com.exadel.aem.toolkit.api.annotations.injectors.I18N;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.Defaultable;
 import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
 
 /**
@@ -81,8 +82,9 @@ public class I18nInjector extends BaseInjector<I18N> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
-    public Object getValue(Object adaptable, String name, Type type, I18N annotation) {
+    public Defaultable getValue(Object adaptable, String name, Type type, I18N annotation) {
         String value = StringUtils.defaultIfEmpty(annotation.value(), name);
 
         Function<Object, Locale> localeDetector = InstantiationUtil.getObjectInstance(annotation.localeDetector());
@@ -93,12 +95,12 @@ public class I18nInjector extends BaseInjector<I18N> {
         I18n i18n = getI18n(adaptable, locale);
 
         if (isI18nType(type)) {
-            return i18n;
+            return Defaultable.of(i18n);
         } else if (String.class.equals(type) || Object.class.equals(type)) {
-            return i18n.get(value);
+            return Defaultable.of(i18n.get(value));
         }
 
-        return null;
+        return Defaultable.EMPTY;
     }
 
     /**

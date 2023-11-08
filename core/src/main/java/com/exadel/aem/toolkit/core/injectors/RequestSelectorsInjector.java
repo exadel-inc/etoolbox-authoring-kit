@@ -28,6 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.injectors.RequestSelectors;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.Defaultable;
 
 /**
  * Provides injecting into a Sling model the value of the {@code selectors} property of the {@link SlingHttpServletRequest}
@@ -64,8 +65,9 @@ public class RequestSelectorsInjector extends BaseInjector<RequestSelectors> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
-    public Object getValue(
+    public Defaultable getValue(
         Object adaptable,
         String name,
         Type type,
@@ -73,9 +75,9 @@ public class RequestSelectorsInjector extends BaseInjector<RequestSelectors> {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
-            return null;
+            return Defaultable.EMPTY;
         }
-        return getValue(request, type);
+        return Defaultable.of(getValue(request, type));
     }
 
     /**

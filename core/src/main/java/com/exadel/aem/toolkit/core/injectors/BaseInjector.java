@@ -30,14 +30,14 @@ import org.apache.sling.models.spi.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.exadel.aem.toolkit.core.injectors.utils.CastResult;
 import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
+import com.exadel.aem.toolkit.core.injectors.utils.Defaultable;
 
 /**
  * Represents a base for a Sling injector. A descendant of this class must extract an annotation from a Java class
  * member and provide a value that matches the annotation. This value is subsequently assigned to the Java class member
  * by the Sling engine
- * @param <T> Type of annotation handled by this injector
+ * @param <T> The type of annotation handled by this injector
  * @see Injector
  */
 abstract class BaseInjector<T extends Annotation> implements Injector {
@@ -72,22 +72,12 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
         if (Objects.isNull(annotation)) {
             return null;
         }
-
-        Object value = getValue(adaptable, name, type, annotation);
-        if (Objects.isNull(value)) {
+        Defaultable rawValue = getValue(adaptable, name, type, annotation);
+        Object value = defaultIfEmpty(rawValue, type, element);
+        if (value == null) {
             logNullValue(element, annotation);
         }
-        return populateDefaultValue(value, type, element);
-    }
-
-    protected Object populateDefaultValue(Object value, Type type, AnnotatedElement element) {
-        Object effectiveValue = value instanceof CastResult ? ((CastResult) value).getValue() : value;
-        boolean isFallback = value instanceof CastResult && ((CastResult) value).isFallback();
-        if ((effectiveValue == null || isFallback) && element.isAnnotationPresent(Default.class)) {
-            Object defaultValue = getDefaultValue(element.getDeclaredAnnotation(Default.class));
-            effectiveValue = CastUtil.toType(defaultValue, type).getValue();
-        }
-        return effectiveValue;
+        return value;
     }
 
     /**
@@ -97,9 +87,10 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
      * @param name       Name of the Java class member to inject the value into
      * @param type       Type of the receiving Java class member
      * @param annotation Annotation handled by the current injector
-     * @return A nullable value
+     * @return A non-null {@link Defaultable} instance that contains the payload that can be null
      */
-    abstract Object getValue(Object adaptable, String name, Type type, T annotation);
+    @Nonnull
+    abstract Defaultable getValue(Object adaptable, String name, Type type, T annotation);
 
     /**
      * When overridden in an injector class, retrieves the annotation processed by this particular injector. Takes into
@@ -112,38 +103,61 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
     abstract T getManagedAnnotation(AnnotatedElement element);
 
     /**
+     * Unwraps the value or the cast result retrieved from an injector implementation and attempts to replace it with a
+     * user-specified default if null
+     * @param source  The value retrieved from an injector implementation
+     * @param type    Type of the receiving Java class member
+     * @param element {@link AnnotatedElement} instance that facades the Java class member and allows retrieving
+     * @return A nullable value
+     */
+    static Object defaultIfEmpty(Defaultable source, Type type, AnnotatedElement element) {
+        if (source != null && !source.isDefault()) {
+            return source.getValue();
+        }
+        if (!element.isAnnotationPresent(Default.class)) {
+            return source != null ? source.getValue() : null;
+        }
+        Object defaultValue = extractDefault(element.getDeclaredAnnotation(Default.class));
+        return CastUtil.toType(defaultValue, type).getValue();
+    }
+
+    /**
+     * Extracts the value from the provided {@link Default} annotation
+     * @param annotation {@code Default} annotation instance
+     * @return An array-typed value per the {@link Default} signature
+     */
+    private static Object extractDefault(Default annotation) {
+        if (ArrayUtils.isNotEmpty(annotation.values())) {
+            return annotation.values();
+        } else if (ArrayUtils.isNotEmpty(annotation.booleanValues())) {
+            return annotation.booleanValues();
+        } else if (ArrayUtils.isNotEmpty(annotation.doubleValues())) {
+            return annotation.doubleValues();
+        } else if (ArrayUtils.isNotEmpty(annotation.floatValues())) {
+            return annotation.floatValues();
+        } else if (ArrayUtils.isNotEmpty(annotation.longValues())) {
+            return annotation.longValues();
+        } else if (ArrayUtils.isNotEmpty(annotation.intValues())) {
+            return annotation.intValues();
+        } else if (ArrayUtils.isNotEmpty(annotation.shortValues())) {
+            return annotation.shortValues();
+        }
+        return new String[0];
+    }
+
+    /**
      * Outputs a formatted message informing that the injection has not been successful
      * @param annotatedElement {@link AnnotatedElement} instance that facades the Java class member and allows
      *                         retrieving annotations
      * @param annotation       The annotation that they attempted to retrieve
      */
-    private void logNullValue(AnnotatedElement annotatedElement, T annotation) {
+    private static void logNullValue(AnnotatedElement annotatedElement, Annotation annotation) {
         if (annotatedElement instanceof Member) {
             String className = ((Member) annotatedElement).getDeclaringClass().getName();
             String memberName = ((Member) annotatedElement).getName();
             LOG.debug(INJECTION_ERROR_MESSAGE, annotation, className, memberName);
         } else {
             LOG.debug(BRIEF_INJECTION_ERROR_MESSAGE, annotation);
-        }
-    }
-
-    private Object getDefaultValue(Default defaultAnnotation) {
-        if (ArrayUtils.isNotEmpty(defaultAnnotation.values())) {
-            return defaultAnnotation.values();
-        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.booleanValues())) {
-            return defaultAnnotation.booleanValues();
-        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.doubleValues())) {
-            return defaultAnnotation.doubleValues();
-        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.floatValues())) {
-            return defaultAnnotation.floatValues();
-        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.intValues())) {
-            return defaultAnnotation.intValues();
-        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.longValues())) {
-            return defaultAnnotation.longValues();
-        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.shortValues())) {
-            return defaultAnnotation.shortValues();
-        } else {
-            return new String[0];
         }
     }
 }
