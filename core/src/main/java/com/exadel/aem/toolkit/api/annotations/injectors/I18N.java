@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.core.injectors.i18n.PageLocaleDetector;
  * particular internationalized string. Internationalization depends on the detection of the locale.
  * <p>By default, the locale is detected through the property of the current resource page. To override this, one can
  * either provide a particular locale value, a locale detector (a routine that guesses on the locale by, e.g., the
- * request path), or fall back to the standard mechanism which guesses on a locale by the preferences of the current
+ * request path) or fall back to the standard mechanism which guesses on a locale by the preferences of the current
  * user.
  * <p>The preferred adaptable object for this injector in an AEM environment is {@code SlingHttpServletRequest}. If
  * adaptation is done from a {@code Resource}, the result depends on whether a proper Sling resource bundle exists for
