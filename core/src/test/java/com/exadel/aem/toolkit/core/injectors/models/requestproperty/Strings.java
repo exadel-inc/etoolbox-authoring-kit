@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
@@ -33,12 +34,17 @@ public class Strings extends RequestAdapterBase<String> {
     @RequestProperty
     private String value;
 
+    @Default(values = "default")
+    @RequestProperty
+    private String defaultValue;
+
     @Self
     private Supplier valueSupplier;
 
     @Inject
     public Strings(@RequestProperty @Named(CoreConstants.PN_VALUE) String value) {
         super(value);
+
     }
 
     @Override
@@ -50,6 +56,10 @@ public class Strings extends RequestAdapterBase<String> {
     @Nullable
     public String getValue() {
         return value;
+    }
+
+    public String getDefaultValue() {
+        return defaultValue;
     }
 
     @Model(adaptables = SlingHttpServletRequest.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)

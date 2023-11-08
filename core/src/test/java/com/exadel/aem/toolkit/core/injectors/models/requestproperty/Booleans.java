@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
@@ -32,6 +33,10 @@ public class Booleans extends RequestAdapterBase<Boolean> {
     @RequestProperty
     private boolean value;
 
+    @Default(booleanValues = true)
+    @RequestProperty
+    private boolean defaultValue;
+
     @Self
     private Supplier supplier;
 
@@ -42,6 +47,10 @@ public class Booleans extends RequestAdapterBase<Boolean> {
 
     public Boolean getValue() {
         return value;
+    }
+
+    public boolean getDefaultValue() {
+        return defaultValue;
     }
 
     @Override

@@ -121,5 +121,4 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
             .filter(StringUtils::isNotEmpty)
             .toArray(String[]::new);
     }
-
 }

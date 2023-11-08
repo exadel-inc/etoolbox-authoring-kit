@@ -53,7 +53,7 @@ public class CastUtil {
      * @param type  A {@link Type} reference; usually reflects the type of Java class member
      * @return Transformed value; returns null in case type casting is not possible
      */
-    public static Object toType(Object value, Type type) {
+    public static CastResult toType(Object value, Type type) {
         return toType(value, type, CastUtil::toInstanceOfType);
     }
 
@@ -67,27 +67,28 @@ public class CastUtil {
      *                  object or primitive, the {@code converter} processes it as is
      * @return Transformed value; returns null in case type casting is not possible
      */
-    public static Object toType(Object value, Type type, BiFunction<Object, Type, Object> converter) {
+    public static CastResult toType(Object value, Type type, BiFunction<Object, Type, Object> converter) {
         if (value == null) {
             return null;
         }
+        boolean fallback = value.getClass().isArray() && Array.getLength(value) == 0;
 
         Class<?> elementType = TypeUtil.getElementType(type);
 
         if (TypeUtil.isArray(type)) {
-            return toArray(value, elementType, converter);
+            return new CastResult(toArray(value, elementType, converter), fallback);
         }
 
         if (TypeUtil.isSupportedCollection(type, true)) {
             return Set.class.equals(TypeUtil.getRawType(type))
-                ? toCollection(value, elementType, converter, LinkedHashSet::new)
-                : toCollection(value, elementType, converter, ArrayList::new);
+                ? new CastResult(toCollection(value, elementType, converter, LinkedHashSet::new), fallback)
+                : new CastResult(toCollection(value, elementType, converter, ArrayList::new), fallback);
         }
 
         if (Object.class.equals(type)) {
-            return converter.apply(value, type);
+            return new CastResult(converter.apply(value, type), fallback);
         }
-        return converter.apply(extractFirstElement(value), type);
+        return new CastResult(converter.apply(extractFirstElement(value), type), fallback);
     }
 
     /**
@@ -108,7 +109,7 @@ public class CastUtil {
         Object result = Array.newInstance(type, length);
         if (value.getClass().isArray()) {
             for (int i = 0; i < length; i++) {
-                Array.set(result, i, toType(Array.get(value, i), type, converter));
+                Array.set(result, i, toType(Array.get(value, i), type, converter).getValue());
             }
         } else if (value instanceof Collection) {
             int i = 0;

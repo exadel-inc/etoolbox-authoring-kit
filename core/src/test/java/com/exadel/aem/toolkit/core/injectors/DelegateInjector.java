@@ -62,37 +62,47 @@ public class DelegateInjector implements Injector {
         String effectiveName = StringUtils.defaultIfBlank(requestProperty.name(), name);
 
         if (delegate instanceof RequestAttributeInjector) {
-            return ((RequestAttributeInjector) delegate).getValue(
+            RequestAttributeInjector requestAttributeInjector = (RequestAttributeInjector) delegate;
+            Object value = requestAttributeInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
                 effectiveName,
                 type);
+            return requestAttributeInjector.populateDefaultValue(value, type, annotatedElement);
         }
 
         if (delegate instanceof RequestParamInjector) {
-            return ((RequestParamInjector) delegate).getValue(
+            RequestParamInjector requestParamInjector = (RequestParamInjector) delegate;
+            Object value = requestParamInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
                 effectiveName,
                 type);
+            return requestParamInjector.populateDefaultValue(value, type, annotatedElement);
         }
 
         if (delegate instanceof RequestSelectorsInjector) {
-            return ((RequestSelectorsInjector) delegate).getValue(
+            RequestSelectorsInjector requestSelectorsInjector = (RequestSelectorsInjector) delegate;
+            Object value = requestSelectorsInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
                 type);
+            return requestSelectorsInjector.populateDefaultValue(value, type, annotatedElement);
         }
 
         if (delegate instanceof RequestSuffixInjector) {
-            return ((RequestSuffixInjector) delegate).getValue(
+            RequestSuffixInjector requestSuffixInjector = (RequestSuffixInjector) delegate;
+            Object value = requestSuffixInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
                 type);
+            return requestSuffixInjector.populateDefaultValue(value, type, annotatedElement);
         }
 
         if (delegate instanceof EnumValueInjector) {
-            return ((EnumValueInjector) delegate).getValue(
+            EnumValueInjector enumValueInjector = (EnumValueInjector) delegate;
+            Object value = enumValueInjector.getValue(
                 adaptable,
                 effectiveName,
                 StringUtils.EMPTY,
                 type);
+            return enumValueInjector.populateDefaultValue(value, type, annotatedElement);
         }
 
         return null;

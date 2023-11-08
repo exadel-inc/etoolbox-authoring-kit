@@ -70,8 +70,18 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
     }
 
     @Test
+    public void shouldInjectDefaultString() {
+        super.shouldInjectDefaultString();
+    }
+
+    @Test
     public void shouldInjectStringArray() {
         super.shouldInjectStringArray();
+    }
+
+    @Test
+    public void shouldInjectDefaultStringArray() {
+        super.shouldInjectDefaultStringArray();
     }
 
     @Test
@@ -85,8 +95,18 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
     }
 
     @Test
+    public void shouldInjectDefaultInteger() {
+        super.shouldInjectDefaultInteger();
+    }
+
+    @Test
     public void shouldInjectIntegerArray() {
         super.shouldInjectIntegerArray();
+    }
+
+    @Test
+    public void shouldInjectDefaultIntegerArray() {
+        super.shouldInjectDefaultIntegerArray();
     }
 
     @Test
@@ -105,8 +125,18 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
     }
 
     @Test
+    public void shouldInjectDefaultLong() {
+        super.shouldInjectDefaultLong();
+    }
+
+    @Test
     public void shouldInjectLongArray() {
         super.shouldInjectLongArray();
+    }
+
+    @Test
+    public void shouldInjectDefaultLongArray() {
+        super.shouldInjectDefaultLongArray();
     }
 
     @Test
@@ -125,8 +155,18 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
     }
 
     @Test
+    public void shouldInjectDefaultDouble() {
+        super.shouldInjectDefaultDouble();
+    }
+
+    @Test
     public void shouldInjectDoubleArray() {
         super.shouldInjectDoubleArray();
+    }
+
+    @Test
+    public void shouldInjectDefaultDoubleArray() {
+        super.shouldInjectDefaultDoubleArray();
     }
 
     @Test
@@ -145,8 +185,18 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
     }
 
     @Test
+    public void shouldInjectDefaultBoolean() {
+        super.shouldInjectDefaultBoolean();
+    }
+
+    @Test
     public void shouldInjectBooleanArray() {
         super.shouldInjectBooleanArray();
+    }
+
+    @Test
+    public void shouldInjectDefaultBooleanArray() {
+        super.shouldInjectDefaultBooleanArray();
     }
 
     @Test

@@ -71,11 +71,21 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
     }
 
     @Test
+    public void shouldInjectDefaultString() {
+        super.shouldInjectDefaultString();
+    }
+
+    @Test
     public void shouldInjectStringArray() {
         super.shouldInjectStringArray((model, payload) -> {
             assertTrue(model.getObjectValue() instanceof RequestParameter);
             assertEquals(extractFirstElement(payload), ((RequestParameter) model.getObjectValue()).getString());
         });
+    }
+
+    @Test
+    public void shouldInjectDefaultStringArray() {
+        super.shouldInjectDefaultStringArray();
     }
 
     @Test
@@ -92,8 +102,18 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
     }
 
     @Test
+    public void shouldInjectDefaultInteger() {
+        super.shouldInjectDefaultInteger();
+    }
+
+    @Test
     public void shouldInjectIntegerArray() {
         super.shouldInjectIntegerCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+    }
+
+    @Test
+    public void shouldInjectDefaultIntegerArray() {
+        super.shouldInjectDefaultIntegerArray();
     }
 
     @Test
@@ -112,8 +132,18 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
     }
 
     @Test
+    public void shouldInjectDefaultLong() {
+        super.shouldInjectDefaultLong();
+    }
+
+    @Test
     public void shouldInjectLongArray() {
         super.shouldInjectLongArray(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+    }
+
+    @Test
+    public void shouldInjectDefaultLongArray() {
+        super.shouldInjectDefaultLongArray();
     }
 
     @Test
@@ -132,8 +162,18 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
     }
 
     @Test
+    public void shouldInjectDefaultDouble() {
+        super.shouldInjectDefaultDouble();
+    }
+
+    @Test
     public void shouldInjectDoubleArray() {
         super.shouldInjectDoubleArray(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+    }
+
+    @Test
+    public void shouldInjectDefaultDoubleArray() {
+        super.shouldInjectDefaultDoubleArray();
     }
 
     @Test
@@ -152,8 +192,18 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
     }
 
     @Test
+    public void shouldInjectDefaultBoolean() {
+        super.shouldInjectDefaultBoolean();
+    }
+
+    @Test
     public void shouldInjectBooleanArray() {
         super.shouldInjectBooleanArray(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+    }
+
+    @Test
+    public void shouldInjectDefaultBooleanArray() {
+        super.shouldInjectDefaultBooleanArray();
     }
 
     @Test

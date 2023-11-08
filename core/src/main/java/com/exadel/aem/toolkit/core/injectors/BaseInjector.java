@@ -21,12 +21,17 @@ import java.util.Objects;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.exadel.aem.toolkit.core.injectors.utils.CastResult;
+import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
 
 /**
  * Represents a base for a Sling injector. A descendant of this class must extract an annotation from a Java class
@@ -72,8 +77,17 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
         if (Objects.isNull(value)) {
             logNullValue(element, annotation);
         }
+        return populateDefaultValue(value, type, element);
+    }
 
-        return value;
+    protected Object populateDefaultValue(Object value, Type type, AnnotatedElement element) {
+        Object effectiveValue = value instanceof CastResult ? ((CastResult) value).getValue() : value;
+        boolean isFallback = value instanceof CastResult && ((CastResult) value).isFallback();
+        if ((effectiveValue == null || isFallback) && element.isAnnotationPresent(Default.class)) {
+            Object defaultValue = getDefaultValue(element.getDeclaredAnnotation(Default.class));
+            effectiveValue = CastUtil.toType(defaultValue, type).getValue();
+        }
+        return effectiveValue;
     }
 
     /**
@@ -110,6 +124,26 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
             LOG.debug(INJECTION_ERROR_MESSAGE, annotation, className, memberName);
         } else {
             LOG.debug(BRIEF_INJECTION_ERROR_MESSAGE, annotation);
+        }
+    }
+
+    private Object getDefaultValue(Default defaultAnnotation) {
+        if (ArrayUtils.isNotEmpty(defaultAnnotation.values())) {
+            return defaultAnnotation.values();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.booleanValues())) {
+            return defaultAnnotation.booleanValues();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.doubleValues())) {
+            return defaultAnnotation.doubleValues();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.floatValues())) {
+            return defaultAnnotation.floatValues();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.intValues())) {
+            return defaultAnnotation.intValues();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.longValues())) {
+            return defaultAnnotation.longValues();
+        } else if (ArrayUtils.isNotEmpty(defaultAnnotation.shortValues())) {
+            return defaultAnnotation.shortValues();
+        } else {
+            return new String[0];
         }
     }
 }

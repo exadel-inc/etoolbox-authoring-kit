@@ -18,6 +18,7 @@ import javax.inject.Named;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
@@ -33,6 +34,10 @@ public class DoubleArrays extends RequestAdapterBase<Double[]> {
     @RequestProperty
     private double[] value;
 
+    @Default(doubleValues = {1.1d, 1.2d, 1.3d})
+    @RequestProperty
+    private double[] defaultValue;
+
     @Self
     private Supplier supplier;
 
@@ -43,6 +48,10 @@ public class DoubleArrays extends RequestAdapterBase<Double[]> {
 
     public Double[] getValue() {
         return ArrayUtils.toObject(value);
+    }
+
+    public double[] getDefaultValue() {
+        return defaultValue;
     }
 
     @Override
