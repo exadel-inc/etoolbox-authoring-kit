@@ -128,22 +128,6 @@ class Orderable<T> {
     }
 
     /**
-     * Gets whether the field was annotated with Place annotation
-     * @return boolean value
-     */
-    public boolean isPlaceAnnotated() {
-        return placeAnnotated;
-    }
-
-    /**
-     * Sets the flag that field annotated with Place annotation
-     * @param placeAnnotated Boolean value signifying the field is annotated with Place annotation
-     */
-    public void setPlaceAnnotated(boolean placeAnnotated) {
-        this.placeAnnotated = placeAnnotated;
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override
