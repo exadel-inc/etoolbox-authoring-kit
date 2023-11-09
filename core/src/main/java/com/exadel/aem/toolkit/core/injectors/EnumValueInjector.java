@@ -33,7 +33,6 @@ import org.osgi.service.component.annotations.Component;
 import com.exadel.aem.toolkit.api.annotations.injectors.EnumValue;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
-import com.exadel.aem.toolkit.core.injectors.utils.Defaultable;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
@@ -70,11 +69,11 @@ public class EnumValueInjector extends BaseInjector<EnumValue> {
      */
     @Nonnull
     @Override
-    Defaultable getValue(Object adaptable, String name, Type type, EnumValue annotation) {
+    Injectable getValue(Object adaptable, String name, Type type, EnumValue annotation) {
         String effectiveName = StringUtils.defaultIfEmpty(annotation.name(), name);
         String valueMember = annotation.valueMember();
         Object value = getValue(adaptable, effectiveName, valueMember, type);
-        return Defaultable.of(value);
+        return Injectable.of(value);
     }
 
     /**

@@ -25,7 +25,6 @@ import org.osgi.service.component.annotations.Component;
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestAttribute;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
-import com.exadel.aem.toolkit.core.injectors.utils.Defaultable;
 
 /**
  * Provides injecting into a Sling model the value of an HTTP request attribute obtained via a {@code
@@ -56,13 +55,13 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
      */
     @Nonnull
     @Override
-    public Defaultable getValue(Object adaptable, String name, Type type, RequestAttribute annotation) {
+    public Injectable getValue(Object adaptable, String name, Type type, RequestAttribute annotation) {
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
-            return Defaultable.EMPTY;
+            return Injectable.EMPTY;
         }
         Object value = getValue(request, annotation.name().isEmpty() ? name : annotation.name(), type);
-        return Defaultable.of(value);
+        return Injectable.of(value);
     }
 
     /**

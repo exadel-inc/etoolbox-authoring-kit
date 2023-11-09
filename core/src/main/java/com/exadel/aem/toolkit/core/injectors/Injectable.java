@@ -11,16 +11,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.injectors.utils;
+package com.exadel.aem.toolkit.core.injectors;
+
+import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
  * Represents a value that can have a fallback
  * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
  * code</p>
  */
-public class Defaultable {
+public class Injectable {
 
-    public static final Defaultable EMPTY = new Defaultable(null, false);
+    public static final Injectable EMPTY = new Injectable(null, false);
 
     private final Object value;
     private boolean isFallback;
@@ -30,7 +32,7 @@ public class Defaultable {
      * @param value      An arbitrary nullable value to set
      * @param isFallback Fallback flag
      */
-    private Defaultable(Object value, boolean isFallback) {
+    private Injectable(Object value, boolean isFallback) {
         this.value = value;
         this.isFallback = isFallback;
     }
@@ -56,11 +58,11 @@ public class Defaultable {
      * @param value Value to set
      * @return {@code Defaultable} instance
      */
-    public static Defaultable of(Object value) {
-        if (value instanceof Defaultable) {
-            return (Defaultable) value;
+    public static Injectable of(Object value) {
+        if (value instanceof Injectable) {
+            return (Injectable) value;
         }
-        return new Defaultable(value, false);
+        return new Injectable(value, false);
     }
 
     /**
@@ -68,12 +70,12 @@ public class Defaultable {
      * @param value Value to set
      * @return {@code Defaultable} instance
      */
-    public static Defaultable fallback(Object value) {
-        if (value instanceof Defaultable) {
-            ((Defaultable) value).isFallback = true;
-            return (Defaultable) value;
+    public static Injectable fallback(Object value) {
+        if (value instanceof Injectable) {
+            ((Injectable) value).isFallback = true;
+            return (Injectable) value;
         }
-        return new Defaultable(value, true);
+        return new Injectable(value, true);
     }
 
     /**
@@ -83,17 +85,17 @@ public class Defaultable {
      * @return True or false
      */
     public static boolean isNotDefault(Object value) {
-        return !(value instanceof Defaultable) || !((Defaultable) value).isDefault();
+        return !(value instanceof Injectable) || !((Injectable) value).isDefault();
     }
 
     /**
-     * Extracts the value from the provided reference that can be a {@link Defaultable} wrapper
+     * Extracts the value from the provided reference that can be a {@link Injectable} wrapper
      * @param value Extraction source
      * @return A nullable object
      */
     public static Object unwrap(Object value) {
-        if (value instanceof Defaultable) {
-            return ((Defaultable) value).getValue();
+        if (value instanceof Injectable) {
+            return ((Injectable) value).getValue();
         }
         return value;
     }

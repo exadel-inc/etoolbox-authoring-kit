@@ -31,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
-import com.exadel.aem.toolkit.core.injectors.utils.Defaultable;
 
 /**
  * Represents a base for a Sling injector. A descendant of this class must extract an annotation from a Java class
@@ -72,7 +71,7 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
         if (Objects.isNull(annotation)) {
             return null;
         }
-        Defaultable rawValue = getValue(adaptable, name, type, annotation);
+        Injectable rawValue = getValue(adaptable, name, type, annotation);
         Object value = defaultIfEmpty(rawValue, type, element);
         if (value == null) {
             logNullValue(element, annotation);
@@ -87,10 +86,10 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
      * @param name       Name of the Java class member to inject the value into
      * @param type       Type of the receiving Java class member
      * @param annotation Annotation handled by the current injector
-     * @return A non-null {@link Defaultable} instance that contains the payload that can be null
+     * @return A non-null {@link Injectable} instance that contains the payload that can be null
      */
     @Nonnull
-    abstract Defaultable getValue(Object adaptable, String name, Type type, T annotation);
+    abstract Injectable getValue(Object adaptable, String name, Type type, T annotation);
 
     /**
      * When overridden in an injector class, retrieves the annotation processed by this particular injector. Takes into
@@ -110,7 +109,7 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
      * @param element {@link AnnotatedElement} instance that facades the Java class member and allows retrieving
      * @return A nullable value
      */
-    static Object defaultIfEmpty(Defaultable source, Type type, AnnotatedElement element) {
+    static Object defaultIfEmpty(Injectable source, Type type, AnnotatedElement element) {
         if (source != null && !source.isDefault()) {
             return source.getValue();
         }

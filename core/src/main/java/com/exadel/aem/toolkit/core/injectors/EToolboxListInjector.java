@@ -48,7 +48,6 @@ import com.day.cq.commons.jcr.JcrConstants;
 import com.exadel.aem.toolkit.api.annotations.injectors.EToolboxList;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
-import com.exadel.aem.toolkit.core.injectors.utils.Defaultable;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 import com.exadel.aem.toolkit.core.lists.utils.ListHelper;
 
@@ -91,30 +90,30 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
      */
     @Nonnull
     @Override
-    public Defaultable getValue(Object adaptable, String name, Type type, EToolboxList annotation) {
+    public Injectable getValue(Object adaptable, String name, Type type, EToolboxList annotation) {
         ResourceResolver resourceResolver = AdaptationUtil.getResourceResolver(adaptable);
         if (resourceResolver == null) {
-            return Defaultable.EMPTY;
+            return Injectable.EMPTY;
         }
         Class<?> rawType = TypeUtil.getRawType(type);
         if (List.class.equals(rawType) || Collection.class.equals(rawType) || Object.class.equals(rawType)) {
-            return Defaultable.of(getList(resourceResolver, annotation.value(), type));
+            return Injectable.of(getList(resourceResolver, annotation.value(), type));
 
         } else if (Set.class.equals(rawType)) {
             List<?> valueList = getList(resourceResolver, annotation.value(), type);
             Class<?> listItemType = TypeUtil.getElementType(type);
             if (listItemType != null && listItemType.isInterface()) {
-                return Defaultable.of(new ProxySet(valueList, listItemType));
+                return Injectable.of(new ProxySet(valueList, listItemType));
             }
-            return Defaultable.of(new LinkedHashSet<>(valueList));
+            return Injectable.of(new LinkedHashSet<>(valueList));
 
         } else if (Map.class.equals(rawType)) {
-            return Defaultable.of(getMap(resourceResolver, annotation.value(), annotation.keyProperty(), type));
+            return Injectable.of(getMap(resourceResolver, annotation.value(), annotation.keyProperty(), type));
 
         } else if (type instanceof Class<?> && ((Class<?>) type).isArray()) {
-            return Defaultable.of(getArray(resourceResolver, annotation.value(), (Class<?>) type));
+            return Injectable.of(getArray(resourceResolver, annotation.value(), (Class<?>) type));
         }
-        return Defaultable.EMPTY;
+        return Injectable.EMPTY;
     }
 
     /**

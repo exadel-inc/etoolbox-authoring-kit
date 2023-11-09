@@ -30,7 +30,6 @@ import org.osgi.service.component.annotations.Reference;
 import com.exadel.aem.toolkit.api.annotations.injectors.Child;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
-import com.exadel.aem.toolkit.core.injectors.utils.Defaultable;
 import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
@@ -76,17 +75,17 @@ public class ChildInjector extends BaseInjector<Child> {
      */
     @Nonnull
     @Override
-    public Defaultable getValue(Object adaptable, String name, Type type, Child annotation) {
+    public Injectable getValue(Object adaptable, String name, Type type, Child annotation) {
 
         Resource adaptableResource = AdaptationUtil.getResource(adaptable);
         if (adaptableResource == null) {
-            return Defaultable.EMPTY;
+            return Injectable.EMPTY;
         }
 
         String resourcePath = StringUtils.defaultIfBlank(annotation.name(), name);
         Resource currentResource = adaptableResource.getChild(resourcePath);
         if (currentResource == null) {
-            return Defaultable.EMPTY;
+            return Injectable.EMPTY;
         }
 
         Resource preparedResource = InstantiationUtil.getFilteredResource(
@@ -110,6 +109,6 @@ public class ChildInjector extends BaseInjector<Child> {
             }
             return CastUtil.toType(preparedResource.adaptTo(elementType), type);
         }
-        return Defaultable.EMPTY;
+        return Injectable.EMPTY;
     }
 }

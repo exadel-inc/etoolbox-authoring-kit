@@ -40,7 +40,6 @@ import org.osgi.service.component.annotations.Reference;
 import com.exadel.aem.toolkit.api.annotations.injectors.Children;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
-import com.exadel.aem.toolkit.core.injectors.utils.Defaultable;
 import com.exadel.aem.toolkit.core.injectors.utils.InstantiationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
@@ -89,26 +88,26 @@ public class ChildrenInjector extends BaseInjector<Children> {
      */
     @Nonnull
     @Override
-    public Defaultable getValue(Object adaptable, String name, Type type, Children annotation) {
+    public Injectable getValue(Object adaptable, String name, Type type, Children annotation) {
 
         Resource adaptableResource = AdaptationUtil.getResource(adaptable);
         if (adaptableResource == null) {
-            return Defaultable.EMPTY;
+            return Injectable.EMPTY;
         }
 
         if (!isSupportedCollectionOrElseSingularType(type) && !Object.class.equals(type)) {
-            return Defaultable.EMPTY;
+            return Injectable.EMPTY;
         }
 
         String targetResourcePath = StringUtils.defaultIfBlank(annotation.name(), name);
         Resource currentResource = adaptableResource.getChild(targetResourcePath);
         if (currentResource == null) {
-            return Defaultable.EMPTY;
+            return Injectable.EMPTY;
         }
 
         List<Object> children = getFilteredInjectables(adaptable, currentResource, type, annotation);
         if (CollectionUtils.isEmpty(children)) {
-            return Defaultable.EMPTY;
+            return Injectable.EMPTY;
         }
 
         return CastUtil.toType(children, type);

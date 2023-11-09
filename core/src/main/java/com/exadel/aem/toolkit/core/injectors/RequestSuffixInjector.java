@@ -27,7 +27,6 @@ import org.osgi.service.component.annotations.Component;
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestSuffix;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
-import com.exadel.aem.toolkit.core.injectors.utils.Defaultable;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
@@ -67,7 +66,7 @@ public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
      */
     @Nonnull
     @Override
-    public Defaultable getValue(
+    public Injectable getValue(
         Object adaptable,
         String name,
         Type type,
@@ -75,9 +74,9 @@ public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
-            return Defaultable.EMPTY;
+            return Injectable.EMPTY;
         }
-        return Defaultable.of(getValue(request, type));
+        return Injectable.of(getValue(request, type));
     }
 
     /**

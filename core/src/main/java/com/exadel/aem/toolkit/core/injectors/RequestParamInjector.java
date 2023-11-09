@@ -29,7 +29,6 @@ import org.osgi.service.component.annotations.Component;
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestParam;
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
 import com.exadel.aem.toolkit.core.injectors.utils.CastUtil;
-import com.exadel.aem.toolkit.core.injectors.utils.Defaultable;
 import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
 
 /**
@@ -69,7 +68,7 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
      */
     @Nonnull
     @Override
-    public Defaultable getValue(
+    public Injectable getValue(
         Object adaptable,
         String name,
         Type type,
@@ -77,7 +76,7 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
-            return Defaultable.EMPTY;
+            return Injectable.EMPTY;
         }
         return getValue(request, annotation.name().isEmpty() ? name : annotation.name(), type);
     }
@@ -87,17 +86,17 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
      * @param request A {@code SlingHttpServletRequest} instance
      * @param name    Name of the parameter
      * @param type    Type of the returned value
-     * @return A non-null {@link Defaultable} instance
+     * @return A non-null {@link Injectable} instance
      */
-    Defaultable getValue(SlingHttpServletRequest request, String name, Type type) {
+    Injectable getValue(SlingHttpServletRequest request, String name, Type type) {
         if (RequestParameter.class.equals(type) || Object.class.equals(type)) {
-            return Defaultable.of(request.getRequestParameter(name));
+            return Injectable.of(request.getRequestParameter(name));
         } else if (TypeUtil.isArrayOfType(type, RequestParameter.class)) {
-            return Defaultable.of(request.getRequestParameters(name));
+            return Injectable.of(request.getRequestParameters(name));
         } else if (TypeUtil.isSupportedCollectionOfType(type, RequestParameter.class, false)) {
             return CastUtil.toType(request.getRequestParameterList(), type);
         } else if (RequestParameterMap.class.equals(type)) {
-            return Defaultable.of(request.getRequestParameterMap());
+            return Injectable.of(request.getRequestParameterMap());
         }
 
         Class<?> elementType = TypeUtil.getElementType(type);
@@ -105,7 +104,7 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
             return CastUtil.toType(getRequestParameterValues(request, name), type);
         }
 
-        return Defaultable.EMPTY;
+        return Injectable.EMPTY;
     }
 
     /**

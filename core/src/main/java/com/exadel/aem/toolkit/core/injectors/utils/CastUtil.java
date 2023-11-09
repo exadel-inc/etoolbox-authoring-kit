@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.injectors.Injectable;
 
 /**
  * Contains utility methods for casting value types involved in Sing injectors processing.
@@ -53,11 +54,11 @@ public class CastUtil {
      * Attempts to cast the given value to the provided {@code Type}. Designed for use with Sling injectors
      * @param value An arbitrary value
      * @param type  A {@link Type} reference. Usually reflects the type of Java class member
-     * @return A {@link Defaultable} instance containing the transformed value; can contain {@code null} if type casting
+     * @return A {@link Injectable} instance containing the transformed value; can contain {@code null} if type casting
      * was not possible
      */
     @Nonnull
-    public static Defaultable toType(Object value, Type type) {
+    public static Injectable toType(Object value, Type type) {
         return toType(value, type, CastUtil::toInstanceOfType);
     }
 
@@ -69,30 +70,30 @@ public class CastUtil {
      *                  Considering the given value is an array or collection, the {@code converter} must process every
      *                  separate array's (collection's) element. If the given value is a singleton object or primitive,
      *                  the {@code converter} processes it as is
-     * @return A {@link Defaultable} instance containing the transformed value; can contain {@code null} if type casting
+     * @return A {@link Injectable} instance containing the transformed value; can contain {@code null} if type casting
      * was not possible
      */
     @Nonnull
-    public static Defaultable toType(Object value, Type type, BiFunction<Object, Type, Object> converter) {
+    public static Injectable toType(Object value, Type type, BiFunction<Object, Type, Object> converter) {
         if (value == null) {
-            return Defaultable.EMPTY;
+            return Injectable.EMPTY;
         }
         Class<?> elementType = TypeUtil.getElementType(type);
 
         if (TypeUtil.isArray(type)) {
-            return Defaultable.of(toArray(value, elementType, converter));
+            return Injectable.of(toArray(value, elementType, converter));
         }
 
         if (TypeUtil.isSupportedCollection(type, true)) {
             return Set.class.equals(TypeUtil.getRawType(type))
-                ? Defaultable.of(toCollection(value, elementType, converter, LinkedHashSet::new))
-                : Defaultable.of(toCollection(value, elementType, converter, ArrayList::new));
+                ? Injectable.of(toCollection(value, elementType, converter, LinkedHashSet::new))
+                : Injectable.of(toCollection(value, elementType, converter, ArrayList::new));
         }
 
         if (Object.class.equals(type)) {
-            return Defaultable.of(converter.apply(value, type));
+            return Injectable.of(converter.apply(value, type));
         }
-        return Defaultable.of(converter.apply(extractFirstElement(value), type));
+        return Injectable.of(converter.apply(extractFirstElement(value), type));
     }
 
     /**
@@ -135,21 +136,21 @@ public class CastUtil {
             int length = Array.getLength(value);
             for (int i = 0; i < length; i++) {
                 Object converted = converter.apply(Array.get(value, i), type);
-                if (Defaultable.isNotDefault(converted)) {
-                    result.add(Defaultable.unwrap(converted));
+                if (Injectable.isNotDefault(converted)) {
+                    result.add(Injectable.unwrap(converted));
                 }
             }
         } else if (value instanceof Collection) {
             for (Object entry : (Collection<?>) value) {
                 Object converted = converter.apply(entry, type);
-                if (Defaultable.isNotDefault(converted)) {
-                    result.add(Defaultable.unwrap(converted));
+                if (Injectable.isNotDefault(converted)) {
+                    result.add(Injectable.unwrap(converted));
                 }
             }
         } else {
             Object converted = converter.apply(value, type);
-            if (Defaultable.isNotDefault(converted)) {
-                result.add(Defaultable.unwrap(converted));
+            if (Injectable.isNotDefault(converted)) {
+                result.add(Injectable.unwrap(converted));
             }
         }
         return result;
@@ -182,19 +183,19 @@ public class CastUtil {
      * @param value An arbitrary non-null value
      * @param type  {@link Type} reference. When passed to this method, {@code type} is expected to be singular (not an
      *              array or collection)
-     * @return A {@link Defaultable} object which usually includes the transformed value. However, it may contain an
+     * @return A {@link Injectable} object which usually includes the transformed value. However, it may contain an
      * original one if type casting is not possible or not needed
      */
-    private static Defaultable toInstanceOfType(Object value, Type type) {
+    private static Injectable toInstanceOfType(Object value, Type type) {
         if (value == null || value.getClass().equals(type) || type instanceof ParameterizedType) {
-            return Defaultable.of(value);
+            return Injectable.of(value);
         }
         assert type instanceof Class<?>;
 
         if ((StringUtils.equalsIgnoreCase(value.toString(), Boolean.TRUE.toString())
             || StringUtils.equalsIgnoreCase(value.toString(), Boolean.FALSE.toString()))
             && ClassUtils.primitiveToWrapper((Class<?>) type).equals(Boolean.class)) {
-            return Defaultable.of(Boolean.parseBoolean(value.toString().toLowerCase()));
+            return Injectable.of(Boolean.parseBoolean(value.toString().toLowerCase()));
         }
         Object effectiveValue = value;
         if (value instanceof String && NumberUtils.isCreatable(value.toString())) {
@@ -210,7 +211,7 @@ public class CastUtil {
             return toNumeric(effectiveValue, type);
         }
         if (ClassUtils.isAssignable(effectiveValue.getClass(), (Class<?>) type)) {
-            return Defaultable.of(((Class<?>) type).cast(effectiveValue));
+            return Injectable.of(((Class<?>) type).cast(effectiveValue));
         }
         return getDefaultValue(type);
     }
@@ -220,72 +221,72 @@ public class CastUtil {
      * and the receiving type is {@code long}
      * @param value An arbitrary object
      * @param type  {@link Type} reference; usually reflects the type of Java class member
-     * @return A {@link Defaultable} object which usually includes the transformed value. However, it may contain an
+     * @return A {@link Injectable} object which usually includes the transformed value. However, it may contain an
      * original one if type casting is not possible or not needed
      */
-    private static Defaultable toNumeric(Object value, Type type) {
+    private static Injectable toNumeric(Object value, Type type) {
         if (ClassUtils.isAssignable((Class<?>) type, Integer.class)) {
-            return value != null ? toInt(value) : Defaultable.fallback(0);
+            return value != null ? toInt(value) : Injectable.fallback(0);
         }
         if (ClassUtils.isAssignable((Class<?>) type, Long.class)) {
-            return value != null ? toLong(value) : Defaultable.fallback(0L);
+            return value != null ? toLong(value) : Injectable.fallback(0L);
         }
         if (ClassUtils.isAssignable((Class<?>) type, Double.class)) {
-            return value != null ? toDouble(value) : Defaultable.fallback(0d);
+            return value != null ? toDouble(value) : Injectable.fallback(0d);
         }
-        return Defaultable.of(value);
+        return Injectable.of(value);
     }
 
     /**
      * Attempts to cast the given value to {@code int}
      * @param value An arbitrary non-null value. Java primitive number or a boxed number is expected
-     * @return A {@link Defaultable} instance that either contains the transformed value or {@code 0} as the fallback
+     * @return A {@link Injectable} instance that either contains the transformed value or {@code 0} as the fallback
      */
-    private static Defaultable toInt(Object value) {
+    private static Injectable toInt(Object value) {
         if (ClassUtils.isAssignable(value.getClass(), Integer.class)) {
-            return Defaultable.of(value);
+            return Injectable.of(value);
         }
         if (ClassUtils.isAssignable(value.getClass(), Byte.class)) {
-            return Defaultable.of(((Byte) value).intValue());
+            return Injectable.of(((Byte) value).intValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Short.class)) {
-            return Defaultable.of(((Short) value).intValue());
+            return Injectable.of(((Short) value).intValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Long.class)) {
-            return Defaultable.of(((Long) value).intValue());
+            return Injectable.of(((Long) value).intValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Float.class)) {
-            return Defaultable.of(((Float) value).intValue());
+            return Injectable.of(((Float) value).intValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Double.class)) {
-            return Defaultable.of(((Double) value).intValue());
+            return Injectable.of(((Double) value).intValue());
         }
-        return Defaultable.fallback(0);
+        return Injectable.fallback(0);
     }
 
     /**
      * Attempts to cast the given value to {@code long}
      * @param value An arbitrary non-null value. Java primitive number or a boxed number is expected
-     * @return A {@link Defaultable} instance that either contains the transformed value or {@code 0L} as the fallback
+     * @return A {@link Injectable} instance that either contains the transformed value or {@code 0L} as the fallback
      */
-    private static Defaultable toLong(Object value) {
+    private static Injectable toLong(Object value) {
         if (ClassUtils.isAssignable(value.getClass(), Long.class)) {
-            return Defaultable.of(value);
+            return Injectable.of(value);
         }
         if (ClassUtils.isAssignable(value.getClass(), Byte.class)) {
-            return Defaultable.of(((Byte) value).longValue());
+            return Injectable.of(((Byte) value).longValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Short.class)) {
-            return Defaultable.of(((Short) value).longValue());
+            return Injectable.of(((Short) value).longValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Integer.class)) {
-            return Defaultable.of(((Integer) value).longValue());
+            return Injectable.of(((Integer) value).longValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Float.class)) {
-            return Defaultable.of(((Float) value).longValue());
+            return Injectable.of(((Float) value).longValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Double.class)) {
-            return Defaultable.of(((Double) value).longValue());
+            return Injectable.of(((Double) value).longValue());
         }
         return toInt(value);
     }
@@ -293,26 +294,26 @@ public class CastUtil {
     /**
      * Attempts to cast the given value to {@code double}
      * @param value An arbitrary non-null value, a Java primitive number, or a boxed number is expected
-     * @return A {@link Defaultable} instance that either contains the transformed value or {@code 0d} as the fallback
+     * @return A {@link Injectable} instance that either contains the transformed value or {@code 0d} as the fallback
      */
-    private static Defaultable toDouble(Object value) {
+    private static Injectable toDouble(Object value) {
         if (ClassUtils.isAssignable(value.getClass(), Double.class)) {
-            return Defaultable.of(value);
+            return Injectable.of(value);
         }
         if (ClassUtils.isAssignable(value.getClass(), Byte.class)) {
-            return Defaultable.of(((Byte) value).doubleValue());
+            return Injectable.of(((Byte) value).doubleValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Short.class)) {
-            return Defaultable.of(((Short) value).doubleValue());
+            return Injectable.of(((Short) value).doubleValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Integer.class)) {
-            return Defaultable.of(((Integer) value).doubleValue());
+            return Injectable.of(((Integer) value).doubleValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Long.class)) {
-            return Defaultable.of(((Long) value).doubleValue());
+            return Injectable.of(((Long) value).doubleValue());
         }
         if (ClassUtils.isAssignable(value.getClass(), Float.class)) {
-            return Defaultable.of(((Float) value).doubleValue());
+            return Injectable.of(((Float) value).doubleValue());
         }
         return toInt(value);
     }
@@ -322,13 +323,13 @@ public class CastUtil {
      * {@code 0} for the numeric fields (incl. boxed fields), {@code false} for the booleans (incl. boxed ones), and
      * {@code null} for the reference types
      * @param type The type of the field
-     * @return A {@link Defaultable} instance in the "fallback" state that contains the default value for the given type
+     * @return A {@link Injectable} instance in the "fallback" state that contains the default value for the given type
      */
-    private static Defaultable getDefaultValue(Type type) {
+    private static Injectable getDefaultValue(Type type) {
         Class<?> elementaryType = ClassUtils.wrapperToPrimitive((Class<?>) type);
         if (elementaryType == null) {
             elementaryType = (Class<?>) type;
         }
-        return Defaultable.fallback(Array.get(Array.newInstance(elementaryType, 1), 0));
+        return Injectable.fallback(Array.get(Array.newInstance(elementaryType, 1), 0));
     }
 }

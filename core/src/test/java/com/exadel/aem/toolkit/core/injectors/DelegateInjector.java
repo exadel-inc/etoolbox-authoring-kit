@@ -25,7 +25,6 @@ import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 
 import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
-import com.exadel.aem.toolkit.core.injectors.utils.Defaultable;
 
 /**
  * This is a testing scope injector that hooks on {@link RequestProperty} to make it possible to use the same testcase
@@ -62,36 +61,36 @@ public class DelegateInjector implements Injector {
         RequestProperty requestProperty = annotatedElement.getAnnotation(RequestProperty.class);
         String effectiveName = StringUtils.defaultIfBlank(requestProperty.name(), name);
 
-        Defaultable value = null;
+        Injectable value = null;
         if (delegate instanceof RequestAttributeInjector) {
             RequestAttributeInjector requestAttributeInjector = (RequestAttributeInjector) delegate;
-            value = Defaultable.of(requestAttributeInjector.getValue(
+            value = Injectable.of(requestAttributeInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
                 effectiveName,
                 type));
 
         } else if (delegate instanceof RequestParamInjector) {
             RequestParamInjector requestParamInjector = (RequestParamInjector) delegate;
-            value = Defaultable.of(requestParamInjector.getValue(
+            value = Injectable.of(requestParamInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
                 effectiveName,
                 type));
 
         } else if (delegate instanceof RequestSelectorsInjector) {
             RequestSelectorsInjector requestSelectorsInjector = (RequestSelectorsInjector) delegate;
-            value = Defaultable.of(requestSelectorsInjector.getValue(
+            value = Injectable.of(requestSelectorsInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
                 type));
 
         } else if (delegate instanceof RequestSuffixInjector) {
             RequestSuffixInjector requestSuffixInjector = (RequestSuffixInjector) delegate;
-            value = Defaultable.of(requestSuffixInjector.getValue(
+            value = Injectable.of(requestSuffixInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
                 type));
 
         } else if (delegate instanceof EnumValueInjector) {
             EnumValueInjector enumValueInjector = (EnumValueInjector) delegate;
-            value = Defaultable.of(enumValueInjector.getValue(
+            value = Injectable.of(enumValueInjector.getValue(
                 adaptable,
                 effectiveName,
                 StringUtils.EMPTY,
