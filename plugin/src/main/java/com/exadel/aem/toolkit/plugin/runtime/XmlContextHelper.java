@@ -60,7 +60,12 @@ public class XmlContextHelper implements XmlUtility {
      * Default routine to manage the merging of two values of an XML attribute by suppressing existing value in favor of
      * a non-empty new one
      */
-    private static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
+    private static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> {
+        if (StringUtils.isNotBlank(first) && StringUtils.isBlank(second)) {
+            return first;
+        }
+        return StringUtils.isNotEmpty(second) ? second : first;
+    };
 
     /* ---------------------------------
        Instance members and constructors
