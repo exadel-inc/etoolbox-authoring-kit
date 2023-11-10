@@ -33,8 +33,8 @@ public class Booleans extends RequestAdapterBase<Boolean> {
     @RequestProperty
     private boolean value;
 
-    @Default(booleanValues = true)
     @RequestProperty
+    @Default(booleanValues = true)
     private boolean defaultValue;
 
     @Self

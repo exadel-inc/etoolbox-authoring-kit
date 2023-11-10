@@ -34,8 +34,8 @@ public class Strings extends RequestAdapterBase<String> {
     @RequestProperty
     private String value;
 
-    @Default(values = "default")
     @RequestProperty
+    @Default(values = "default")
     private String defaultValue;
 
     @Self

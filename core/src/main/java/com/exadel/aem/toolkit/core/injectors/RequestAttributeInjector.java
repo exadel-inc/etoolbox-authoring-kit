@@ -53,13 +53,15 @@ public class RequestAttributeInjector extends BaseInjector<RequestAttribute> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
-    public Object getValue(Object adaptable, String name, Type type, RequestAttribute annotation) {
+    public Injectable getValue(Object adaptable, String name, Type type, RequestAttribute annotation) {
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
-            return null;
+            return Injectable.EMPTY;
         }
-        return getValue(request, annotation.name().isEmpty() ? name : annotation.name(), type);
+        Object value = getValue(request, annotation.name().isEmpty() ? name : annotation.name(), type);
+        return Injectable.of(value);
     }
 
     /**

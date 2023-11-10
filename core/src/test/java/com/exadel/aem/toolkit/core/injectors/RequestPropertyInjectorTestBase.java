@@ -16,6 +16,7 @@ package com.exadel.aem.toolkit.core.injectors;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -78,14 +79,14 @@ abstract class RequestPropertyInjectorTestBase {
     private static final int[] EXPECTED_INTEGER_ARRAY = {42, 43, 44};
     private static final int[] EXPECTED_DEFAULT_INTEGER_ARRAY = {10, 11, 12};
     private static final List<Integer> EXPECTED_INTEGER_LIST = Arrays.asList(42, 43, 44);
-    private static final List<Integer> EXPECTED_HALF_PARSED_INTEGER_LIST = Arrays.asList(0, 42);
+    private static final List<Integer> EXPECTED_HALF_PARSED_INTEGER_LIST = Collections.singletonList(42);
 
     private static final long EXPECTED_LONG = 42L;
     private static final long EXPECTED_DEFAULT_LONG = 10L;
     private static final long[] EXPECTED_LONG_ARRAY = {42L, 43L, 44};
     private static final long[] EXPECTED_DEFAULT_LONG_ARRAY = {10L, 11L, 12L};
     private static final List<Long> EXPECTED_LONG_LIST = Arrays.asList(42L, 43L, 44L);
-    private static final List<Long> EXPECTED_HALF_PARSED_LONG_LIST = Arrays.asList(0L, 42L);
+    private static final List<Long> EXPECTED_HALF_PARSED_LONG_LIST = Collections.singletonList(42L);
 
     private static final float EXPECTED_FLOAT = 42.1f;
     private static final String EXPECTED_FLOAT_STRING = "42.1f";
@@ -97,7 +98,7 @@ abstract class RequestPropertyInjectorTestBase {
     private static final double[] EXPECTED_DOUBLE_ARRAY = {42.1d, 43.1d, 44.1d};
     private static final double[] EXPECTED_DEFAULT_DOUBLE_ARRAY = {1.1d, 1.2d, 1.3d};
     static final List<Double> EXPECTED_DOUBLE_LIST = Arrays.asList(42.1d, 43.1d, 44.1d);
-    static final List<Double> EXPECTED_HALF_PARSED_DOUBLE_LIST = Arrays.asList(0d, 42.1d, 43.1d, 44.1d);
+    static final List<Double> EXPECTED_HALF_PARSED_DOUBLE_LIST = Arrays.asList(42.1d, 43.1d, 44.1d);
 
     private static final boolean[] EXPECTED_BOOLEAN_ARRAY = {true, true, false};
     private static final boolean[] EXPECTED_DEFAULT_BOOLEAN_ARRAY = {true, false, true};
@@ -245,6 +246,11 @@ abstract class RequestPropertyInjectorTestBase {
         Integers model = context.request().adaptTo(Integers.class);
         assertNotNull(model);
         assertEquals(EXPECTED_DEFAULT_INTEGER, model.getDefaultValue());
+
+        prepareRequest(context.request(), EXPECTED_STRING);
+        model = context.request().adaptTo(Integers.class);
+        assertNotNull(model);
+        assertEquals(EXPECTED_DEFAULT_INTEGER, model.getDefaultValue());
     }
 
     void shouldInjectIntegerArray() {
@@ -321,6 +327,11 @@ abstract class RequestPropertyInjectorTestBase {
         IntegerCollections model = context.request().adaptTo(IntegerCollections.class);
         assertNotNull(model);
         assertArrayEquals(EXPECTED_DEFAULT_INTEGER_ARRAY, model.getDefaultValue());
+
+        prepareRequest(context.request(), EXPECTED_STRING_ARRAY);
+        model = context.request().adaptTo(IntegerCollections.class);
+        assertNotNull(model);
+        assertArrayEquals(EXPECTED_DEFAULT_INTEGER_ARRAY, model.getDefaultValue());
     }
 
     void shouldInjectUnparseableIntegerCollection() {
@@ -373,6 +384,12 @@ abstract class RequestPropertyInjectorTestBase {
         assertNotNull(model);
         assertNotNull(model.getDefaultValue());
         assertEquals(EXPECTED_DEFAULT_LONG, model.getDefaultValue().longValue());
+
+        prepareRequest(context.request(), EXPECTED_STRING);
+        model = context.request().adaptTo(Longs.class);
+        assertNotNull(model);
+        assertNotNull(model.getDefaultValue());
+        assertEquals(EXPECTED_DEFAULT_LONG, model.getDefaultValue().longValue());
     }
 
     void shouldInjectLongArray() {
@@ -410,6 +427,11 @@ abstract class RequestPropertyInjectorTestBase {
     }
 
     void shouldInjectDefaultLongArray() {
+//        LongArrays model = context.request().adaptTo(LongArrays.class);
+//        assertNotNull(model);
+//        assertArrayEquals(EXPECTED_DEFAULT_LONG_ARRAY, model.getDefaultValue());
+
+        prepareRequest(context.request(), EXPECTED_STRING);
         LongArrays model = context.request().adaptTo(LongArrays.class);
         assertNotNull(model);
         assertArrayEquals(EXPECTED_DEFAULT_LONG_ARRAY, model.getDefaultValue());
@@ -502,6 +524,12 @@ abstract class RequestPropertyInjectorTestBase {
         assertNotNull(model);
         assertNotNull(model.getDefaultValue());
         assertEquals(EXPECTED_DEFAULT_DOUBLE, model.getDefaultValue(), 0.0001);
+
+        prepareRequest(context.request(), EXPECTED_STRING);
+        model = context.request().adaptTo(Doubles.class);
+        assertNotNull(model);
+        assertNotNull(model.getDefaultValue());
+        assertEquals(EXPECTED_DEFAULT_DOUBLE, model.getDefaultValue(), 0.0001);
     }
 
     void shouldInjectDoubleArray() {
@@ -539,6 +567,11 @@ abstract class RequestPropertyInjectorTestBase {
 
     void shouldInjectDefaultDoubleArray() {
         DoubleArrays model = context.request().adaptTo(DoubleArrays.class);
+        assertNotNull(model);
+        assertArrayEquals(EXPECTED_DEFAULT_DOUBLE_ARRAY, model.getDefaultValue(), 0.0001);
+
+        prepareRequest(context.request(), EXPECTED_STRING_ARRAY);
+        model = context.request().adaptTo(DoubleArrays.class);
         assertNotNull(model);
         assertArrayEquals(EXPECTED_DEFAULT_DOUBLE_ARRAY, model.getDefaultValue(), 0.0001);
     }
@@ -612,6 +645,11 @@ abstract class RequestPropertyInjectorTestBase {
         Booleans model = context.request().adaptTo(Booleans.class);
         assertNotNull(model);
         assertTrue(model.getDefaultValue());
+
+        prepareRequest(context.request(), EXPECTED_STRING);
+        model = context.request().adaptTo(Booleans.class);
+        assertNotNull(model);
+        assertTrue(model.getDefaultValue());
     }
 
     void shouldInjectBooleanArray() {
@@ -643,6 +681,11 @@ abstract class RequestPropertyInjectorTestBase {
 
     void shouldInjectDefaultBooleanArray() {
         BooleanArrays model = context.request().adaptTo(BooleanArrays.class);
+        assertNotNull(model);
+        assertArrayEquals(EXPECTED_DEFAULT_BOOLEAN_ARRAY, model.getDefaultValue());
+
+        prepareRequest(context.request(), EXPECTED_STRING_ARRAY);
+        model = context.request().adaptTo(BooleanArrays.class);
         assertNotNull(model);
         assertArrayEquals(EXPECTED_DEFAULT_BOOLEAN_ARRAY, model.getDefaultValue());
     }

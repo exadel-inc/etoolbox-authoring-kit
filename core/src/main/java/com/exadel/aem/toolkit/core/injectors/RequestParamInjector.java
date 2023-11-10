@@ -66,8 +66,9 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
-    public Object getValue(
+    public Injectable getValue(
         Object adaptable,
         String name,
         Type type,
@@ -75,7 +76,7 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
-            return null;
+            return Injectable.EMPTY;
         }
         return getValue(request, annotation.name().isEmpty() ? name : annotation.name(), type);
     }
@@ -85,17 +86,17 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
      * @param request A {@code SlingHttpServletRequest} instance
      * @param name    Name of the parameter
      * @param type    Type of the returned value
-     * @return A nullable value
+     * @return A non-null {@link Injectable} instance
      */
-    Object getValue(SlingHttpServletRequest request, String name, Type type) {
+    Injectable getValue(SlingHttpServletRequest request, String name, Type type) {
         if (RequestParameter.class.equals(type) || Object.class.equals(type)) {
-            return request.getRequestParameter(name);
+            return Injectable.of(request.getRequestParameter(name));
         } else if (TypeUtil.isArrayOfType(type, RequestParameter.class)) {
-            return request.getRequestParameters(name);
+            return Injectable.of(request.getRequestParameters(name));
         } else if (TypeUtil.isSupportedCollectionOfType(type, RequestParameter.class, false)) {
             return CastUtil.toType(request.getRequestParameterList(), type);
         } else if (RequestParameterMap.class.equals(type)) {
-            return request.getRequestParameterMap();
+            return Injectable.of(request.getRequestParameterMap());
         }
 
         Class<?> elementType = TypeUtil.getElementType(type);
@@ -103,7 +104,7 @@ public class RequestParamInjector extends BaseInjector<RequestParam> {
             return CastUtil.toType(getRequestParameterValues(request, name), type);
         }
 
-        return null;
+        return Injectable.EMPTY;
     }
 
     /**

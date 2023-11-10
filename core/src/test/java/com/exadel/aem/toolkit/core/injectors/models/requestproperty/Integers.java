@@ -33,8 +33,8 @@ public class Integers extends RequestAdapterBase<Integer> {
     @RequestProperty
     private int value;
 
-    @Default(intValues = 10)
     @RequestProperty
+    @Default(intValues = 10)
     private Integer defaultValue;
 
     @Self

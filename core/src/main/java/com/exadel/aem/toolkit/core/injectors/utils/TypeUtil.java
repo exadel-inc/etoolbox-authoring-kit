@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.injectors.utils;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -247,9 +248,31 @@ public class TypeUtil {
         return value instanceof Class<?> ? (Class<?>) value : null;
     }
 
-    /* --------------
-       Sling adapters
-       -------------- */
+    /* ---------------
+       Probing objects
+       --------------- */
+
+    /**
+     * Gets whether the given value can be considered an "empty" object. An "empty" object is either {@code null}, or
+     * an empty array, iterable, or map
+     * @param value Arbitrary object
+     * @return True or false
+     */
+    public static boolean isEmpty(Object value) {
+        if (value == null) {
+            return true;
+        }
+        if (value.getClass().isArray()) {
+            return Array.getLength(value) == 0;
+        }
+        if (value instanceof Iterable<?>) {
+            return !((Iterable<?>) value).iterator().hasNext();
+        }
+        if (value instanceof Map<?, ?>) {
+            return ((Map<?, ?>) value).isEmpty();
+        }
+        return false;
+    }
 
     /**
      * Gets whether the given {@code type} is a {@code SlingHttpServletRequest} adapter

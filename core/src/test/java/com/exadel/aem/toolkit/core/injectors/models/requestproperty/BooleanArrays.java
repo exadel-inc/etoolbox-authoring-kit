@@ -34,8 +34,8 @@ public class BooleanArrays extends RequestAdapterBase<Boolean[]> {
     @RequestProperty
     private boolean[] value;
 
-    @Default(booleanValues = {true, false, true})
     @RequestProperty
+    @Default(booleanValues = {true, false, true})
     private boolean[] defaultValue;
 
     @Self

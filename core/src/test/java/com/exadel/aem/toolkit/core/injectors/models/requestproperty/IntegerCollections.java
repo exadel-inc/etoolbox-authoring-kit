@@ -36,8 +36,8 @@ public class IntegerCollections extends RequestAdapterBase<Collection<Integer>> 
     @RequestProperty
     private Set<Integer> value;
 
-    @Default(intValues = {10, 11, 12})
     @RequestProperty
+    @Default(intValues = {10, 11, 12})
     private int[] defaultValue;
 
     @Self

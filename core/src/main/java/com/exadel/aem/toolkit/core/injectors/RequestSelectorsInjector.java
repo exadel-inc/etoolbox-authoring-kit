@@ -64,8 +64,9 @@ public class RequestSelectorsInjector extends BaseInjector<RequestSelectors> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
-    public Object getValue(
+    public Injectable getValue(
         Object adaptable,
         String name,
         Type type,
@@ -73,9 +74,9 @@ public class RequestSelectorsInjector extends BaseInjector<RequestSelectors> {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
-            return null;
+            return Injectable.EMPTY;
         }
-        return getValue(request, type);
+        return Injectable.of(getValue(request, type));
     }
 
     /**

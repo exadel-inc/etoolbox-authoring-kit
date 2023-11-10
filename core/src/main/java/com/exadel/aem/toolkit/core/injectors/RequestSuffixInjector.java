@@ -64,8 +64,9 @@ public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
-    public Object getValue(
+    public Injectable getValue(
         Object adaptable,
         String name,
         Type type,
@@ -73,9 +74,9 @@ public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
-            return null;
+            return Injectable.EMPTY;
         }
-        return getValue(request, type);
+        return Injectable.of(getValue(request, type));
     }
 
     /**
@@ -98,5 +99,4 @@ public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
         }
         return null;
     }
-
 }

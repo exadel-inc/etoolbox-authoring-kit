@@ -34,8 +34,8 @@ public class Doubles extends RequestAdapterBase<Double> {
     @RequestProperty
     private Double value;
 
-    @Default(doubleValues = 1.1d)
     @RequestProperty
+    @Default(doubleValues = 1.1d)
     private Double defaultValue;
 
     @Self

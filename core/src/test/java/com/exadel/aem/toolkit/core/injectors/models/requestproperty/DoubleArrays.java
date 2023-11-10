@@ -34,8 +34,8 @@ public class DoubleArrays extends RequestAdapterBase<Double[]> {
     @RequestProperty
     private double[] value;
 
-    @Default(doubleValues = {1.1d, 1.2d, 1.3d})
     @RequestProperty
+    @Default(doubleValues = {1.1d, 1.2d, 1.3d})
     private double[] defaultValue;
 
     @Self
