@@ -67,14 +67,28 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <skipTests>false</skipTests>
-                            <systemPropertyVariables>
-                                <aem.host>${aem.host}</aem.host>
-                                <aem.port>${aem.port}</aem.port>
-                                <aem.login>${aem.login}</aem.login>
-                                <aem.password>${aem.login}</aem.password>
-                            </systemPropertyVariables>
                             <includes>
                                 <include>**/AllTests.class</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>regression</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>false</skipTests>
+                            <systemPropertyVariables>
+                                <eak.version>${project.parent.version}</eak.version>
+                            </systemPropertyVariables>
+                            <includes>
+                                <include>**/RegressionTest.class</include>
                             </includes>
                         </configuration>
                     </plugin>
