@@ -440,6 +440,15 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>regression</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>it.tests</module>
+            </modules>
+        </profile>
     </profiles>
 
     <dependencyManagement>
