@@ -85,6 +85,8 @@
                         <configuration>
                             <skipTests>false</skipTests>
                             <systemPropertyVariables>
+                                <eak.group>${project.parent.groupId}</eak.group>
+                                <eak.id>${project.parent.artifactId}</eak.id>
                                 <eak.version>${project.parent.version}</eak.version>
                             </systemPropertyVariables>
                             <includes>
@@ -123,6 +125,10 @@
             <artifactId>plexus-utils</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.exadel.etoolbox</groupId>
+            <artifactId>etoolbox-coconut-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
         </dependency>
@@ -149,6 +155,10 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
