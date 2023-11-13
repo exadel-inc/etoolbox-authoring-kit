@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.plugin.maven;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystem;
 import java.nio.file.Files;
@@ -38,6 +39,8 @@ class RenderingUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(RenderingUtil.class);
 
+    private static final Filter XML_NAMESPACE_FILTER = new XmlNamespaceFilter();
+
     private RenderingUtil() {
     }
 
@@ -56,30 +59,25 @@ class RenderingUtil {
 
         PackageWriter.forFileSystem(fileSystem, TestConstants.DEFAULT_PROJECT_NAME).write(testable);
 
-        List<Diff> differences = Comparator
+        List<Diff> differences = new Comparator()
             .left(sampleFilesPath, "Expected")
             .right(effectiveCreatedFilesPath, "Actual")
-            .filter(new Filter() {
-                @Override
-                public boolean skipLine(DiffEntry value) {
-                    return value.getLeft().trim().startsWith("xmlns:") || value.getRight().trim().startsWith("xmlns:");
-                }
-            })
+            .filter(XML_NAMESPACE_FILTER)
             .compare();
 
-        boolean result = Comparator.isEqual(differences);
+        boolean result = Comparator.isMatch(differences);
         if (!result) {
-            reportDifferences(fileSystem, differences);
+            reportDifferences(differences);
         }
         cleanUp(effectiveCreatedFilesPath);
         return result;
     }
 
-    private static void reportDifferences(FileSystem fileSystem, List<Diff> differences) {
+    private static void reportDifferences(List<Diff> differences) {
         StringBuilder builder = new StringBuilder();
         for (Diff difference : differences) {
-            String pathSeparator = fileSystem.getSeparator();
-            String testFolder = pathSeparator + "test" + pathSeparator + "resources" + pathSeparator;
+            String separator = File.separator;
+            String testFolder = separator + "test" + separator + "resources" + separator;
             String diffLocation = difference.getLeft().contains(testFolder)
                 ? StringUtils.substringAfter(difference.getLeft(), testFolder)
                 : difference.getLeft();
@@ -99,7 +97,14 @@ class RenderingUtil {
                 Files.delete(p);
             }
         } catch (IOException e) {
-            LOG.error("Could not in-memory file {}", path, e);
+            LOG.error("Could not remove in-memory file {}", path, e);
+        }
+    }
+
+    private static class XmlNamespaceFilter implements Filter {
+        @Override
+        public boolean skipLine(DiffEntry value) {
+            return value.getLeft().trim().startsWith("xmlns:") || value.getRight().trim().startsWith("xmlns:");
         }
     }
 }
