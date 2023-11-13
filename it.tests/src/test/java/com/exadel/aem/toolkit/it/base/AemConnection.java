@@ -14,6 +14,7 @@
 package com.exadel.aem.toolkit.it.base;
 
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.Base64;
 
@@ -31,6 +32,9 @@ import com.exadel.aem.toolkit.core.CoreConstants;
  * Contains utility methods for handling HTTP connections to an AEM instance
  */
 public class AemConnection {
+
+    public static final int TIMEOUT = 10000;
+    public static final int POLLING_INTERVAL = 1000;
 
     private static final String PROPERTY_HOST = "aem.host";
     private static final String PROPERTY_PORT = "aem.port";
@@ -71,7 +75,10 @@ public class AemConnection {
     public static void open(String path, String... variants) {
         String url = getUrl(path);
         Selenide.open(url);
-        Selenide.Wait().until(webDriver ->
+        Selenide.Wait()
+            .withTimeout(Duration.ofMillis(TIMEOUT))
+            .pollingEvery(Duration.ofMillis(POLLING_INTERVAL))
+            .until(webDriver ->
             (webDriver.getCurrentUrl().equals(url)
                 || Arrays.stream(ArrayUtils.nullToEmpty(variants)).anyMatch(v -> webDriver.getCurrentUrl().equals(getUrl(v))))
                 && ((JavascriptExecutor) webDriver).executeScript("return document.readyState").equals("complete"));
@@ -90,7 +97,10 @@ public class AemConnection {
         Selenide.element(By.name("j_username")).setValue(getProperty(PROPERTY_LOGIN));
         Selenide.element(By.name("j_password")).setValue(getProperty(PROPERTY_PASSWORD));
         Selenide.element(By.id("submit-button")).click();
-        Selenide.Wait().until(webDriver -> webDriver.getCurrentUrl().contains(LANDING_PATH));
+        Selenide.Wait()
+            .withTimeout(Duration.ofMillis(TIMEOUT))
+            .pollingEvery(Duration.ofMillis(POLLING_INTERVAL))
+            .until(webDriver -> webDriver.getCurrentUrl().contains(LANDING_PATH));
     }
 
     /**
