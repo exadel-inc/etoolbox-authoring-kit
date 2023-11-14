@@ -176,7 +176,7 @@ class RegressionAssetHelper {
             return;
         }
         try {
-            Files.deleteIfExists(tempDirectory);
+            FileUtils.deleteDirectory(tempDirectory.toFile());
         } catch (IOException e) {
             RegressionTest.LOG.warn("Could not clean up {}", tempDirectory, e);
         }
