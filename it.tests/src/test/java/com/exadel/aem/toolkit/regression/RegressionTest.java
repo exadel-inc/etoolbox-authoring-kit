@@ -77,6 +77,7 @@ public class RegressionTest {
         boolean result = ComparisonUtil.isMatch(oldPackagesDirectory, newPackagesDirectory);
 
         if (settings.cleanUp()) {
+            LOG.info("Cleaning up regression content");
             assetHelper.cleanUp();
         } else {
             LOG.info("Regression content is stored at {}", newPackagesDirectory.getParent());
