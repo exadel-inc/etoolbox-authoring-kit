@@ -78,6 +78,8 @@ public class RegressionTest {
 
         if (settings.cleanUp()) {
             assetHelper.cleanUp();
+        } else {
+            LOG.info("Regression content is stored at {}", newPackagesDirectory.getParent());
         }
         Assert.assertTrue("There were differences in regression content. See log above", result);
     }
