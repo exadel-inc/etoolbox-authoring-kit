@@ -120,6 +120,10 @@
         </dependency>
         <dependency>
             <groupId>io.wcm</groupId>
+            <artifactId>io.wcm.testing.aem-mock.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.wcm</groupId>
             <artifactId>io.wcm.testing.aem-mock.junit4</artifactId>
         </dependency>
         <dependency>
@@ -141,6 +145,14 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.sling</groupId>
