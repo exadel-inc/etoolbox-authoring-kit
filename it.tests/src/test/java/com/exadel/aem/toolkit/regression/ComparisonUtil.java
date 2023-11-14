@@ -15,18 +15,18 @@ package com.exadel.aem.toolkit.regression;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.zip.CRC32;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Assert;
-import com.google.common.hash.Hashing;
-import com.google.common.io.ByteSource;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.etoolbox.coconut.Comparator;
@@ -82,14 +82,14 @@ class ComparisonUtil {
             if (StringUtils.containsIgnoreCase(oldFile.getName(), ".all-")) {
                 continue;
             }
-            long oldHash = getHashCode(oldFile);
+            long oldHash = getCrc(oldFile);
 
             File newFile = Arrays
                 .stream(newFiles)
                 .filter(f -> f.getName().equals(oldFile.getName()))
                 .findFirst()
                 .orElse(null);
-            long newHash = getHashCode(newFile);
+            long newHash = getCrc(newFile);
             if (newHash != 0 && newHash != oldHash) {
                 assert newFile != null;
                 oldFilesFiltered.add(oldFile.toPath());
@@ -100,15 +100,20 @@ class ComparisonUtil {
         return Pair.of(oldFilesFiltered.toArray(new Path[0]), newFilesFiltered.toArray(new Path[0]));
     }
 
-    private static long getHashCode(File value) {
+    private static long getCrc(File value) {
         if (value == null) {
             return 0L;
         }
-        ByteSource byteSource =  com.google.common.io.Files.asByteSource(value);
-        try {
-            return byteSource.hash(Hashing.sha256()).asLong();
+        CRC32 crc32 = new CRC32();
+        try (InputStream input = value.toURI().toURL().openStream()) {
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = input.read(buffer)) != -1) {
+                crc32.update(buffer, 0, bytesRead);
+            }
+            return crc32.getValue();
         } catch (IOException e) {
-            throw new AssertionError("Could not calculate the hash code " + e.getMessage());
+            throw new AssertionError("Could not calculate file CRC " + e.getMessage());
         }
     }
 
