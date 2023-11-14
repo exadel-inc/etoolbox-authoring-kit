@@ -291,7 +291,7 @@ Read more on debugging a Maven plugin e.g. [here](https://spin.atomicobject.com/
 
 ### Running integration tests
 
-Starting from version _2.3.0_, the ToolKit supports integration tests powered by [Selenide](https://selenide.org). They are mainly for checking the browser-bound functions as well as checking the connection to a live AEM server and/or 3rd-party services on the Internet.
+The ToolKit supports integration tests powered by [Selenide](https://selenide.org). They are mainly for checking the browser-bound functions and rely on the connection to a live AEM server and/or 3rd-party services on the Internet.
 
 The integration tests are localed in the `it.tests` module. Important: unlike unit tests, integration tests are not run in frames of a "regular" build. To run them, you need to specify the dedicated Maven profile like the following:
 ```
@@ -311,3 +311,24 @@ A complete command line for running integration tests with different properties 
 mvn clean install -PautoInstallPackage -Pintegration -D"aem.host"=192.168.0.81 -D"aem.port"=8080 -D"aem.login"=siteadmin -D"aem.password"=MyPa$$w0rd -Dnouninstall=true
 
 ```
+
+### Doing regression testing
+
+The ToolKit supports regression testing as well. Regression testing is done using an external AEM project. The aim is to make sure that a <newer> version of ToolKit (namely, the plugin) produces essentially the same XML markup as an <older> one. The <older> version is considered a "reference" and is used as a baseline for comparison.
+
+To run regression tests, you need to specify the dedicated Maven profile like the following:
+```
+mvn test -Pregression -Dproject=e:\projects\aem\my_project
+```
+The ToolKit will navigate to the folder e:\projects\aem\my_project_ (and expectedly will find project's POM file in it). It will build the project (without deployment) with the version of ToolKit that is specified in the project. It will collect the content packages created  upon the build. Then it will switch the version of ToolKit to the current one (the one that is specified in the ToolKit's own POM) and run the build for the second time. The content packages will be collected again. Then the "former" and the "newer" packages will be compared content-wise. If there are no significant disparities, the test is passed. Otherwise, the test is failed.
+
+We've said that the second part of the regression is building a target project with the current ToolKit version. If you however wish to test another version, specify it with the optional switch like `-Deak.version=1.2.3-SNAPSHOT`.`
+
+The regression assumes that the AEM project's POM file has a dedicated _&lt;property>_ that stores the version of ToolKit (it will NOT look for a version specified in _&lt;dependencyManagement_ or _&lt;pluginManagement>_). By default we expect that the property has the name `<eak.version>`. You can change this expectation it by specifying `-Deak.version.prop=other.property.name` in the command line.
+
+Besides, you can override the _Maven_ executable used to build the target AEM project by specifying `-Dmaven.cmd=/path/to/mvn/or/a/cmd/file`. Optionally you can specify a local Maven repository address if it differs from _$HOME$/.m2_, with `-Dmaven.dir=/path/to/maven/repository`.
+
+If the target AEM project is a multimodule project with, you can specify only particular modules to speed up the build with `-Dmodules=module1,module2,...`. Do not forget you need not just the content module but also the corresponding "bundle" module that contains your AEM components for the build to succeed.
+
+The comparison is done inside a temp folder. By default, the folder is erased after the regression is done. If you want to keep it, specify `-Dnocleanup=true`.
+
