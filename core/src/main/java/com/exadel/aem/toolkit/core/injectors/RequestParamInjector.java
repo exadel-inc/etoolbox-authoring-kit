@@ -17,8 +17,8 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Type;
 import javax.annotation.Nonnull;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.request.RequestParameterMap;

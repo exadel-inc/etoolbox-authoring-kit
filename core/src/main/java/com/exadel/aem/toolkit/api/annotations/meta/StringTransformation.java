@@ -15,8 +15,8 @@ package com.exadel.aem.toolkit.api.annotations.meta;
 
 import java.util.function.UnaryOperator;
 
-import org.apache.commons.lang.WordUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import com.google.common.base.CaseFormat;
 
 /**
@@ -28,7 +28,7 @@ public enum StringTransformation {
     UPPERCASE(String::toUpperCase),
     LOWERCASE(String::toLowerCase),
     CAMELCASE(string -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, string.toLowerCase())),
-    CAPITALIZE(string -> WordUtils.capitalizeFully(string, new char[] {' ', '-'}));
+    CAPITALIZE(string -> WordUtils.capitalizeFully(string, ' ', '-'));
 
     private final UnaryOperator<String> transformation;
 
