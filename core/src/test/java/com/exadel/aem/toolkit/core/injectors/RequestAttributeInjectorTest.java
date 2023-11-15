@@ -90,6 +90,11 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
     }
 
     @Test
+    public void shouldInjectDefaultStringCollection() {
+        super.shouldInjectDefaultStringCollection();
+    }
+
+    @Test
     public void shouldInjectInteger() {
         super.shouldInjectInteger(RequestAttributeInjectorTest::assertStringifiedObjectValueEquals);
     }
@@ -112,6 +117,11 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
     @Test
     public void shouldInjectIntegerCollection() {
         super.shouldInjectIntegerCollection();
+    }
+
+    @Test
+    public void shouldInjectDefaultIntegerCollection() {
+        super.shouldInjectDefaultIntegerCollection();
     }
 
     @Test
@@ -145,6 +155,11 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
     }
 
     @Test
+    public void shouldInjectDefaultLongCollection() {
+        super.shouldInjectDefaultLongCollection();
+    }
+
+    @Test
     public void shouldInjectUnparseableLongCollection() {
         super.shouldInjectUnparseableLongCollection();
     }
@@ -175,6 +190,11 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
     }
 
     @Test
+    public void shouldInjectDefaultDoubleCollection() {
+        super.shouldInjectDefaultDoubleCollection();
+    }
+
+    @Test
     public void shouldInjectUnparseableDoubleCollection() {
         super.shouldInjectUnparseableDoubleCollection();
     }
@@ -202,6 +222,11 @@ public class RequestAttributeInjectorTest extends RequestPropertyInjectorTestBas
     @Test
     public void shouldInjectBooleanCollection() {
         super.shouldInjectBooleanCollection();
+    }
+
+    @Test
+    public void shouldInjectDefaultBooleanCollection() {
+        super.shouldInjectDefaultBooleanCollection();
     }
 
     @Test

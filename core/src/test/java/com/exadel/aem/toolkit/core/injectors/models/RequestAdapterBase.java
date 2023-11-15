@@ -15,19 +15,19 @@ package com.exadel.aem.toolkit.core.injectors.models;
 
 import javax.annotation.Nullable;
 
-import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.models.annotations.DefaultInjectionStrategy;
-import org.apache.sling.models.annotations.Model;
+import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.injectors.RequestProperty;
 
-@Model(adaptables = SlingHttpServletRequest.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
 public abstract class RequestAdapterBase<T> {
 
     @RequestProperty(name = CoreConstants.PN_VALUE)
     // Note: this value is not used in models for {@code EToolboxListInjector}
     private Object objectValue;
+
+    @RequestProperty(name = CoreConstants.PN_VALUE)
+    private String stringValue;
 
     private final T constructorValue;
 
@@ -45,9 +45,22 @@ public abstract class RequestAdapterBase<T> {
 
     public abstract T getValue();
 
+    // Note: this method is not used in models covering complex reference types such as {@link Calendar},
+    // {@link SimpleListItem}, or a {@link Map}
+    public abstract T getDefaultValue();
+
     @Nullable
     public Object getObjectValue() {
         return objectValue;
+    }
+
+    public String getStringValue() {
+        return stringValue;
+    }
+
+    // Note: this method is only tested in a selected of descendants
+    public String getDefaultStringValue() {
+        return StringUtils.EMPTY;
     }
 
     public abstract ValueSupplier<T> getValueSupplier();

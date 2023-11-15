@@ -46,11 +46,13 @@ public class Doubles extends RequestAdapterBase<Double> {
         super(value);
     }
 
+    @Override
     @Nullable
     public Double getValue() {
         return value;
     }
 
+    @Override
     public Double getDefaultValue() {
         return defaultValue;
     }

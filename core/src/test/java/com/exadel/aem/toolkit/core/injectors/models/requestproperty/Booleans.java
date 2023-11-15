@@ -37,6 +37,10 @@ public class Booleans extends RequestAdapterBase<Boolean> {
     @Default(booleanValues = true)
     private boolean defaultValue;
 
+    @RequestProperty
+    @Default(booleanValues = true)
+    private String defaultStringValue;
+
     @Self
     private Supplier supplier;
 
@@ -49,8 +53,14 @@ public class Booleans extends RequestAdapterBase<Boolean> {
         return value;
     }
 
-    public boolean getDefaultValue() {
+    @Override
+    public Boolean getDefaultValue() {
         return defaultValue;
+    }
+
+    @Override
+    public String getDefaultStringValue() {
+        return defaultStringValue;
     }
 
     @Override

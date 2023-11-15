@@ -45,9 +45,15 @@ public class CalendarCollections extends RequestAdapterBase<Collection<Calendar>
         super(value);
     }
 
+    @Override
     public Collection<Calendar> getValue() {
         assert value != null;
         return value.stream().map(Calendar.class::cast).collect(Collectors.toList());
+    }
+
+    @Override
+    public Collection<Calendar> getDefaultValue() {
+        return null;
     }
 
     @Override

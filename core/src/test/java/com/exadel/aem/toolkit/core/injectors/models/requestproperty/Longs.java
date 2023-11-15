@@ -51,6 +51,7 @@ public class Longs extends RequestAdapterBase<Long> {
         return value;
     }
 
+    @Override
     public Long getDefaultValue() {
         return defaultValue;
     }

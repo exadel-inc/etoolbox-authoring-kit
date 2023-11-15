@@ -59,6 +59,11 @@ public class Resources extends RequestAdapterBase<List<Resource>> {
         return (List<Resource>) value;
     }
 
+    @Override
+    public List<Resource> getDefaultValue() {
+        return null;
+    }
+
     @Nullable
     @Override
     public Object getObjectValue() {

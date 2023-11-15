@@ -56,6 +56,11 @@ public class CustomListItemsMap extends RequestAdapterBase<Map<String, CustomLis
     }
 
     @Override
+    public Map<String, CustomListItem> getDefaultValue() {
+        return null;
+    }
+
+    @Override
     public ValueSupplier<Map<String, CustomListItem>> getValueSupplier() {
         return supplier;
     }

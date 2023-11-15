@@ -35,7 +35,7 @@ public class DoubleArrays extends RequestAdapterBase<Double[]> {
     private double[] value;
 
     @RequestProperty
-    @Default(doubleValues = {1.1d, 1.2d, 1.3d})
+    @Default(doubleValues = {42.1d, 43.1d, 44.1d})
     private double[] defaultValue;
 
     @Self
@@ -46,12 +46,14 @@ public class DoubleArrays extends RequestAdapterBase<Double[]> {
         super(value);
     }
 
+    @Override
     public Double[] getValue() {
         return ArrayUtils.toObject(value);
     }
 
-    public double[] getDefaultValue() {
-        return defaultValue;
+    @Override
+    public Double[] getDefaultValue() {
+        return ArrayUtils.toObject(defaultValue);
     }
 
     @Override

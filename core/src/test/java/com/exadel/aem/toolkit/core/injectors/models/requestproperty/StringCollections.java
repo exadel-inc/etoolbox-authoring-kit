@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
@@ -34,6 +35,10 @@ public class StringCollections extends RequestAdapterBase<Collection<String>> {
 
     @RequestProperty
     private Set<String> value;
+
+    @RequestProperty
+    @Default(values = {"Hello", "World"})
+    private Set<String> defaultValue;
 
     @Self
     private Supplier valueSupplier;
@@ -51,6 +56,11 @@ public class StringCollections extends RequestAdapterBase<Collection<String>> {
     @Override
     public Collection<String> getValue() {
         return value;
+    }
+
+    @Override
+    public Collection<String> getDefaultValue() {
+        return defaultValue;
     }
 
     @Model(adaptables = SlingHttpServletRequest.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)

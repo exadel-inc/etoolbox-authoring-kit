@@ -53,6 +53,11 @@ public class CustomListItems extends RequestAdapterBase<List<CustomListItem>> {
         return (List<CustomListItem>) value;
     }
 
+    @Override
+    public List<CustomListItem> getDefaultValue() {
+        return null;
+    }
+
     public CustomListItem[] getArrayValue() {
         return arrayValue;
     }
