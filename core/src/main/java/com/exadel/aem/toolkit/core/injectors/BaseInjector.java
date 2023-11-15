@@ -18,6 +18,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Member;
 import java.lang.reflect.Type;
 import java.util.Objects;
+import java.util.function.BiFunction;
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
@@ -92,6 +93,19 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
     abstract Injectable getValue(Object adaptable, String name, Type type, T annotation);
 
     /**
+     * When overridden in an injector class, retrieves a custom routine used to convert a provided value (usually the
+     * value of the {@link Default} annotation) to the needs of the current injector. This method only needs overriding
+     * when the injector supports conversion not covered by {@link CastUtil} (i.e., when conversion depends on the
+     * type of the injectable or an annotation parameter)
+     * @param type       Type of the receiving Java class member
+     * @param annotation Annotation handled by the current injector
+     * @return A nullable {@code BiFunction} instance
+     */
+    BiFunction<Object, Type, Object> getValueConverter(Type type, T annotation) {
+        return null;
+    }
+
+    /**
      * When overridden in an injector class, retrieves the annotation processed by this particular injector. Takes into
      * account that there might be several annotations attached to the current Java class member, and an injector can
      * potentially process several annotation types, depending on the setup
@@ -109,7 +123,7 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
      * @param element {@link AnnotatedElement} instance that facades the Java class member and allows retrieving
      * @return A nullable value
      */
-    static Object defaultIfEmpty(Injectable source, Type type, AnnotatedElement element) {
+    final Object defaultIfEmpty(Injectable source, Type type, AnnotatedElement element) {
         if (source != null && !source.isDefault()) {
             return source.getValue();
         }
@@ -117,7 +131,10 @@ abstract class BaseInjector<T extends Annotation> implements Injector {
             return source != null ? source.getValue() : null;
         }
         Object defaultValue = extractDefault(element.getDeclaredAnnotation(Default.class));
-        return CastUtil.toType(defaultValue, type).getValue();
+        return CastUtil.toType(
+            defaultValue,
+            type,
+            getValueConverter(type, getManagedAnnotation(element))).getValue();
     }
 
     /**

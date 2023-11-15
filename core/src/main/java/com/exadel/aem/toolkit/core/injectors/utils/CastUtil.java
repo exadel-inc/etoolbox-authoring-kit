@@ -59,7 +59,7 @@ public class CastUtil {
      */
     @Nonnull
     public static Injectable toType(Object value, Type type) {
-        return toType(value, type, CastUtil::toInstanceOfType);
+        return toType(value, type, null);
     }
 
     /**
@@ -78,7 +78,9 @@ public class CastUtil {
         if (value == null) {
             return Injectable.EMPTY;
         }
+
         Class<?> elementType = TypeUtil.getElementType(type);
+        BiFunction<Object, Type, Object> effectiveConverter = converter != null ? converter : CastUtil::toInstanceOfType;
 
         if (TypeUtil.isArray(type)) {
             return Injectable.of(toArray(value, elementType, effectiveConverter));
