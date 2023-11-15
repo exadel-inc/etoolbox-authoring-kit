@@ -81,19 +81,21 @@ public class CastUtil {
         Class<?> elementType = TypeUtil.getElementType(type);
 
         if (TypeUtil.isArray(type)) {
-            return Injectable.of(toArray(value, elementType, converter));
+            return Injectable.of(toArray(value, elementType, effectiveConverter));
         }
 
         if (TypeUtil.isSupportedCollection(type, true)) {
             return Set.class.equals(TypeUtil.getRawType(type))
-                ? Injectable.of(toCollection(value, elementType, converter, LinkedHashSet::new))
-                : Injectable.of(toCollection(value, elementType, converter, ArrayList::new));
+                ? Injectable.of(toCollection(value, elementType, effectiveConverter, LinkedHashSet::new))
+                : Injectable.of(toCollection(value, elementType, effectiveConverter, ArrayList::new));
         }
 
         if (Object.class.equals(type)) {
-            return Injectable.of(converter.apply(value, type));
+            return Injectable.of(effectiveConverter.apply(value, type));
         }
-        return Injectable.of(converter.apply(extractFirstElement(value), type));
+
+        Object convertable = ClassUtils.isAssignable((Class<?>) type, String.class) ? value: extractFirstElement(value);
+        return Injectable.of(effectiveConverter.apply(convertable, type));
     }
 
     /**
@@ -176,6 +178,33 @@ public class CastUtil {
     }
 
     /**
+     * Called by {@code CastUtil#toType} to stringify the given value. Arrays and iterable collections are converted
+     * to a comma-separated string
+     * @param value An arbitrary non-null value
+     * @return String value
+     */
+    private static String toString(Object value) {
+        if (value.getClass().isArray()) {
+            StringBuilder result = new StringBuilder();
+            for (int i = 0, length = Array.getLength(value); i < length; i++) {
+                Object entry = Array.get(value, i);
+                if (entry == null) {
+                    continue;
+                }
+                if (result.length() > 0) {
+                    result.append(CoreConstants.SEPARATOR_COMMA);
+                }
+                result.append(entry);
+            }
+            return result.toString();
+        }
+        if (TypeUtil.isSupportedCollection(value.getClass(), false)) {
+            return StringUtils.join((Collection<?>) value, CoreConstants.SEPARATOR_COMMA);
+        }
+        return String.valueOf(value);
+    }
+
+    /**
      * Called by {@code CastUtil#toType} to further adapt the passed value to the given type if there is type
      * compatibility. E.g., when an {@code int} value is passed, and the receiving type is {@code long}, or else the
      * passed value is an implementation of an interface, and the receiving type is the interface itself. The adaptation
@@ -187,7 +216,7 @@ public class CastUtil {
      * original one if type casting is not possible or not needed
      */
     private static Injectable toInstanceOfType(Object value, Type type) {
-        if (value == null || value.getClass().equals(type) || type instanceof ParameterizedType) {
+        if (TypeUtil.isEmpty(value) || value.getClass().equals(type) || type instanceof ParameterizedType) {
             return Injectable.of(value);
         }
         assert type instanceof Class<?>;
@@ -212,6 +241,9 @@ public class CastUtil {
         }
         if (ClassUtils.isAssignable(effectiveValue.getClass(), (Class<?>) type)) {
             return Injectable.of(((Class<?>) type).cast(effectiveValue));
+        }
+        if (ClassUtils.isAssignable((Class<?>) type, String.class)) {
+            return Injectable.of(toString(value));
         }
         return getDefaultValue(type);
     }
