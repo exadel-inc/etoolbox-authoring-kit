@@ -96,7 +96,7 @@ public class CastUtil {
             return Injectable.of(effectiveConverter.apply(value, type));
         }
 
-        Object convertable = ClassUtils.isAssignable((Class<?>) type, String.class) ? value: extractFirstElement(value);
+        Object convertable = ClassUtils.isAssignable((Class<?>) type, String.class) ? value : extractFirstElement(value);
         return Injectable.of(effectiveConverter.apply(convertable, type));
     }
 

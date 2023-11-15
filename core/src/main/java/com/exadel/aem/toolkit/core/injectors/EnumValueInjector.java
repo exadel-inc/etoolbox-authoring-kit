@@ -78,14 +78,6 @@ public class EnumValueInjector extends BaseInjector<EnumValue> {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Override
-    BiFunction<Object, Type, Object> getValueConverter(Type type, EnumValue annotation) {
-        return getValueConverter(annotation.valueMember());
-    }
-
-    /**
      * Attempts to extract an enum value from the given {@code adaptable}, which is usually a
      * {@code SlingHttpServletRequest} or a {@code Resource}. If the provided {@code type} is an enum type, we try to
      * pick up an appropriate enum constant
@@ -119,6 +111,14 @@ public class EnumValueInjector extends BaseInjector<EnumValue> {
         }
 
         return CastUtil.toType(valueMapValue, type, getValueConverter(valueMember));
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    BiFunction<Object, Type, Object> getValueConverter(Type type, EnumValue annotation) {
+        return getValueConverter(annotation.valueMember());
     }
 
     /**
