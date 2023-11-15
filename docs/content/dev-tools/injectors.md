@@ -387,8 +387,8 @@ why it's all right to, e.g., have a String-typed value backed by an array of int
 public class SampleModel {
     // ...
     @RequestParam
-    @Default(values = {1, 2, 3})
-    private String[] values;
+    @Default(intValues = {1, 2, 3})
+    private String value;
 }
 ```
  Defaults for enum values are supported via the String-typed property of `@Default`.
@@ -397,4 +397,4 @@ public class SampleModel {
 Models framework. Therefore, as you experiment with injectors annotations and defaults you may observe log messages like:
 "_Cannot provide default for java.util.Collection<Integer>"_ or else _Default values for class &lt;EnumClass>
 are not supported_", etc. There can also be warnings from a linter in your IDE set up with a typical AEM ruleset.
-Consider these cases individually and do proper testing to make sure that some feature actually works or not.
+Consider such cases individually and do testing to make sure that some feature actually works for you or it does not.
