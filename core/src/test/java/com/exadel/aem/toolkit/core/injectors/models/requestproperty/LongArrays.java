@@ -35,7 +35,7 @@ public class LongArrays extends RequestAdapterBase<Long[]> {
     private long[] value;
 
     @RequestProperty
-    @Default(longValues = {10L, 11L, 12L})
+    @Default(longValues = {42L, 43L, 44L})
     private long[] defaultValue;
 
     @Self
@@ -46,12 +46,14 @@ public class LongArrays extends RequestAdapterBase<Long[]> {
         super(value);
     }
 
+    @Override
     public Long[] getValue() {
         return ArrayUtils.toObject(value);
     }
 
-    public long[] getDefaultValue() {
-        return defaultValue;
+    @Override
+    public Long[] getDefaultValue() {
+        return ArrayUtils.toObject(defaultValue);
     }
 
     @Override

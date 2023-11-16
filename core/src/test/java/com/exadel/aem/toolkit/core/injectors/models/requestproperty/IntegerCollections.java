@@ -37,8 +37,8 @@ public class IntegerCollections extends RequestAdapterBase<Collection<Integer>> 
     private Set<Integer> value;
 
     @RequestProperty
-    @Default(intValues = {10, 11, 12})
-    private int[] defaultValue;
+    @Default(doubleValues = {42.1d, 43.2d, 44.05d})
+    private List<Integer> defaultValue;
 
     @Self
     private Supplier supplier;
@@ -52,7 +52,7 @@ public class IntegerCollections extends RequestAdapterBase<Collection<Integer>> 
         return value;
     }
 
-    public int[] getDefaultValue() {
+    public Collection<Integer> getDefaultValue() {
         return defaultValue;
     }
 

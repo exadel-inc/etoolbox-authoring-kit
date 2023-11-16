@@ -96,6 +96,8 @@ public class DelegateInjector implements Injector {
                 StringUtils.EMPTY,
                 type));
         }
-        return BaseInjector.defaultIfEmpty(value, type, annotatedElement);
+        return delegate instanceof BaseInjector
+            ? ((BaseInjector<?>) delegate).defaultIfEmpty(value, type, annotatedElement)
+            : null;
     }
 }

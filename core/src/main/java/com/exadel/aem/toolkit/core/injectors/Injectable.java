@@ -79,12 +79,16 @@ public class Injectable {
     }
 
     /**
-     * Gets whether the provided object is not a {@code Defaultable} instance in the "fallback" state> This is usually
-     * needed to validate an injectable value
+     * Gets whether the provided object is not a {@code Defaultable} instance in the "fallback" state. A {@code null} is
+     * considered a default value as well. This check is usually needed to place a value into an injectable array or
+     * collection
      * @param value Value to check
      * @return True or false
      */
     public static boolean isNotDefault(Object value) {
+        if (value == null) {
+            return false;
+        }
         return !(value instanceof Injectable) || !((Injectable) value).isDefault();
     }
 

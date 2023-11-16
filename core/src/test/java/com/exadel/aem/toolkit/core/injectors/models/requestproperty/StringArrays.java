@@ -34,7 +34,7 @@ public class StringArrays extends RequestAdapterBase<String[]> {
     private String[] value;
 
     @RequestProperty
-    @Default(values = {"Default", "values"})
+    @Default(values = {"Hello", "World"})
     private String[] defaultValue;
 
     @Self
@@ -55,6 +55,7 @@ public class StringArrays extends RequestAdapterBase<String[]> {
         return value;
     }
 
+    @Override
     public String[] getDefaultValue() {
         return defaultValue;
     }

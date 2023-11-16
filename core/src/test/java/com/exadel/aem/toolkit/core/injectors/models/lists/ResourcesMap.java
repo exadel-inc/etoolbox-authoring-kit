@@ -54,6 +54,11 @@ public class ResourcesMap extends RequestAdapterBase<Map<String, Resource>> {
         return value;
     }
 
+    @Override
+    public Map<String, Resource> getDefaultValue() {
+        return null;
+    }
+
     @Nullable
     public Map<Object, Object> getGenericValue() {
         return genericValue;

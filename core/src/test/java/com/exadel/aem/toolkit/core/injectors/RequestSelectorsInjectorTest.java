@@ -77,6 +77,11 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
     }
 
     @Test
+    public void shouldInjectDefaultStringCollection() {
+        super.shouldInjectDefaultStringCollection();
+    }
+
+    @Test
     public void shouldInjectInteger() {
         super.shouldInjectInteger(RequestSelectorsInjectorTest::assertStringifiedValuesEqual);
     }
@@ -88,7 +93,7 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
 
     @Test
     public void shouldInjectIntegerArray() {
-        super.shouldInjectIntegerArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
+        super.shouldInjectIntegerArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual, true);
     }
 
     @Test
@@ -98,7 +103,12 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
 
     @Test
     public void shouldInjectIntegerCollection() {
-        super.shouldInjectIntegerCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
+        super.shouldInjectIntegerCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual, true);
+    }
+
+    @Test
+    public void shouldInjectDefaultIntegerCollection() {
+        super.shouldInjectDefaultIntegerCollection();
     }
 
     @Test
@@ -118,7 +128,7 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
 
     @Test
     public void shouldInjectLongArray() {
-        super.shouldInjectLongArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
+        super.shouldInjectLongArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual, true);
     }
 
     @Test
@@ -128,7 +138,12 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
 
     @Test
     public void shouldInjectLongCollection() {
-        super.shouldInjectLongCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
+        super.shouldInjectLongCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual, true);
+    }
+
+    @Test
+    public void shouldInjectDefaultLongCollection() {
+        super.shouldInjectDefaultLongCollection();
     }
 
     @Test
@@ -148,7 +163,7 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
 
     @Test
     public void shouldInjectBooleanArray() {
-        super.shouldInjectBooleanArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
+        super.shouldInjectBooleanArray(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual, true);
     }
 
     @Test
@@ -158,7 +173,12 @@ public class RequestSelectorsInjectorTest extends RequestPropertyInjectorTestBas
 
     @Test
     public void shouldInjectBooleanCollection() {
-        super.shouldInjectBooleanCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual);
+        super.shouldInjectBooleanCollection(RequestSelectorsInjectorTest::assertStringifiedCollectionsEqual, true);
+    }
+
+    @Test
+    public void shouldInjectDefaultBooleanCollection() {
+        super.shouldInjectDefaultBooleanCollection();
     }
 
     @Test

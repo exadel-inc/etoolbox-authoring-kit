@@ -41,8 +41,14 @@ public class Calendars extends RequestAdapterBase<Calendar> {
         super(value);
     }
 
+    @Override
     public Calendar getValue() {
         return (Calendar) value;
+    }
+
+    @Override
+    public Calendar getDefaultValue() {
+        return null;
     }
 
     @Override

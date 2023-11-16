@@ -44,7 +44,6 @@ public class Strings extends RequestAdapterBase<String> {
     @Inject
     public Strings(@RequestProperty @Named(CoreConstants.PN_VALUE) String value) {
         super(value);
-
     }
 
     @Override
@@ -58,6 +57,7 @@ public class Strings extends RequestAdapterBase<String> {
         return value;
     }
 
+    @Override
     public String getDefaultValue() {
         return defaultValue;
     }

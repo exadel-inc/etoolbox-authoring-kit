@@ -37,6 +37,10 @@ public class Integers extends RequestAdapterBase<Integer> {
     @Default(intValues = 10)
     private Integer defaultValue;
 
+    @RequestProperty
+    @Default(intValues = 10)
+    private String defaultStringValue;
+
     @Self
     private Supplier supplier;
 
@@ -51,6 +55,11 @@ public class Integers extends RequestAdapterBase<Integer> {
 
     public Integer getDefaultValue() {
         return defaultValue;
+    }
+
+    @Override
+    public String getDefaultStringValue() {
+        return defaultStringValue;
     }
 
     @Override
