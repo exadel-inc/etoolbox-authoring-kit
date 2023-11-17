@@ -29,6 +29,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.injectors.models.lists.CustomListItem;
 import com.exadel.aem.toolkit.core.injectors.models.lists.CustomListItems;
@@ -49,7 +50,7 @@ public class EToolboxListInjectorTest {
     public static final String PN_TEXT_VALUE = "textValue";
 
     @Rule
-    public final AemContext context = new AemContext();
+    public final AemContext context = AemContextFactory.newInstance();
 
     /* -----------
        Preparation
@@ -60,7 +61,6 @@ public class EToolboxListInjectorTest {
         context.addModelsForPackage(MODELS_PACKAGE_NAME);
 
         context.registerInjectActivateService(new EToolboxListInjector());
-        context.registerInjectActivateService(new DelegateInjector(null));
         context.load().json("/com/exadel/aem/toolkit/core/injectors/listInjector.json", SIMPLE_LIST_PATH);
         context.load().json("/com/exadel/aem/toolkit/core/injectors/customListInjector.json", CUSTOM_LIST_PATH);
     }

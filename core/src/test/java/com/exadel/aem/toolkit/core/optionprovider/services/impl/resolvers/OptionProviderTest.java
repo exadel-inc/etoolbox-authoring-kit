@@ -27,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformation;
+import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.TestConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
@@ -40,7 +41,7 @@ public class OptionProviderTest {
     static final String VALUE_NONE = "none";
 
     @Rule
-    public final AemContext context = new AemContext();
+    public final AemContext context = AemContextFactory.newInstance();
 
     private OptionProviderService optionProvider;
 

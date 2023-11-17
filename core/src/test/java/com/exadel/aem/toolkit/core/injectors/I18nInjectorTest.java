@@ -25,6 +25,7 @@ import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.injectors.models.i18n.I18nInterface;
 import com.exadel.aem.toolkit.core.injectors.models.i18n.Objects;
@@ -43,7 +44,7 @@ public class I18nInjectorTest {
     private static final Locale LOCALE_IT = new Locale("it", "it");
 
     @Rule
-    public final AemContext context = new AemContext();
+    public final AemContext context = AemContextFactory.newInstance();
 
     /* -----------
        Preparation

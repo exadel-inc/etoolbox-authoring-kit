@@ -18,7 +18,6 @@ import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
-import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +32,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
 
+import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.TestConstants;
 import com.exadel.aem.toolkit.core.lists.ListConstants;
@@ -41,7 +41,7 @@ import com.exadel.aem.toolkit.core.lists.ListConstants;
 public class ListPageUtilTest {
 
     @Rule
-    public AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
+    public AemContext context = AemContextFactory.newInstance();
 
     @Test
     public void shouldNotCreatePageIfCannotGetPageManager() {

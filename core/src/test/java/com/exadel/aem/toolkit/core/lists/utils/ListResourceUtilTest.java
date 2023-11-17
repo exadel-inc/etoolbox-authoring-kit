@@ -19,21 +19,20 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.Rule;
 import org.junit.Test;
 import com.day.cq.commons.jcr.JcrConstants;
-
-import com.exadel.aem.toolkit.core.CoreConstants;
-
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import com.exadel.aem.toolkit.core.AemContextFactory;
+import com.exadel.aem.toolkit.core.CoreConstants;
+
 public class ListResourceUtilTest {
 
     @Rule
-    public AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
+    public AemContext context = AemContextFactory.newInstance();
 
     @Test
     public void shouldTransformKeyValuePairMapToResource() {

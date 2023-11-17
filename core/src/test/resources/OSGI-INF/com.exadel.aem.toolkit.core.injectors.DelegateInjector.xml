@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.3.0" name="com.exadel.aem.toolkit.core.injectors.DelegateInjector">
+  <service>
+    <provide interface="org.apache.sling.models.spi.Injector"/>
+    <provide interface="org.apache.sling.models.spi.injectorspecific.StaticInjectAnnotationProcessorFactory"/>
+  </service>
+  <implementation class="com.exadel.aem.toolkit.core.injectors.DelegateInjector"/>
+</scr:component>
