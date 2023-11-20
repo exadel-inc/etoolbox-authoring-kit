@@ -35,6 +35,7 @@ import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertArrayEquals;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.TestConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
@@ -43,7 +44,7 @@ import com.exadel.aem.toolkit.core.optionprovider.services.impl.OptionProviderSe
 public class OptionProviderHttpTest {
 
     @Rule
-    public final AemContext context = new AemContext();
+    public final AemContext context = AemContextFactory.newInstance();
 
     private OptionProviderService optionProvider;
 

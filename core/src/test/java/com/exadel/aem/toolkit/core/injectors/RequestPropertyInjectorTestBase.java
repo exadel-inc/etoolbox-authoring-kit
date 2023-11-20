@@ -31,12 +31,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest;
 import org.junit.Before;
 import org.junit.Rule;
+import org.slf4j.LoggerFactory;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.injectors.models.RequestAdapterBase;
 import com.exadel.aem.toolkit.core.injectors.models.requestproperty.BooleanArrays;
@@ -106,7 +108,7 @@ abstract class RequestPropertyInjectorTestBase {
     private static final String EXPECTED_BOOLEAN_ARRAY_STRING = "true,true,false";
 
     @Rule
-    public final AemContext context = new AemContext();
+    public final AemContext context = AemContextFactory.newInstance();
 
     /* -----------
        Preparation
@@ -114,8 +116,9 @@ abstract class RequestPropertyInjectorTestBase {
 
     @Before
     public void beforeTest() {
-        context.addModelsForPackage(MODELS_PACKAGE_NAME);
+        LoggerFactory.getLogger(getClass()).info("Running test: {}", getClass().getSimpleName());
         context.registerInjectActivateService(new DelegateInjector(prepareInjector()));
+        context.addModelsForPackage(MODELS_PACKAGE_NAME);
     }
 
     abstract BaseInjector<?> prepareInjector();

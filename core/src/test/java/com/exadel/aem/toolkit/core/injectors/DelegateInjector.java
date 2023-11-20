@@ -19,8 +19,12 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
+import org.apache.sling.models.spi.injectorspecific.AbstractInjectAnnotationProcessor2;
+import org.apache.sling.models.spi.injectorspecific.InjectAnnotationProcessor2;
+import org.apache.sling.models.spi.injectorspecific.StaticInjectAnnotationProcessorFactory;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 
@@ -31,9 +35,9 @@ import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
  * Sling models for different injection scenarios
  */
 @Component(
-    service = Injector.class,
+    service = {Injector.class, StaticInjectAnnotationProcessorFactory.class},
     property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING)
-public class DelegateInjector implements Injector {
+public class DelegateInjector implements Injector, StaticInjectAnnotationProcessorFactory {
 
     static final String NAME = "eak-delegate-injector";
 
@@ -99,5 +103,18 @@ public class DelegateInjector implements Injector {
         return delegate instanceof BaseInjector
             ? ((BaseInjector<?>) delegate).defaultIfEmpty(value, type, annotatedElement)
             : null;
+    }
+
+    @Override
+    public InjectAnnotationProcessor2 createAnnotationProcessor(AnnotatedElement element) {
+        if (!element.isAnnotationPresent(RequestProperty.class)) {
+            return null;
+        }
+        return new AbstractInjectAnnotationProcessor2() {
+            @Override
+            public boolean hasDefault() {
+                return element.isAnnotationPresent(Default.class);
+            }
+        };
     }
 }
