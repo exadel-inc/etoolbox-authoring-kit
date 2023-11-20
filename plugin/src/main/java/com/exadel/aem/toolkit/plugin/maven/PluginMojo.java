@@ -13,8 +13,12 @@
  */
 package com.exadel.aem.toolkit.plugin.maven;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -24,54 +28,87 @@ import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.ConfigurationContainer;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.Component;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
+import org.apache.maven.toolchain.ToolchainManager;
+import org.codehaus.plexus.util.cli.CommandLineException;
+import org.codehaus.plexus.util.cli.CommandLineUtils;
+import org.codehaus.plexus.util.cli.Commandline;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
+import com.exadel.aem.toolkit.plugin.utils.ToolchainUtil;
 import com.exadel.aem.toolkit.plugin.writers.PackageWriter;
 
 /**
- * Represents the entry-point of the EToolbox Authoring Kit (the ToolKit) Maven plugin execution
+ * Represents the entry point of the EToolbox Authoring Kit (the ToolKit) Maven plugin execution
  */
-@Mojo(name = "aem-authoring", defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyCollection = ResolutionScope.COMPILE)
+@Mojo(
+    name = PluginMojo.PLUGIN_GOAL,
+    defaultPhase = LifecyclePhase.PACKAGE,
+    requiresDependencyCollection = ResolutionScope.COMPILE
+)
 @SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
 public class PluginMojo extends AbstractMojo {
     private static final Logger LOG = LoggerFactory.getLogger(DialogConstants.ARTIFACT_NAME);
 
     private static final String PLUGIN_ARTIFACT_ID = "etoolbox-authoring-kit-plugin";
+    static final String PLUGIN_GOAL = "aem-authoring";
+    private static final String PLUGIN_GROUP = "com.exadel.etoolbox";
+
+    private static final String MAVEN_EXECUTABLE = "mvn";
+
     private static final String PROJECT_TYPE_PACKAGE = "content-package";
+
+    private static final String CONFIG_KEY_CLASSPATH_ELEMENTS = "classpathElements";
     private static final String CONFIG_KEY_PATH_BASE = "componentsPathBase";
     private static final String CONFIG_KEY_REFERENCE_BASE = "componentsReferenceBase";
+    private static final String CONFIG_KEY_TERMINATE_ON = "terminateOn";
 
     private static final String DEPENDENCY_RESOLUTION_EXCEPTION_MESSAGE = "Could not resolve dependencies of project %s: %s";
     private static final String PLUGIN_EXECUTION_EXCEPTION_MESSAGE = "%s in module %s: %s";
     private static final String PLUGIN_COMPLETION_MESSAGE = "Execution completed.";
     private static final String PLUGIN_COMPLETION_STATISTICS_MESSAGE = PLUGIN_COMPLETION_MESSAGE + " {} component(-s) processed.";
 
-    @Parameter(readonly = true, defaultValue = "${project}")
+    private static final String ARGUMENT_FORMAT = "-D%s=%s";
+    private static final Pattern ARGUMENT_SPLITTER = Pattern.compile(CoreConstants.SEPARATOR_COMMA);
+    private static final String PATTERN_LOG_LEVEL = "^\\s*\\[[A-Z]+]\\s+";
+
+    @Component
+    private ToolchainManager toolchainManager;
+
+    // Automatic parameters
+
+    @Parameter(defaultValue = "${project}", readonly = true, required = true)
     private MavenProject project;
 
-    @Parameter(defaultValue = "${session}", required = true, readonly = true)
+    @Parameter(defaultValue = "${session}", readonly = true, required = true)
     private MavenSession session;
 
-    @Parameter(readonly = true, defaultValue = "${plugin.artifacts}")
+    @Parameter(defaultValue = "${plugin.artifacts}", readonly = true)
     private List<Artifact> pluginDependencies;
 
-    @Parameter(readonly = true)
+    // Customizable parameters
+
+    @Parameter(property = "classpathElements", readonly = true)
+    private String classpathElements;
+
+    @Parameter(property = "componentsPathBase", readonly = true)
     private String componentsPathBase;
 
-    @Parameter(readonly = true)
+    @Parameter(property = "componentsReferenceBase", readonly = true)
     private String componentsReferenceBase;
 
-    @Parameter(readonly = true, defaultValue = "java.io.IOException")
+    @Parameter(defaultValue = "java.io.IOException", property = "terminateOn", readonly = true)
     private String terminateOn;
 
     /**
@@ -80,29 +117,27 @@ public class PluginMojo extends AbstractMojo {
      * extracted and processed with {@link PackageWriter} instance created for a particular Maven project; the result is
      * written down to the AEM package zip file. The method is run once for each package module that has the ToolKit
      * plugin included in the POM file
-     * @throws MojoExecutionException if work on a package cannot proceed (due to e.g. file system failure or improper
+     * @throws MojoExecutionException if work on a package cannot proceed (due to, e.g., file system failure or improper
      *                                initialization) or in case an internal exception is thrown that corresponds to the
      *                                {@code terminateOn} setting
      */
     public void execute() throws MojoExecutionException {
-        List<String> classpathElements;
-        try {
-            classpathElements = project.getCompileClasspathElements();
-        } catch (DependencyResolutionRequiredException e) {
-            throw new MojoExecutionException(String.format(DEPENDENCY_RESOLUTION_EXCEPTION_MESSAGE,
-                project.getBuild().getFinalName(),
-                e.getMessage()), e);
+        if (ToolchainUtil.shouldReload(toolchainManager, session)) {
+            String javaHome = ToolchainUtil.getJavaHome(toolchainManager, session);
+            LOG.info("Another JVM version is required. Will use {}", javaHome);
+            fork(javaHome);
+            return;
         }
-        pluginDependencies.stream().findFirst().ifPresent(d -> classpathElements.add(d.getFile().getPath()));
 
         PluginSettings.Builder settingsBuilder = PluginSettings.builder()
             .terminateOn(terminateOn)
             .defaultPathBase(componentsPathBase);
         populateReferenceEntries(settingsBuilder);
+        PluginSettings pluginSettings = settingsBuilder.build();
 
         PluginRuntime.contextBuilder()
-            .classPathElements(classpathElements)
-            .settings(settingsBuilder.build())
+            .classPathElements(getClasspathElements())
+            .settings(pluginSettings)
             .build();
 
         int processedCount = 0;
@@ -125,6 +160,59 @@ public class PluginMojo extends AbstractMojo {
         } else {
             LOG.info(PLUGIN_COMPLETION_MESSAGE);
         }
+    }
+
+    /**
+     * Restarts the ToolKit's plugin execution with the JDK specified in the current Maven toolchain
+     * @param jvmPath String value representing the path to the JDK
+     * @throws MojoExecutionException if the plugin process cannot be restarted due to, e.g., missing dependencies
+     */
+    private void fork(String jvmPath) throws MojoExecutionException {
+        Commandline commandline = new Commandline();
+        commandline.setExecutable(MAVEN_EXECUTABLE);
+        commandline.addEnvironment(DialogConstants.PN_JAVA_HOME, jvmPath);
+        commandline.addArguments(new String[] {
+            String.join(CoreConstants.SEPARATOR_COLON, PLUGIN_GROUP, PLUGIN_ARTIFACT_ID, PLUGIN_GOAL),
+            String.format(ARGUMENT_FORMAT, CONFIG_KEY_CLASSPATH_ELEMENTS, String.join(CoreConstants.SEPARATOR_COMMA, getClasspathElements())),
+            String.format(ARGUMENT_FORMAT, CONFIG_KEY_PATH_BASE, componentsPathBase),
+            String.format(ARGUMENT_FORMAT, CONFIG_KEY_REFERENCE_BASE, componentsReferenceBase),
+            String.format(ARGUMENT_FORMAT, CONFIG_KEY_TERMINATE_ON, terminateOn)
+        });
+        commandline.setWorkingDirectory(project.getFile().getParentFile());
+        LOG.info("Restarting with {}", commandline);
+        try {
+            CommandLineUtils.executeCommandLine(
+                commandline,
+                line -> LOG.info(line.replaceAll(PATTERN_LOG_LEVEL, StringUtils.EMPTY)),
+                line -> LOG.error(line.replaceAll(PATTERN_LOG_LEVEL, StringUtils.EMPTY)));
+        } catch (CommandLineException e) {
+            throw new MojoExecutionException("Could not restart plugin process", e);
+        }
+    }
+
+    /**
+     * Retrieves the list of classpath elements for the current Maven project
+     * @return {@code List} of {@code String} values
+     * @throws MojoExecutionException if required dependencies cannot be resolved
+     */
+    private List<String> getClasspathElements() throws MojoExecutionException {
+        Set<String> result;
+        try {
+            result = new HashSet<>(project.getCompileClasspathElements());
+        } catch (DependencyResolutionRequiredException e) {
+            throw new MojoExecutionException(String.format(DEPENDENCY_RESOLUTION_EXCEPTION_MESSAGE,
+                project.getBuild().getFinalName(),
+                e.getMessage()), e);
+        }
+        if (StringUtils.isNotBlank(this.classpathElements)) {
+            ARGUMENT_SPLITTER
+                .splitAsStream(this.classpathElements)
+                .filter(StringUtils::isNotBlank)
+                .map(String::trim)
+                .forEach(result::add);
+        }
+        pluginDependencies.stream().findFirst().ifPresent(d -> result.add(d.getFile().getPath()));
+        return new ArrayList<>(result);
     }
 
     /**
