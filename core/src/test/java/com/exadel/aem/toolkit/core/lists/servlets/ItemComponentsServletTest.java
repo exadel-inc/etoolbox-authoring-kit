@@ -20,9 +20,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import com.adobe.granite.ui.components.ds.DataSource;
-
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
+
+import com.exadel.aem.toolkit.core.AemContextFactory;
 
 public class ItemComponentsServletTest {
 
@@ -30,7 +31,7 @@ public class ItemComponentsServletTest {
     private static final String SIMPLE_ITEM_PATH = "/etc/etoolbox-authoring-kit/lists/components/content/simpleItem";
 
     @Rule
-    public AemContext context = new AemContext(ResourceResolverType.JCR_OAK);
+    public AemContext context = AemContextFactory.newInstance(ResourceResolverType.JCR_OAK);
 
     @Before
     public void setUp() {

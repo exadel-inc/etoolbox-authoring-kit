@@ -29,16 +29,16 @@ import org.mockito.Mockito;
 import com.google.common.collect.ImmutableMap;
 import com.day.cq.wcm.api.components.Component;
 import com.day.cq.wcm.api.components.ComponentEditConfig;
-
-import com.exadel.aem.toolkit.core.CoreConstants;
-
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertTrue;
+
+import com.exadel.aem.toolkit.core.AemContextFactory;
+import com.exadel.aem.toolkit.core.CoreConstants;
 
 public class TopLevelPolicyFilterTest {
 
     @Rule
-    public final AemContext context = new AemContext();
+    public final AemContext context = AemContextFactory.newInstance();
 
     private TopLevelPolicyFilter topLevelPolicyFilter;
     private MockFilterChain filterChain;
@@ -51,7 +51,7 @@ public class TopLevelPolicyFilterTest {
         topLevelPolicyFilter = context.registerInjectActivateService(new TopLevelPolicyFilter());
         filterChain = context.registerService(new MockFilterChain());
 
-        context.registerAdapter(Resource.class, Component.class, getMockComponent(context));
+        context.registerAdapter(Resource.class, Component.class, getMockComponent());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class TopLevelPolicyFilterTest {
         assertTrue(StringUtils.contains(context.response().getOutputAsString(), "window.eakApplyTopLevelPolicy"));
     }
 
-    private Component getMockComponent(AemContext context) {
+    private Component getMockComponent() {
         Component mockComponent = Mockito.mock(Component.class);
         ComponentEditConfig mockEditConfig = Mockito.mock(ComponentEditConfig.class);
         Resource listenersNode = Objects.requireNonNull(context.resourceResolver().getResource("/apps/acme/components/pages/generic/cq:childEditConfig/listeners"));
