@@ -5,9 +5,7 @@
           xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
           jcr:primaryType="nt:unstructured"
           sling:resourceType="cq/gui/components/authoring/dialog"
-          jcr:title="Tabs Test Dialog"
-          width="{Double}560.0"
-          height="{Double}480.0">
+          jcr:title="Tabs Test Dialog">
     <content jcr:primaryType="nt:unstructured"
              sling:resourceType="granite/ui/components/coral/foundation/container">
         <items jcr:primaryType="nt:unstructured">

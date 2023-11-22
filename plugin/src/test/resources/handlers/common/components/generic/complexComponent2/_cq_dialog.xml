@@ -4,8 +4,6 @@
           jcr:primaryType="nt:unstructured"
           jcr:title="Test Component"
           sling:resourceType="cq/gui/components/authoring/dialog"
-          height="{Double}480.0"
-          width="{Double}560.0"
           extraClientlibs="[cq.common.wcm]">
     <content
         jcr:primaryType="nt:unstructured"
