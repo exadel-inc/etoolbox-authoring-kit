@@ -54,6 +54,7 @@ public @interface DesignDialog {
 
     /**
      * Renders as the `width` attribute of component's {@code cq:design_dialog} node
+     * @return Double-typed number
      */
     @PropertyRendering(ignoreValues = "0.0")
     @ValueRestriction(ValueRestrictions.POSITIVE)
