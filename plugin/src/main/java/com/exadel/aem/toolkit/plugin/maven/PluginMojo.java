@@ -61,8 +61,8 @@ import com.exadel.aem.toolkit.plugin.writers.PackageWriter;
 public class PluginMojo extends AbstractMojo {
     private static final Logger LOG = LoggerFactory.getLogger(DialogConstants.ARTIFACT_NAME);
 
-    private static final String PLUGIN_ARTIFACT_ID = "etoolbox-authoring-kit-plugin";
     static final String PLUGIN_GOAL = "aem-authoring";
+    private static final String PLUGIN_ARTIFACT_ID = "etoolbox-authoring-kit-plugin";
     private static final String PLUGIN_GROUP = "com.exadel.etoolbox";
 
     private static final String MAVEN_EXECUTABLE = "mvn";
