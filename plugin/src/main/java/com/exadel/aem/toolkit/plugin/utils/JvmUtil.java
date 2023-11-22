@@ -20,14 +20,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.toolchain.Toolchain;
 import org.apache.maven.toolchain.ToolchainManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Contains utility methods for working with Maven toolchain
+ * Contains utility methods for working with JVM settings
  */
-public class ToolchainUtil {
-    private static final Logger LOG = LoggerFactory.getLogger(ToolchainUtil.class);
+public class JvmUtil {
+
+    public static final String PROPERTY_JAVA_HOME = "JAVA_HOME";
 
     private static final String DIRECTORY_BIN = "bin";
     private static final String TOOL_JAVA = "java";
@@ -36,25 +35,23 @@ public class ToolchainUtil {
     /**
      * Default (instantiation-restricting) constructor
      */
-    private ToolchainUtil() {
+    private JvmUtil() {
     }
 
     /**
-     * Gets whether the ToolKit's plugin should reload with the JDK specified in the current Maven toolchain
-     * @param toolchainManager {@link ToolchainManager} instance
-     * @param session {@link MavenSession} instance
-     * @return True or false
+     * Gets the path to the Java installation specified in the current environment
+     * @return {@code String} value, or empty string if not found
      */
-    public static boolean shouldReload(ToolchainManager toolchainManager, MavenSession session) {
-        String javaHome = System.getProperty(DialogConstants.PN_JAVA_HOME);
-        String toolchainJavaHome = getJavaHome(toolchainManager, session);
-        return StringUtils.isNoneEmpty(javaHome, toolchainJavaHome) && !StringUtils.equals(javaHome, toolchainJavaHome);
+    public static String getJavaHome() {
+        return StringUtils.firstNonBlank(
+            System.getProperty(PROPERTY_JAVA_HOME),
+            System.getProperty("java.home"));
     }
 
     /**
-     * Gets the path to the JDK specified in the current Maven toolchain
+     * Gets the path to the Java installation specified in the current Maven toolchain
      * @param toolchainManager {@link ToolchainManager} instance
-     * @param session {@link MavenSession} instance
+     * @param session          {@link MavenSession} instance
      * @return {@code String} value, or empty string if not found
      */
     public static String getJavaHome(ToolchainManager toolchainManager, MavenSession session) {
@@ -68,5 +65,18 @@ public class ToolchainUtil {
             return path.toAbsolutePath().toString();
         }
         return StringUtils.EMPTY;
+    }
+
+    /**
+     * Gets whether the ToolKit's plugin needs to be launched in a separate process with the JDK specified in the
+     * current Maven toolchain
+     * @param toolchainManager {@link ToolchainManager} instance
+     * @param session          {@link MavenSession} instance
+     * @return True or false
+     */
+    public static boolean shouldRelaunch(ToolchainManager toolchainManager, MavenSession session) {
+        String javaHome = getJavaHome();
+        String toolchainJavaHome = getJavaHome(toolchainManager, session);
+        return StringUtils.isNoneEmpty(javaHome, toolchainJavaHome) && !StringUtils.equals(javaHome, toolchainJavaHome);
     }
 }

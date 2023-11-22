@@ -48,7 +48,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
-import com.exadel.aem.toolkit.plugin.utils.ToolchainUtil;
+import com.exadel.aem.toolkit.plugin.utils.JvmUtil;
 import com.exadel.aem.toolkit.plugin.writers.PackageWriter;
 
 /**
@@ -126,10 +126,11 @@ public class PluginMojo extends AbstractMojo {
      *                                {@code terminateOn} setting
      */
     public void execute() throws MojoExecutionException {
-        if (ToolchainUtil.shouldReload(toolchainManager, session)) {
-            String javaHome = ToolchainUtil.getJavaHome(toolchainManager, session);
-            LOG.info("Another JVM version is required. Will use {}", javaHome);
-            fork(javaHome);
+        if (JvmUtil.shouldRelaunch(toolchainManager, session)) {
+            String currentJavaHome = JvmUtil.getJavaHome();
+            String toolchainJavaHome = JvmUtil.getJavaHome(toolchainManager, session);
+            LOG.info("Current JVM is {}. Will switch to {}", currentJavaHome, toolchainJavaHome);
+            fork(toolchainJavaHome);
             return;
         }
 
@@ -174,7 +175,8 @@ public class PluginMojo extends AbstractMojo {
     private void fork(String jvmPath) throws MojoExecutionException {
         Commandline commandline = new Commandline();
         commandline.setExecutable(MAVEN_EXECUTABLE);
-        commandline.addEnvironment(DialogConstants.PN_JAVA_HOME, jvmPath);
+        commandline.addEnvironment(JvmUtil.PROPERTY_JAVA_HOME, jvmPath);
+        commandline.setWorkingDirectory(project.getFile().getParentFile());
         commandline.addArguments(new String[] {
             "--batch-mode",
             String.join(CoreConstants.SEPARATOR_COLON, PLUGIN_GROUP, PLUGIN_ARTIFACT_ID, PLUGIN_GOAL),
@@ -183,15 +185,14 @@ public class PluginMojo extends AbstractMojo {
             String.format(ARGUMENT_FORMAT, CONFIG_KEY_REFERENCE_BASE, componentsReferenceBase),
             String.format(ARGUMENT_FORMAT, CONFIG_KEY_TERMINATE_ON, terminateOn)
         });
-        commandline.setWorkingDirectory(project.getFile().getParentFile());
-        LOG.info("Restarting with {}", commandline);
+        LOG.info("Relaunching plugin with {}", commandline);
         try {
             CommandLineUtils.executeCommandLine(
                 commandline,
                 line -> relayLogLine(LOG::info, line),
                 line -> relayLogLine(LOG::error, line));
         } catch (CommandLineException e) {
-            throw new MojoExecutionException("Could not restart plugin process", e);
+            throw new MojoExecutionException("Could not relaunch plugin process", e);
         }
     }
 
