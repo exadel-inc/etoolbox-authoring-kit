@@ -18,9 +18,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
@@ -80,8 +82,10 @@ public class PluginMojo extends AbstractMojo {
     private static final String PLUGIN_COMPLETION_STATISTICS_MESSAGE = PLUGIN_COMPLETION_MESSAGE + " {} component(-s) processed.";
 
     private static final String ARGUMENT_FORMAT = "-D%s=%s";
-    private static final Pattern ARGUMENT_SPLITTER = Pattern.compile(CoreConstants.SEPARATOR_COMMA);
+
+    private static final String PATTERN_COLOR_CODE = "[^A-Za-z0-0]\\[[0-9;]*m";
     private static final String PATTERN_LOG_LEVEL = "^\\s*\\[[A-Z]+]\\s+";
+    private static final Pattern PATTERN_SPLITTER = Pattern.compile(CoreConstants.SEPARATOR_COMMA);
 
     @Component
     private ToolchainManager toolchainManager;
@@ -172,6 +176,7 @@ public class PluginMojo extends AbstractMojo {
         commandline.setExecutable(MAVEN_EXECUTABLE);
         commandline.addEnvironment(DialogConstants.PN_JAVA_HOME, jvmPath);
         commandline.addArguments(new String[] {
+            "--batch-mode",
             String.join(CoreConstants.SEPARATOR_COLON, PLUGIN_GROUP, PLUGIN_ARTIFACT_ID, PLUGIN_GOAL),
             String.format(ARGUMENT_FORMAT, CONFIG_KEY_CLASSPATH_ELEMENTS, String.join(CoreConstants.SEPARATOR_COMMA, getClasspathElements())),
             String.format(ARGUMENT_FORMAT, CONFIG_KEY_PATH_BASE, componentsPathBase),
@@ -183,8 +188,8 @@ public class PluginMojo extends AbstractMojo {
         try {
             CommandLineUtils.executeCommandLine(
                 commandline,
-                line -> LOG.info(line.replaceAll(PATTERN_LOG_LEVEL, StringUtils.EMPTY)),
-                line -> LOG.error(line.replaceAll(PATTERN_LOG_LEVEL, StringUtils.EMPTY)));
+                line -> relayLogLine(LOG::info, line),
+                line -> relayLogLine(LOG::error, line));
         } catch (CommandLineException e) {
             throw new MojoExecutionException("Could not restart plugin process", e);
         }
@@ -205,7 +210,7 @@ public class PluginMojo extends AbstractMojo {
                 e.getMessage()), e);
         }
         if (StringUtils.isNotBlank(this.classpathElements)) {
-            ARGUMENT_SPLITTER
+            PATTERN_SPLITTER
                 .splitAsStream(this.classpathElements)
                 .filter(StringUtils::isNotBlank)
                 .map(String::trim)
@@ -250,4 +255,19 @@ public class PluginMojo extends AbstractMojo {
             builder.referenceEntry(pathBase, referenceBase);
         }
     }
+
+    /**
+     * Transfers to the main logger a line retrieved from the secondary Maven process
+     * @param logger A logging method such as {@code .info()} or {@code .error()}
+     * @param line   A string value representing the line to log
+     */
+    private static void relayLogLine(Consumer<String> logger, String line) {
+        String effectiveLine = RegExUtils.removePattern(line, PATTERN_LOG_LEVEL);
+        effectiveLine = RegExUtils.removePattern(effectiveLine, PATTERN_COLOR_CODE);
+        if (StringUtils.isEmpty(effectiveLine)) {
+            return;
+        }
+        logger.accept(effectiveLine.trim());
+    }
 }
+
