@@ -95,8 +95,8 @@ public class ReflectionContextHelper {
     /**
      * Retrieves a collection of unique {@code ComponentSource} objects that encapsulate {@code AemComponent}-annotated
      * and {@code @Dialog}-annotated classes
-     * @param packageBase Restricts the processing to the particular package(-s) in the plugin's settings. Can help to
-     *                    e.g. separate between classes that are matched by component folders in the current content
+     * @param packageBase Restricts the processing to the particular package(-s) in the plugin's settings. Can help to,
+     *                    e.g., separate between classes that are matched by component folders in the current content
      *                    package
      * @return A non-null list of {@code ComponentSource} objects; can be empty
      */
@@ -165,7 +165,7 @@ public class ReflectionContextHelper {
 
     /**
      * Gets whether the given annotation has a managed handler or a meta-annotation. This method is useful for
-     * distinguishing between ToolKit-relevant annotations (including custom ones that reside in the user's own
+     * distinguishing between ToolKit-relevant annotations (including custom ones that reside in the user's code
      * namespace) and "foreign" annotations
      * @param annotation {@link Annotation} object
      * @return True or false
@@ -265,8 +265,8 @@ public class ReflectionContextHelper {
             handlerScopes = ScopeUtil.designate(handles.value());
         }
         // If still no particular scopes, try to guess by the mere annotations added to the current class
-        // (so that if there is, e.g., {@code @Dialog}, and the handler has no particular scope, it is considered the handler
-        // is also for the dialog)
+        // (so that if there is, e.g., {@code @Dialog}, and the handler has no particular scope, it is assumed that
+        // the handler is also for the dialog)
         if (handlerScopes.length == 1 && handlerScopes[0].equals(Scopes.DEFAULT)) {
             handlerScopes = ScopeUtil.designate(annotationTypes);
         }
