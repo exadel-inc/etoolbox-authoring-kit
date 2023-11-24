@@ -58,8 +58,6 @@ class JvmHelper {
     static boolean shouldRelaunch(ToolchainManager toolchainManager, MavenSession session) {
         String javaHome = getJavaHome();
         String toolchainJavaHome = getJavaHome(toolchainManager, session);
-        LOG.info("Java home: {}", javaHome);
-        LOG.info("Toolchain Java home: {}", toolchainJavaHome);
         if (StringUtils.isAnyEmpty(javaHome, toolchainJavaHome) || StringUtils.equals(javaHome, toolchainJavaHome)) {
             return false;
         }

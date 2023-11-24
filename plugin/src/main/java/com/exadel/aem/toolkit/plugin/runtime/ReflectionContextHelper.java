@@ -55,7 +55,7 @@ import com.exadel.aem.toolkit.plugin.utils.ScopeUtil;
 import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
 
 /**
- * Introspects the classes available in Maven reactor to retrieve and manage Toolkit-related logic
+ * Introspects the classes available in the Maven reactor to retrieve and manage Toolkit-related logic
  */
 public class ReflectionContextHelper {
 
@@ -95,8 +95,9 @@ public class ReflectionContextHelper {
     /**
      * Retrieves a collection of unique {@code ComponentSource} objects that encapsulate {@code AemComponent}-annotated
      * and {@code @Dialog}-annotated classes
-     * @param packageBase Restricts the processing to certain package(-s) in the plugin's settings. Can help to e.g.
-     *                    separate between classes that are matched by component folders in the current content package
+     * @param packageBase Restricts the processing to the particular package(-s) in the plugin's settings. Can help to
+     *                    e.g. separate between classes that are matched by component folders in the current content
+     *                    package
      * @return A non-null list of {@code ComponentSource} objects; can be empty
      */
     public List<ComponentSource> getComponents(String packageBase) {
@@ -164,8 +165,8 @@ public class ReflectionContextHelper {
 
     /**
      * Gets whether the given annotation has a managed handler or a meta-annotation. This method is useful for
-     * distinguishing between ToolKit-relevant annotations (including custom ones that reside in user's own namespace)
-     * and "foreign" annotations
+     * distinguishing between ToolKit-relevant annotations (including custom ones that reside in the user's own
+     * namespace) and "foreign" annotations
      * @param annotation {@link Annotation} object
      * @return True or false
      */
@@ -223,8 +224,8 @@ public class ReflectionContextHelper {
     }
 
     /**
-     * Tests whether the given handler fits for the conditions defined by the set of manageable annotations and the
-     * {@code Scope} value
+     * Tests whether the given handler is suitable for the conditions defined by the set of manageable annotations and
+     * the {@code Scope} value
      * @param scope       String value representing the scope that the handlers must match
      * @param handler     {@code Handler} instance to test
      * @param annotations An array of {@code Annotation} objects, usually representing annotations of a method or class
@@ -235,8 +236,8 @@ public class ReflectionContextHelper {
     }
 
     /**
-     * Tests whether the given handler fits for the conditions defined by the set of manageable annotations and the
-     * {@code Scope} value
+     * Tests whether the given handler is suitable for the conditions defined by the set of manageable annotations and
+     * the {@code Scope} value
      * @param handler         {@code Handler} instance to test
      * @param scope           String value representing the scope that the handlers must match
      * @param annotationTypes An array of {@code Class} references, usually representing types of annotations of a
@@ -259,12 +260,12 @@ public class ReflectionContextHelper {
 
         String[] handlerScopes = handles != null ? handles.scope() : new String[]{Scopes.DEFAULT};
         // Try to guess appropriate scopes for the handler judging by the annotations it handles
-        // (so that if it handles e.g. @ChildEditConfig, the scope for the handler is exactly ChildEditConfig)
+        // (so that if it handles, e.g., {@code @ChildEditConfig}, the scope for the handler is exactly ChildEditConfig)
         if (handles != null && handlerScopes.length == 1 && handlerScopes[0].equals(Scopes.DEFAULT)) {
             handlerScopes = ScopeUtil.designate(handles.value());
         }
         // If still no particular scopes, try to guess by the mere annotations added to the current class
-        // (so that if there's e.g. @Dialog, and the handler has no particular scope, it is considered the handler
+        // (so that if there is, e.g., {@code @Dialog}, and the handler has no particular scope, it is considered the handler
         // is also for the dialog)
         if (handlerScopes.length == 1 && handlerScopes[0].equals(Scopes.DEFAULT)) {
             handlerScopes = ScopeUtil.designate(annotationTypes);
