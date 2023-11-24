@@ -13,14 +13,14 @@
  */
 package com.exadel.aem.toolkit.regression;
 
-import java.io.IOException;
 import java.nio.file.Path;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
-import org.codehaus.plexus.util.cli.WriterStreamConsumer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -31,6 +31,8 @@ public class RegressionTest {
     static final Logger LOG = LoggerFactory.getLogger(RegressionTest.class);
 
     private static final String CUSTOM_PROP_FORMAT = "-D%s=%s";
+
+    private static final Pattern PATTERN_LOG_LEVEL = Pattern.compile("^\\s*\\[([A-Z]+)]\\s+");
 
     @Test
     public void doRegression() {
@@ -45,11 +47,11 @@ public class RegressionTest {
         if (shouldReplaceSnapshot) {
             LOG.info("Backing up current snapshot");
             assetHelper.retainArtifacts(settings);
-            assetHelper.restoreArtifacts(settings);
         }
 
         LOG.info("Running pre-change regression build");
         Commandline commandLine = getCommandLine(settings);
+        LOG.info("{}> {}", settings.getProjectDirectory(), commandLine);
         int exitCode = runBuild(commandLine);
         Assert.assertEquals("Pre-change regression build exited with code " + exitCode, 0, exitCode);
 
@@ -61,11 +63,12 @@ public class RegressionTest {
             assetHelper.restoreArtifacts(settings);
         }
 
-        LOG.info("Running post-change build");
+        LOG.info("Running post-change regression build");
         commandLine.addArguments(new String[] {String.format(
             CUSTOM_PROP_FORMAT,
             settings.getVersionProperty(),
             settings.getCurrentVersion())});
+        LOG.info("{}> {}", settings.getProjectDirectory(), commandLine);
         exitCode = runBuild(commandLine);
         Assert.assertEquals("Post-change regression build exited with code " + exitCode, 0, exitCode);
 
@@ -87,7 +90,7 @@ public class RegressionTest {
 
     private static Commandline getCommandLine(ProjectSettings settings) {
         Commandline commandLine = new Commandline(settings.getMavenExecutable());
-        commandLine.addArguments(new String[] {"package", "-Dmaven.test.skip=true"});
+        commandLine.addArguments(new String[] {"package", "-Dmaven.test.skip=true", "--batch-mode"});
         if (StringUtils.isNotBlank(settings.getModules())) {
             commandLine.addArguments(new String[] {"-pl", settings.getModules()});
         }
@@ -96,13 +99,34 @@ public class RegressionTest {
     }
 
     private static int runBuild(Commandline commandLine) {
-        try (LogWriter sysOutWriter = new LogWriter(false);
-             LogWriter sysErrWriter = new LogWriter(true)) {
-            WriterStreamConsumer systemOut = new WriterStreamConsumer(sysOutWriter);
-            WriterStreamConsumer systemErr = new WriterStreamConsumer(sysErrWriter);
-            return CommandLineUtils.executeCommandLine(commandLine, systemOut, systemErr);
-        } catch (IOException | CommandLineException e) {
+        try {
+            return CommandLineUtils.executeCommandLine(
+                commandLine,
+                RegressionTest::relayLogLine,
+                RegressionTest::relayLogLine);
+        } catch (CommandLineException e) {
             throw new AssertionError(e.getMessage());
+        }
+    }
+
+    private static void relayLogLine(String line) {
+        Matcher matcher = PATTERN_LOG_LEVEL.matcher(StringUtils.defaultString(line));
+        if (!matcher.find() && StringUtils.isNotBlank(line)) {
+            LOG.info(line.trim());
+            return;
+        } else if (StringUtils.isBlank(line)) {
+            return;
+        }
+        String effectiveLine = StringUtils.substring(line, matcher.end());
+        switch (matcher.group(1)) {
+            case "ERROR":
+                LOG.error(effectiveLine);
+                break;
+            case "WARN":
+                LOG.warn(effectiveLine);
+                break;
+            default:
+                LOG.info(effectiveLine);
         }
     }
 }
