@@ -16,7 +16,9 @@ package com.exadel.aem.toolkit.plugin.maven;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.Set;
 import java.util.function.Consumer;
 import java.util.regex.Pattern;
@@ -48,7 +50,6 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
-import com.exadel.aem.toolkit.plugin.utils.JvmUtil;
 import com.exadel.aem.toolkit.plugin.writers.PackageWriter;
 
 /**
@@ -67,8 +68,6 @@ public class PluginMojo extends AbstractMojo {
     private static final String PLUGIN_ARTIFACT_ID = "etoolbox-authoring-kit-plugin";
     private static final String PLUGIN_GROUP = "com.exadel.etoolbox";
 
-    private static final String MAVEN_EXECUTABLE = "mvn";
-
     private static final String PROJECT_TYPE_PACKAGE = "content-package";
 
     private static final String CONFIG_KEY_CLASSPATH_ELEMENTS = "classpathElements";
@@ -80,8 +79,6 @@ public class PluginMojo extends AbstractMojo {
     private static final String PLUGIN_EXECUTION_EXCEPTION_MESSAGE = "%s in module %s: %s";
     private static final String PLUGIN_COMPLETION_MESSAGE = "Execution completed.";
     private static final String PLUGIN_COMPLETION_STATISTICS_MESSAGE = PLUGIN_COMPLETION_MESSAGE + " {} component(-s) processed.";
-
-    private static final String ARGUMENT_FORMAT = "-D%s=%s";
 
     private static final String PATTERN_COLOR_CODE = "[^A-Za-z0-0]\\[[0-9;]*m";
     private static final String PATTERN_LOG_LEVEL = "^\\s*\\[[A-Z]+]\\s+";
@@ -126,11 +123,13 @@ public class PluginMojo extends AbstractMojo {
      *                                {@code terminateOn} setting
      */
     public void execute() throws MojoExecutionException {
-        if (JvmUtil.shouldRelaunch(toolchainManager, session)) {
-            String currentJavaHome = JvmUtil.getJavaHome();
-            String toolchainJavaHome = JvmUtil.getJavaHome(toolchainManager, session);
-            LOG.info("Current JVM is {}. Will switch to {}", currentJavaHome, toolchainJavaHome);
-            fork(toolchainJavaHome);
+        if (JvmHelper.shouldRelaunch(toolchainManager, session)) {
+            String toolchainJavaExec = JvmHelper.getJavaExecutable(toolchainManager, session);
+            LOG.info(
+                "Current JVM is {}. Will switch to {}",
+                JvmHelper.getJavaHome(),
+                JvmHelper.getJavaHome(toolchainJavaExec));
+            fork(toolchainJavaExec);
             return;
         }
 
@@ -169,22 +168,21 @@ public class PluginMojo extends AbstractMojo {
 
     /**
      * Restarts the ToolKit's plugin execution with the JDK specified in the current Maven toolchain
-     * @param jvmPath String value representing the path to the JDK
-     * @throws MojoExecutionException if the plugin process cannot be restarted due to, e.g., missing dependencies
+     * @param executable Path to Java executable; a non-blank string is expected
+     * @throws MojoExecutionException if the plugin process cannot be restarted due to, e.g., missing properties or
+     * dependencies
      */
-    private void fork(String jvmPath) throws MojoExecutionException {
-        Commandline commandline = new Commandline();
-        commandline.setExecutable(MAVEN_EXECUTABLE);
-        commandline.addEnvironment(JvmUtil.PROPERTY_JAVA_HOME, jvmPath);
-        commandline.setWorkingDirectory(project.getFile().getParentFile());
-        commandline.addArguments(new String[] {
-            "--batch-mode",
-            String.join(CoreConstants.SEPARATOR_COLON, PLUGIN_GROUP, PLUGIN_ARTIFACT_ID, PLUGIN_GOAL),
-            String.format(ARGUMENT_FORMAT, CONFIG_KEY_CLASSPATH_ELEMENTS, String.join(CoreConstants.SEPARATOR_COMMA, getClasspathElements())),
-            String.format(ARGUMENT_FORMAT, CONFIG_KEY_PATH_BASE, componentsPathBase),
-            String.format(ARGUMENT_FORMAT, CONFIG_KEY_REFERENCE_BASE, componentsReferenceBase),
-            String.format(ARGUMENT_FORMAT, CONFIG_KEY_TERMINATE_ON, terminateOn)
-        });
+    private void fork(String executable) throws MojoExecutionException {
+        Commandline commandline = JvmHelper
+            .commandLine()
+            .executable(executable)
+            .directory(project.getFile().getParent())
+            .pluginCommand(String.join(CoreConstants.SEPARATOR_COLON, PLUGIN_GROUP, PLUGIN_ARTIFACT_ID, PLUGIN_GOAL))
+            .argument(CONFIG_KEY_CLASSPATH_ELEMENTS, String.join(CoreConstants.SEPARATOR_COMMA, getClasspathElements()))
+            .argument(CONFIG_KEY_PATH_BASE, componentsPathBase)
+            .argument(CONFIG_KEY_REFERENCE_BASE, componentsReferenceBase)
+            .argument(CONFIG_KEY_TERMINATE_ON, terminateOn)
+            .build();
         LOG.info("Relaunching plugin with {}", commandline);
         try {
             CommandLineUtils.executeCommandLine(
