@@ -84,6 +84,23 @@
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
                             <skipTests>false</skipTests>
+                            <includes>
+                                <include>**/AllTests.class</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>regression</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>false</skipTests>
                             <systemPropertyVariables>
                                 <eak.group>${project.parent.groupId}</eak.group>
                                 <eak.id>${project.parent.artifactId}</eak.id>

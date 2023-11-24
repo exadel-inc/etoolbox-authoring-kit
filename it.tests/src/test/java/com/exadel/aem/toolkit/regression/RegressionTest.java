@@ -21,6 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
+import org.codehaus.plexus.util.cli.WriterStreamConsumer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
