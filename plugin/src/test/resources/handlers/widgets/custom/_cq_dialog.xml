@@ -7,8 +7,6 @@
           jcr:primaryType="nt:unstructured"
           jcr:title="test-component-dialog"
           sling:resourceType="cq/gui/components/authoring/dialog"
-          height="{Double}480.0"
-          width="{Double}560.0"
           className="CustomAnnotationsComponent"
           fullyQualifiedClassName="com.exadel.aem.toolkit.plugin.handlers.common.cases.components.CustomAnnotationsComponent"
           autoField1="value1"
