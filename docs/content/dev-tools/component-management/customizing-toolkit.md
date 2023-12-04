@@ -330,5 +330,11 @@ Besides, you can override the _Maven_ executable used to build the target AEM pr
 
 If the target AEM project is a multimodule project with, you can specify only particular modules to speed up the build with `-Dmodules=module1,module2,...`. Do not forget you need not just the content module but also the corresponding "bundle" module that contains your AEM components for the build to succeed.
 
+Certain disparities that may be found in regression testing are expected and, therefore, can be omitted. This is done with the _filters_ option. A filter is a JavaScript file composed per the EToolbox-Coconut documentation.
+
+By default, the filters are looked for at the current project's path in the `eak.regression/filters` subdirectory. E.g., `/home/projects/my-aem-project/eak.regression/filters`.
+
+This subdirectory can contain another subdir that refers to the "older" and "newer" ToolKit's versions delimited with _-to-_ like in the following example: `/home/projects/my-aem-project/eak.regression/filters/2.4.0-to-2.4.1-SNAPSHOT`. If such a subdirectory exists, the filters are borrowed from it. But if the there isn't a subdir matching the "older" and "newer" versions, the filters are borrowed from just `eak.regression/filters`.
+
 The comparison is done inside a temp folder. By default, the folder is erased after the regression is done. If you want to keep it, specify `-Dnocleanup=true`.
 
