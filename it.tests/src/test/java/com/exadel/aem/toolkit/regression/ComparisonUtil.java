@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.zip.CRC32;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -33,6 +34,7 @@ import com.exadel.etoolbox.coconut.Comparator;
 import com.exadel.etoolbox.coconut.OutputType;
 import com.exadel.etoolbox.coconut.diff.Diff;
 import com.exadel.etoolbox.coconut.filter.Filter;
+import com.exadel.etoolbox.coconut.filter.FilterFactory;
 
 class ComparisonUtil {
 
@@ -41,7 +43,7 @@ class ComparisonUtil {
     private ComparisonUtil() {
     }
 
-    static boolean isMatch(Path oldDirectory, Path newDirectory) {
+    static boolean isMatch(Path oldDirectory, Path newDirectory, List<String> filters) {
         Pair<Path[], Path[]> comparable = getComparable(oldDirectory, newDirectory);
         Path[] oldPackages = comparable.getLeft();
         Path[] newPackages = comparable.getRight();
@@ -49,11 +51,23 @@ class ComparisonUtil {
             RegressionTest.LOG.info("There are no different packages");
             return true;
         }
-        List<Diff> differences = new Comparator()
+        Comparator comparator = new Comparator()
             .left(oldPackages, "Expected")
             .right(newPackages, "Actual")
-            .filter(PACKAGE_FILTER)
-            .compare();
+            .filter(PACKAGE_FILTER);
+
+        List<Diff> differences;
+
+        if (CollectionUtils.isNotEmpty(filters)) {
+            try (FilterFactory factory = new FilterFactory()) {
+                for (String filter : filters) {
+                    factory.useScript(filter);
+                }
+                differences = comparator.filter(factory.getFilters()).compare();
+            }
+        } else {
+            differences = comparator.compare();
+        }
 
         boolean result = Comparator.isMatch(differences);
         if (!differences.isEmpty()) {
@@ -123,10 +137,10 @@ class ComparisonUtil {
             String pathSeparator = File.separator;
             String fileName = StringUtils.substringAfterLast(difference.getLeft(), pathSeparator);
             builder.append(String.format(
-                "\n\nFound %d difference(-s) in %s\n\n",
+                "\n\nFound %d difference(-s) in %s\n",
                 difference.getCount(),
                 fileName));
-            builder.append(difference.toString(OutputType.CONSOLE));
+            builder.append(difference.toString(OutputType.CONSOLE)).append(StringUtils.LF);
         }
         RegressionTest.LOG.warn(builder.toString());
     }

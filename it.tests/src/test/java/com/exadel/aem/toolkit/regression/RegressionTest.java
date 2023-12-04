@@ -21,7 +21,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.cli.CommandLineException;
 import org.codehaus.plexus.util.cli.CommandLineUtils;
 import org.codehaus.plexus.util.cli.Commandline;
-import org.codehaus.plexus.util.cli.WriterStreamConsumer;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
@@ -78,7 +77,7 @@ public class RegressionTest {
             oldPackagesDirectory.getParent().resolve("new"));
         LOG.info("Post-change package files stored at {}", newPackagesDirectory);
 
-        boolean result = ComparisonUtil.isMatch(oldPackagesDirectory, newPackagesDirectory);
+        boolean result = ComparisonUtil.isMatch(oldPackagesDirectory, newPackagesDirectory, settings.getFilters());
 
         if (settings.cleanUp()) {
             LOG.info("Cleaning up regression content");
