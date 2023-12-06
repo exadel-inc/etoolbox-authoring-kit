@@ -2,91 +2,91 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://authoring-kit.com/content/authoring-tools/etoolbox-lists</loc>
-    <lastmod>2023-12-06T15:30:15.291Z</lastmod>
+    <lastmod>2023-12-06T16:09:50.434Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/allowed-components</loc>
-    <lastmod>2023-12-06T15:30:15.283Z</lastmod>
-  </url>
-  <url>
-    <loc>https://authoring-kit.com/content/dev-tools/option-provider</loc>
-    <lastmod>2023-12-06T15:30:15.283Z</lastmod>
+    <lastmod>2023-12-06T16:09:50.422Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/injectors</loc>
-    <lastmod>2023-12-06T15:30:15.283Z</lastmod>
-  </url>
-  <url>
-    <loc>https://authoring-kit.com/content/getting-started/common-use-cases</loc>
-    <lastmod>2023-12-06T15:30:15.279Z</lastmod>
+    <lastmod>2023-12-06T16:09:50.422Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/getting-started/installation</loc>
-    <lastmod>2023-12-06T15:30:15.279Z</lastmod>
+    <lastmod>2023-12-06T16:09:50.422Z</lastmod>
   </url>
   <url>
-    <loc>https://authoring-kit.com/content/dev-tools/component-management/additional-properties</loc>
-    <lastmod>2023-12-06T15:30:15.287Z</lastmod>
+    <loc>https://authoring-kit.com/content/dev-tools/option-provider</loc>
+    <lastmod>2023-12-06T16:09:50.422Z</lastmod>
   </url>
   <url>
-    <loc>https://authoring-kit.com/content/dev-tools/component-management/customizing-toolkit</loc>
-    <lastmod>2023-12-06T15:30:15.287Z</lastmod>
+    <loc>https://authoring-kit.com/content/getting-started/common-use-cases</loc>
+    <lastmod>2023-12-06T16:09:50.422Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/component-management/component-structure</loc>
-    <lastmod>2023-12-06T15:30:15.287Z</lastmod>
+    <lastmod>2023-12-06T16:09:50.430Z</lastmod>
+  </url>
+  <url>
+    <loc>https://authoring-kit.com/content/dev-tools/component-management/additional-properties</loc>
+    <lastmod>2023-12-06T16:09:50.430Z</lastmod>
+  </url>
+  <url>
+    <loc>https://authoring-kit.com/content/dev-tools/component-management/customizing-toolkit</loc>
+    <lastmod>2023-12-06T16:09:50.430Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/component-management/dialog-layout</loc>
-    <lastmod>2023-12-06T15:30:15.287Z</lastmod>
-  </url>
-  <url>
-    <loc>https://authoring-kit.com/content/dev-tools/component-management/reusing-code</loc>
-    <lastmod>2023-12-06T15:30:15.287Z</lastmod>
+    <lastmod>2023-12-06T16:09:50.430Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/depends-on/api</loc>
-    <lastmod>2023-12-06T15:30:15.287Z</lastmod>
+    <lastmod>2023-12-06T16:09:50.426Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/depends-on/examples</loc>
-    <lastmod>2023-12-06T15:30:15.287Z</lastmod>
+    <lastmod>2023-12-06T16:09:50.426Z</lastmod>
   </url>
   <url>
-    <loc>https://authoring-kit.com/content/dev-tools/depends-on/introduction</loc>
-    <lastmod>2023-12-06T15:30:15.283Z</lastmod>
+    <loc>https://authoring-kit.com/content/dev-tools/component-management/reusing-code</loc>
+    <lastmod>2023-12-06T16:09:50.426Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/depends-on/usage</loc>
-    <lastmod>2023-12-06T15:30:15.283Z</lastmod>
+    <lastmod>2023-12-06T16:09:50.426Z</lastmod>
+  </url>
+  <url>
+    <loc>https://authoring-kit.com/content/dev-tools/depends-on/introduction</loc>
+    <lastmod>2023-12-06T16:09:50.426Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/component-management/dialog-fields/configuring-fieldset</loc>
-    <lastmod>2023-12-06T15:30:15.291Z</lastmod>
+    <lastmod>2023-12-06T16:09:50.434Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/component-management/dialog-fields/configuring-multifield</loc>
-    <lastmod>2023-12-06T15:30:15.291Z</lastmod>
+    <lastmod>2023-12-06T16:09:50.434Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/component-management/dialog-fields/dialog-field</loc>
-    <lastmod>2023-12-06T15:30:15.291Z</lastmod>
+    <lastmod>2023-12-06T16:09:50.430Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/component-management/dialog-fields/configuring-rte</loc>
-    <lastmod>2023-12-06T15:30:15.291Z</lastmod>
+    <lastmod>2023-12-06T16:09:50.434Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/component-management/dialog-fields/widgets</loc>
-    <lastmod>2023-12-06T15:30:15.291Z</lastmod>
+    <lastmod>2023-12-06T16:09:50.430Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/getting-started/popular-articles</loc>
-    <lastmod>2023-12-06T15:30:15.279Z</lastmod>
+    <lastmod>2023-12-06T16:09:50.418Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com</loc>
-    <lastmod>2023-12-06T15:29:58.374Z</lastmod>
+    <lastmod>2023-12-06T16:09:32.846Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
