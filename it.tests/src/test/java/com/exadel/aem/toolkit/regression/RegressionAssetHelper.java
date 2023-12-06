@@ -18,116 +18,55 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 
 class RegressionAssetHelper {
 
-    private static final String ARTIFACT_ID =  System.getProperty("eak.id", "etoolbox-authoring-kit");
-    private static final String[] ARTIFACT_SELECTORS = new String[] {"core", "plugin", "ui.apps", "ui.content"};
-
-    private static final String FOLDER_REPO = "repo";
+    private static final String PROPERTY_TMPDIR = "java.io.tmpdir";
+    private static final String DIRECTORY_PREFIX = "eak-regression-";
 
     private Path tempDirectory;
 
-    /* ---------------
-       Artifacts logic
-       --------------- */
-
-    void retainArtifacts(ProjectSettings settings) {
-        Path tempRepoPath = getTempDirectory().resolve(FOLDER_REPO);
-        try {
-            if (!tempRepoPath.toFile().exists()) {
-                Files.createDirectory(tempRepoPath);
-            }
-            Path mavenDirectory = settings.getMavenDirectory();
-            if (!mavenDirectory.toFile().exists()) {
-                throw new AssertionError("Could not find local Maven repository");
-            }
-            List<File> artifacts = getArtifactDirectories(mavenDirectory, settings.getCurrentVersion());
-            for (File artifact : artifacts) {
-                String parentFolderName = artifact.toPath().getParent().getFileName().toString();
-                FileUtils.moveDirectory(artifact, tempRepoPath.resolve(parentFolderName).toFile());
-            }
-        } catch (IOException e) {
-            RegressionTest.LOG.warn("Could not retain artifact(-s): {}", e.getMessage());
-        }
-    }
-
-    void restoreArtifacts(ProjectSettings settings) {
-        File tempRepoDirectory = getTempDirectory().resolve(FOLDER_REPO).toFile();
-        if (!tempRepoDirectory.exists()) {
-            return;
-        }
-        Path mavenDirectory = settings.getMavenDirectory();
-        if (!mavenDirectory.toFile().exists()) {
-            throw new AssertionError("Could not find local Maven repository");
-        }
-        File[] artifacts = tempRepoDirectory.listFiles();
-        if (ArrayUtils.isEmpty(artifacts)) {
-            return;
+    @SuppressWarnings("SameParameterValue")
+    Path createTempRoot(String name) {
+        Path newPath = Paths.get(System.getProperty(PROPERTY_TMPDIR), DIRECTORY_PREFIX + name);
+        if (newPath.toFile().exists()) {
+            return newPath.toAbsolutePath();
         }
         try {
-            assert artifacts != null;
-            for (File artifact : artifacts) {
-                Path existingMavenArtifact = mavenDirectory.resolve(artifact.getName()).resolve(settings.getCurrentVersion());
-                Files.deleteIfExists(existingMavenArtifact);
-                Files.createDirectories(existingMavenArtifact.getParent());
-                FileUtils.moveDirectory(artifact, existingMavenArtifact.toFile());
-            }
+            Files.createDirectory(newPath);
+            return newPath.toAbsolutePath();
         } catch (IOException e) {
-            throw new AssertionError("Could not restore artifact(-s): " + e.getMessage());
+            throw new AssertionError("Could not create directory " + newPath.toAbsolutePath(), e);
         }
     }
 
-    private static List<File> getArtifactDirectories(Path mavenDirectory, String version) {
-        File[] folders = mavenDirectory
-            .toFile()
-            .listFiles(RegressionAssetHelper::isMatchingArtifactDirectory);
-        if (ArrayUtils.isEmpty(folders)) {
-            return Collections.emptyList();
+    Path getTempRoot() {
+        if (tempDirectory != null) {
+            return tempDirectory;
         }
-        assert folders != null;
-        return Arrays
-            .stream(folders)
-            .map(File::toPath)
-            .map(path -> path.resolve(version))
-            .map(Path::toFile)
-            .filter(file -> file.exists() && file.isDirectory())
-            .collect(Collectors.toList());
+        try {
+            tempDirectory = Files.createTempDirectory(DIRECTORY_PREFIX);
+        } catch (IOException e) {
+            throw new AssertionError("Could not create temp directory", e);
+        }
+        return tempDirectory;
     }
-
-    private static boolean isMatchingArtifactDirectory(File value) {
-        if (!value.isDirectory() || !value.getName().startsWith(ARTIFACT_ID)) {
-            return false;
-        }
-        if (value.getName().equals(ARTIFACT_ID)) {
-            return true;
-        }
-        String selector = value.getName().substring(ARTIFACT_ID.length() + 1);
-        return ArrayUtils.contains(ARTIFACT_SELECTORS, selector);
-    }
-
-    /* --------------
-       Packages logic
-       -------------- */
 
     @SuppressWarnings("SameParameterValue")
     Path retainPackages(File projectDirectory, String selector) {
-        return retainPackages(projectDirectory, getTempDirectory().resolve(selector));
+        return retainPackages(projectDirectory, getTempRoot().resolve(selector));
     }
 
     Path retainPackages(File projectDirectory, Path storePath) {
         List<File> packageFiles = getPackages(projectDirectory);
-        Assert.assertFalse("Could not find any packages", packageFiles.isEmpty());
+        Assert.assertFalse("Could not find any packages at " + projectDirectory, packageFiles.isEmpty());
         try {
             if (!storePath.toFile().exists()) {
                 Files.createDirectory(storePath);
@@ -137,20 +76,19 @@ class RegressionAssetHelper {
             }
             return storePath;
         } catch (IOException e) {
-            throw new AssertionError("Could not retain package file(-s): " + e.getMessage());
+            throw new AssertionError("Could not retain package file(-s)", e);
         }
     }
 
-    private Path getTempDirectory() {
-        if (tempDirectory != null) {
-            return tempDirectory;
+    void cleanUp() {
+        if (tempDirectory == null) {
+            return;
         }
         try {
-            tempDirectory = Files.createTempDirectory("eak-regression-");
+            FileUtils.deleteDirectory(tempDirectory.toFile());
         } catch (IOException e) {
-            throw new AssertionError("Could not create temp directory: " + e.getMessage());
+            RegressionTest.LOG.warn("Could not clean up {}", tempDirectory, e);
         }
-        return tempDirectory;
     }
 
     private static List<File> getPackages(File directory) {
@@ -161,24 +99,7 @@ class RegressionAssetHelper {
                 .map(Path::toFile)
                 .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new AssertionError("Could not enumerate package files at "
-                + directory.getAbsolutePath()
-                + ": " + e.getMessage());
-        }
-    }
-
-    /* -------
-       Cleanup
-       ------- */
-
-    void cleanUp() {
-        if (tempDirectory == null) {
-            return;
-        }
-        try {
-            FileUtils.deleteDirectory(tempDirectory.toFile());
-        } catch (IOException e) {
-            RegressionTest.LOG.warn("Could not clean up {}", tempDirectory, e);
+            throw new AssertionError("Could not enumerate package files at "+ directory.getAbsolutePath(), e);
         }
     }
 }
