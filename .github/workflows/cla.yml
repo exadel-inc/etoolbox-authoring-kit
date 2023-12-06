@@ -18,9 +18,9 @@ jobs:
                     PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
                 with:
                     path-to-signatures: 'signatures/version1/cla.json'
-                    path-to-cla-document: 'https://github.com/exadel-inc/aem-authoring-toolkit/blob/master/CLA.md'
+                    path-to-document: 'https://github.com/exadel-inc/aem-authoring-toolkit/blob/master/CLA.md'
                     branch: 'cla'
-                    allowlist: bot*
+                    allowlist: bot*,*kaliada*
 
                     create-file-commit-message: '[Tech] Created file for storing CLA Signatures'
                     signed-commit-message: '[Tech] $contributorName has signed the CLA in #$pullRequestNo'
