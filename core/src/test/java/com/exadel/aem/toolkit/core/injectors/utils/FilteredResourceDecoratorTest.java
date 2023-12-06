@@ -25,6 +25,7 @@ import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.TestConstants;
 import com.exadel.aem.toolkit.core.injectors.ChildInjectorTest;
@@ -33,7 +34,7 @@ import com.exadel.aem.toolkit.core.injectors.models.child.InjectedWithSelection;
 public class FilteredResourceDecoratorTest {
 
     @Rule
-    public final AemContext context = new AemContext();
+    public final AemContext context = AemContextFactory.newInstance();
 
     @Before
     public void beforeTest() {

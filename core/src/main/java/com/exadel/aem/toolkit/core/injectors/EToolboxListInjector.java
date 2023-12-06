@@ -88,31 +88,32 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
-    public Object getValue(Object adaptable, String name, Type type, EToolboxList annotation) {
+    public Injectable getValue(Object adaptable, String name, Type type, EToolboxList annotation) {
         ResourceResolver resourceResolver = AdaptationUtil.getResourceResolver(adaptable);
         if (resourceResolver == null) {
-            return null;
+            return Injectable.EMPTY;
         }
         Class<?> rawType = TypeUtil.getRawType(type);
         if (List.class.equals(rawType) || Collection.class.equals(rawType) || Object.class.equals(rawType)) {
-            return getList(resourceResolver, annotation.value(), type);
+            return Injectable.of(getList(resourceResolver, annotation.value(), type));
 
         } else if (Set.class.equals(rawType)) {
             List<?> valueList = getList(resourceResolver, annotation.value(), type);
             Class<?> listItemType = TypeUtil.getElementType(type);
             if (listItemType != null && listItemType.isInterface()) {
-                return new ProxySet(valueList, listItemType);
+                return Injectable.of(new ProxySet(valueList, listItemType));
             }
-            return new LinkedHashSet<>(valueList);
+            return Injectable.of(new LinkedHashSet<>(valueList));
 
         } else if (Map.class.equals(rawType)) {
-            return getMap(resourceResolver, annotation.value(), annotation.keyProperty(), type);
+            return Injectable.of(getMap(resourceResolver, annotation.value(), annotation.keyProperty(), type));
 
         } else if (type instanceof Class<?> && ((Class<?>) type).isArray()) {
-            return getArray(resourceResolver, annotation.value(), (Class<?>) type);
+            return Injectable.of(getArray(resourceResolver, annotation.value(), (Class<?>) type));
         }
-        return null;
+        return Injectable.EMPTY;
     }
 
     /**
@@ -217,7 +218,7 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
      * @param list A generic {@code List} that contains list entries
      * @param type Type of receiving Java class member
      * @param <T>  The class of the objects in the array
-     * @return An array containing all the elements from provided List
+     * @return An array containing all the elements from the provided List
      */
     @SuppressWarnings("unchecked")
     private <T> T[] toArray(List<?> list, Class<?> type) {
@@ -227,7 +228,7 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
     }
 
     /**
-     * Represents a {@link Set} containing interface based proxy objects that do not have a proper implementation of
+     * Represents a {@link Set} containing interface-based proxy objects that do not have a proper implementation of
      * {@code hashCode()} and {@code equals()}. This can be, e.g., Sling model instances created out of
      * {@code @Model}-annotated Java interfaces
      */
@@ -306,6 +307,7 @@ public class EToolboxListInjector extends BaseInjector<EToolboxList> {
         /**
          * {@inheritDoc}
          */
+        @Nonnull
         @Override
         public Iterator<Object> iterator() {
             return collection.iterator();

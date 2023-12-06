@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.core.authoring.models;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;

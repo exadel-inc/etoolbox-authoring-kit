@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
@@ -33,6 +34,10 @@ public class Longs extends RequestAdapterBase<Long> {
     @RequestProperty
     private Long value;
 
+    @RequestProperty
+    @Default(longValues = 10L)
+    private Long defaultValue;
+
     @Self
     private Supplier supplier;
 
@@ -44,6 +49,11 @@ public class Longs extends RequestAdapterBase<Long> {
     @Nullable
     public Long getValue() {
         return value;
+    }
+
+    @Override
+    public Long getDefaultValue() {
+        return defaultValue;
     }
 
     @Override

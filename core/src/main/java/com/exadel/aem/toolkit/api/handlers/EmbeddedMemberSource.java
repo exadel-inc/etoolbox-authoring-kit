@@ -18,12 +18,14 @@ import java.lang.reflect.Member;
 public interface EmbeddedMemberSource extends MemberSource {
     /**
      * Retrieves an optional {@code Member} reference pointing to a member of a foreign Java class that triggered
-     * rendering of the class that contains the current member. This is useful for rendering containers such as {@code
-     * FieldSet}s.
+     * rendering of the class that contains the current member. This is useful for rendering containers such as
+     * {@code FieldSet}s.
      * <p><i>Ex.: Class named "{@code Foo}" contains the field {@code private FooFieldset fooFieldset;}. Class named
-     * "{@code FooFieldset}" contains the field {@code private String bar}. As the plugin renders markup for {@code
-     * Foo}, it needs to render members of {@code FooFieldset} inside. As it reaches the field map {@code bar}, it will
-     * use the value {@code reportingClass = Foo.class} and grab values from {@code Foo} if needs to</i></p>
+     * "{@code FooFieldset}" contains the field {@code private String bar}. As the plugin renders markup for
+     * {@code Foo}, it needs to render members of {@code FooFieldset} inside. As it reaches the field map {@code bar},
+     * it will use the values {@code reportingClass = Foo.class} and {@code upstreamMember = Foo#fooFieldset}. These
+     * values can be then used to form up a rendering context for the current field {@code bar}: in particular, to get
+     * embeddable settings</i></p>
      * @return A nullable {@code Member} reference
      */
     Member getUpstreamMember();

@@ -63,6 +63,11 @@ public class RequestSuffixInjectorTest extends RequestPropertyInjectorTestBase {
     }
 
     @Test
+    public void shouldInjectDefaultString() {
+        super.shouldInjectDefaultString();
+    }
+
+    @Test
     public void shouldInjectResource() {
         ((MockRequestPathInfo) context.request().getRequestPathInfo()).setSuffix(DEFAULT_SUFFIX);
         Resources model = context.request().adaptTo(Resources.class);

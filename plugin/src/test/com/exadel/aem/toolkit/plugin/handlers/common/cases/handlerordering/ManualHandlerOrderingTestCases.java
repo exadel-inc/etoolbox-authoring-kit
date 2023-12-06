@@ -51,7 +51,7 @@ public class ManualHandlerOrderingTestCases {
         }
     }
 
-    @Handles(value = WidgetAnnotationForOrderingTest.class, before = CustomHandler3.class, after = CustomHandler1.class)
+    @Handles(value = WidgetAnnotationForOrderingTest.class, before = CustomHandler2.class, after = CustomHandler1.class)
     public static class CustomHandler1 implements Handler {
 
         @Override
@@ -78,7 +78,7 @@ public class ManualHandlerOrderingTestCases {
         }
     }
 
-    @Handles(value = WidgetAnnotationForOrderingTest.class, before = CustomHandler0.class, after = CustomHandler3.class)
+    @Handles(value = WidgetAnnotationForOrderingTest.class, after = CustomHandler3.class)
     public static class CustomHandler3 implements Handler {
 
         @Override

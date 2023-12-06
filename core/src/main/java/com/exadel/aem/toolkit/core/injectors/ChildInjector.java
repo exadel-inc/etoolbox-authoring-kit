@@ -73,18 +73,19 @@ public class ChildInjector extends BaseInjector<Child> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
-    public Object getValue(Object adaptable, String name, Type type, Child annotation) {
+    public Injectable getValue(Object adaptable, String name, Type type, Child annotation) {
 
         Resource adaptableResource = AdaptationUtil.getResource(adaptable);
         if (adaptableResource == null) {
-            return null;
+            return Injectable.EMPTY;
         }
 
         String resourcePath = StringUtils.defaultIfBlank(annotation.name(), name);
         Resource currentResource = adaptableResource.getChild(resourcePath);
         if (currentResource == null) {
-            return null;
+            return Injectable.EMPTY;
         }
 
         Resource preparedResource = InstantiationUtil.getFilteredResource(
@@ -108,6 +109,6 @@ public class ChildInjector extends BaseInjector<Child> {
             }
             return CastUtil.toType(preparedResource.adaptTo(elementType), type);
         }
-        return null;
+        return Injectable.EMPTY;
     }
 }

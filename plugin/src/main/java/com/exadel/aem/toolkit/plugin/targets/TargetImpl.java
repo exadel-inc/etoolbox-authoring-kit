@@ -55,7 +55,12 @@ import com.exadel.aem.toolkit.plugin.utils.StringUtil;
 @SuppressWarnings("HiddenField") // Allows to pass {@code name} arguments in attribute constructors
 class TargetImpl extends AdaptationBase<Target> implements Target, LegacyHandlerAcceptor {
 
-    static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> StringUtils.isNotBlank(second) ? second : first;
+    static final BinaryOperator<String> DEFAULT_ATTRIBUTE_MERGER = (first, second) -> {
+        if (StringUtils.isNotBlank(first) && StringUtils.isBlank(second)) {
+            return first;
+        }
+        return StringUtils.isNotEmpty(second) ? second : first;
+    };
 
     /* -----------------------------
        Local fields and constructors

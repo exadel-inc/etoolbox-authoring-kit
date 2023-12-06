@@ -14,7 +14,6 @@
 package com.exadel.aem.toolkit.plugin.utils.ordering;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,7 +28,6 @@ import java.util.List;
 class TopologicalSorter<T> {
 
     private final List<Orderable<T>> nodes;
-    private final List<List<Orderable<T>>> adjacencyList;
 
     /**
      * Initializes a class instance
@@ -37,12 +35,6 @@ class TopologicalSorter<T> {
      */
     TopologicalSorter(List<Orderable<T>> nodes) {
         this.nodes = nodes;
-        this.adjacencyList = new ArrayList<>(this.nodes.size());
-        for (int i = 0; i < this.nodes.size(); i++) {
-            this.nodes.get(i).setPosition(i);
-            this.adjacencyList.add(new ArrayList<>());
-        }
-        initAdjacencyList();
     }
 
     /**
@@ -50,102 +42,102 @@ class TopologicalSorter<T> {
      * @return List of entities with the sorting applied
      */
     public List<Orderable<T>> topologicalSort() {
-        // Array to store how many edges are incoming to the i node
-        int[] inDegrees = new int[this.nodes.size()];
-        // Deque for bfs that store nodes in special order for bfs
+        List<Orderable<T>> sorted = new ArrayList<>();
+
+        for (int i = 0; i < this.nodes.size(); i++) {
+            Orderable<T> orderable = nodes.get(i);
+            Deque<Orderable<T>> temp = new LinkedList<>();
+
+            Deque<Orderable<T>> after = after(orderable, new ArrayList<>());
+            while (!after.isEmpty()) {
+                Orderable<T> tOrderable = after.removeLast();
+                if (!sorted.contains(tOrderable) && !temp.contains(tOrderable)) {
+                    temp.addFirst(tOrderable);
+                }
+            }
+
+            Deque<Orderable<T>> before = before(orderable, new ArrayList<>());
+            while (!before.isEmpty()) {
+                Orderable<T> tOrderable = before.removeFirst();
+                if (!sorted.contains(tOrderable) && !temp.contains(tOrderable)) {
+                    temp.addLast(tOrderable);
+                }
+            }
+
+            if (!sorted.contains(orderable) && !temp.contains(orderable)) {
+                temp.addLast(orderable);
+            }
+
+            sorted.addAll(temp);
+        }
+        return sorted;
+    }
+
+    /**
+     * Called by {@link TopologicalSorter#topologicalSort()} to get all entities connected to
+     * the entity as 'after' relationship
+     * @param orderable Orderable entity
+     * @param values List of all already used entities in sort
+     * @return Deque of connected entities
+     */
+    private Deque<Orderable<T>> after(Orderable<T> orderable, List<Orderable<T>> values) {
         Deque<Orderable<T>> deque = new LinkedList<>();
-        // List to store sorted order
-        List<Orderable<T>> sortedOrder = new ArrayList<>(this.nodes.size());
-
-        // Loop to count how many edges are incoming to the i node
-        for (int i = 0; i < this.nodes.size(); i++) {
-            for (Orderable<T> node : this.adjacencyList.get(i)) {
-                inDegrees[node.getPosition()]++;
-            }
+        if (orderable == null) {
+            return deque;
         }
-
-        // Loop to init dequeue with nodes, that do not have incoming edges
-        for (int i = 0; i < this.nodes.size(); i++) {
-            if (inDegrees[i] == 0) {
-                deque.addLast(nodes.get(i));
-            }
-        }
-
-        // Check if entire graph is loop
-        if (deque.isEmpty()) {
-            // Set that the first node do not have incoming nodes
-            inDegrees[0] = 0;
-            // Add the first node to deque to start bfs from the first node
-            deque.addLast(nodes.get(0));
-            // Remove all edges incoming to the first node
-            this.adjacencyList.forEach(list -> list.remove(nodes.get(0)));
-        }
-
-        // Start of bfs
-        while (!deque.isEmpty()) {
-            Orderable<T> currentNode = deque.pollFirst();
-            sortedOrder.add(currentNode);
-
-            int indexOfCurrentNode = currentNode.getPosition();
-
-            // Iterate a trough all neighbors for the current node (that means bfs)
-            for (Orderable<T> adjacent : this.adjacencyList.get(indexOfCurrentNode)) {
-                int indexOfNeighborNode = adjacent.getPosition();
-                inDegrees[indexOfNeighborNode]--;
-                if (inDegrees[indexOfNeighborNode] == 0) {
-                    deque.addLast(adjacent);
+        for (Orderable<T> orderable1 : orderable.getAfter()) {
+            if (!values.contains(orderable1)) {
+                values.add(orderable1);
+                Deque<Orderable<T>> after = after(orderable1, values);
+                while (!after.isEmpty()) {
+                    deque.addFirst(after.removeLast());
+                }
+                Deque<Orderable<T>> before = before(orderable1, values);
+                while (!before.isEmpty()) {
+                    Orderable<T> tOrderable = before.removeFirst();
+                    if (!deque.contains(tOrderable)) {
+                        deque.addLast(tOrderable);
+                    }
                 }
             }
         }
-
-        // Check if not all nodes are visited
-        if (sortedOrder.size() != this.nodes.size()) {
-            sortedOrder.addAll(sortLoop(inDegrees));
+        if (!deque.contains(orderable)) {
+            deque.addLast(orderable);
         }
-        return sortedOrder;
+        return deque;
     }
 
     /**
-     * Initializes the collection of ordered lists used to represent a finite graph
+     * Called by {@link TopologicalSorter#topologicalSort()} to get all entities connected to
+     * the entity as 'before' relationship
+     * @param orderable Orderable entity
+     * @param values List of all already used entities in sort
+     * @return Deque of connected entities
      */
-    private void initAdjacencyList() {
-        for (int i = 0; i < this.nodes.size(); i++) {
-            Orderable<T> currNode = this.nodes.get(i);
-            Orderable<T> before = currNode.getBefore();
-            Orderable<T> after = currNode.getAfter();
-            // Check for null and self-loop
-            if (before != null && !before.equals(currNode)) {
-                this.adjacencyList.get(i).add(before);
-            }
-            // Check for null, self-loop and simple cycle, e.g. 1->2 and 2->1
-            if (after != null
-                && !after.equals(currNode)
-                && !this.adjacencyList.get(after.getPosition()).contains(currNode)) {
-                this.adjacencyList.get(after.getPosition()).add(currNode);
-            }
+    private Deque<Orderable<T>> before(Orderable<T> orderable, List<Orderable<T>> values) {
+        Deque<Orderable<T>> deque = new LinkedList<>();
+        if (orderable == null) {
+            return deque;
         }
-        // Sort every list to keep the fallback order (that is, by ranking, if there's ranking specified,
-        // and then alphabetically)
-        for (int i = 0; i < this.nodes.size(); i++) {
-            this.adjacencyList.get(i).sort(Comparator.<Orderable<T>>comparingInt(Orderable::getRank).thenComparing(Orderable::getId));
-        }
-    }
-
-    /**
-     * Called by {@link TopologicalSorter#topologicalSort()} when there's no possibility to process all the nodes
-     * in a single run (due to a loop-like relation when e.g. two nodes refer to each other in their "before" hints).
-     * This method collects the nodes that are involved in a loop-like relation and composes a separate graph in order
-     * to perform another sorting run for these nodes separately
-     * @param inDegrees Array of integer values defining the number of incoming edges
-     * @return List of entities with the sorting applied
-     */
-    private List<Orderable<T>> sortLoop(int[] inDegrees) {
-        List<Orderable<T>> loopNodes = new ArrayList<>();
-        for (int i = 0; i < this.nodes.size(); i++) {
-            if (inDegrees[i] != 0) {
-                loopNodes.add(this.nodes.get(i));
+        for (Orderable<T> orderable1 : orderable.getBefore()) {
+            if (!values.contains(orderable1)) {
+                values.add(orderable1);
+                Deque<Orderable<T>> after = after(orderable1, values);
+                while (!after.isEmpty()) {
+                    deque.addFirst(after.removeLast());
+                }
+                Deque<Orderable<T>> before = before(orderable1, values);
+                while (!before.isEmpty()) {
+                    Orderable<T> tOrderable = before.removeFirst();
+                    if (!deque.contains(tOrderable)) {
+                        deque.addLast(tOrderable);
+                    }
+                }
             }
         }
-        return new TopologicalSorter<>(loopNodes).topologicalSort();
+        if (!deque.contains(orderable)) {
+            deque.addFirst(orderable);
+        }
+        return deque;
     }
 }

@@ -32,9 +32,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import com.adobe.granite.ui.components.ExpressionResolver;
 import com.adobe.granite.ui.components.ds.DataSource;
-
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
+
+import com.exadel.aem.toolkit.core.AemContextFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ListsServletTest {
@@ -43,7 +44,7 @@ public class ListsServletTest {
     private static final String DATASOURCE_PATH = "/datasource";
 
     @Rule
-    public AemContext context = new AemContext(ResourceResolverType.JCR_OAK);
+    public AemContext context = AemContextFactory.newInstance(ResourceResolverType.JCR_OAK);
 
     @Mock
     private ExpressionResolver expressionResolver;

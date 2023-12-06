@@ -97,7 +97,7 @@ public class Handlers {
     private static final BiConsumer<Source, Target> EDIT_CONFIG_INPLACE_HANDLER = new InplaceEditingHandler();
     private static final BiConsumer<Source, Target> EDIT_CONFIG_LISTENERS_HANDLER = new ListenersHandler();
 
-    // Complete editConfig chains
+    // Complete editConfig chain
     private static final BiConsumer<Source, Target> EDIT_CONFIG_HANDLER_CHAIN =
         EDIT_CONFIG_DROP_TARGETS_HANDLER
         .andThen(EDIT_CONFIG_FORM_PARAMS_HANDLER)
@@ -113,8 +113,8 @@ public class Handlers {
     }
 
     /**
-     * Retrieves a handler conveyor for rendering a scope-specific UI, such as a dialog, a design dialog, or an
-     * in-place editing config
+     * Retrieves a handler conveyor for rendering a scope-specific UI, such as a dialog, a design dialog, or an in-place
+     * editing config
      * @param scope Non-blank string representing the scope
      * @return {@code BiConsumer<Source, Target>} instance representing the conveyor
      */

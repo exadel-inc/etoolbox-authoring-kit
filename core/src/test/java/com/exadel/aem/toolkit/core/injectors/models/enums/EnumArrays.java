@@ -19,6 +19,7 @@ import javax.inject.Named;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
@@ -35,6 +36,10 @@ public class EnumArrays extends RequestAdapterBase<Colors[]> {
     @EnumValue
     private Colors[] arrayValue;
 
+    @EnumValue
+    @Default(values = {"YELLOW", "ORANGE"})
+    private Colors[] defaultValue;
+
     @Self
     private Supplier supplier;
 
@@ -45,9 +50,15 @@ public class EnumArrays extends RequestAdapterBase<Colors[]> {
         this.constructorValue = arrayValue;
     }
 
+    @Override
     @Nullable
     public Colors[] getValue() {
         return arrayValue;
+    }
+
+    @Override
+    public Colors[] getDefaultValue() {
+        return defaultValue;
     }
 
     @Nullable

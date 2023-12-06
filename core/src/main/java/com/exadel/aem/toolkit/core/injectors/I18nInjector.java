@@ -25,8 +25,8 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.i18n.ResourceBundleProvider;
@@ -81,8 +81,9 @@ public class I18nInjector extends BaseInjector<I18N> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
-    public Object getValue(Object adaptable, String name, Type type, I18N annotation) {
+    public Injectable getValue(Object adaptable, String name, Type type, I18N annotation) {
         String value = StringUtils.defaultIfEmpty(annotation.value(), name);
 
         Function<Object, Locale> localeDetector = InstantiationUtil.getObjectInstance(annotation.localeDetector());
@@ -93,12 +94,12 @@ public class I18nInjector extends BaseInjector<I18N> {
         I18n i18n = getI18n(adaptable, locale);
 
         if (isI18nType(type)) {
-            return i18n;
+            return Injectable.of(i18n);
         } else if (String.class.equals(type) || Object.class.equals(type)) {
-            return i18n.get(value);
+            return Injectable.of(i18n.get(value));
         }
 
-        return null;
+        return Injectable.EMPTY;
     }
 
     /**

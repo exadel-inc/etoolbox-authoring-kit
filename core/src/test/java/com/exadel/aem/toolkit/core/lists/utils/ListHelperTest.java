@@ -27,7 +27,6 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.ValueMapValue;
-import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -39,6 +38,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 
@@ -51,7 +51,7 @@ public class ListHelperTest {
     private static final String LIST_ITEM_PATH = "list/listItem";
 
     @Rule
-    public AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
+    public AemContext context = AemContextFactory.newInstance();
 
     @Before
     public void setUp() {

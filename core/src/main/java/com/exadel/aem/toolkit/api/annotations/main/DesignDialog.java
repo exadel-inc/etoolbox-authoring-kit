@@ -45,20 +45,20 @@ public @interface DesignDialog {
     String title() default "";
 
     /**
-     * Renders as the `height` attribute of component's {@code cq:design_dialog} node. If no value provided,
-     * default {@code 480} is used
+     * Renders as the `height` attribute of component's {@code cq:design_dialog} node
      * @return Double-typed number
      */
+    @PropertyRendering(ignoreValues = "0.0")
     @ValueRestriction(ValueRestrictions.POSITIVE)
-    double height() default 480;
+    double height() default 0;
 
     /**
-     * Renders as the `width` attribute of component's {@code cq:design_dialog} node. If no value provided,
-     * default {@code 560} is used
+     * Renders as the `width` attribute of component's {@code cq:design_dialog} node
      * @return Double-typed number
      */
+    @PropertyRendering(ignoreValues = "0.0")
     @ValueRestriction(ValueRestrictions.POSITIVE)
-    double width() default 560;
+    double width() default 0;
 
     /**
      * When set to true, forces the entire dialog to ignore freshness of the Granite UI form beside the dialog. This will

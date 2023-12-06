@@ -7,6 +7,7 @@
       "jcr:primaryType": "nt:unstructured",
       "value": "YELLOW",
       "arrayValue": ["YELLOW", "orange"],
+      "defaultValue": "TURQUOISE",
       "customString": "#0000FF",
       "customStringArray": ["#FFFF00", "#FFA500"],
       "customInt": 65280,

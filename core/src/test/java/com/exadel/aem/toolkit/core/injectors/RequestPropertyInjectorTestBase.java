@@ -16,23 +16,29 @@ package com.exadel.aem.toolkit.core.injectors;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.testing.mock.sling.servlet.MockSlingHttpServletRequest;
 import org.junit.Before;
 import org.junit.Rule;
+import org.slf4j.LoggerFactory;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.injectors.models.RequestAdapterBase;
 import com.exadel.aem.toolkit.core.injectors.models.requestproperty.BooleanArrays;
@@ -63,6 +69,7 @@ abstract class RequestPropertyInjectorTestBase {
     private static final String MODELS_PACKAGE_NAME = CoreConstants.ROOT_PACKAGE + ".core.injectors.models.requestproperty";
 
     private static final String EXPECTED_STRING = "Hello World";
+    private static final String EXPECTED_DEFAULT_STRING = "default";
     static final String[] EXPECTED_STRING_ARRAY = {"Hello", "World"};
     private static final List<String> EXPECTED_STRING_LIST = Arrays.asList(EXPECTED_STRING_ARRAY);
 
@@ -72,14 +79,17 @@ abstract class RequestPropertyInjectorTestBase {
     private static final List<? extends Serializable> HALF_PARSEABLE_INTEGERS = Arrays.asList("foo", 42);
 
     private static final Integer EXPECTED_INTEGER = 42;
-    private static final int[] EXPECTED_INTEGER_ARRAY = {42, 43, 44};
+    private static final Integer EXPECTED_DEFAULT_INTEGER = 10;
+    private static final Integer[] EXPECTED_INTEGER_ARRAY = {42, 43, 44};
     private static final List<Integer> EXPECTED_INTEGER_LIST = Arrays.asList(42, 43, 44);
-    private static final List<Integer> EXPECTED_HALF_PARSED_INTEGER_LIST = Arrays.asList(0, 42);
+    private static final List<Integer> EXPECTED_HALF_PARSED_INTEGER_LIST = Collections.singletonList(42);
+    private static final String EXPECTED_INTEGER_ARRAY_STRING = "42,43,44";
 
     private static final long EXPECTED_LONG = 42L;
-    private static final long[] EXPECTED_LONG_ARRAY = {42L, 43L, 44};
+    private static final long EXPECTED_DEFAULT_LONG = 10L;
+    private static final Long[] EXPECTED_LONG_ARRAY = {42L, 43L, 44L};
     private static final List<Long> EXPECTED_LONG_LIST = Arrays.asList(42L, 43L, 44L);
-    private static final List<Long> EXPECTED_HALF_PARSED_LONG_LIST = Arrays.asList(0L, 42L);
+    private static final List<Long> EXPECTED_HALF_PARSED_LONG_LIST = Collections.singletonList(42L);
 
     private static final float EXPECTED_FLOAT = 42.1f;
     private static final String EXPECTED_FLOAT_STRING = "42.1f";
@@ -87,15 +97,18 @@ abstract class RequestPropertyInjectorTestBase {
     private static final List<? extends Serializable> HALF_PARSEABLE_FLOATING_POINT_VALUES = Arrays.asList("foo", 42.1f, 43.1d, "44.1d");
 
     private static final double EXPECTED_DOUBLE = 42.1d;
-    private static final double[] EXPECTED_DOUBLE_ARRAY = {42.1d, 43.1d, 44.1d};
+    private static final double EXPECTED_DEFAULT_DOUBLE = 1.1d;
+    private static final Double[] EXPECTED_DOUBLE_ARRAY = {42.1d, 43.1d, 44.1d};
     static final List<Double> EXPECTED_DOUBLE_LIST = Arrays.asList(42.1d, 43.1d, 44.1d);
-    static final List<Double> EXPECTED_HALF_PARSED_DOUBLE_LIST = Arrays.asList(0d, 42.1d, 43.1d, 44.1d);
+    static final List<Double> EXPECTED_HALF_PARSED_DOUBLE_LIST = Arrays.asList(42.1d, 43.1d, 44.1d);
+    private static final String EXPECTED_DOUBLE_ARRAY_STRING = "42.1,43.1,44.1";
 
-    private static final boolean[] EXPECTED_BOOLEAN_ARRAY = {true, true, false};
+    private static final Boolean[] EXPECTED_BOOLEAN_ARRAY = {true, true, false};
     private static final List<Boolean> EXPECTED_BOOLEAN_LIST = Arrays.asList(true, true, false);
+    private static final String EXPECTED_BOOLEAN_ARRAY_STRING = "true,true,false";
 
     @Rule
-    public final AemContext context = new AemContext();
+    public final AemContext context = AemContextFactory.newInstance();
 
     /* -----------
        Preparation
@@ -103,8 +116,9 @@ abstract class RequestPropertyInjectorTestBase {
 
     @Before
     public void beforeTest() {
-        context.addModelsForPackage(MODELS_PACKAGE_NAME);
+        LoggerFactory.getLogger(getClass()).info("Running test: {}", getClass().getSimpleName());
         context.registerInjectActivateService(new DelegateInjector(prepareInjector()));
+        context.addModelsForPackage(MODELS_PACKAGE_NAME);
     }
 
     abstract BaseInjector<?> prepareInjector();
@@ -115,6 +129,7 @@ abstract class RequestPropertyInjectorTestBase {
        Tests
        ----- */
 
+    // region Strings
     void shouldInjectString() {
         shouldInjectString(model -> assertEquals(EXPECTED_STRING, model.getObjectValue()));
     }
@@ -127,6 +142,12 @@ abstract class RequestPropertyInjectorTestBase {
         objectValueChecker.accept(model);
         assertEquals(EXPECTED_STRING, model.getConstructorValue());
         assertEquals(EXPECTED_STRING, model.getValueSupplier().getValue());
+    }
+
+    void shouldInjectDefaultString() {
+        Strings model = context.request().adaptTo(Strings.class);
+        assertNotNull(model);
+        assertEquals(EXPECTED_DEFAULT_STRING, model.getDefaultValue());
     }
 
     void shouldInjectStringArray() {
@@ -157,11 +178,18 @@ abstract class RequestPropertyInjectorTestBase {
         assertEquals(EXPECTED_STRING, model.getConstructorValue()[0]);
     }
 
+    void shouldInjectDefaultStringArray() {
+        StringArrays model = context.request().adaptTo(StringArrays.class);
+        assertNotNull(model);
+        assertArrayEquals(EXPECTED_STRING_ARRAY, model.getDefaultValue());
+    }
+
+    @SuppressWarnings("unchecked")
     void shouldInjectStringCollection() {
         shouldInjectStringArray((model, payload) -> {
             if (EXPECTED_STRING_LIST.equals(payload)) {
                 assert model.getObjectValue() != null;
-                assertTrue(CollectionUtils.isEqualCollection(EXPECTED_STRING_LIST, (Collection<?>) model.getObjectValue()));
+                assertTrue(collectionsAreEqual(EXPECTED_STRING_LIST, (Collection<String>) model.getObjectValue()));
             } else {
                 assertEquals(payload, model.getObjectValue());
             }
@@ -181,9 +209,9 @@ abstract class RequestPropertyInjectorTestBase {
             objectValueChecker.accept(model, payload);
             assertNotNull(model.getConstructorValue());
             assertNotNull(model.getValueSupplier().getValue());
-            assertTrue(CollectionUtils.isEqualCollection(EXPECTED_STRING_LIST, model.getValue()));
-            assertTrue(CollectionUtils.isEqualCollection(EXPECTED_STRING_LIST, model.getConstructorValue()));
-            assertTrue(CollectionUtils.isEqualCollection(EXPECTED_STRING_LIST, model.getValueSupplier().getValue()));
+            assertTrue(collectionsAreEqual(EXPECTED_STRING_LIST, model.getValue()));
+            assertTrue(collectionsAreEqual(EXPECTED_STRING_LIST, model.getConstructorValue()));
+            assertTrue(collectionsAreEqual(EXPECTED_STRING_LIST, model.getValueSupplier().getValue()));
         }
         prepareRequest(context.request(), EXPECTED_STRING);
         StringCollections model = context.request().adaptTo(StringCollections.class);
@@ -194,13 +222,21 @@ abstract class RequestPropertyInjectorTestBase {
         assertEquals(EXPECTED_STRING, model.getConstructorValue().toArray()[0]);
     }
 
+    void shouldInjectDefaultStringCollection() {
+        StringCollections model = context.request().adaptTo(StringCollections.class);
+        assertNotNull(model);
+        assertTrue(collectionsAreEqual(EXPECTED_STRING_LIST, model.getDefaultValue()));
+    }
+    // endregion
+
+    // region Integers
     void shouldInjectInteger(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker) {
         for (Object payload : Arrays.asList(
             EXPECTED_BYTE,
             EXPECTED_INTEGER,
             EXPECTED_LONG,
             EXPECTED_FLOAT,
-            EXPECTED_FLOAT_STRING ,
+            EXPECTED_FLOAT_STRING,
             EXPECTED_DOUBLE)) {
 
             prepareRequest(context.request(), payload);
@@ -210,6 +246,11 @@ abstract class RequestPropertyInjectorTestBase {
             objectValueChecker.accept(model, payload);
             assertEquals(EXPECTED_INTEGER, model.getConstructorValue());
             assertEquals(EXPECTED_INTEGER, model.getValueSupplier().getValue());
+            if (!payload.equals(EXPECTED_FLOAT_STRING)) {
+                assertEquals(
+                    StringUtils.substringBefore(String.valueOf(payload), CoreConstants.SEPARATOR_DOT),
+                    StringUtils.substringBefore(model.getStringValue(), CoreConstants.SEPARATOR_DOT));
+            }
         }
 
         prepareRequest(context.request(), EXPECTED_STRING);
@@ -220,17 +261,29 @@ abstract class RequestPropertyInjectorTestBase {
         assertEquals(0, model.getValueSupplier().getValue().intValue());
     }
 
-    void shouldInjectIntegerArray() {
-        shouldInjectIntegerArray(RequestPropertyInjectorTestBase::assertObjectValueEquals);
+    void shouldInjectDefaultInteger() {
+        Integers model = context.request().adaptTo(Integers.class);
+        assertNotNull(model);
+        assertEquals(EXPECTED_DEFAULT_INTEGER, model.getDefaultValue());
+        assertEquals(String.valueOf(EXPECTED_DEFAULT_INTEGER), model.getDefaultStringValue());
+
+        prepareRequest(context.request(), EXPECTED_STRING);
+        model = context.request().adaptTo(Integers.class);
+        assertNotNull(model);
+        assertEquals(EXPECTED_DEFAULT_INTEGER, model.getDefaultValue());
     }
 
-    void shouldInjectIntegerArray(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker) {
-        Integer[] objectArray = ArrayUtils.toObject(EXPECTED_INTEGER_ARRAY);
+    void shouldInjectIntegerArray() {
+        shouldInjectIntegerArray(RequestPropertyInjectorTestBase::assertObjectValueEquals, false);
+    }
+
+    void shouldInjectIntegerArray(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker, boolean skipStringified) {
+        Integer[] objectArray = EXPECTED_INTEGER_ARRAY;
         for (Object payload : Arrays.asList(
             EXPECTED_BYTE_ARRAY,
             EXPECTED_INTEGER_ARRAY,
-            ArrayUtils.toObject(EXPECTED_INTEGER_ARRAY),
-            toObjectArray(ArrayUtils.toObject(EXPECTED_INTEGER_ARRAY)),
+            EXPECTED_INTEGER_ARRAY,
+            toObjectArray(EXPECTED_INTEGER_ARRAY),
             EXPECTED_INTEGER_LIST,
             EXPECTED_LONG_ARRAY,
             EXPECTED_LONG_LIST,
@@ -245,6 +298,14 @@ abstract class RequestPropertyInjectorTestBase {
             objectValueChecker.accept(model, payload);
             assertArrayEquals(objectArray, model.getConstructorValue());
             assertArrayEquals(objectArray, model.getValueSupplier().getValue());
+            if (skipStringified) {
+                continue;
+            }
+            if (EXPECTED_INTEGER_ARRAY.equals(payload) || EXPECTED_LONG_LIST.equals(payload)) {
+                assertEquals(EXPECTED_INTEGER_ARRAY_STRING, model.getStringValue());
+            } else if (EXPECTED_DOUBLE_ARRAY.equals(payload) || EXPECTED_DOUBLE_LIST.equals(payload)) {
+                assertEquals(EXPECTED_DOUBLE_ARRAY_STRING, model.getStringValue());
+            }
         }
 
         prepareRequest(context.request(), EXPECTED_INTEGER);
@@ -256,11 +317,18 @@ abstract class RequestPropertyInjectorTestBase {
         assertEquals(EXPECTED_INTEGER, model.getConstructorValue()[0]);
     }
 
-    void shouldInjectIntegerCollection() {
-        shouldInjectIntegerCollection(RequestPropertyInjectorTestBase::assertObjectValueEquals);
+    void shouldInjectDefaultIntegerArray() {
+        IntegerArrays model = context.request().adaptTo(IntegerArrays.class);
+        assertNotNull(model);
+        assertTrue(arraysAreEqual(EXPECTED_INTEGER_ARRAY, model.getDefaultValue()));
+        assertEquals(EXPECTED_INTEGER_ARRAY_STRING, model.getDefaultStringValue());
     }
 
-    void shouldInjectIntegerCollection(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker) {
+    void shouldInjectIntegerCollection() {
+        shouldInjectIntegerCollection(RequestPropertyInjectorTestBase::assertObjectValueEquals, false);
+    }
+
+    void shouldInjectIntegerCollection(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker, boolean skipStringified) {
         for (Object payload : Arrays.asList(
             EXPECTED_BYTE_ARRAY,
             EXPECTED_INTEGER_ARRAY,
@@ -275,10 +343,18 @@ abstract class RequestPropertyInjectorTestBase {
             assertNotNull(model.getValue());
             assertNotNull(model.getConstructorValue());
             assertNotNull(model.getValueSupplier().getValue());
-            assertTrue(CollectionUtils.isEqualCollection(EXPECTED_INTEGER_LIST, model.getValue()));
+            assertTrue(collectionsAreEqual(EXPECTED_INTEGER_LIST, model.getValue()));
             objectValueChecker.accept(model, payload);
-            assertTrue(CollectionUtils.isEqualCollection(EXPECTED_INTEGER_LIST, model.getConstructorValue()));
-            assertTrue(CollectionUtils.isEqualCollection(EXPECTED_INTEGER_LIST, model.getValueSupplier().getValue()));
+            assertTrue(collectionsAreEqual(EXPECTED_INTEGER_LIST, model.getConstructorValue()));
+            assertTrue(collectionsAreEqual(EXPECTED_INTEGER_LIST, model.getValueSupplier().getValue()));
+            if (skipStringified) {
+                continue;
+            }
+            if (EXPECTED_INTEGER_ARRAY.equals(payload) || EXPECTED_LONG_LIST.equals(payload)) {
+                assertEquals(EXPECTED_INTEGER_ARRAY_STRING, model.getStringValue());
+            } else if (EXPECTED_DOUBLE_ARRAY.equals(payload) || EXPECTED_DOUBLE_LIST.equals(payload)) {
+                assertEquals(EXPECTED_DOUBLE_ARRAY_STRING, model.getStringValue());
+            }
         }
 
         prepareRequest(context.request(), EXPECTED_BYTE);
@@ -288,6 +364,17 @@ abstract class RequestPropertyInjectorTestBase {
         assertEquals(EXPECTED_INTEGER, model.getValue().toArray()[0]);
         assertEquals(1, model.getConstructorValue().size());
         assertEquals(EXPECTED_INTEGER, model.getConstructorValue().toArray()[0]);
+    }
+
+    void shouldInjectDefaultIntegerCollection() {
+        IntegerCollections model = context.request().adaptTo(IntegerCollections.class);
+        assertNotNull(model);
+        assertTrue(collectionsAreEqual(EXPECTED_INTEGER_LIST, model.getDefaultValue()));
+
+        prepareRequest(context.request(), EXPECTED_STRING_ARRAY);
+        model = context.request().adaptTo(IntegerCollections.class);
+        assertNotNull(model);
+        assertTrue(collectionsAreEqual(EXPECTED_INTEGER_LIST, model.getDefaultValue()));
     }
 
     void shouldInjectUnparseableIntegerCollection() {
@@ -301,12 +388,14 @@ abstract class RequestPropertyInjectorTestBase {
         assertNotNull(model.getValue());
         assertNotNull(model.getConstructorValue());
         assertNotNull(model.getValueSupplier().getValue());
-        assertTrue(CollectionUtils.isEqualCollection(EXPECTED_HALF_PARSED_INTEGER_LIST, model.getValue()));
+        assertTrue(collectionsAreEqual(EXPECTED_HALF_PARSED_INTEGER_LIST, model.getValue()));
         objectValueChecker.accept(model, HALF_PARSEABLE_INTEGERS);
-        assertTrue(CollectionUtils.isEqualCollection(EXPECTED_HALF_PARSED_INTEGER_LIST, model.getConstructorValue()));
-        assertTrue(CollectionUtils.isEqualCollection(EXPECTED_HALF_PARSED_INTEGER_LIST, model.getValueSupplier().getValue()));
+        assertTrue(collectionsAreEqual(EXPECTED_HALF_PARSED_INTEGER_LIST, model.getConstructorValue()));
+        assertTrue(collectionsAreEqual(EXPECTED_HALF_PARSED_INTEGER_LIST, model.getValueSupplier().getValue()));
     }
+    // endregion
 
+    // region Longs
     void shouldInjectLong(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker) {
         for (Object payload : Arrays.asList(
             EXPECTED_BYTE,
@@ -335,16 +424,29 @@ abstract class RequestPropertyInjectorTestBase {
         assertEquals(0L, model.getValueSupplier().getValue().longValue());
     }
 
-    void shouldInjectLongArray() {
-        shouldInjectLongArray(RequestPropertyInjectorTestBase::assertObjectValueEquals);
+    void shouldInjectDefaultLong() {
+        Longs model = context.request().adaptTo(Longs.class);
+        assertNotNull(model);
+        assertNotNull(model.getDefaultValue());
+        assertEquals(EXPECTED_DEFAULT_LONG, model.getDefaultValue().longValue());
+
+        prepareRequest(context.request(), EXPECTED_STRING);
+        model = context.request().adaptTo(Longs.class);
+        assertNotNull(model);
+        assertNotNull(model.getDefaultValue());
+        assertEquals(EXPECTED_DEFAULT_LONG, model.getDefaultValue().longValue());
     }
 
-    void shouldInjectLongArray(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker) {
-        Long[] objectArray = ArrayUtils.toObject(EXPECTED_LONG_ARRAY);
+    void shouldInjectLongArray() {
+        shouldInjectLongArray(RequestPropertyInjectorTestBase::assertObjectValueEquals, false);
+    }
+
+    void shouldInjectLongArray(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker, boolean skipStringified) {
+        Long[] objectArray = EXPECTED_LONG_ARRAY;
         for (Object payload : Arrays.asList(
             EXPECTED_BYTE_ARRAY,
             EXPECTED_INTEGER_ARRAY,
-            ArrayUtils.toObject(EXPECTED_INTEGER_ARRAY),
+            EXPECTED_INTEGER_ARRAY,
             EXPECTED_INTEGER_LIST,
             EXPECTED_LONG_ARRAY,
             EXPECTED_LONG_LIST,
@@ -358,6 +460,14 @@ abstract class RequestPropertyInjectorTestBase {
             objectValueChecker.accept(model, payload);
             assertArrayEquals(objectArray, model.getConstructorValue());
             assertArrayEquals(objectArray, model.getValueSupplier().getValue());
+            if (skipStringified) {
+                continue;
+            }
+            if (EXPECTED_INTEGER_ARRAY.equals(payload) || EXPECTED_LONG_LIST.equals(payload)) {
+                assertEquals(EXPECTED_INTEGER_ARRAY_STRING, model.getStringValue());
+            } else if (EXPECTED_DOUBLE_ARRAY.equals(payload) || EXPECTED_DOUBLE_LIST.equals(payload)) {
+                assertEquals(EXPECTED_DOUBLE_ARRAY_STRING, model.getStringValue());
+            }
         }
 
         prepareRequest(context.request(), EXPECTED_INTEGER);
@@ -369,11 +479,22 @@ abstract class RequestPropertyInjectorTestBase {
         assertEquals(EXPECTED_LONG, (long) model.getConstructorValue()[0]);
     }
 
-    void shouldInjectLongCollection() {
-        shouldInjectLongCollection(RequestPropertyInjectorTestBase::assertObjectValueEquals);
+    void shouldInjectDefaultLongArray() {
+        LongArrays model = context.request().adaptTo(LongArrays.class);
+        assertNotNull(model);
+        assertArrayEquals(EXPECTED_LONG_ARRAY, model.getDefaultValue());
+
+        prepareRequest(context.request(), EXPECTED_STRING);
+        model = context.request().adaptTo(LongArrays.class);
+        assertNotNull(model);
+        assertArrayEquals(EXPECTED_LONG_ARRAY, model.getDefaultValue());
     }
 
-    void shouldInjectLongCollection(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker) {
+    void shouldInjectLongCollection() {
+        shouldInjectLongCollection(RequestPropertyInjectorTestBase::assertObjectValueEquals, false);
+    }
+
+    void shouldInjectLongCollection(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker, boolean skipStringified) {
         for (Object payload : Arrays.asList(
             EXPECTED_BYTE_ARRAY,
             EXPECTED_INTEGER_ARRAY,
@@ -389,10 +510,18 @@ abstract class RequestPropertyInjectorTestBase {
             assertNotNull(model.getValue());
             assertNotNull(model.getConstructorValue());
             assertNotNull(model.getValueSupplier().getValue());
-            assertTrue(CollectionUtils.isEqualCollection(EXPECTED_LONG_LIST, model.getValue()));
+            assertTrue(collectionsAreEqual(EXPECTED_LONG_LIST, model.getValue()));
             objectValueChecker.accept(model, payload);
-            assertTrue(CollectionUtils.isEqualCollection(EXPECTED_LONG_LIST, model.getConstructorValue()));
-            assertTrue(CollectionUtils.isEqualCollection(EXPECTED_LONG_LIST, model.getValueSupplier().getValue()));
+            assertTrue(collectionsAreEqual(EXPECTED_LONG_LIST, model.getConstructorValue()));
+            assertTrue(collectionsAreEqual(EXPECTED_LONG_LIST, model.getValueSupplier().getValue()));
+            if (skipStringified) {
+                continue;
+            }
+            if (EXPECTED_INTEGER_ARRAY.equals(payload) || EXPECTED_LONG_LIST.equals(payload)) {
+                assertEquals(EXPECTED_INTEGER_ARRAY_STRING, model.getStringValue());
+            } else if (EXPECTED_DOUBLE_ARRAY.equals(payload) || EXPECTED_DOUBLE_LIST.equals(payload)) {
+                assertEquals(EXPECTED_DOUBLE_ARRAY_STRING, model.getStringValue());
+            }
         }
 
         prepareRequest(context.request(), EXPECTED_BYTE);
@@ -403,6 +532,12 @@ abstract class RequestPropertyInjectorTestBase {
         assertEquals(EXPECTED_LONG, model.getValue().toArray()[0]);
         assertEquals(1, model.getConstructorValue().size());
         assertEquals(EXPECTED_LONG, model.getConstructorValue().toArray()[0]);
+    }
+
+    void shouldInjectDefaultLongCollection() {
+        LongCollections model = context.request().adaptTo(LongCollections.class);
+        assertNotNull(model);
+        assertTrue(collectionsAreEqual(EXPECTED_LONG_LIST, model.getDefaultValue()));
     }
 
     void shouldInjectUnparseableLongCollection() {
@@ -416,12 +551,14 @@ abstract class RequestPropertyInjectorTestBase {
         assertNotNull(model.getValue());
         assertNotNull(model.getConstructorValue());
         assertNotNull(model.getValueSupplier().getValue());
-        assertTrue(CollectionUtils.isEqualCollection(EXPECTED_HALF_PARSED_LONG_LIST, model.getValue()));
+        assertTrue(collectionsAreEqual(EXPECTED_HALF_PARSED_LONG_LIST, model.getValue()));
         objectValueChecker.accept(model, HALF_PARSEABLE_INTEGERS);
-        assertTrue(CollectionUtils.isEqualCollection(EXPECTED_HALF_PARSED_LONG_LIST, model.getConstructorValue()));
-        assertTrue(CollectionUtils.isEqualCollection(EXPECTED_HALF_PARSED_LONG_LIST, model.getValueSupplier().getValue()));
+        assertTrue(collectionsAreEqual(EXPECTED_HALF_PARSED_LONG_LIST, model.getConstructorValue()));
+        assertTrue(collectionsAreEqual(EXPECTED_HALF_PARSED_LONG_LIST, model.getValueSupplier().getValue()));
     }
+    // endregion
 
+    // region Doubles
     void shouldInjectDouble(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker) {
         for (Object payload : Arrays.asList(
             EXPECTED_BYTE,
@@ -451,6 +588,19 @@ abstract class RequestPropertyInjectorTestBase {
         assertEquals(0, model.getValueSupplier().getValue().intValue());
     }
 
+    void shouldInjectDefaultDouble() {
+        Doubles model = context.request().adaptTo(Doubles.class);
+        assertNotNull(model);
+        assertNotNull(model.getDefaultValue());
+        assertEquals(EXPECTED_DEFAULT_DOUBLE, model.getDefaultValue(), 0.0001);
+
+        prepareRequest(context.request(), EXPECTED_STRING);
+        model = context.request().adaptTo(Doubles.class);
+        assertNotNull(model);
+        assertNotNull(model.getDefaultValue());
+        assertEquals(EXPECTED_DEFAULT_DOUBLE, model.getDefaultValue(), 0.0001);
+    }
+
     void shouldInjectDoubleArray() {
         shouldInjectDoubleArray(RequestPropertyInjectorTestBase::assertObjectValueEquals);
     }
@@ -469,10 +619,15 @@ abstract class RequestPropertyInjectorTestBase {
             prepareRequest(context.request(), payload);
             DoubleArrays model = context.request().adaptTo(DoubleArrays.class);
             assertNotNull(model);
-            assertArrayEquals(EXPECTED_DOUBLE_ARRAY, ArrayUtils.toPrimitive(model.getValue()), delta);
+            assertTrue(doubleArraysAreEqual(EXPECTED_DOUBLE_ARRAY, model.getValue(),delta));
             objectValueChecker.accept(model, payload);
-            assertArrayEquals(EXPECTED_DOUBLE_ARRAY, ArrayUtils.toPrimitive(model.getConstructorValue()), delta);
-            assertArrayEquals(EXPECTED_DOUBLE_ARRAY, ArrayUtils.toPrimitive(model.getValueSupplier().getValue()), delta);
+            assertTrue(doubleArraysAreEqual(EXPECTED_DOUBLE_ARRAY, model.getConstructorValue(), delta));
+            assertTrue(doubleArraysAreEqual(EXPECTED_DOUBLE_ARRAY, model.getValueSupplier().getValue(), delta));
+            if (EXPECTED_INTEGER_ARRAY.equals(payload) || EXPECTED_LONG_LIST.equals(payload)) {
+                assertEquals(EXPECTED_INTEGER_ARRAY_STRING, model.getStringValue());
+            } else if (EXPECTED_DOUBLE_ARRAY.equals(payload) || EXPECTED_DOUBLE_LIST.equals(payload)) {
+                assertEquals(EXPECTED_DOUBLE_ARRAY_STRING, model.getStringValue());
+            }
         }
 
         prepareRequest(context.request(), EXPECTED_DOUBLE);
@@ -484,25 +639,19 @@ abstract class RequestPropertyInjectorTestBase {
         assertEquals(EXPECTED_DOUBLE, model.getConstructorValue()[0], 0.0d);
     }
 
+    void shouldInjectDefaultDoubleArray() {
+        DoubleArrays model = context.request().adaptTo(DoubleArrays.class);
+        assertNotNull(model);
+        assertTrue(doubleArraysAreEqual(EXPECTED_DOUBLE_ARRAY, model.getDefaultValue(), 0.0001d));
+
+        prepareRequest(context.request(), EXPECTED_STRING_ARRAY);
+        model = context.request().adaptTo(DoubleArrays.class);
+        assertNotNull(model);
+        assertTrue(doubleArraysAreEqual(EXPECTED_DOUBLE_ARRAY, model.getDefaultValue(), 0.0001d));
+    }
+
     void shouldInjectDoubleCollection() {
         shouldInjectDoubleCollection(RequestPropertyInjectorTestBase::assertObjectValueEquals);
-    }
-
-    void shouldInjectUnparseableDoubleCollection() {
-        shouldInjectUnparseableDoubleCollection(RequestPropertyInjectorTestBase::assertObjectValueEquals);
-    }
-
-    void shouldInjectUnparseableDoubleCollection(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker) {
-        prepareRequest(context.request(), HALF_PARSEABLE_FLOATING_POINT_VALUES);
-        DoubleCollections model = context.request().adaptTo(DoubleCollections.class);
-        assertNotNull(model);
-        assertNotNull(model.getValue());
-        assertNotNull(model.getConstructorValue());
-        assertNotNull(model.getValueSupplier().getValue());
-        assertTrue(isEqualCollection(EXPECTED_HALF_PARSED_DOUBLE_LIST, model.getValue(), 0.01d));
-        objectValueChecker.accept(model, HALF_PARSEABLE_FLOATING_POINT_VALUES);
-        assertTrue(isEqualCollection(EXPECTED_HALF_PARSED_DOUBLE_LIST, model.getConstructorValue(), 0.01d));
-        assertTrue(isEqualCollection(EXPECTED_HALF_PARSED_DOUBLE_LIST, model.getValueSupplier().getValue(), 0.01d));
     }
 
     void shouldInjectDoubleCollection(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker) {
@@ -519,10 +668,15 @@ abstract class RequestPropertyInjectorTestBase {
             prepareRequest(context.request(), payload);
             DoubleCollections model = context.request().adaptTo(DoubleCollections.class);
             assertNotNull(model);
-            assertTrue(isEqualCollection(EXPECTED_DOUBLE_LIST, model.getValue(), delta));
+            assertTrue(doubleCollectionsAreEqual(EXPECTED_DOUBLE_LIST, model.getValue(), delta));
             objectValueChecker.accept(model, payload);
-            assertTrue(isEqualCollection(EXPECTED_DOUBLE_LIST, model.getConstructorValue(), delta));
-            assertTrue(isEqualCollection(EXPECTED_DOUBLE_LIST, model.getValueSupplier().getValue(), delta));
+            assertTrue(doubleCollectionsAreEqual(EXPECTED_DOUBLE_LIST, model.getConstructorValue(), delta));
+            assertTrue(doubleCollectionsAreEqual(EXPECTED_DOUBLE_LIST, model.getValueSupplier().getValue(), delta));
+            if (EXPECTED_BYTE_ARRAY.equals(payload) || EXPECTED_LONG_LIST.equals(payload)) {
+                assertEquals(EXPECTED_INTEGER_ARRAY_STRING, model.getStringValue());
+            } else if (EXPECTED_DOUBLE_ARRAY.equals(payload) || EXPECTED_DOUBLE_LIST.equals(payload)) {
+                assertEquals(EXPECTED_DOUBLE_ARRAY_STRING, model.getStringValue());
+            }
         }
 
         prepareRequest(context.request(), EXPECTED_FLOAT);
@@ -534,7 +688,35 @@ abstract class RequestPropertyInjectorTestBase {
         assertEquals(EXPECTED_DOUBLE, (double) model.getConstructorValue().toArray()[0], 0.01d);
     }
 
+    void shouldInjectDefaultDoubleCollection() {
+        DoubleCollections model = context.request().adaptTo(DoubleCollections.class);
+        assertNotNull(model);
+        assertTrue(collectionsAreEqual(
+            EXPECTED_DOUBLE_LIST,
+            model.getDefaultValue(),
+            (first, second) -> Math.abs(first - (double) second) < 0.0001));
+        assertEquals(EXPECTED_DOUBLE_ARRAY_STRING, model.getDefaultStringValue());
+    }
 
+    void shouldInjectUnparseableDoubleCollection() {
+        shouldInjectUnparseableDoubleCollection(RequestPropertyInjectorTestBase::assertObjectValueEquals);
+    }
+
+    void shouldInjectUnparseableDoubleCollection(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker) {
+        prepareRequest(context.request(), HALF_PARSEABLE_FLOATING_POINT_VALUES);
+        DoubleCollections model = context.request().adaptTo(DoubleCollections.class);
+        assertNotNull(model);
+        assertNotNull(model.getValue());
+        assertNotNull(model.getConstructorValue());
+        assertNotNull(model.getValueSupplier().getValue());
+        assertTrue(doubleCollectionsAreEqual(EXPECTED_HALF_PARSED_DOUBLE_LIST, model.getValue(), 0.01d));
+        objectValueChecker.accept(model, HALF_PARSEABLE_FLOATING_POINT_VALUES);
+        assertTrue(doubleCollectionsAreEqual(EXPECTED_HALF_PARSED_DOUBLE_LIST, model.getConstructorValue(), 0.01d));
+        assertTrue(doubleCollectionsAreEqual(EXPECTED_HALF_PARSED_DOUBLE_LIST, model.getValueSupplier().getValue(), 0.01d));
+    }
+    // endregion
+
+    // region Booleans
     void shouldInjectBoolean() {
         shouldInjectBoolean(RequestPropertyInjectorTestBase::assertObjectValueEquals);
     }
@@ -549,22 +731,39 @@ abstract class RequestPropertyInjectorTestBase {
         assertTrue(model.getValueSupplier().getValue());
     }
 
-    void shouldInjectBooleanArray() {
-        shouldInjectBooleanArray(RequestPropertyInjectorTestBase::assertObjectValueEquals);
+    void shouldInjectDefaultBoolean() {
+        Booleans model = context.request().adaptTo(Booleans.class);
+        assertNotNull(model);
+        assertTrue(model.getDefaultValue());
+        assertEquals(Boolean.TRUE.toString(), model.getDefaultStringValue());
+
+        prepareRequest(context.request(), EXPECTED_STRING);
+        model = context.request().adaptTo(Booleans.class);
+        assertNotNull(model);
+        assertTrue(model.getDefaultValue());
     }
 
-    void shouldInjectBooleanArray(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker) {
+    void shouldInjectBooleanArray() {
+        shouldInjectBooleanArray(RequestPropertyInjectorTestBase::assertObjectValueEquals, false);
+    }
+
+    void shouldInjectBooleanArray(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker, boolean skipStringified) {
         for (Object payload : Arrays.asList(
             EXPECTED_BOOLEAN_ARRAY,
-            ArrayUtils.toObject(EXPECTED_BOOLEAN_ARRAY))) {
+            ArrayUtils.toPrimitive(EXPECTED_BOOLEAN_ARRAY))) {
 
             prepareRequest(context.request(), payload);
             BooleanArrays model = context.request().adaptTo(BooleanArrays.class);
             assertNotNull(model);
-            assertArrayEquals(EXPECTED_BOOLEAN_ARRAY, ArrayUtils.toPrimitive(model.getValue()));
+            assertArrayEquals(EXPECTED_BOOLEAN_ARRAY, model.getValue());
             objectValueChecker.accept(model, payload);
-            assertArrayEquals(EXPECTED_BOOLEAN_ARRAY, ArrayUtils.toPrimitive(model.getConstructorValue()));
-            assertArrayEquals(EXPECTED_BOOLEAN_ARRAY, ArrayUtils.toPrimitive(model.getValueSupplier().getValue()));
+            assertArrayEquals(EXPECTED_BOOLEAN_ARRAY, model.getConstructorValue());
+            assertArrayEquals(EXPECTED_BOOLEAN_ARRAY, model.getValueSupplier().getValue());
+            if (skipStringified) {
+                continue;
+            }
+            assertEquals(EXPECTED_BOOLEAN_ARRAY_STRING, model.getStringValue());
+            assertEquals(EXPECTED_BOOLEAN_ARRAY_STRING, model.getDefaultStringValue());
         }
 
         prepareRequest(context.request(), true);
@@ -576,11 +775,22 @@ abstract class RequestPropertyInjectorTestBase {
         assertTrue(model.getConstructorValue()[0]);
     }
 
-    void shouldInjectBooleanCollection() {
-        shouldInjectBooleanCollection(RequestPropertyInjectorTestBase::assertObjectValueEquals);
+    void shouldInjectDefaultBooleanArray() {
+        BooleanArrays model = context.request().adaptTo(BooleanArrays.class);
+        assertNotNull(model);
+        assertTrue(arraysAreEqual(EXPECTED_BOOLEAN_ARRAY, model.getDefaultValue()));
+
+        prepareRequest(context.request(), EXPECTED_STRING_ARRAY);
+        model = context.request().adaptTo(BooleanArrays.class);
+        assertNotNull(model);
+        assertTrue(arraysAreEqual(EXPECTED_BOOLEAN_ARRAY, model.getDefaultValue()));
     }
 
-    void shouldInjectBooleanCollection(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker) {
+    void shouldInjectBooleanCollection() {
+        shouldInjectBooleanCollection(RequestPropertyInjectorTestBase::assertObjectValueEquals, false);
+    }
+
+    void shouldInjectBooleanCollection(BiConsumer<RequestAdapterBase<?>, Object> objectValueChecker, boolean skipStringified) {
         for (Object payload : Arrays.asList(
             EXPECTED_BOOLEAN_ARRAY,
             EXPECTED_BOOLEAN_LIST)) {
@@ -591,10 +801,15 @@ abstract class RequestPropertyInjectorTestBase {
             assertNotNull(model.getValue());
             assertNotNull(model.getConstructorValue());
             assertNotNull(model.getValueSupplier().getValue());
-            assertTrue(CollectionUtils.isEqualCollection(EXPECTED_BOOLEAN_LIST, model.getValue()));
+            assertTrue(collectionsAreEqual(EXPECTED_BOOLEAN_LIST, model.getValue()));
             objectValueChecker.accept(model, payload);
-            assertTrue(CollectionUtils.isEqualCollection(EXPECTED_BOOLEAN_LIST, model.getConstructorValue()));
-            assertTrue(CollectionUtils.isEqualCollection(EXPECTED_BOOLEAN_LIST, model.getValueSupplier().getValue()));
+            assertTrue(collectionsAreEqual(EXPECTED_BOOLEAN_LIST, model.getConstructorValue()));
+            assertTrue(collectionsAreEqual(EXPECTED_BOOLEAN_LIST, model.getValueSupplier().getValue()));
+            if (skipStringified) {
+                continue;
+            }
+            assertEquals(EXPECTED_BOOLEAN_ARRAY_STRING, model.getStringValue());
+            assertEquals(EXPECTED_BOOLEAN_ARRAY_STRING, model.getDefaultStringValue());
         }
 
         prepareRequest(context.request(), true);
@@ -606,6 +821,13 @@ abstract class RequestPropertyInjectorTestBase {
         assertTrue((boolean) model.getConstructorValue().toArray()[0]);
     }
 
+    void shouldInjectDefaultBooleanCollection() {
+        BooleanCollections model = context.request().adaptTo(BooleanCollections.class);
+        assertNotNull(model);
+        assertTrue(collectionsAreEqual(EXPECTED_BOOLEAN_LIST, model.getDefaultValue()));
+    }
+    //endregion
+
     void shouldNotCauseExceptionWhenPayloadMissing() {
         prepareRequest(context.request(), null);
         for (Class<? extends RequestAdapterBase<?>> testClass : GENERIC_TEST_CASES) {
@@ -614,14 +836,70 @@ abstract class RequestPropertyInjectorTestBase {
         }
     }
 
-    /* ---------------
-       Service methods
-       --------------- */
+    /* ----------
+       Assertions
+       ---------- */
 
     private static void assertObjectValueEquals(RequestAdapterBase<?> model, Object payload) {
         assertNotNull(model.getObjectValue());
         assertEquals(payload, model.getObjectValue());
     }
+
+    @SuppressWarnings("SameParameterValue")
+    private static <T> boolean arraysAreEqual(T[] expected, T[] actual) {
+        return arraysAreEqual(expected, actual, (first, second) -> first == second);
+    }
+
+    private static <T> boolean arraysAreEqual(T[] expected, T[] actual, BiPredicate<T, T> comparator) {
+        if (expected == null || actual == null || expected.length != actual.length) {
+            return false;
+        }
+        for (int i = 0; i < expected.length; i++) {
+            if (!comparator.test(expected[i], actual[i])) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private static boolean doubleArraysAreEqual(Double[] expected, Double[] actual, double delta) {
+        return arraysAreEqual(
+            expected,
+            actual,
+            (first, second) -> Math.abs(first - (double) second) < delta);
+    }
+
+    private static <T> boolean collectionsAreEqual(Collection<T> expected, Collection<T> actual) {
+        return collectionsAreEqual(expected, actual, Objects::equals);
+    }
+
+    private static <T> boolean collectionsAreEqual(Collection<T> expected, Collection<T> actual, BiPredicate<T, T> comparator) {
+        if (expected == null || actual == null || expected.size() != actual.size()) {
+            return false;
+        }
+        Iterator<T> expectedIterator = expected.iterator();
+        Iterator<T> actualIterator = actual.iterator();
+        while (expectedIterator.hasNext() && actualIterator.hasNext()) {
+            T expectedEntry = expectedIterator.next();
+            T actualEntry = actualIterator.next();
+            if (!comparator.test(expectedEntry, actualEntry)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static boolean doubleCollectionsAreEqual(Collection<Double> expected, Collection<Double> actual, double delta) {
+        return collectionsAreEqual(
+            expected,
+            actual,
+            (first, second) -> Math.abs(first - (double) second) < delta);
+    }
+
+    /* ---------------
+       Service methods
+       --------------- */
 
     private static <T> Object[] toObjectArray(T[] value) {
         Object[] result = new Object[value.length];
@@ -637,18 +915,5 @@ abstract class RequestPropertyInjectorTestBase {
             result = 0d;
         }
         return result;
-    }
-
-    @SuppressWarnings("SameParameterValue")
-    private static boolean isEqualCollection(Collection<Double> expected, Collection<Double> actual, double delta) {
-        if (expected == null || actual == null || expected.size() != actual.size()) {
-            return false;
-        }
-        for (Double value : expected) {
-            if (actual.stream().filter(a -> Math.abs(a - value) < delta).count() != 1) {
-                return false;
-            }
-        }
-        return true;
     }
 }

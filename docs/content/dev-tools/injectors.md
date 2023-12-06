@@ -338,3 +338,63 @@ public class SampleModel {
 Note: this annotation can be used with either a field, a method, or a constructor argument. When using with a
 constructor, write it like `(@I18N @Named String argument)` and annotate the constructor itself with `@Inject`.
 
+## Injector for enums
+
+The *ToolKit* provides a special injector for Enum-typed values. Surely, a Sling resource cannot store an enum-typed value.
+Neither does a Sling request parameter, or selector, or suffix. However enum values are convenient to operate inside
+Sling models as part of Java logic. We can always "deserialize" an enum value from its string representation and inject
+into an enum-typed class member. The `@EnumValue` annotation is designed for this purpose.
+
+```java
+public class SampleModel {
+    // ...
+    @EnumValue
+    private MyEnum enumValue;
+
+    @EnumValue(valueMember = "myMethod")
+    private MyEnum[] enumValues;
+
+    @EnumValue
+    private List<MyEnum> enumList;
+}
+```
+ As the *ToolKit* retrieves a string for an enum value, it reads the type of the enum from the underlying class member
+and then enumerates through the enum constants of that type. The constant that matches the string is then injected.
+
+The matching is performed by: a) return value of the constant's `name()` method; b) return value of the constant's
+`toString()` method; c) return value of the method referenced in `@EnumValue(valueMember = "...")` property.
+
+## Use Sling's @Default where appropriate
+
+The *ToolKit*'s injector annotations work well with the standard [@Default](https://sling.apache.org/documentation/bundles/models.html#defaults-1) annotation. This way, you can
+specify a default value for a class member in case the corresponding resource property is not present or is empty. You may,
+for example, want to inject query parameters into a _List_-typed field. If the parameters are missing from the request,
+you are still able to populate the _List_ with the array of default values.
+
+```java
+public class SampleModel {
+    // ...
+    @RequestParam
+    @Default(values = {"/content/path1", "/content/path2"})
+    private List<String> paths;
+}
+```
+
+For the values specified inside `@Default`, the same (generous) type casting rules apply as for "usual" cases. That is
+why it's all right to, e.g., have a String-typed value backed by an array of integers like in the following example:
+
+```java
+public class SampleModel {
+    // ...
+    @RequestParam
+    @Default(intValues = {1, 2, 3})
+    private String value;
+}
+```
+ Defaults for enum values are supported via the String-typed property of `@Default`.
+
+<u>Please note</u>: the type casting mechanism of the *ToolKit*'s injectors exceeds the limitations of the pure Sling
+Models framework. Therefore, as you experiment with injectors annotations and defaults you may observe log messages like:
+"_Cannot provide default for java.util.Collection<Integer>"_ or else _Default values for class &lt;EnumClass>
+are not supported_", etc. There can also be warnings from a linter in your IDE set up with a typical AEM ruleset.
+Consider such cases individually and do testing to make sure that some feature actually works for you or it does not.

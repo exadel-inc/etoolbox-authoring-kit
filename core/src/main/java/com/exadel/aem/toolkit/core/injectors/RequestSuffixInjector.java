@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.models.spi.Injector;
+import org.apache.sling.models.spi.injectorspecific.StaticInjectAnnotationProcessorFactory;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 
@@ -36,9 +37,9 @@ import com.exadel.aem.toolkit.core.injectors.utils.TypeUtil;
  * @see BaseInjector
  */
 @Component(
-    service = Injector.class,
+    service = {Injector.class, StaticInjectAnnotationProcessorFactory.class},
     property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING)
-public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
+public class RequestSuffixInjector extends DefaultAwareInjector<RequestSuffix> {
 
     public static final String NAME = "eak-request-suffix-injector";
 
@@ -64,8 +65,9 @@ public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
-    public Object getValue(
+    public Injectable getValue(
         Object adaptable,
         String name,
         Type type,
@@ -73,9 +75,9 @@ public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
 
         SlingHttpServletRequest request = AdaptationUtil.getRequest(adaptable);
         if (request == null) {
-            return null;
+            return Injectable.EMPTY;
         }
-        return getValue(request, type);
+        return Injectable.of(getValue(request, type));
     }
 
     /**
@@ -98,5 +100,4 @@ public class RequestSuffixInjector extends BaseInjector<RequestSuffix> {
         }
         return null;
     }
-
 }

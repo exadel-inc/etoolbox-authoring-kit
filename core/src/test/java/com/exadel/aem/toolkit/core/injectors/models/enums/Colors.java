@@ -35,4 +35,10 @@ public enum Colors {
     public int getIntValue() {
         return intValue;
     }
+
+
+    @Override
+    public String toString() {
+        return hexValue;
+    }
 }

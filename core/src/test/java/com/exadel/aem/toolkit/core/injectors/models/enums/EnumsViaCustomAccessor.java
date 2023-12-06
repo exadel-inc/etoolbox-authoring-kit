@@ -19,6 +19,7 @@ import javax.inject.Named;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
@@ -41,6 +42,10 @@ public class EnumsViaCustomAccessor extends RequestAdapterBase<Colors> {
     @Named()
     private Colors value;
 
+    @EnumValue
+    @Default(values = ColorConstants.VALUE_RED)
+    private Colors defaultValue;
+
     @Self
     private Supplier supplier;
 
@@ -54,6 +59,11 @@ public class EnumsViaCustomAccessor extends RequestAdapterBase<Colors> {
     @Nullable
     public Colors getValue() {
         return value;
+    }
+
+    @Override
+    public Colors getDefaultValue() {
+        return defaultValue;
     }
 
     @Nullable

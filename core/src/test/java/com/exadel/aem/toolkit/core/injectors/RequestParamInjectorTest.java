@@ -71,11 +71,21 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
     }
 
     @Test
+    public void shouldInjectDefaultString() {
+        super.shouldInjectDefaultString();
+    }
+
+    @Test
     public void shouldInjectStringArray() {
         super.shouldInjectStringArray((model, payload) -> {
             assertTrue(model.getObjectValue() instanceof RequestParameter);
             assertEquals(extractFirstElement(payload), ((RequestParameter) model.getObjectValue()).getString());
         });
+    }
+
+    @Test
+    public void shouldInjectDefaultStringArray() {
+        super.shouldInjectDefaultStringArray();
     }
 
     @Test
@@ -87,18 +97,38 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
     }
 
     @Test
+    public void shouldInjectDefaultStringCollection() {
+        super.shouldInjectDefaultStringCollection();
+    }
+
+    @Test
     public void shouldInjectInteger() {
         super.shouldInjectInteger(RequestParamInjectorTest::assertObjectValueEquals);
     }
 
     @Test
+    public void shouldInjectDefaultInteger() {
+        super.shouldInjectDefaultInteger();
+    }
+
+    @Test
     public void shouldInjectIntegerArray() {
-        super.shouldInjectIntegerCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+        super.shouldInjectIntegerCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals, false);
+    }
+
+    @Test
+    public void shouldInjectDefaultIntegerArray() {
+        super.shouldInjectDefaultIntegerArray();
     }
 
     @Test
     public void shouldInjectIntegerCollection() {
-        super.shouldInjectIntegerCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+        super.shouldInjectIntegerCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals, false);
+    }
+
+    @Test
+    public void shouldInjectDefaultIntegerCollection() {
+        super.shouldInjectDefaultIntegerCollection();
     }
 
     @Test
@@ -112,13 +142,28 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
     }
 
     @Test
+    public void shouldInjectDefaultLong() {
+        super.shouldInjectDefaultLong();
+    }
+
+    @Test
     public void shouldInjectLongArray() {
-        super.shouldInjectLongArray(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+        super.shouldInjectLongArray(RequestParamInjectorTest::assertArrayOrCollectionValueEquals, false);
+    }
+
+    @Test
+    public void shouldInjectDefaultLongArray() {
+        super.shouldInjectDefaultLongArray();
     }
 
     @Test
     public void shouldInjectLongCollection() {
-        super.shouldInjectLongCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+        super.shouldInjectLongCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals, false);
+    }
+
+    @Test
+    public void shouldInjectDefaultLongCollection() {
+        super.shouldInjectDefaultLongCollection();
     }
 
     @Test
@@ -132,13 +177,28 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
     }
 
     @Test
+    public void shouldInjectDefaultDouble() {
+        super.shouldInjectDefaultDouble();
+    }
+
+    @Test
     public void shouldInjectDoubleArray() {
         super.shouldInjectDoubleArray(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
     }
 
     @Test
+    public void shouldInjectDefaultDoubleArray() {
+        super.shouldInjectDefaultDoubleArray();
+    }
+
+    @Test
     public void shouldInjectDoubleCollection() {
         super.shouldInjectDoubleCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+    }
+
+    @Test
+    public void shouldInjectDefaultDoubleCollection() {
+        super.shouldInjectDefaultDoubleCollection();
     }
 
     @Test
@@ -152,13 +212,28 @@ public class RequestParamInjectorTest extends RequestPropertyInjectorTestBase {
     }
 
     @Test
+    public void shouldInjectDefaultBoolean() {
+        super.shouldInjectDefaultBoolean();
+    }
+
+    @Test
     public void shouldInjectBooleanArray() {
-        super.shouldInjectBooleanArray(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+        super.shouldInjectBooleanArray(RequestParamInjectorTest::assertArrayOrCollectionValueEquals, false);
+    }
+
+    @Test
+    public void shouldInjectDefaultBooleanArray() {
+        super.shouldInjectDefaultBooleanArray();
     }
 
     @Test
     public void shouldInjectBooleanCollection() {
-        super.shouldInjectBooleanCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals);
+        super.shouldInjectBooleanCollection(RequestParamInjectorTest::assertArrayOrCollectionValueEquals, false);
+    }
+
+    @Test
+    public void shouldInjectDefaultBooleanCollection() {
+        super.shouldInjectDefaultBooleanCollection();
     }
 
     @Test

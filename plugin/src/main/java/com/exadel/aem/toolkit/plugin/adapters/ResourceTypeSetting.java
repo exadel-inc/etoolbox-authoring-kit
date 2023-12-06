@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.plugin.metadata.Metadata;
 import com.exadel.aem.toolkit.plugin.metadata.Property;
 
 /**
- * Implements {@link Adapts} for extracting appropriate {@code sling:resourceType} value from a {@link Source} object
+ * Adapts a {@link Source} object in order to extract an appropriate {@code sling:resourceType} value
  */
 @Adapts(Source.class)
 public class ResourceTypeSetting {

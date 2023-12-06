@@ -22,6 +22,7 @@ import javax.inject.Named;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
@@ -40,6 +41,10 @@ public class EnumCollections extends RequestAdapterBase<Collection<Colors>> {
     @EnumValue
     private Collection<Colors> arrayValue;
 
+    @EnumValue
+    @Default(values = {ColorConstants.VALUE_YELLOW, ColorConstants.VALUE_ORANGE})
+    private Collection<Colors> defaultValue;
+
     @Self
     private Supplier supplier;
 
@@ -50,9 +55,15 @@ public class EnumCollections extends RequestAdapterBase<Collection<Colors>> {
         this.constructorValue = arrayValue;
     }
 
+    @Override
     @Nullable
     public Collection<Colors> getValue() {
         return arrayValue;
+    }
+
+    @Override
+    public Collection<Colors> getDefaultValue() {
+        return defaultValue;
     }
 
     @Nullable
