@@ -10,7 +10,7 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             -   name: "CLA Assistant"
-                if: (github.event.comment.body == 'recheckcla' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
+                if: (github.event.comment.body == 'recheck' || github.event.comment.body == 'recheckcla' || github.event.comment.body == 'I have read the CLA Document and I hereby sign the CLA') || github.event_name == 'pull_request_target'
                 # Alpha Release
                 uses: cla-assistant/github-action@v2.1.3-beta
                 env:
@@ -20,7 +20,7 @@ jobs:
                     path-to-signatures: 'signatures/version1/cla.json'
                     path-to-document: 'https://github.com/exadel-inc/aem-authoring-toolkit/blob/master/CLA.md'
                     branch: 'cla'
-                    allowlist: bot*,*kaliada*
+                    allowlist: bot*
 
                     create-file-commit-message: '[Tech] Created file for storing CLA Signatures'
                     signed-commit-message: '[Tech] $contributorName has signed the CLA in #$pullRequestNo'
