@@ -60,11 +60,11 @@ class RegressionAssetHelper {
     }
 
     @SuppressWarnings("SameParameterValue")
-    Path retainPackages(File projectDirectory, String selector) {
+    Path retainPackages(Path projectDirectory, String selector) {
         return retainPackages(projectDirectory, getTempRoot().resolve(selector));
     }
 
-    Path retainPackages(File projectDirectory, Path storePath) {
+    Path retainPackages(Path projectDirectory, Path storePath) {
         List<File> packageFiles = getPackages(projectDirectory);
         Assert.assertFalse("Could not find any packages at " + projectDirectory, packageFiles.isEmpty());
         try {
@@ -91,15 +91,15 @@ class RegressionAssetHelper {
         }
     }
 
-    private static List<File> getPackages(File directory) {
-        try (Stream<Path> paths = Files.walk(Paths.get(directory.getAbsolutePath()))){
+    private static List<File> getPackages(Path directory) {
+        try (Stream<Path> paths = Files.walk(directory)) {
             return paths
                 .filter(path -> StringUtils.contains(path.toString(), File.separator + "target" + File.separator))
                 .filter(path -> StringUtils.endsWithIgnoreCase(path.getFileName().toString(), ".zip"))
                 .map(Path::toFile)
                 .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new AssertionError("Could not enumerate package files at "+ directory.getAbsolutePath(), e);
+            throw new AssertionError("Could not enumerate package files at "+ directory, e);
         }
     }
 }

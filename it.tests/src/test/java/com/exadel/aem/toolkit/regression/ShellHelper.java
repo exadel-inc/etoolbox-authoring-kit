@@ -15,9 +15,12 @@ package com.exadel.aem.toolkit.regression;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.plexus.util.cli.Commandline;
 
@@ -26,26 +29,28 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 class ShellHelper {
 
     static final String MAVEN_PROP_FORMAT = "-D%s=%s";
-    static final String MAVEN_SNAPSHOT_VERSION = "0.0.1-SNAPSHOT";
     private static final String MAVEN_OPTION_BATCH = "--batch-mode";
 
     private ShellHelper() {
     }
 
-    static Commandline getBuildCommand(ProjectSettings settings) {
+    static Commandline getBuildCommand(RegressionSettings settings, ProjectInfo project, String version) {
         Commandline commandLine = new Commandline(settings.getMavenExecutable());
         commandLine.addArguments(new String[]{
             "package",
             String.format(MAVEN_PROP_FORMAT, "maven.test.skip", true),
             MAVEN_OPTION_BATCH});
-        if (StringUtils.isNotBlank(settings.getModules())) {
-            commandLine.addArguments(new String[]{"-pl", settings.getModules()});
+        if (CollectionUtils.isNotEmpty(project.getOptions())) {
+            Map<String, String> interpolatableValues = new HashMap<>();
+            interpolatableValues.put(RegressionSettings.PROPERTY_VERSION, version);
+            interpolatableValues.put("version", version);
+            commandLine.addArguments(project.getOptions(interpolatableValues).toArray(new String[0]));
         }
-        commandLine.setWorkingDirectory(settings.getProjectDirectory());
+        commandLine.setWorkingDirectory(project.getDirectory().toFile());
         return commandLine;
     }
 
-    static Commandline getDownloadCommand(ProjectSettings settings, String artifact, Path repoDirectory) {
+    static Commandline getDownloadCommand(RegressionSettings settings, String artifact, Path repoDirectory) {
         Commandline commandLine = new Commandline(settings.getMavenExecutable());
         commandLine.addArguments(new String[]{
             "dependency:get",
@@ -58,7 +63,7 @@ class ShellHelper {
         return commandLine;
     }
 
-    static Commandline getInstallCommand(ProjectSettings settings, ArtifactInfo artifact, Path repoDirectory) {
+    static Commandline getInstallCommand(RegressionSettings settings, ArtifactInfo artifact, Path repoDirectory) {
         Commandline commandLine = new Commandline(settings.getMavenExecutable());
         String packaging = artifact.getPackaging();
         if (ArtifactInfo.PACKAGING_CONTENT.equals(packaging)) {
@@ -72,11 +77,16 @@ class ShellHelper {
             String.format(MAVEN_PROP_FORMAT, "version", artifact.getVersion()),
             String.format(MAVEN_PROP_FORMAT, "packaging", packaging),
             MAVEN_OPTION_BATCH});
+        if (!ArtifactInfo.PACKAGING_POM.equals(artifact.getPackaging())) {
+            commandLine.addArguments(new String[]{
+                String.format(MAVEN_PROP_FORMAT, "pomFile", artifact.getPomPath())
+            });
+        }
         commandLine.setWorkingDirectory(repoDirectory.toFile());
         return commandLine;
     }
 
-    static Commandline getPurgeCommand(ProjectSettings settings, List<ArtifactInfo> artifacts) {
+    static Commandline getPurgeCommand(RegressionSettings settings, List<ArtifactInfo> artifacts) {
         Commandline commandLine = new Commandline(settings.getMavenExecutable());
         String artifactsLine = artifacts
             .stream()
