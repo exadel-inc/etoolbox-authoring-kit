@@ -36,11 +36,13 @@ class ArtifactInfo {
     private String path;
     private String pomPath;
     private String version;
+    private String fallbackVersion;
 
     ArtifactInfo(String groupId, String id, String version, String packaging) {
         this.groupId = groupId;
         this.id = id;
         this.version = version;
+        this.fallbackVersion = version;
         this.packaging = packaging;
     }
 
@@ -82,6 +84,10 @@ class ArtifactInfo {
 
     void setVersion(String value) {
         version = value;
+    }
+
+    void resetVersion() {
+        version = fallbackVersion;
     }
 
     String getFileExtension() {

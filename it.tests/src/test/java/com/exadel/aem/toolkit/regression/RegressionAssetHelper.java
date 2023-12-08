@@ -89,6 +89,7 @@ class RegressionAssetHelper {
         } catch (IOException e) {
             RegressionTest.LOG.warn("Could not clean up {}", tempDirectory, e);
         }
+        tempDirectory = null;
     }
 
     private static List<File> getPackages(Path directory) {

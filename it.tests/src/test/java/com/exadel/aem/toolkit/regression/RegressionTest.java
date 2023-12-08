@@ -51,17 +51,17 @@ public class RegressionTest {
     @Test
     public void doRegression() {
         settings.validate();
+        LOG.info("Using Maven executable {}", settings.getMavenExecutable());
         for (ProjectInfo project : settings.getProjects()) {
             project.validate();
             doRegression(project);
+            settings.getEakArtifacts().forEach(ArtifactInfo::resetVersion);
         }
     }
 
     private void doRegression(ProjectInfo project) {
         LOG.info("Using project {}", project.getDirectory());
         LOG.info("Comparing version {} to {}", project.getDeclaredEakVersion(), settings.getCurrentEakVersion());
-        LOG.info("Using Maven executable {}", settings.getMavenExecutable());
-
         try {
             boolean versionsAreEqual = StringUtils.equals(project.getDeclaredEakVersion(), settings.getCurrentEakVersion())
                 && StringUtils.contains(settings.getCurrentEakVersion(), "-SNAPSHOT");
