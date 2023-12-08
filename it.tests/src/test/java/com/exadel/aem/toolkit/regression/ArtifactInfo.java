@@ -26,8 +26,7 @@ class ArtifactInfo {
     static final String PACKAGING_POM = "pom";
 
     static final String EXTENSION_ZIP = "zip";
-    private static final String EXTENSION_JAR = "jar";
-    private static final String EXTENSION_POM = PACKAGING_POM;
+    static final String EXTENSION_JAR = "jar";
 
     private final String groupId;
     private final String id;
@@ -86,8 +85,8 @@ class ArtifactInfo {
     }
 
     String getFileExtension() {
-        if (EXTENSION_POM.equals(packaging)) {
-            return EXTENSION_POM;
+        if (PACKAGING_POM.equals(packaging)) {
+            return PACKAGING_POM;
         }
         if (PACKAGING_CONTENT.equals(packaging)) {
             return EXTENSION_ZIP;
@@ -117,7 +116,7 @@ class ArtifactInfo {
         if (PACKAGING_POM.equals(packaging)) {
             pomPath = path;
         } else {
-            target = resolve(root, EXTENSION_POM);
+            target = resolve(root, PACKAGING_POM);
             pomPath = target.toFile().exists() ? target.toAbsolutePath().toString() : null;
         }
     }
