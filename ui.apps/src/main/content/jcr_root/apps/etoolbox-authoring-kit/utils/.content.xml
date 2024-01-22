@@ -2,7 +2,7 @@
 <jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
 		  xmlns:jcr="http://www.jcp.org/jcr/1.0"
           jcr:primaryType="cq:ClientLibraryFolder"
-          categories="[eak.limited-parsys]"
-          dependencies="[eak.utils]"
+          categories="[eak.utils]"
+          dependencies="[granite.jquery,granite.utils]"
           jsProcessor="[min:gcc;languageIn=ECMASCRIPT_2015,compilationLevel=advanced,languageOut=ECMASCRIPT5]"
 />
