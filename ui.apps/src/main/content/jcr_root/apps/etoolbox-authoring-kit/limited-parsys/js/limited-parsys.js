@@ -16,112 +16,103 @@
  *  A simple clientlib that disables insert, drag/drop and copy/paste to an editable more components than defined
  *  in 'childrenLimit' property
  */
-(function ($, author) {
+(function (ns, utils, $, author) {
     'use strict';
 
-    const $document = $(document);
+    ns.LimitedParsys = ns.LimitedParsys || {};
 
-    const INSERT_ACTION = 'INSERT';
-    const LIMIT_RESOLVER_NAME = 'resolvemaxlimit';
-    const LIMIT_RESOLVER_PROPERTY = 'eak-children-limit';
+    /** Utility builder for childConfig `resolvemaxlimit` listener to create a fixed limit resolver */
+    ns.LimitedParsys.constant = (limit) => () => limit;
 
-    /** @returns the value of the given property defined in the policy */
-    function findPropertyFromPolicy(editable, propertyName) {
-        const cell = author.util.resolveProperty(author.pageDesign, editable.config.policyPath);
-        return cell && cell[propertyName] ? cell[propertyName] : null;
-    }
+    /** The name of listener to resolve parsys children limit */
+    ns.LimitedParsys.LIMIT_RESOLVER_NAME = 'resolvemaxlimit';
 
-    /**
-     * @see /libs/cq/gui/components/authoring/editors/clientlibs/core/js/storage/components.js _findAllowedComponentsFromDesign
-     * @returns the value of the given property from design object
-     */
-    function findPropertyFromDesign(editable, propertyName) {
-        const cellSearchPaths = editable.config.cellSearchPath || [];
-        for (let i = 0; i < cellSearchPaths.length; i++) {
-            const cell = author.util.resolveProperty(author.pageDesign, cellSearchPaths[i]);
-            if (cell && cell[propertyName]) return cell[propertyName];
-        }
-        return null;
-    }
+    /** The name of property to resolve parsys children limit */
+    ns.LimitedParsys.LIMIT_RESOLVER_PROPERTY = 'eak-children-limit';
 
     /**
-     * @returns the value of the given property of an editable from policy or design configuration
+     * @param {Editable} editable
+     * @returns {boolean} true if editable is a parsys
      */
-    function findPropertyFromConfig(editable, propertyName) {
-        if (editable && editable.config) {
-            if (editable.config.policyPath) {
-                return findPropertyFromPolicy(editable, propertyName);
-            } else {
-                return findPropertyFromDesign(editable, propertyName);
-            }
-        }
-        return null;
-    }
+    ns.LimitedParsys.isParsys = (editable) => editable && editable.type && editable.type.indexOf('parsys') !== -1;
+    /**
+     * @param {Editable} editable
+     * @returns {boolean} true if editable is a 'newpar' parsys zone
+     */
+    ns.LimitedParsys.isParsysZone = (editable) => editable && editable.type && editable.type.endsWith('newpar');
 
-    function getChildrenLimit(editable) {
-        if (typeof editable.config.editConfig.listeners[LIMIT_RESOLVER_NAME] === 'function') {
-            try {
-                const limit = editable.config.editConfig.listeners[LIMIT_RESOLVER_NAME].call(editable);
-                if (typeof limit === 'number') return limit;
-            } catch (e) {
-                console.error('Error while executing resolvemaxlimit listener for editable: ', e);
-            }
-        }
-        if (editable.type.indexOf('parsys') === -1) return Number.POSITIVE_INFINITY;
-        const limitCfg = findPropertyFromConfig(editable, LIMIT_RESOLVER_PROPERTY);
+    /**
+     * @param editable
+     * @returns {number} - children limit for the given editable
+     */
+    ns.LimitedParsys.getChildrenLimit = function getChildrenLimit(editable) {
+        const limit = utils.executeListener(editable, ns.LimitedParsys.LIMIT_RESOLVER_NAME);
+        if (typeof limit === 'number' || typeof limit === 'string') return +limit;
+        return ns.LimitedParsys.resolveChildrenLimitFromPolicy(editable);
+    };
+
+    /**
+     * @param editable
+     * @returns {number} - children limit for the given editable
+     */
+    ns.LimitedParsys.resolveChildrenLimitFromPolicy = function resolveChildrenLimitFromPolicy(editable) {
+        if (!ns.LimitedParsys.isParsys(editable)) return Number.POSITIVE_INFINITY;
+        const limitCfg = utils.findPropertyFromConfig(editable, ns.LimitedParsys.LIMIT_RESOLVER_PROPERTY);
         return limitCfg === null ? Number.POSITIVE_INFINITY : +limitCfg;
-    }
+    };
 
-    function getChildrenCount(editable) {
+    /**
+     * @param editable
+     * @returns {number} current children count for the given editable
+     */
+    ns.LimitedParsys.getChildrenCount = function getChildrenCount(editable) {
         if (!editable.dom) return 0;
         const children = editable.dom.children(':not(cq, .par, .newpar, .iparys_inherited)');
         return children ? children.length : 0;
-    }
+    };
 
     /**
      * Checks if editable contains equal or less children than defined in 'childrenLimit' property
+     * @param editable
+     * @returns {boolean} true if children limit is reached
      */
-    function isChildrenLimitReached(editable) {
-        const limit = getChildrenLimit(editable);
-        const size = getChildrenCount(editable);
+    ns.LimitedParsys.isChildrenLimitReached = function isChildrenLimitReached(editable) {
+        const limit = ns.LimitedParsys.getChildrenLimit(editable);
+        const size = ns.LimitedParsys.getChildrenCount(editable);
         return size >= limit;
-    }
+    };
 
     /**
      * Show/hide all editables' insert parsys depending on {@link isChildrenLimitReached} function
      */
-    function toggleInsertParsys() {
-        const zones = author.editables.filter((editable) => editable && editable.type.endsWith('newpar'));
+    ns.LimitedParsys.updateParsysZones = function updatetParsysZones() {
+        const zones = author.editables.filter(ns.LimitedParsys.isParsysZone);
         for (const zone of zones) {
             const parsys = author.editables.getParent(zone);
-            const isBlocked = isChildrenLimitReached(parsys);
+            const isBlocked = ns.LimitedParsys.isChildrenLimitReached(parsys);
             zone.overlay && zone.overlay.setVisible(!isBlocked);
             zone.dom && zone.dom.attr('hidden', isBlocked);
         }
-    }
+    };
 
-    const toggleInsertParsysDebounced = $.debounce(100, toggleInsertParsys);
+    /** Debounced version of {@link updateParsysZones} */
+    ns.LimitedParsys.updateParsysZonesDebounced = $.debounce(100, ns.LimitedParsys.updateParsysZones);
 
+    const $document = $(document);
     $document.on('cq-layer-activated', function (ev) {
-        if (ev.layer === 'Edit') {
-            const action = author.edit.EditableActions[INSERT_ACTION];
-            const originalCondition = action.condition;
-            action.condition = function (editable) {
-                try {
-                    return !isChildrenLimitReached(editable) && originalCondition.apply(this, arguments);
-                } catch (e) {
-                    console.error('Error while checking children limit for editable: ', e);
-                    return false;
-                }
-            };
+        if (ev.layer !== 'Edit') return;
 
-            // set initial visibility state
-            toggleInsertParsysDebounced();
+        // decorate insert action condition
+        const action = author.edit.EditableActions.INSERT;
+        action.condition = utils.decorate(action.condition, function (originalCondition, ...args) {
+            return !ns.LimitedParsys.isChildrenLimitReached(this) && originalCondition.apply(this, args);
+        });
 
-            // track editables and overlays updates to hide insert parsys
-            $document
-                .off('cq-editables-updated.limited-parsys cq-overlays-repositioned.limited-parsys')
-                .on('cq-editables-updated.limited-parsys cq-overlays-repositioned.limited-parsys', toggleInsertParsysDebounced);
-        }
+        // Initial call
+        ns.LimitedParsys.updateParsysZonesDebounced();
+
+        // track editables and overlays updates to hide insert parsys
+        const UPDATE_EVENTS = 'cq-editables-updated.eak.limited-parsys cq-overlays-repositioned.eak.limited-parsys';
+        $document.off(UPDATE_EVENTS).on(UPDATE_EVENTS, ns.LimitedParsys.updateParsysZonesDebounced);
     });
-}(Granite.$, Granite.author));
+}(Granite, Granite.EAK, Granite.$, Granite.author));
