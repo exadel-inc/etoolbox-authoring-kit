@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          jcr:primaryType="cq:EditConfig">
+    <cq:listeners jcr:primaryType="cq:EditListenersConfig"
+                  resolvemaxchildern="() => 1"
+                  updatecomponentlist="Granite.PolicyResolver.build('{&quot;isEditConfig&quot;:false,&quot;rules&quot;:[{&quot;value&quot;:[&quot;/apps/eak/test-component&quot;],&quot;pagePaths&quot;:[&quot;page/Path1&quot;,&quot;page/Path2&quot;],&quot;mode&quot;:&quot;MERGE&quot;}]}')"/>
+</jcr:root>

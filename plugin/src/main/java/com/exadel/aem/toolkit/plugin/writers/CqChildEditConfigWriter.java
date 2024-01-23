@@ -19,6 +19,7 @@ import javax.xml.transform.Transformer;
 import com.exadel.aem.toolkit.api.annotations.editconfig.ChildEditConfig;
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
+import com.exadel.aem.toolkit.api.annotations.policies.MaxChildren;
 import com.exadel.aem.toolkit.api.annotations.policies.PolicyTarget;
 import com.exadel.aem.toolkit.api.handlers.Source;
 
@@ -55,6 +56,8 @@ class CqChildEditConfigWriter extends PackageEntryWriter {
         Class<?> componentClass = (Class<?>) source.adaptTo(Class.class);
         return componentClass.isAnnotationPresent(ChildEditConfig.class)
                 || Arrays.stream(componentClass.getAnnotationsByType(AllowedChildren.class))
+                .anyMatch(ac -> PolicyTarget.CHILD.equals(ac.targetContainer()))
+                || Arrays.stream(componentClass.getAnnotationsByType(MaxChildren.class))
                 .anyMatch(ac -> PolicyTarget.CHILD.equals(ac.targetContainer()));
     }
 }
