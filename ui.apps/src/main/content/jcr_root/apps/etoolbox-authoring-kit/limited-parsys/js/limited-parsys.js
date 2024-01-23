@@ -21,14 +21,11 @@
 
     ns.LimitedParsys = ns.LimitedParsys || {};
 
-    /** Utility builder for childConfig `resolvemaxlimit` listener to create a fixed limit resolver */
-    ns.LimitedParsys.constant = (limit) => () => limit;
-
     /** The name of listener to resolve parsys children limit */
-    ns.LimitedParsys.LIMIT_RESOLVER_NAME = 'resolvemaxlimit';
+    ns.LimitedParsys.LIMIT_RESOLVER_NAME = 'resolvemaxchildern';
 
     /** The name of property to resolve parsys children limit */
-    ns.LimitedParsys.LIMIT_RESOLVER_PROPERTY = 'eak-children-limit';
+    ns.LimitedParsys.LIMIT_RESOLVER_PROPERTY = 'eak-max-children';
 
     /**
      * @param {Editable} editable
@@ -104,8 +101,13 @@
 
         // decorate insert action condition
         const action = author.edit.EditableActions.INSERT;
-        action.condition = utils.decorate(action.condition, function (originalCondition, ...args) {
-            return !ns.LimitedParsys.isChildrenLimitReached(this) && originalCondition.apply(this, args);
+        action.condition = utils.decorate(action.condition, function (originalCondition, editable, ...args) {
+            if (ns.LimitedParsys.isChildrenLimitReached(editable)) return false;
+            if (!ns.LimitedParsys.isParsysZone(editable)) {
+                const parent = author.editables.getParent(editable);
+                if (ns.LimitedParsys.isChildrenLimitReached(parent)) return false;
+            }
+            return originalCondition.call(this, editable, ...args);
         });
 
         // Initial call
