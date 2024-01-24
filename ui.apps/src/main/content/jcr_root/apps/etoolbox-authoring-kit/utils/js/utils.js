@@ -15,7 +15,7 @@
     'use strict';
 
     /**
-     * Wrap the given function with the provided wrapper. Do not wrap twice.
+     * Wraps the given function with the provided wrapper. Does not wrap twice.
      * @param {function} fn
      * @param {function} wrapper
      * @returns {function} - wrapped function
@@ -36,7 +36,7 @@
     }
 
     /**
-     * Execute listener for the given editable
+     * Executes listener for the given editable
      * @param {Editable} editable
      * @param {string} name
      * @param {Array} params

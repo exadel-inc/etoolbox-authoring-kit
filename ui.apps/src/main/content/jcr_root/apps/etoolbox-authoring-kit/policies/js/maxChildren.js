@@ -13,7 +13,7 @@
  */
 
 /**
- * Utility that disables insertion, drag/drop and copy/paste actions for container component
+ * Utility that disables insertion, drag/drop, and copy/paste actions for container component
  * if there are more child components inserted than the {@link MaxChildrenLimiter.LIMIT_RESOLVER_NAME} listener returns or
  * defined by {@link MaxChildrenLimiter.LIMIT_RESOLVER_PROPERTY} in policies or designs.
  */
@@ -42,7 +42,7 @@
 
     /**
      * Resolves max children limit for the given editable using {@link LIMIT_RESOLVER_NAME} listener.
-     * If listener does not exist or return a number, then {@link resolveChildrenLimitFromPolicy} is used.
+     * If a listener does not exist or return a number, then {@link resolveChildrenLimitFromPolicy} is used.
      * @param editable
      * @returns {number} - max children for the given editable
      */
@@ -72,7 +72,7 @@
     };
 
     /**
-     * Checks if editable contains equal or less children than defined in 'childrenLimit' property
+     * Checks if editable contains equal or fewer children than defined in 'childrenLimit' property
      * @param editable
      * @returns {boolean} true if children limit is reached
      */

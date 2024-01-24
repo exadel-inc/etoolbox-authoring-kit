@@ -28,8 +28,8 @@ public @interface MaxChildren {
     long value();
 
     /**
-     * Used to specify target node for max children limit. If set to {@link PolicyTarget#CURRENT} the limitation applies
-     * to the current annotated component. Otherwise, the limitation is applied to a container nested within the current
+     * Used to specify target node for max children limit. The limitation applies to the current annotated component
+     * if set to {@link PolicyTarget#CURRENT}. Otherwise, the limitation is applied to a container nested within the current
      * component. E.g. if the current component is an inheritor of parsys, setting {@code targetContainer} to {@link
      * PolicyTarget#CURRENT} means that the limitation affects which components can be added to the current
      * one. But if the current component contains a parsys inside you need to skip {@code targetContainer} or set it to

@@ -14,7 +14,7 @@
 package com.exadel.aem.toolkit.api.annotations.policies;
 
 /**
- * Defines possible values of {@link AllowedChildren#targetContainer()} and {@link MaxChildren#targetContainer()} property
+ * Defines possible values of {@link AllowedChildren#targetContainer()} and {@link MaxChildren#targetContainer()} properties
  */
 public enum PolicyTarget {
     CHILD,
