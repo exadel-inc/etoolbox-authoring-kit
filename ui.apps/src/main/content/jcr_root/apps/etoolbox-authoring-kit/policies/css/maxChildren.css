@@ -1,0 +1,15 @@
+/* Blocked text */
+.cq-Overlay--placeholder[data-max-children-marker]::before {
+    content: attr(data-max-children-marker);
+    color: #d24637;
+
+    /* Position fix */
+    line-height: 100%;
+    vertical-align: middle;
+}
+
+/* Blocked hover state */
+.cq-Overlay--placeholder[data-max-children-marker]:hover {
+    border-color: #d24637;
+    background-color: rgba(203, 156, 150, 0.6);
+}

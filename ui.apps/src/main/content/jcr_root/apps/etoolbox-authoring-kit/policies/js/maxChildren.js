@@ -28,6 +28,12 @@
     /** The name of property to resolve parsys children limit */
     ns.MaxChildrenLimiter.LIMIT_RESOLVER_PROPERTY = 'eak-max-children';
 
+    /** The default limit active message */
+    ns.MaxChildrenLimiter.ERROR_MESSAGE = ns.I18n.get('Maximum number of allowed components reached');
+
+    /** The name of attribute to store limit message and marker */
+    ns.MaxChildrenLimiter.ERROR_MESSAGE_ATTR = 'data-max-children-marker';
+
     /**
      * @param {Editable} editable
      * @returns {boolean} true if editable is a 'newpar' parsys zone
@@ -82,8 +88,11 @@
         for (const placeholder of placeholders) {
             const parsys = author.editables.getParent(placeholder);
             const isBlocked = ns.MaxChildrenLimiter.isChildrenLimitReached(parsys);
-            placeholder.overlay && placeholder.overlay.setVisible(!isBlocked);
-            placeholder.dom && placeholder.dom.attr('hidden', isBlocked);
+            placeholder.setDisabled(isBlocked);
+            $(placeholder.overlay.dom || []).attr(
+                ns.MaxChildrenLimiter.ERROR_MESSAGE_ATTR,
+                isBlocked ? ns.MaxChildrenLimiter.ERROR_MESSAGE : null
+            );
         }
     };
 
@@ -94,7 +103,6 @@
      */
     ns.MaxChildrenLimiter.isInsertionAllowed = function isInsertionAllowed(editable) {
         if (ns.MaxChildrenLimiter.isChildrenLimitReached(editable)) return false;
-        if (ns.MaxChildrenLimiter.isPlaceholder(editable)) return true;
         const parent = author.editables.getParent(editable);
         return !ns.MaxChildrenLimiter.isChildrenLimitReached(parent);
     };
