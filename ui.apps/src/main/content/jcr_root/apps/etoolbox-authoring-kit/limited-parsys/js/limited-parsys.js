@@ -29,14 +29,9 @@
 
     /**
      * @param {Editable} editable
-     * @returns {boolean} true if editable is a parsys
-     */
-    ns.LimitedParsys.isParsys = (editable) => editable && editable.type && editable.type.indexOf('parsys') !== -1;
-    /**
-     * @param {Editable} editable
      * @returns {boolean} true if editable is a 'newpar' parsys zone
      */
-    ns.LimitedParsys.isParsysZone = (editable) => editable && editable.type && editable.type.endsWith('newpar');
+    ns.LimitedParsys.isPlaceholder = (editable) => editable && editable.type && editable.type.endsWith('newpar');
 
     /**
      * @param editable
@@ -53,7 +48,6 @@
      * @returns {number} - children limit for the given editable
      */
     ns.LimitedParsys.resolveChildrenLimitFromPolicy = function resolveChildrenLimitFromPolicy(editable) {
-        if (!ns.LimitedParsys.isParsys(editable)) return Number.POSITIVE_INFINITY;
         const limitCfg = utils.findPropertyFromConfig(editable, ns.LimitedParsys.LIMIT_RESOLVER_PROPERTY);
         return limitCfg === null ? Number.POSITIVE_INFINITY : +limitCfg;
     };
@@ -83,13 +77,25 @@
      * Show/hide all editables' insert parsys depending on {@link isChildrenLimitReached} function
      */
     ns.LimitedParsys.updateParsysZones = function updatetParsysZones() {
-        const zones = author.editables.filter(ns.LimitedParsys.isParsysZone);
-        for (const zone of zones) {
-            const parsys = author.editables.getParent(zone);
+        const placeholders = author.editables.filter(ns.LimitedParsys.isPlaceholder);
+        for (const placeholder of placeholders) {
+            const parsys = author.editables.getParent(placeholder);
             const isBlocked = ns.LimitedParsys.isChildrenLimitReached(parsys);
-            zone.overlay && zone.overlay.setVisible(!isBlocked);
-            zone.dom && zone.dom.attr('hidden', isBlocked);
+            placeholder.overlay && placeholder.overlay.setVisible(!isBlocked);
+            placeholder.dom && placeholder.dom.attr('hidden', isBlocked);
         }
+    };
+
+    /**
+     * Checks if insert action is allowed for the given editable
+     * @param editable
+     * @returns {boolean} true if insert action is allowed
+     */
+    ns.LimitedParsys.isInsertionAllowed = function isInsertionAllowed(editable) {
+        if (ns.LimitedParsys.isChildrenLimitReached(editable)) return false;
+        if (ns.LimitedParsys.isPlaceholder(editable)) return true;
+        const parent = author.editables.getParent(editable);
+        return !ns.LimitedParsys.isChildrenLimitReached(parent);
     };
 
     /** Debounced version of {@link updateParsysZones} */
@@ -101,19 +107,14 @@
 
         // decorate insert action condition
         const action = author.edit.EditableActions.INSERT;
-        action.condition = utils.decorate(action.condition, function (originalCondition, editable, ...args) {
-            if (ns.LimitedParsys.isChildrenLimitReached(editable)) return false;
-            if (!ns.LimitedParsys.isParsysZone(editable)) {
-                const parent = author.editables.getParent(editable);
-                if (ns.LimitedParsys.isChildrenLimitReached(parent)) return false;
-            }
-            return originalCondition.call(this, editable, ...args);
+        action.condition = utils.decorate(action.condition, function (originalCondition, ...args) {
+            return ns.LimitedParsys.isInsertionAllowed(...args) && originalCondition.apply(this, args);
         });
 
         // Initial call
         ns.LimitedParsys.updateParsysZonesDebounced();
 
-        // track editables and overlays updates to hide insert parsys
+        // track editables and overlays updates to hide container placeholders
         const UPDATE_EVENTS = 'cq-editables-updated.eak.limited-parsys cq-overlays-repositioned.eak.limited-parsys';
         $document.off(UPDATE_EVENTS).on(UPDATE_EVENTS, ns.LimitedParsys.updateParsysZonesDebounced);
     });

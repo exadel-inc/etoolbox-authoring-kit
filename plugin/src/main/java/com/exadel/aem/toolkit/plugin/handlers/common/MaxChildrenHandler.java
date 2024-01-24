@@ -68,10 +68,9 @@ public class MaxChildrenHandler implements Handler {
     /**
      * Gets whether the given {@link Target} is a representation of a {@code cq:editConfig} node of an AEM component
      * @param target {@code Target} instance
-     * @return True or false
+     * @return True if the target is a {@code cq:editConfig} node; otherwise, false
      */
     private static boolean isEditConfig(Target target) {
-        // TO-DO: move to a common place.
         return Scopes.CQ_EDIT_CONFIG.equals(target.getScope());
     }
 }
