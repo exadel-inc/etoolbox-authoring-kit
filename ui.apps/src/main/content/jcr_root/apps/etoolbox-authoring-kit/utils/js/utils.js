@@ -56,4 +56,4 @@
     // Public API
     ns.decorate = decorate;
     ns.executeListener = executeListener;
-}((Granite.EAK = Granite.EAK || {})));
+}((Granite.EAKUtils = Granite.EAKUtils || {})));

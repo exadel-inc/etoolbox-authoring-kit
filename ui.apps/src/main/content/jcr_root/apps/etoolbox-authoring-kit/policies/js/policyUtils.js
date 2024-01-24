@@ -59,4 +59,4 @@
     ns.findPropertyFromPolicy = findPropertyFromPolicy;
     ns.findPropertyFromDesign = findPropertyFromDesign;
     ns.findPropertyFromConfig = findPropertyFromConfig;
-}((Granite.EAK = Granite.EAK || {}), Granite.author));
+}((Granite.EAKPolicyUtils = Granite.EAKPolicyUtils || {}), Granite.author));

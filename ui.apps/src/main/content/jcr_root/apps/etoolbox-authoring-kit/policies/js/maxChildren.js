@@ -13,42 +13,43 @@
  */
 
 /**
- *  A simple clientlib that disables insert, drag/drop and copy/paste to an editable more components than defined
- *  in 'childrenLimit' property
+ * Utility that disables insertion, drag/drop and copy/paste actions for container component
+ * if there are more child components inserted than the {@link MaxChildrenLimiter.LIMIT_RESOLVER_NAME} listener returns or
+ * defined by {@link MaxChildrenLimiter.LIMIT_RESOLVER_PROPERTY} in policies or designs.
  */
-(function (ns, utils, $, author) {
+(function (ns, $, author) {
     'use strict';
 
-    ns.LimitedParsys = ns.LimitedParsys || {};
+    ns.MaxChildrenLimiter = ns.MaxChildrenLimiter || {};
 
     /** The name of listener to resolve parsys children limit */
-    ns.LimitedParsys.LIMIT_RESOLVER_NAME = 'resolvemaxchildern';
+    ns.MaxChildrenLimiter.LIMIT_RESOLVER_NAME = 'resolvemaxchildern';
 
     /** The name of property to resolve parsys children limit */
-    ns.LimitedParsys.LIMIT_RESOLVER_PROPERTY = 'eak-max-children';
+    ns.MaxChildrenLimiter.LIMIT_RESOLVER_PROPERTY = 'eak-max-children';
 
     /**
      * @param {Editable} editable
      * @returns {boolean} true if editable is a 'newpar' parsys zone
      */
-    ns.LimitedParsys.isPlaceholder = (editable) => editable && editable.type && editable.type.endsWith('newpar');
+    ns.MaxChildrenLimiter.isPlaceholder = (editable) => editable && editable.type && editable.type.endsWith('newpar');
 
     /**
      * @param editable
      * @returns {number} - children limit for the given editable
      */
-    ns.LimitedParsys.getChildrenLimit = function getChildrenLimit(editable) {
-        const limit = utils.executeListener(editable, ns.LimitedParsys.LIMIT_RESOLVER_NAME);
+    ns.MaxChildrenLimiter.getChildrenLimit = function getChildrenLimit(editable) {
+        const limit = ns.EAKUtils.executeListener(editable, ns.MaxChildrenLimiter.LIMIT_RESOLVER_NAME);
         if (typeof limit === 'number' || typeof limit === 'string') return +limit;
-        return ns.LimitedParsys.resolveChildrenLimitFromPolicy(editable);
+        return ns.MaxChildrenLimiter.resolveChildrenLimitFromPolicy(editable);
     };
 
     /**
      * @param editable
      * @returns {number} - children limit for the given editable
      */
-    ns.LimitedParsys.resolveChildrenLimitFromPolicy = function resolveChildrenLimitFromPolicy(editable) {
-        const limitCfg = utils.findPropertyFromConfig(editable, ns.LimitedParsys.LIMIT_RESOLVER_PROPERTY);
+    ns.MaxChildrenLimiter.resolveChildrenLimitFromPolicy = function resolveChildrenLimitFromPolicy(editable) {
+        const limitCfg = ns.EAKPolicyUtils.findPropertyFromConfig(editable, ns.MaxChildrenLimiter.LIMIT_RESOLVER_PROPERTY);
         return limitCfg === null ? Number.POSITIVE_INFINITY : +limitCfg;
     };
 
@@ -56,7 +57,7 @@
      * @param editable
      * @returns {number} current children count for the given editable
      */
-    ns.LimitedParsys.getChildrenCount = function getChildrenCount(editable) {
+    ns.MaxChildrenLimiter.getChildrenCount = function getChildrenCount(editable) {
         if (!editable.dom) return 0;
         const children = editable.dom.children(':not(cq, .par, .newpar, .iparys_inherited)');
         return children ? children.length : 0;
@@ -67,20 +68,20 @@
      * @param editable
      * @returns {boolean} true if children limit is reached
      */
-    ns.LimitedParsys.isChildrenLimitReached = function isChildrenLimitReached(editable) {
-        const limit = ns.LimitedParsys.getChildrenLimit(editable);
-        const size = ns.LimitedParsys.getChildrenCount(editable);
+    ns.MaxChildrenLimiter.isChildrenLimitReached = function isChildrenLimitReached(editable) {
+        const limit = ns.MaxChildrenLimiter.getChildrenLimit(editable);
+        const size = ns.MaxChildrenLimiter.getChildrenCount(editable);
         return size >= limit;
     };
 
     /**
      * Show/hide all editables' insert parsys depending on {@link isChildrenLimitReached} function
      */
-    ns.LimitedParsys.updateParsysZones = function updatetParsysZones() {
-        const placeholders = author.editables.filter(ns.LimitedParsys.isPlaceholder);
+    ns.MaxChildrenLimiter.updateParsysZones = function updatetParsysZones() {
+        const placeholders = author.editables.filter(ns.MaxChildrenLimiter.isPlaceholder);
         for (const placeholder of placeholders) {
             const parsys = author.editables.getParent(placeholder);
-            const isBlocked = ns.LimitedParsys.isChildrenLimitReached(parsys);
+            const isBlocked = ns.MaxChildrenLimiter.isChildrenLimitReached(parsys);
             placeholder.overlay && placeholder.overlay.setVisible(!isBlocked);
             placeholder.dom && placeholder.dom.attr('hidden', isBlocked);
         }
@@ -91,15 +92,15 @@
      * @param editable
      * @returns {boolean} true if insert action is allowed
      */
-    ns.LimitedParsys.isInsertionAllowed = function isInsertionAllowed(editable) {
-        if (ns.LimitedParsys.isChildrenLimitReached(editable)) return false;
-        if (ns.LimitedParsys.isPlaceholder(editable)) return true;
+    ns.MaxChildrenLimiter.isInsertionAllowed = function isInsertionAllowed(editable) {
+        if (ns.MaxChildrenLimiter.isChildrenLimitReached(editable)) return false;
+        if (ns.MaxChildrenLimiter.isPlaceholder(editable)) return true;
         const parent = author.editables.getParent(editable);
-        return !ns.LimitedParsys.isChildrenLimitReached(parent);
+        return !ns.MaxChildrenLimiter.isChildrenLimitReached(parent);
     };
 
     /** Debounced version of {@link updateParsysZones} */
-    ns.LimitedParsys.updateParsysZonesDebounced = $.debounce(100, ns.LimitedParsys.updateParsysZones);
+    ns.MaxChildrenLimiter.updateParsysZonesDebounced = $.debounce(100, ns.MaxChildrenLimiter.updateParsysZones);
 
     const $document = $(document);
     $document.on('cq-layer-activated', function (ev) {
@@ -107,15 +108,15 @@
 
         // decorate insert action condition
         const action = author.edit.EditableActions.INSERT;
-        action.condition = utils.decorate(action.condition, function (originalCondition, ...args) {
-            return ns.LimitedParsys.isInsertionAllowed(...args) && originalCondition.apply(this, args);
+        action.condition = ns.EAKUtils.decorate(action.condition, function (originalCondition, ...args) {
+            return ns.MaxChildrenLimiter.isInsertionAllowed(...args) && originalCondition.apply(this, args);
         });
 
         // Initial call
-        ns.LimitedParsys.updateParsysZonesDebounced();
+        ns.MaxChildrenLimiter.updateParsysZonesDebounced();
 
         // track editables and overlays updates to hide container placeholders
         const UPDATE_EVENTS = 'cq-editables-updated.eak.limited-parsys cq-overlays-repositioned.eak.limited-parsys';
-        $document.off(UPDATE_EVENTS).on(UPDATE_EVENTS, ns.LimitedParsys.updateParsysZonesDebounced);
+        $document.off(UPDATE_EVENTS).on(UPDATE_EVENTS, ns.MaxChildrenLimiter.updateParsysZonesDebounced);
     });
-}(Granite, Granite.EAK, Granite.$, Granite.author));
+}(Granite, Granite.$, Granite.author));
