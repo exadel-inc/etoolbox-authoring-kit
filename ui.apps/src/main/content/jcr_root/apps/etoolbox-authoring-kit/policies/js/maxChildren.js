@@ -23,7 +23,7 @@
     ns.MaxChildrenLimiter = ns.MaxChildrenLimiter || {};
 
     /** The name of listener to resolve parsys children limit */
-    ns.MaxChildrenLimiter.LIMIT_RESOLVER_NAME = 'resolvemaxchildern';
+    ns.MaxChildrenLimiter.LIMIT_RESOLVER_NAME = 'resolvemaxchildren';
 
     /** The name of property to resolve parsys children limit */
     ns.MaxChildrenLimiter.LIMIT_RESOLVER_PROPERTY = 'eak-max-children';
@@ -41,8 +41,10 @@
     ns.MaxChildrenLimiter.isPlaceholder = (editable) => editable && editable.type && editable.type.endsWith('newpar');
 
     /**
+     * Resolves max children limit for the given editable using {@link LIMIT_RESOLVER_NAME} listener.
+     * If listener does not exist or return a number, then {@link resolveChildrenLimitFromPolicy} is used.
      * @param editable
-     * @returns {number} - children limit for the given editable
+     * @returns {number} - max children for the given editable
      */
     ns.MaxChildrenLimiter.getChildrenLimit = function getChildrenLimit(editable) {
         const limit = ns.EAKUtils.executeListener(editable, ns.MaxChildrenLimiter.LIMIT_RESOLVER_NAME);
@@ -51,8 +53,9 @@
     };
 
     /**
+     * Resolves children limit using desing or policy configuration for given editable
      * @param editable
-     * @returns {number} - children limit for the given editable
+     * @returns {number} - max children for the given editable
      */
     ns.MaxChildrenLimiter.resolveChildrenLimitFromPolicy = function resolveChildrenLimitFromPolicy(editable) {
         const limitCfg = ns.EAKPolicyUtils.findPropertyFromConfig(editable, ns.MaxChildrenLimiter.LIMIT_RESOLVER_PROPERTY);
@@ -65,8 +68,7 @@
      */
     ns.MaxChildrenLimiter.getChildrenCount = function getChildrenCount(editable) {
         if (!editable.dom) return 0;
-        const children = editable.dom.children(':not(cq, .par, .newpar, .iparys_inherited)');
-        return children ? children.length : 0;
+        return editable.dom.children(':not(cq, .par, .newpar, .iparys_inherited)').length;
     };
 
     /**

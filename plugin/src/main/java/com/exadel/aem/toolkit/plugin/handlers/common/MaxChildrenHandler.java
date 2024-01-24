@@ -23,14 +23,14 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
 /**
  * Implements {@code BiConsumer} to populate a {@link Target} instance with properties originating from a {@link Source}
- * object. The source refers to the {@code resolvemaxchildern} listener of the {@code
+ * object. The source refers to the {@code resolvemaxchildren} listener of the {@code
  * cq:editConfig} node of an AEM component
  */
 public class MaxChildrenHandler implements Handler {
     /**
-     * Name of the listener to resolve max children limit for `limited-parsys` js module
+     * Name of the listener to resolve max children limit for `policies` js module
      */
-    public static final String MAX_LIMIT_RESOLVER_NAME = "resolvemaxchildern";
+    public static final String MAX_LIMIT_RESOLVER_NAME = "resolvemaxchildren";
 
     /**
      * Format of default max children limit resolver

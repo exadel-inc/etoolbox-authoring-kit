@@ -3,5 +3,5 @@
           xmlns:jcr="http://www.jcp.org/jcr/1.0"
           jcr:primaryType="cq:EditConfig">
     <cq:listeners jcr:primaryType="cq:EditListenersConfig"
-                  resolvemaxchildern="() => 5"/>
+                  resolvemaxchildren="() => 5"/>
 </jcr:root>
