@@ -29,7 +29,7 @@
     ns.MaxChildrenLimiter.LIMIT_RESOLVER_PROPERTY = 'eak-max-children';
 
     /** The default limit active message */
-    ns.MaxChildrenLimiter.ERROR_MESSAGE = ns.I18n.get('Maximum number of allowed components reached');
+    ns.MaxChildrenLimiter.ERROR_MESSAGE = ns.I18n.get('Maximum number of allowed components is reached');
 
     /** The name of attribute to store limit message and marker */
     ns.MaxChildrenLimiter.ERROR_MESSAGE_ATTR = 'data-max-children-marker';

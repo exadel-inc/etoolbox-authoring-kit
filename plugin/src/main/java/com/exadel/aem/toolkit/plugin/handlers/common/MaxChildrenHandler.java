@@ -30,12 +30,12 @@ public class MaxChildrenHandler implements Handler {
     /**
      * Name of the listener to resolve max children limit for `policies` js module
      */
-    public static final String MAX_LIMIT_RESOLVER_NAME = "resolvemaxchildren";
+    public static final String MAX_CHILDREN_RESOLVER_NAME = "resolvemaxchildren";
 
     /**
      * Format of default max children limit resolver
      */
-    private static final String MAX_LIMIT_RESOLVER_FORMAT = "() => %d";
+    private static final String MAX_CHILDREN_RESOLVER_FORMAT = "() => %d";
 
 
     /**
@@ -61,7 +61,7 @@ public class MaxChildrenHandler implements Handler {
                 .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_EDIT_CONFIG)
                 .getOrCreateTarget(DialogConstants.NN_LISTENERS)
                 .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_LISTENERS)
-                .attribute(MAX_LIMIT_RESOLVER_NAME, String.format(MAX_LIMIT_RESOLVER_FORMAT, rule.value()));
+                .attribute(MAX_CHILDREN_RESOLVER_NAME, String.format(MAX_CHILDREN_RESOLVER_FORMAT, rule.value()));
         }
     }
 

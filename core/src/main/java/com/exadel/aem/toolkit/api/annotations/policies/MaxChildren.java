@@ -18,6 +18,9 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
+
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface MaxChildren {
@@ -25,6 +28,7 @@ public @interface MaxChildren {
      * Specifies the maximum number of children allowed for container component
      * @return Long value, 0 or greater
      */
+    @ValueRestriction(ValueRestrictions.NON_NEGATIVE)
     long value();
 
     /**
