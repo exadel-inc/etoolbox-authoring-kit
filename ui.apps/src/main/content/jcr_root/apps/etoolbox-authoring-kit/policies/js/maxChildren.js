@@ -59,7 +59,7 @@
      */
     ns.MaxChildrenLimiter.resolveChildrenLimitFromPolicy = function resolveChildrenLimitFromPolicy(editable) {
         const limitCfg = ns.EAKPolicyUtils.findPropertyFromConfig(editable, ns.MaxChildrenLimiter.LIMIT_RESOLVER_PROPERTY);
-        return limitCfg === null ? Number.POSITIVE_INFINITY : +limitCfg;
+        return isNaN(+limitCfg) ? Number.POSITIVE_INFINITY : +limitCfg;
     };
 
     /**
