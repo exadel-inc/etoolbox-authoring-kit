@@ -31,12 +31,7 @@
      * @returns {any} value of the given property from design object
      */
     function findPropertyFromDesign(editable, name) {
-        const cellSearchPaths = editable.config.cellSearchPath || [];
-        for (let i = 0; i < cellSearchPaths.length; i++) {
-            const cell = author.util.resolveProperty(author.pageDesign, cellSearchPaths[i]);
-            if (cell && cell[name]) return cell[name];
-        }
-        return null;
+        return author.designResolver.getProperty(editable.config, author.pageDesign, name);
     }
 
     /**
