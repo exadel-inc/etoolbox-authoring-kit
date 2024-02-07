@@ -4,7 +4,7 @@
 
     <groupId>com.exadel.etoolbox</groupId>
     <artifactId>etoolbox-authoring-kit</artifactId>
-    <version>2.4.1</version>
+    <version>2.5.0</version>
 
     <name>Exadel Toolbox Authoring Kit</name>
     <description>Automates generating and managing rich and responsive authoring interfaces for Adobe Experience Manager</description>
@@ -17,14 +17,14 @@
 
     <developers>
         <developer>
-            <id>exadel-martech</id>
-            <name>Exadel MarTech Team</name>
+            <id>exadel-dmtp</id>
+            <name>Exadel DMTP Team</name>
             <organization>Exadel, Inc.</organization>
             <organizationUrl>https://exadel.com</organizationUrl>
             <roles>
                 <role>developer</role>
             </roles>
-            <timezone>Europe/Minsk</timezone>
+            <timezone>Europe/Warsaw</timezone>
         </developer>
     </developers>
 

@@ -24,6 +24,7 @@ import com.exadel.aem.toolkit.plugin.handlers.common.AllowedChildrenTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.ComponentsTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.EditConfigTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.IgnoreFreshnessTest;
+import com.exadel.aem.toolkit.plugin.handlers.common.MaxChildrenTest;
 import com.exadel.aem.toolkit.plugin.handlers.common.WriteModeTest;
 import com.exadel.aem.toolkit.plugin.handlers.dependson.DependsOnTest;
 import com.exadel.aem.toolkit.plugin.handlers.placement.CoincidenceTest;
@@ -63,6 +64,7 @@ import com.exadel.aem.toolkit.plugin.writers.PackageInfoTest;
     AllowedChildrenTest.class,
     DependsOnTest.class,
     IgnoreFreshnessTest.class,
+    MaxChildrenTest.class,
 
     LayoutTest.class,
     ReplacementTest.class,
