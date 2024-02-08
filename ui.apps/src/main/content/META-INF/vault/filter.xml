@@ -7,8 +7,4 @@
         <exclude pattern="/apps/etoolbox-authoring-kit/fixes(/.*)?"/>
         <exclude pattern="/apps/etoolbox-authoring-kit/samples(/.*)?"/>
     </filter>
-
-    <!-- The following filters clear old directories in JCR content. They can be removed after v.2 release -->
-    <filter root="/apps/authoring-toolkit"/>
-    <filter root="/apps/cq/core/content/nav/tools/aembox/lists"/>
 </workspaceFilter>
