@@ -66,13 +66,13 @@
                             <excludeDefaultDirectories>true</excludeDefaultDirectories>
                             <filesets>
                                 <fileset>
-                                    <directory>${basedir}/src/main/content/jcr_root/etc/packages/${project.groupId}/${project.parent.artifactId}</directory>
+                                    <directory>${basedir}/src/main/content/jcr_root/etc/packages/${project.groupId}</directory>
                                     <includes>
                                         <include>**</include>
                                     </includes>
                                     <excludes>
-                                        <exclude>.snapshot</exclude>
-                                        <exclude>.snapshot/.keep</exclude>
+                                        <exclude>${project.parent.artifactId}/.snapshot</exclude>
+                                        <exclude>${project.parent.artifactId}/.snapshot/.keep</exclude>
                                     </excludes>
                                 </fileset>
                             </filesets>
