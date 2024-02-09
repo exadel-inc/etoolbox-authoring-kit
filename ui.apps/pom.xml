@@ -12,7 +12,7 @@
 
     <artifactId>etoolbox-authoring-kit-plus-ui.apps</artifactId>
 
-    <name>Exadel Toolbox Authoring Kit - UI Applications</name>
+    <name>Exadel Toolbox Authoring Kit (Plus Edition) - UI Applications</name>
     <description>Presents assets designed for the /apps section of an AEM instance</description>
 
     <packaging>content-package</packaging>
@@ -22,7 +22,6 @@
     </properties>
 
     <build>
-        <sourceDirectory>src/main/content/jcr_root/apps/${project.parent.artifactId}/depends-on/js</sourceDirectory>
         <resources>
             <resource>
                 <directory>src/main/content/jcr_root</directory>

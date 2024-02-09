@@ -12,8 +12,8 @@
 
     <artifactId>etoolbox-authoring-kit-plus-all</artifactId>
 
-    <name>Exadel Toolbox Authoring Kit - Cumulative Package</name>
-    <description>All-in-one content package for the ui.apps and ui.content modules of Exadel Toolbox Authoring Kit</description>
+    <name>Exadel Toolbox Authoring Kit (Plus Edition) - Cumulative Package</name>
+    <description>All-in-one content package for the Exadel Toolbox Authoring Kit (Plus edition)</description>
 
     <packaging>content-package</packaging>
 

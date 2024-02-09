@@ -12,7 +12,7 @@
 
     <artifactId>etoolbox-authoring-kit-plus-plugin</artifactId>
 
-    <name>Exadel Toolbox Authoring Kit - Maven Plugin</name>
+    <name>Exadel Toolbox Authoring Kit (Plus Edition) - Maven Plugin</name>
     <description>Maven plugin for storing AEM (Granite UI) markup created with Exadel Toolbox Authoring Kit</description>
 
     <packaging>maven-plugin</packaging>

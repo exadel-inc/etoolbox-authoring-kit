@@ -12,7 +12,7 @@
 
     <artifactId>etoolbox-authoring-kit-plus-core</artifactId>
 
-    <name>Exadel Toolbox Authoring Kit - Core</name>
+    <name>Exadel Toolbox Authoring Kit (Plus Edition) - Core</name>
     <description>API and core functionality module of Exadel Toolbox Authoring Kit</description>
 
     <packaging>jar</packaging>
