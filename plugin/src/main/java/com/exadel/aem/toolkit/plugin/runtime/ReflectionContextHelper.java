@@ -59,6 +59,7 @@ import com.exadel.aem.toolkit.plugin.utils.ordering.OrderingUtil;
  */
 public class ReflectionContextHelper {
 
+    private static final char SEPARATOR_COMMA = ',';
     private Reflections reflections;
 
     private ClassLoader classLoader;
@@ -101,9 +102,10 @@ public class ReflectionContextHelper {
      * @return A non-null list of {@code ComponentSource} objects; can be empty
      */
     public List<ComponentSource> getComponents(String packageBase) {
+        String[] packageRoots = StringUtils.split(packageBase, SEPARATOR_COMMA);
         return getComponents()
             .stream()
-            .filter(comp -> StringUtils.isEmpty(packageBase) || ClassUtil.matchesReference(comp.adaptTo(Class.class), packageBase))
+            .filter(comp -> StringUtils.isEmpty(packageBase) || ClassUtil.matchesReference(comp.adaptTo(Class.class), packageRoots))
             .collect(Collectors.toList());
     }
 

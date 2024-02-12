@@ -32,7 +32,7 @@ seoTitle: Installation - Exadel Authoring Kit
     <configuration>
         <!-- RECOMMENDED: Place here the path to the node under which your component nodes are stored -->
         <componentsPathBase>jcr_root/apps/acme/components</componentsPathBase>
-        <!-- RECOMMENDED: Specify root package for component classes that match the current package -->
+        <!-- RECOMMENDED: Specify root package for component classes that match the current package. Multiple values can be separated with a comma  -->
         <componentsReferenceBase>com.acme.project.components.*</componentsReferenceBase>
         <!-- OPTIONAL: specify list of exceptions that would cause this plugin to terminate -->
         <terminateOn>ALL</terminateOn>
