@@ -79,7 +79,7 @@ You need to do two steps.
 <dependency>
     <groupId>com.exadel.etoolbox</groupId>
     <artifactId>etoolbox-authoring-kit-all</artifactId>
-    <version>2.4.1</version>
+    <version>2.5.1</version>
     <type>content-package</type>
 </dependency>
 ```
