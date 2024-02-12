@@ -16,6 +16,8 @@ package com.exadel.aem.toolkit.plugin.validators.cases;
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_TITLE;
 
+import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
+import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
 import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.main.HtmlTag;
@@ -114,4 +116,22 @@ public class ValidatorTestCases {
     @Dialog
     @HtmlTag(className = " ")
     public static class ComponentWithWrongHtmlTag2 {}
+
+    @AemComponent(path = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @EditConfig(
+        dropTargets = @DropTargetConfig(
+            nodeName = " ",
+            accept = {"image/*"},
+            groups = {"media"},
+            propertyName = ""))
+    public static class InvalidDropTargetConfig {}
+
+    @AemComponent(path = DEFAULT_COMPONENT_NAME, title = DEFAULT_COMPONENT_TITLE)
+    @EditConfig(
+        dropTargets = @DropTargetConfig(
+            nodeName = "image",
+            accept = {"image/*"},
+            groups = {"media"},
+            propertyName = " "))
+    public static class InvalidDropTargetConfig2 {}
 }

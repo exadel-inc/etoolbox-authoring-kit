@@ -17,10 +17,14 @@ import java.util.Arrays;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.exadel.aem.toolkit.api.annotations.editconfig.DropTargetConfig;
 import com.exadel.aem.toolkit.api.annotations.editconfig.EditConfig;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.handlers.Target;
+import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
+import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.metadata.RenderingFilter;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
@@ -30,6 +34,8 @@ import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
  * or {@code cq:childEditConfig} node
  */
 public class DropTargetsHandler implements BiConsumer<Source, Target> {
+
+    private static final String INVALID_NAME_MESSAGE = "Invalid drop target node name";
 
     /**
      * Processes data that can be extracted from the given {@code Source} and stores it into the provided {@code Target}
@@ -45,6 +51,9 @@ public class DropTargetsHandler implements BiConsumer<Source, Target> {
         Target dropTargetsElement = target.getOrCreateTarget(DialogConstants.NN_DROP_TARGETS);
         for (int i = 0; i < editConfig.dropTargets().length; i++) {
             DropTargetConfig dropTargetConfig = editConfig.dropTargets()[i];
+            if (StringUtils.isBlank(dropTargetConfig.nodeName())) {
+                PluginRuntime.context().getExceptionHandler().handle(new ValidationException(INVALID_NAME_MESSAGE));
+            }
             dropTargetsElement.getOrCreateTarget(dropTargetConfig.nodeName())
                     .attribute(DialogConstants.PN_PRIMARY_TYPE, DialogConstants.NT_DROP_TARGET_CONFIG)
                     .attributes(dropTargetConfig, new RenderingFilter(dropTargetConfig))
