@@ -21,7 +21,6 @@ import org.apache.sling.api.resource.ValueMap;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Setting;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.SettingPersistence;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
-import com.exadel.aem.toolkit.core.assistant.utils.VersionableValueMap;
 
 class RephraseFacility extends OpenAiFacility {
 
@@ -38,8 +37,7 @@ class RephraseFacility extends OpenAiFacility {
     static {
         REPHRASE_SETTINGS = new ArrayList<>();
         REPHRASE_SETTINGS.add(INSTRUCTION_SETTING);
-        REPHRASE_SETTINGS.addAll(EDIT_SETTINGS);
-
+        REPHRASE_SETTINGS.addAll(SETTINGS);
     }
 
     public RephraseFacility(OpenAiService service) {
@@ -68,9 +66,6 @@ class RephraseFacility extends OpenAiFacility {
 
     @Override
     public Solution execute(ValueMap args) {
-        ValueMap newArgs = new VersionableValueMap(args)
-            .putIfMissing(OpenAiConstants.PN_INSTRUCTION, DEFAULT_INSTRUCTION)
-            .putIfMissing(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_EDIT_MODEL);
-        return getService().executeEdit(newArgs);
+        return getService().generateText(args);
     }
 }

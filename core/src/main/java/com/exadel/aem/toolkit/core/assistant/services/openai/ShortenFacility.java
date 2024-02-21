@@ -19,11 +19,8 @@ import org.apache.sling.api.resource.ValueMap;
 
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Setting;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
-import com.exadel.aem.toolkit.core.assistant.utils.VersionableValueMap;
 
 class ShortenFacility extends OpenAiFacility {
-
-    private static final String INSTRUCTION = "Make the text shorter and more focused";
 
     ShortenFacility(OpenAiService service) {
         super(service);
@@ -51,14 +48,11 @@ class ShortenFacility extends OpenAiFacility {
 
     @Override
     public List<Setting> getSettings() {
-        return EDIT_SETTINGS;
+        return SETTINGS;
     }
 
     @Override
     public Solution execute(ValueMap args) {
-        ValueMap newArgs = new VersionableValueMap(args)
-            .putIfMissing(OpenAiConstants.PN_INSTRUCTION, INSTRUCTION)
-            .putIfMissing(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_EDIT_MODEL);
-        return getService().executeEdit(newArgs);
+        return getService().generateText(args);
     }
 }

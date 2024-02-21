@@ -40,12 +40,12 @@ class TargetingFacility extends OpenAiFacility {
         AUDIENCES.put(DEFAULT_AUDIENCE, DEFAULT_TARGET);
         AUDIENCES.put("Young adults", "like a Zoomer's blog post addressed at young adults in their late teens and early twenties");
         AUDIENCES.put("Elderly people", "an article from a magazine addressed at elderly people");
-        AUDIENCES.put("Customers from East Asia", " most suitable for customers from East Asia");
-        AUDIENCES.put("Customers from South America", " most suitable for customers from South America");
+        AUDIENCES.put("Customers from East Asia", "most suitable for customers from East Asia");
+        AUDIENCES.put("Customers from South America", "most suitable for customers from South America");
 
         Setting.Builder settingBuilder = Setting
             .builder()
-            .id("prompt")
+            .id(CoreConstants.PN_PROMPT)
             .title("Select the audience")
             .persistence(SettingPersistence.TRANSIENT);
         AUDIENCES.keySet().forEach(settingBuilder::option);
@@ -54,7 +54,7 @@ class TargetingFacility extends OpenAiFacility {
 
         PROFILE_SETTINGS = new ArrayList<>();
         PROFILE_SETTINGS.add(PROMPT_SETTING);
-        PROFILE_SETTINGS.addAll(COMPLETION_SETTINGS);
+        PROFILE_SETTINGS.addAll(SETTINGS);
     }
 
     public TargetingFacility(OpenAiService service) {
@@ -90,8 +90,7 @@ class TargetingFacility extends OpenAiFacility {
     public Solution execute(ValueMap args) {
         String prompt = args.get(CoreConstants.PN_PROMPT, DEFAULT_AUDIENCE);
         ValueMap newArgs = new VersionableValueMap(args)
-            .put(CoreConstants.PN_PROMPT, PROMPT_PREFIX + AUDIENCES.getOrDefault(prompt, DEFAULT_TARGET) + CoreConstants.SEPARATOR_COLON)
-            .putIfMissing(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_COMPLETION_MODEL);
-        return getService().executeCompletion(newArgs);
+            .put(CoreConstants.PN_PROMPT, PROMPT_PREFIX + AUDIENCES.getOrDefault(prompt, DEFAULT_TARGET));
+        return getService().generateText(newArgs);
     }
 }

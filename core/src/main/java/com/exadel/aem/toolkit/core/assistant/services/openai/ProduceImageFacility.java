@@ -13,7 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.assistant.services.openai;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.sling.api.resource.ValueMap;
@@ -27,7 +27,16 @@ import com.exadel.aem.toolkit.core.assistant.utils.VersionableValueMap;
 
 class ProduceImageFacility extends OpenAiFacility {
 
-    private static final List<Setting> IMAGE_SETTINGS = Collections.singletonList(
+    private static final List<Setting> IMAGE_SETTINGS = Arrays.asList(
+        Setting
+            .builder()
+            .id(OpenAiConstants.PN_MODEL)
+            .title("Model")
+            .type(SettingType.STRING)
+            .option(OpenAiServiceConfig.IMAGE_MODEL_DALLE_3, "DALL·E 3")
+            .option(OpenAiServiceConfig.IMAGE_MODEL_DALLE_2, "DALL·E 2")
+            .defaultValue(OpenAiServiceConfig.DEFAULT_IMAGE_MODEL)
+            .build(),
         Setting
             .builder()
             .id(CoreConstants.PN_SIZE)
@@ -71,6 +80,6 @@ class ProduceImageFacility extends OpenAiFacility {
 
     @Override
     public Solution execute(ValueMap args) {
-        return getService().executeImageGeneration(new VersionableValueMap(args).put(OpenAiConstants.NO_CACHE, true));
+        return getService().generateImage(new VersionableValueMap(args).put(OpenAiConstants.NO_CACHE, true).put(OpenAiConstants.PN_MODEL, "1"));
     }
 }

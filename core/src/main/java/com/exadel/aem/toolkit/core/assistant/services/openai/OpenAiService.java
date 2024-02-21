@@ -20,9 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -75,17 +73,10 @@ public class OpenAiService implements AssistantService {
     private static final int CACHE_READ_DELAY = 500;
 
     private static final String PN_CHOICES = "choices";
-    private static final String PN_CONTENT = "content";
     private static final String PN_DATA = "data";
     private static final String PN_ERROR = "error";
     private static final String PN_FINISH = "finish_reason";
-    private static final String PN_INPUT = "input";
-    private static final String PN_MESSAGES = "messages";
-    private static final String PN_ROLE = "role";
     private static final String PN_URL = "url";
-
-    private static final String ROLE_SYSTEM = "system";
-    private static final String ROLE_USER = "user";
 
     private static final String VALUE_LENGTH = "length";
 
@@ -95,8 +86,8 @@ public class OpenAiService implements AssistantService {
     private static final String EXCEPTION_COULD_NOT_COMPLETE_ASYNC = "Could not complete request";
     private static final String EXCEPTION_TIMEOUT = "Connection to {} timed out after {} ms";
 
-    private static final String PATTERN_LEADING_NON_ALPHABETIC = "^\\W+";
-    private static final String PATTERN_LEADING_TAG = "^<\\w+>";
+    private static final String LEADING_NON_ALPHABETIC = "^\\W+";
+    private static final Pattern LEADING_TAG = Pattern.compile("^<\\w+>");
 
     private static final String VENDOR_NAME = "OpenAI";
 
@@ -118,6 +109,7 @@ public class OpenAiService implements AssistantService {
 
 
     private OpenAiServiceConfig config;
+    private PayloadHelper payloadHelper;
     private ExecutorService threadPoolExecutor;
     private List<Facility> facilities;
 
@@ -126,6 +118,7 @@ public class OpenAiService implements AssistantService {
     private void init(OpenAiServiceConfig config) {
         destroy();
         this.config = config;
+        this.payloadHelper = new PayloadHelper(config);
         if (facilities == null) {
             facilities = Arrays.asList(
                 new ExpandFacility(this),
@@ -147,6 +140,10 @@ public class OpenAiService implements AssistantService {
             threadPoolExecutor.shutdownNow();
         }
     }
+
+    /* -----------------
+       Interface methods
+       ----------------- */
 
     @Override
     public String getVendorName() {
@@ -172,29 +169,32 @@ public class OpenAiService implements AssistantService {
         return config;
     }
 
-    List<Solution> executeCompletion(List<ValueMap> args) {
-        return execute(config.completionsEndpoint(), args, this::getCompletionRequestPayload);
+    /* ------------------
+       Request processing
+       ------------------ */
+
+    List<Solution> generateText(List<ValueMap> args) {
+        return generate(config.textEndpoint(), args, payloadHelper::getTextGenerationPayload);
     }
 
-    Solution executeCompletion(ValueMap args) {
-        return execute(config.completionsEndpoint(), args, this::getCompletionRequestPayload);
+    Solution generateText(ValueMap args) {
+        return generate(
+            EndpointUtil.isChatEndpoint(args) ? config.textEndpoint() : config.legacyTextEndpoint(),
+            args,
+            payloadHelper::getTextGenerationPayload);
     }
 
-    Solution executeEdit(ValueMap args) {
-        return execute(config.editsEndpoint(), args, this::getEditRequestPayload);
+    List<Solution> generateImage(List<ValueMap> args) {
+        return generate(config.imageEndpoint(), args, payloadHelper::getImageGenerationPayload);
     }
 
-    List<Solution> executeImageGeneration(List<ValueMap> args) {
-        return execute(config.imagesEndpoint(), args, this::getImageGenerationPayload);
+    Solution generateImage(ValueMap args) {
+        return generate(config.imageEndpoint(), args, payloadHelper::getImageGenerationPayload);
     }
 
-    Solution executeImageGeneration(ValueMap args) {
-        return execute(config.imagesEndpoint(), args, this::getImageGenerationPayload);
-    }
-
-    private List<Solution> execute(String endpoint, List<ValueMap> args, Function<ValueMap, String> payloadFactory) {
+    private List<Solution> generate(String endpoint, List<ValueMap> args, Function<ValueMap, String> payloadFactory) {
         if (args.size() == 1) {
-            return Collections.singletonList(execute(endpoint, args.get(0), payloadFactory));
+            return Collections.singletonList(generate(endpoint, args.get(0), payloadFactory));
         }
         CompletableFuture<?>[] tasks = new CompletableFuture[args.size()];
         for (int i = 0; i < args.size(); i++) {
@@ -218,10 +218,10 @@ public class OpenAiService implements AssistantService {
         return result;
     }
 
-    private Solution execute(String endpoint, ValueMap args, Function<ValueMap, String> payloadFactory) {
+    private Solution generate(String endpoint, ValueMap args, Function<ValueMap, String> payloadFactory) {
         String model = args.get(OpenAiConstants.PN_MODEL, String.class);
         String effectiveEndpoint = StringUtils.containsAny(model, "gpt-3.5", "gpt-4")
-            ? config.chatEndpoint()
+            ? config.textEndpoint()
             : endpoint;
 
         String requestPayload = payloadFactory.apply(args);
@@ -255,7 +255,7 @@ public class OpenAiService implements AssistantService {
                 CloseableHttpResponse response = client.execute(request)
             ) {
                 String responseContent = IOUtils.toString(response.getEntity().getContent(), StandardCharsets.UTF_8);
-                Solution solution = parseOpenAiResponse(responseContent, effectiveEndpoint, args);
+                Solution solution = parseResponse(responseContent, effectiveEndpoint, args);
                 if (solution.isSuccess() && useCache) {
                     CacheUtil.saveSolution(
                         args.get(ResourceResolver.class.getName(), ResourceResolver.class),
@@ -276,77 +276,20 @@ public class OpenAiService implements AssistantService {
         return Solution.from(args).withMessage(lastExceptionStatus, StringUtils.defaultIfEmpty(lastExceptionMessage, EXCEPTION_REQUEST_FAILED));
     }
 
-    private CompletableFuture<Solution> executeAsync(String endpoint, ValueMap args, Function<ValueMap, String> payloadFactory) {
+    private CompletableFuture<Solution> executeAsync(
+        String endpoint,
+        ValueMap args,
+        Function<ValueMap, String> payloadFactory) {
         return CompletableFuture.supplyAsync(
-            () -> execute(endpoint, args, payloadFactory),
+            () -> generate(endpoint, args, payloadFactory),
             threadPoolExecutor);
     }
 
-    private String getCompletionRequestPayload(ValueMap args) {
-        return isChatEndpoint(args)
-            ? getChatRequestPayload(args)
-            : getInstructCompletionRequestPayload(args);
-    }
+    /* -------------------
+       Response processing
+       ------------------- */
 
-    private String getInstructCompletionRequestPayload(ValueMap args) {
-        String prompt = args.get(CoreConstants.PN_PROMPT, String.class);
-        if (!StringUtils.endsWith(prompt, CoreConstants.SEPARATOR_COLON)) {
-            prompt += CoreConstants.SEPARATOR_COLON;
-        }
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(CoreConstants.PN_PROMPT, prompt + StringUtils.SPACE + args.get(CoreConstants.PN_TEXT));
-        properties.put(OpenAiConstants.PN_MODEL, args.get(OpenAiConstants.PN_MODEL, String.class));
-        properties.put(OpenAiConstants.PN_MAX_TOKENS, args.get(OpenAiConstants.PN_MAX_TOKENS, config.textLength()));
-        properties.put(OpenAiConstants.PN_TEMPERATURE, args.get(OpenAiConstants.PN_TEMPERATURE, config.temperature()));
-        properties.put(OpenAiConstants.PN_CHOICES_COUNT, args.get(OpenAiConstants.PN_CHOICES_COUNT, config.choices()));
-        return ObjectConversionUtil.toJson(properties);
-    }
-
-    private String getEditRequestPayload(ValueMap args) {
-        return isChatEndpoint(args)
-            ? getChatRequestPayload(args)
-            : getInstructEditRequestPayload(args);
-    }
-
-    private String getInstructEditRequestPayload(ValueMap args) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(OpenAiConstants.PN_INSTRUCTION, args.get(OpenAiConstants.PN_INSTRUCTION, StringUtils.EMPTY));
-        properties.put(OpenAiConstants.PN_MODEL, args.get(OpenAiConstants.PN_MODEL, config.editModel()));
-        properties.put(PN_INPUT, args.get(CoreConstants.PN_TEXT));
-        properties.put(OpenAiConstants.PN_TEMPERATURE, args.get(OpenAiConstants.PN_TEMPERATURE, config.temperature()));
-        properties.put(OpenAiConstants.PN_CHOICES_COUNT, args.get(OpenAiConstants.PN_CHOICES_COUNT, config.choices()));
-        return ObjectConversionUtil.toJson(properties);
-    }
-
-    private String getChatRequestPayload(ValueMap args) {
-        String instruction = args.get(OpenAiConstants.PN_INSTRUCTION, StringUtils.EMPTY);
-        if (!StringUtils.endsWith(instruction, CoreConstants.SEPARATOR_COLON)) {
-            instruction += CoreConstants.SEPARATOR_COLON;
-        }
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(OpenAiConstants.PN_MODEL, args.get(OpenAiConstants.PN_MODEL, String.class));
-        properties.put(PN_MESSAGES, getChatPrompt(instruction + StringUtils.SPACE + args.get(CoreConstants.PN_TEXT)));
-        properties.put(OpenAiConstants.PN_MAX_TOKENS, args.get(OpenAiConstants.PN_MAX_TOKENS, config.textLength()));
-        properties.put(OpenAiConstants.PN_CHOICES_COUNT, args.get(OpenAiConstants.PN_CHOICES_COUNT, config.choices()));
-        return ObjectConversionUtil.toJson(properties);
-
-    }
-
-    private String getImageGenerationPayload(ValueMap args) {
-        Map<String, Object> properties = new HashMap<>();
-        String effectivePrompt = args.get(CoreConstants.PN_PROMPT, args.get(CoreConstants.PN_TEXT, StringUtils.EMPTY));
-        properties.put(CoreConstants.PN_PROMPT, effectivePrompt);
-        properties.put(CoreConstants.PN_SIZE, args.getOrDefault(CoreConstants.PN_SIZE, config.imageSize()));
-        properties.put(OpenAiConstants.PN_CHOICES_COUNT, args.get(OpenAiConstants.PN_CHOICES_COUNT, config.choices()));
-        return ObjectConversionUtil.toJson(properties);
-    }
-
-    private static boolean isChatEndpoint(ValueMap args) {
-        String model = args.get(OpenAiConstants.PN_MODEL, String.class);
-        return StringUtils.containsAny(model, "gpt-3.5", "gpt-4");
-    }
-
-    private static Solution parseOpenAiResponse(
+    private static Solution parseResponse(
         String content,
         String endpoint,
         Map<String, Object> args) throws IOException {
@@ -373,10 +316,10 @@ public class OpenAiService implements AssistantService {
         JsonNode choices = ObjectUtils.firstNonNull(
             jsonNode.get(PN_CHOICES),
             jsonNode.get(PN_DATA));
-        return  parseOpenAiResponse(choices, args);
+        return  parseResponse(choices, args);
     }
 
-    private static Solution parseOpenAiResponse(JsonNode choices, Map<String, Object> args) {
+    private static Solution parseResponse(JsonNode choices, Map<String, Object> args) {
         if (choices == null) {
             return Solution.from(args).empty();
         }
@@ -387,21 +330,16 @@ public class OpenAiService implements AssistantService {
             if (nextElement.hasNonNull(PN_URL)) {
                 Optional.of(nextElement.get(PN_URL))
                     .map(JsonNode::asText)
-                    .map(OpenAiService::sanitizeTextOutput)
+                    .map(txt -> sanitizeTextOutput(txt, false))
                     .filter(StringUtils::isNotEmpty)
                     .ifPresent(options::add);
             } else if (nextElement.hasNonNull(CoreConstants.PN_TEXT)) {
                 JsonNode text = nextElement.get(CoreConstants.PN_TEXT);
-                boolean isCutOff = Optional.ofNullable(nextElement.get(PN_FINISH))
-                    .map(JsonNode::asText)
-                    .orElse(StringUtils.EMPTY)
-                    .equals(VALUE_LENGTH);
-                options.add(sanitizeTextOutput(text.asText())
-                    + (isCutOff ? CoreConstants.ELLIPSIS : StringUtils.EMPTY));
+                options.add(sanitizeTextOutput(text.asText(), isCutOff(nextElement)));
             } else if (nextElement.has(CoreConstants.PN_MESSAGE)) {
-                JsonNode messageNode = nextElement.get(CoreConstants.PN_MESSAGE);
-                if (messageNode.has(PN_CONTENT)) {
-                    options.add(messageNode.get(PN_CONTENT).asText());
+                JsonNode message = nextElement.get(CoreConstants.PN_MESSAGE);
+                if (message.has(OpenAiConstants.PN_CONTENT)) {
+                    options.add(sanitizeTextOutput(message.get(OpenAiConstants.PN_CONTENT).asText(), isCutOff(nextElement)));
                 }
             }
         }
@@ -412,24 +350,25 @@ public class OpenAiService implements AssistantService {
        Utility methods
        --------------- */
 
-    private static List<Map<String, String>> getChatPrompt(String prompt) {
-        List<Map<String, String>> result = new ArrayList<>();
-        Map<String, String> message = new LinkedHashMap<>();
-        message.put(PN_ROLE, ROLE_SYSTEM);
-        message.put(PN_CONTENT, "You are a competent and eloquent journalist who writes for the web");
-        result.add(message);
-        message = new LinkedHashMap<>();
-        message.put(PN_ROLE, ROLE_USER);
-        message.put(PN_CONTENT, prompt);
-        result.add(message);
-        return result;
-    }
-
-    private static String sanitizeTextOutput(String value) {
+    private static String sanitizeTextOutput(String value, boolean handleCut) {
         String result = StringUtils.trim(value);
-        if (Pattern.compile(PATTERN_LEADING_TAG).matcher(result).find()) {
+        if (LEADING_TAG.matcher(result).find()) {
             return result;
         }
-        return StringUtils.removePattern(result, PATTERN_LEADING_NON_ALPHABETIC);
+        result = StringUtils.removePattern(result, LEADING_NON_ALPHABETIC);
+        if (!handleCut) {
+            return result;
+        }
+        if (StringUtils.contains(result, ". ")) {
+            return StringUtils.substringBeforeLast(result, ". ");
+        }
+        return result + "...";
+    }
+
+    private static boolean isCutOff(JsonNode value) {
+        return Optional.ofNullable(value.get(PN_FINISH))
+            .map(JsonNode::asText)
+            .orElse(StringUtils.EMPTY)
+            .equals(VALUE_LENGTH);
     }
 }

@@ -17,12 +17,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Spliterators;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang.RandomStringUtils;
@@ -48,7 +46,6 @@ class CacheUtil {
 
     private static final String CACHE_ADDRESS = "/var/etoolbox-authoring-kit/assistant/openai/cache";
 
-    private static final String PN_REQUEST_ARGS = "requestArgs";
     private static final String PN_SOLUTION = "solution";
 
     private static final int NODE_NAME_PREFIX_LENGTH = 50;
@@ -116,7 +113,13 @@ class CacheUtil {
             }
             Map<String, Object> newValueMap = new HashMap<>();
             newValueMap.put(JcrConstants.JCR_PRIMARYTYPE, JcrConstants.NT_UNSTRUCTURED);
-            newValueMap.put(PN_REQUEST_ARGS, ObjectConversionUtil.toJson(value.getArgs()));
+            newValueMap.put("cmd", value.getArgs().get("cmd"));
+            if (value.getArgs().get("prompt") != null) {
+                newValueMap.put("prompt", value.getArgs().get("prompt"));
+            }
+            if (value.getArgs().get("text") != null) {
+                newValueMap.put("text", value.getArgs().get("text"));
+            }
             newValueMap.put(PN_SOLUTION, ObjectConversionUtil.toJson(value));
             resourceResolver.create(cacheResource, nodeName + randomSuffix, newValueMap);
             resourceResolver.commit();
@@ -131,14 +134,24 @@ class CacheUtil {
         Map<String, Object> args) {
 
         Resource cacheResource = resourceResolver.getResource(CACHE_ADDRESS);
-        String argsText = ObjectConversionUtil.toJson(args);
-        if (cacheResource == null || argsText == null) {
+        if (cacheResource == null) {
             return null;
         }
-        for (Resource child : cacheResource.getChildren()) {
-            String childArgsText = child.getValueMap().get(PN_REQUEST_ARGS, String.class);
+        Object cmd = args.get(CoreConstants.PN_COMMAND);
+        Object stage = args.get(OpenAiConstants.PN_STAGE);
+        Object prompt = args.get(CoreConstants.PN_PROMPT);
+        Object text = args.get(CoreConstants.PN_TEXT);
 
-            if (StringUtils.equals(argsText, childArgsText)) {
+        for (Resource child : cacheResource.getChildren()) {
+            ValueMap valueMap = child.getValueMap();
+            String storedCmd = valueMap.get(CoreConstants.PN_COMMAND, String.class);
+            String storedStage =  valueMap.get(OpenAiConstants.PN_STAGE, StringUtils.EMPTY);
+            String storedPrompt = valueMap.get(CoreConstants.PN_PROMPT, StringUtils.EMPTY);
+            String storedText = valueMap.get(CoreConstants.PN_TEXT, StringUtils.EMPTY);
+            if (stringsEqual(cmd, storedCmd)
+                && stringsEqual(stage, storedStage)
+                && stringsEqual(prompt, storedPrompt)
+                && stringsEqual(text, storedText)) {
                 return child;
             }
         }
@@ -166,14 +179,7 @@ class CacheUtil {
     }
 
     private static String getNodeName(Map<String, Object> args) {
-        String instruction = Stream.of(
-            args.get(CoreConstants.PN_PROMPT),
-            args.get(OpenAiConstants.PN_INSTRUCTION))
-            .filter(Objects::nonNull)
-            .map(Object::toString)
-            .map(String::trim)
-            .findFirst()
-            .orElse(StringUtils.EMPTY);
+        String prompt = args.getOrDefault(CoreConstants.PN_PROMPT, StringUtils.EMPTY).toString().trim();
         String text = args.getOrDefault(CoreConstants.PN_TEXT, StringUtils.EMPTY).toString().trim();
         String commandPart = args
             .getOrDefault(CoreConstants.PN_COMMAND, StringUtils.EMPTY)
@@ -183,12 +189,12 @@ class CacheUtil {
         if (!commandPart.isEmpty()) {
             commandPart += CoreConstants.SEPARATOR_HYPHEN;
         }
-        String instructionPart = getNodeNamePart(instruction, NODE_NAME_PREFIX_LENGTH);
-        if (!instructionPart.isEmpty()) {
-            instructionPart += CoreConstants.SEPARATOR_HYPHEN;
+        String promptPart = getNodeNamePart(prompt, NODE_NAME_PREFIX_LENGTH);
+        if (!promptPart.isEmpty()) {
+            promptPart += CoreConstants.SEPARATOR_HYPHEN;
         }
-        String textPart = getNodeNamePart(text, NODE_NAME_LENGTH - commandPart.length() - instructionPart.length());
-        return StringUtils.strip(commandPart + instructionPart + textPart, CoreConstants.SEPARATOR_HYPHEN);
+        String textPart = getNodeNamePart(text, NODE_NAME_LENGTH - commandPart.length() - promptPart.length());
+        return StringUtils.strip(commandPart + promptPart + textPart, CoreConstants.SEPARATOR_HYPHEN);
     }
 
     private static String getNodeNamePart(String source, int limit) {
@@ -209,5 +215,11 @@ class CacheUtil {
             }
         }
         return result.toString();
+    }
+
+    private static boolean stringsEqual(Object left, Object right) {
+        String stringifiedLeft = left != null ? left.toString() : StringUtils.EMPTY;
+        String stringifiedRight = right != null ? right.toString() : StringUtils.EMPTY;
+        return StringUtils.equals(stringifiedLeft, stringifiedRight);
     }
 }

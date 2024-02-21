@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
@@ -58,7 +59,7 @@ class TaggingFacility extends OpenAiFacility {
 
     @Override
     public String getId() {
-        return "tags.text.oai";
+        return "tags.oai";
     }
 
     @Override
@@ -83,7 +84,7 @@ class TaggingFacility extends OpenAiFacility {
 
     @Override
     public List<Setting> getSettings() {
-        return COMPLETION_SETTINGS;
+        return SETTINGS;
     }
 
     @Override
@@ -102,13 +103,17 @@ class TaggingFacility extends OpenAiFacility {
                 }
                 String text = resource.getValueMap().get(fieldName, String.class);
                 ValueMap task = ((VersionableValueMap) getArguments(request))
+                    .put(ResourceResolver.class.getName(), request.getResourceResolver())
+                    .put(
+                        CoreConstants.PN_PROMPT,
+                        getStoredPrompt(request, getId()))
                     .put(CoreConstants.PN_TEXT, text)
-                    .put(CoreConstants.PN_PROMPT, "Create no more than 10 keywords that describe the following text")
                     .put(OpenAiConstants.PN_CHOICES_COUNT, 1)
-                    .putIfMissing(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_COMPLETION_MODEL);
+                    .put(OpenAiConstants.PN_BEST_OF, 2)
+                    .putIfMissing(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_TEXT_MODEL);
                 tasks.add(task);
             }
-            List<Solution> solutions = getService().executeCompletion(tasks);
+            List<Solution> solutions = getService().generateText(tasks);
             String keywords = solutions
                 .stream()
                 .filter(Solution::isSuccess)

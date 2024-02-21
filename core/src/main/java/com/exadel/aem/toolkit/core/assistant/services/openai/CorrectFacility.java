@@ -13,7 +13,12 @@
  */
 package com.exadel.aem.toolkit.core.assistant.services.openai;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import com.exadel.aem.toolkit.core.assistant.models.facilities.SettingPersistence;
+
+import com.exadel.aem.toolkit.core.assistant.models.facilities.SettingType;
 
 import org.apache.sling.api.resource.ValueMap;
 
@@ -23,7 +28,19 @@ import com.exadel.aem.toolkit.core.assistant.utils.VersionableValueMap;
 
 class CorrectFacility extends OpenAiFacility {
 
-    private static final String INSTRUCTION = "Correct spelling and grammar";
+    private static final List<Setting> CORRECTION_SETTINGS;
+    static {
+        CORRECTION_SETTINGS = new ArrayList<>();
+        CORRECTION_SETTINGS.add(Setting
+            .builder()
+                .id("prompt")
+                .type(SettingType.STRING)
+                .title("How do you want this text to be corrected?")
+                .defaultValue("Correct spelling and grammar in the following text")
+                .persistence(SettingPersistence.TRANSIENT)
+            .build());
+        CORRECTION_SETTINGS.addAll(SETTINGS);
+    }
 
     public CorrectFacility(OpenAiService service) {
         super(service);
@@ -46,15 +63,14 @@ class CorrectFacility extends OpenAiFacility {
 
     @Override
     public List<Setting> getSettings() {
-        return EDIT_SETTINGS;
+        return CORRECTION_SETTINGS;
     }
 
     @Override
     public Solution execute(ValueMap args) {
         ValueMap newArgs = new VersionableValueMap(args)
-            .putIfMissing(OpenAiConstants.PN_INSTRUCTION, INSTRUCTION)
             .put(OpenAiConstants.PN_CHOICES_COUNT, 1)
             .put(OpenAiConstants.PN_BEST_OF, 2);
-        return getService().executeEdit(newArgs);
+        return getService().generateText(newArgs);
     }
 }

@@ -160,7 +160,6 @@ class PageFacility extends OpenAiFacility {
         if (currentStage == null || StringUtils.isAnyBlank(currentPath, currentPrompt)) {
             return Solution.from(args).withMessage(HttpStatus.SC_BAD_REQUEST, EXCEPTION_INVALID_REQUEST);
         }
-        args.putIfAbsent(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_COMPLETION_MODEL);
 
         try {
             PageFacilityBroker pageBroker = PageFacilityBroker.getInstance(
@@ -217,17 +216,15 @@ class PageFacility extends OpenAiFacility {
        Stage routines
        -------------- */
 
-    private void createSummary(
-        PageFacilityBroker broker,
-        ValueMap args) throws AssistantException {
+    private void createSummary(PageFacilityBroker broker, ValueMap args) throws AssistantException {
         int phrasesCount = Math.max(broker.getTextMembers().size(), 1);
         ValueMap task = new VersionableValueMap(args)
             .put(
                 CoreConstants.PN_PROMPT,
-                String.format("Generate as many as %d ideas for an article on the following topic", phrasesCount))
+                getStoredPrompt(broker.getRequest(), "summary.page.create.oai").replace("%d", String.valueOf(phrasesCount)))
             .put(OpenAiConstants.PN_CHOICES_COUNT, 1);
 
-        Solution solution = getService().executeCompletion(task);
+        Solution solution = getService().generateText(task);
         String solutionText = solution.isSuccess() ? solution.asText() : StringUtils.EMPTY;
 
         List<String> summaryPoints = PATTERN_SPLIT_BY_NEWLINE.splitAsStream(solutionText)
@@ -247,10 +244,12 @@ class PageFacility extends OpenAiFacility {
         String summary = broker.getSummary();
         String normalizedSummary = normalizeSummary(summary);
         ValueMap task = new VersionableValueMap(args)
-            .put(CoreConstants.PN_PROMPT, "Create a title for the following text")
+            .put(
+                CoreConstants.PN_PROMPT,
+                getStoredPrompt(broker.getRequest(), "title.page.create.oai"))
             .put(CoreConstants.PN_TEXT, normalizedSummary)
             .put(OpenAiConstants.PN_CHOICES_COUNT, 1);
-        Solution solution = getService().executeCompletion(task);
+        Solution solution = getService().generateText(task);
         if (solution.isSuccess()) {
             broker.setTitle(StringUtils.strip(solution.asText(), TERMINATOR_SPACE_QUOTE));
         }
@@ -260,10 +259,12 @@ class PageFacility extends OpenAiFacility {
         String summary = broker.getSummary();
         String normalizedSummary = normalizeSummary(summary);
         ValueMap task = new VersionableValueMap(args)
-            .put(CoreConstants.PN_PROMPT, "Summarize the following text in " + ABSTRACT_WORDS_LIMIT + " words")
+            .put(
+                CoreConstants.PN_PROMPT,
+                getStoredPrompt(broker.getRequest(), "subtitle.page.create.oai").replace("%d", String.valueOf(ABSTRACT_WORDS_LIMIT)))
             .put(CoreConstants.PN_TEXT, normalizedSummary)
             .put(OpenAiConstants.PN_CHOICES_COUNT, 1);
-        Solution solution = getService().executeCompletion(task);
+        Solution solution = getService().generateText(task);
         if (solution.isSuccess()) {
             String text = solution.asText();
             broker.setSubtitle(stripAfterWordsLimit(text));
@@ -274,7 +275,7 @@ class PageFacility extends OpenAiFacility {
         createStringValues(
             broker,
             args,
-            ExpandFacility.PROMPT,
+            getStoredPrompt(broker.getRequest(), "text.expand.oai"),
             PageFacilityBroker::getTextMembers,
             PageFacility::stripUnfinishedPhrase,
             false);
@@ -291,28 +292,20 @@ class PageFacility extends OpenAiFacility {
     }
 
     private void createImagePrompts(PageFacilityBroker broker, ValueMap args) throws AssistantException {
-        String promptText = "Create a prompt for the DALL-E image generator to create an image on the following topic: \"" +
-            args.get(CoreConstants.PN_TEXT) +
-            "\". The prompt must specify an arbitrary type of framing, an arbitrary shoot context, " +
-            "an arbitrary type of lighting, and an arbitrary usage context. Example: \"A close up studio " +
-            "photographic portrait of a robot, soft lighting, a photo from Life Magazine\". " +
-            "The result must not exceed 400 characters.";
         createStringValues(
             broker,
             args,
-            promptText,
+            getStoredPrompt(broker.getRequest(), "imageprompt.page.create.oai").replace("%s", String.valueOf(args.get(CoreConstants.PN_TEXT)).trim()),
             PageFacilityBroker::getImagePromptMembers,
             value -> ObjectConversionUtil.toJson(CoreConstants.PN_PROMPT, value),
             false);
     }
 
     private void createFindings(PageFacilityBroker broker, ValueMap args) throws AssistantException {
-        String promptText = "Formulate 2 findings (no more than 12 words each) suitable for a conclusion " +
-            "of an article from the following text";
         createStringValues(
             broker,
             args,
-            promptText,
+            getStoredPrompt(broker.getRequest(), "title.page.findings.oai"),
             PageFacilityBroker::getFindingsMembers,
             value -> StringUtils.removePattern(value, "(?m)^\\s*\\d+\\.\\s*"),
             true);
@@ -344,7 +337,7 @@ class PageFacility extends OpenAiFacility {
         Map<String, String> membersToDamUrls = new HashMap<>();
         Map<String, String> voidedMembers = getMapOfEmptyValues(imageMembers);
 
-        List<Solution> solutions = getService().executeImageGeneration(tasks);
+        List<Solution> solutions = getService().generateImage(tasks);
         Map<String, String> downloadTasks = new HashMap<>();
         for (Solution solution : solutions) {
             if (!solution.isSuccess()) {
@@ -424,7 +417,7 @@ class PageFacility extends OpenAiFacility {
             }
             tasks.add(newTask);
         }
-        return getService().executeCompletion(tasks);
+        return getService().generateText(tasks);
     }
 
     private List<Solution> retrieveSolutions(

@@ -16,6 +16,8 @@ package com.exadel.aem.toolkit.core.assistant.services.openai;
 import java.util.Arrays;
 import java.util.List;
 
+import com.exadel.aem.toolkit.core.assistant.utils.VersionableValueMap;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -29,44 +31,39 @@ import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
 
 abstract class OpenAiFacility extends SimpleFacility {
 
-    private static final Setting COMPLETION_MODEL_SETTING = Setting
-        .builder()
-        .id(OpenAiConstants.PN_MODEL)
-        .title("Model")
-        .option("gpt-4", "GPT-4")
-        .option(OpenAiServiceConfig.DEFAULT_COMPLETION_MODEL, "GPT-3 DaVinci")
-        .option("text-curie-001", "GPT-3 Curie")
-        .option("text-babbage-001", "GPT-3 Babbage")
-        .option("text-ada-001", "GPT-3 Ada")
-        .defaultValue(OpenAiServiceConfig.DEFAULT_COMPLETION_MODEL)
-        .build();
-    private static final Setting EDIT_MODEL_SETTING = Setting
-        .builder()
-        .id(OpenAiConstants.PN_MODEL)
-        .title("Model")
-        .option("gpt-4", "GPT-4")
-        .option(OpenAiServiceConfig.DEFAULT_EDIT_MODEL, "DaVinci")
-        .defaultValue(OpenAiServiceConfig.DEFAULT_EDIT_MODEL)
-        .build();
-    private static final Setting TEMPERATURE_SETTING = Setting
-        .builder()
-        .id(OpenAiConstants.PN_TEMPERATURE)
-        .title("Temperature")
-        .type(SettingType.DOUBLE)
-        .minValue(0d)
-        .maxValue(2d)
-        .defaultValue(String.valueOf(OpenAiServiceConfig.DEFAULT_TEMPERATURE))
-        .build();
-    private static final Setting MAX_TOKENS_SETTING = Setting
-        .builder()
-        .id(OpenAiConstants.PN_MAX_TOKENS)
-        .title("Max Text Length (tokens)")
-        .type(SettingType.INTEGER)
-        .minValue(0)
-        .defaultValue(OpenAiServiceConfig.DEFAULT_TEXT_LENGTH)
-        .build();
-    static final List<Setting> COMPLETION_SETTINGS = Arrays.asList(COMPLETION_MODEL_SETTING, TEMPERATURE_SETTING, MAX_TOKENS_SETTING);
-    static final List<Setting> EDIT_SETTINGS = Arrays.asList(EDIT_MODEL_SETTING, TEMPERATURE_SETTING);
+    static final List<Setting> SETTINGS = Arrays.asList(
+        Setting
+            .builder()
+            .id(OpenAiConstants.PN_MODEL)
+            .title("Model")
+            .option(OpenAiServiceConfig.TEXT_MODEL_GPT_4_TURBO, "GPT-4 Turbo")
+            .option(OpenAiServiceConfig.TEXT_MODEL_GPT_4, "GPT-4")
+            .option(OpenAiServiceConfig.TEXT_MODEL_GPT_3_5_TURBO, "GPT-3.5 Turbo")
+            .option(OpenAiServiceConfig.TEXT_MODEL_GPT_3_5_INSTRUCT, "GPT-3.5")
+            .option(OpenAiServiceConfig.TEXT_MODEL_GPT_3_DAVINCI, "GPT-3 Curie/DaVinci")
+            .option(OpenAiServiceConfig.TEXT_MODEL_GPT_3_BABBAGE, "GPT-3 Ada/Babbage")
+            .defaultValue(OpenAiServiceConfig.DEFAULT_TEXT_MODEL)
+            .build(),
+
+        Setting
+            .builder()
+            .id(OpenAiConstants.PN_MAX_TOKENS)
+            .title("Max Text Length (tokens)")
+            .type(SettingType.INTEGER)
+            .minValue(0)
+            .defaultValue(OpenAiServiceConfig.DEFAULT_TEXT_LENGTH)
+            .build(),
+
+        Setting
+            .builder()
+            .id(OpenAiConstants.PN_TEMPERATURE)
+            .title("Temperature")
+            .type(SettingType.DOUBLE)
+            .minValue(0d)
+            .maxValue(2d)
+            .defaultValue(String.valueOf(OpenAiServiceConfig.DEFAULT_TEMPERATURE))
+            .build());
+
     static final String EXCEPTION_TOKEN_MISSING = "Authentication token is missing";
 
     private final OpenAiService service;
@@ -87,7 +84,7 @@ abstract class OpenAiFacility extends SimpleFacility {
 
     @Override
     public Solution execute(SlingHttpServletRequest request) {
-        ValueMap args = getArguments(request);
+        VersionableValueMap args = (VersionableValueMap) getArguments(request);
         boolean isCacheable = service.getConfig().caching()
             && !args.get(OpenAiConstants.NO_CACHE, false);
 
@@ -100,6 +97,7 @@ abstract class OpenAiFacility extends SimpleFacility {
         if (StringUtils.isBlank(args.get(CoreConstants.PN_TEXT, String.class))) {
             return Solution.from(EXCEPTION_INVALID_REQUEST);
         }
+        args.putIfMissing(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_TEXT_MODEL);
         return execute(args);
     }
 

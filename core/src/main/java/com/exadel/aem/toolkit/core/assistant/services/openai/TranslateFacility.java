@@ -16,6 +16,8 @@ package com.exadel.aem.toolkit.core.assistant.services.openai;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
+
 import org.apache.sling.api.resource.ValueMap;
 
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Setting;
@@ -64,7 +66,7 @@ class TranslateFacility extends OpenAiFacility {
     static {
         REPHRASE_SETTINGS = new ArrayList<>();
         REPHRASE_SETTINGS.add(LANGUAGE_SETTING);
-        REPHRASE_SETTINGS.addAll(EDIT_SETTINGS);
+        REPHRASE_SETTINGS.addAll(SETTINGS);
 
     }
 
@@ -99,10 +101,9 @@ class TranslateFacility extends OpenAiFacility {
 
     @Override
     public Solution execute(ValueMap args) {
-        String instruction = "Translate this text into " + args.get(PROPERTY_LANGUAGE, DEFAULT_TRANSLATION);
+        String prompt = "Translate this text into " + args.get(PROPERTY_LANGUAGE, DEFAULT_TRANSLATION);
         ValueMap newArgs = new VersionableValueMap(args)
-            .put(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_CHAT_MODEL)
-            .put(OpenAiConstants.PN_INSTRUCTION, instruction);
-        return getService().executeEdit(newArgs);
+            .put(CoreConstants.PN_PROMPT, prompt);
+        return getService().generateText(newArgs);
     }
 }

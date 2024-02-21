@@ -18,14 +18,22 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
 import com.exadel.aem.toolkit.core.utils.HttpClientFactory;
 
-@ObjectClassDefinition(name = "EToolbox Authoring Kit - Assistant: OpenAI Integration")
+@ObjectClassDefinition(name = "EToolbox Authoring Assistant: OpenAI Integration")
 public @interface OpenAiServiceConfig {
 
-    String DEFAULT_COMPLETION_MODEL = "text-davinci-003";
-    String DEFAULT_CHAT_MODEL = "gpt-3.5-turbo";
+    String TEXT_MODEL_GPT_4_TURBO = "gpt-4-turbo-preview";
+    String TEXT_MODEL_GPT_4 = "gpt-4";
+    String TEXT_MODEL_GPT_3_5_TURBO = "gpt-3.5-turbo";
+    String TEXT_MODEL_GPT_3_5_INSTRUCT = "gpt-3.5-turbo-instruct";
+    String TEXT_MODEL_GPT_3_DAVINCI = "davinci-002";
+    String TEXT_MODEL_GPT_3_BABBAGE = "babbage-002";
+    String DEFAULT_TEXT_MODEL = TEXT_MODEL_GPT_3_5_TURBO;
+
+    String IMAGE_MODEL_DALLE_3 = "dall-e-3";
+    String IMAGE_MODEL_DALLE_2 = "dall-e-2";
+    String DEFAULT_IMAGE_MODEL = IMAGE_MODEL_DALLE_3;
 
     String DEFAULT_IMAGE_SIZE = "512x512";
-    String DEFAULT_EDIT_MODEL = "text-davinci-edit-001";
     double DEFAULT_TEMPERATURE = 0.8d;
     int DEFAULT_TEXT_LENGTH = 200;
 
@@ -35,23 +43,17 @@ public @interface OpenAiServiceConfig {
     @AttributeDefinition(name = "Authorization Token")
     String token();
 
-    @AttributeDefinition(name = "Chat Endpoint")
-    String chatEndpoint() default "https://api.openai.com/v1/chat/completions";
+    @AttributeDefinition(name = "Text Generation Endpoint")
+    String textEndpoint() default "https://api.openai.com/v1/chat/completions";
 
-    @AttributeDefinition(name = "Completions Endpoint")
-    String completionsEndpoint() default "https://api.openai.com/v1/completions";
+    @AttributeDefinition(name = "Legacy Text Generation Endpoint")
+    String legacyTextEndpoint() default "https://api.openai.com/v1/completions";
 
-    @AttributeDefinition(name = "Edits Endpoint")
-    String editsEndpoint() default "https://api.openai.com/v1/edits";
-
-    @AttributeDefinition(name = "Images Endpoint")
-    String imagesEndpoint() default "https://api.openai.com/v1/images/generations";
+    @AttributeDefinition(name = "Image Generation Endpoint")
+    String imageEndpoint() default "https://api.openai.com/v1/images/generations";
 
     @AttributeDefinition(name = "Default Completion Model")
-    String completionModel() default DEFAULT_COMPLETION_MODEL;
-
-    @AttributeDefinition(name = "Default Edit Model")
-    String editModel() default DEFAULT_EDIT_MODEL;
+    String model() default DEFAULT_TEXT_MODEL;
 
     @AttributeDefinition(name = "Default Temperature")
     double temperature() default DEFAULT_TEMPERATURE;

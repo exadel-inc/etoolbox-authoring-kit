@@ -17,14 +17,10 @@ import java.util.List;
 
 import org.apache.sling.api.resource.ValueMap;
 
-import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.assistant.models.facilities.Setting;
 import com.exadel.aem.toolkit.core.assistant.models.solutions.Solution;
-import com.exadel.aem.toolkit.core.assistant.utils.VersionableValueMap;
 
 class ExpandFacility extends OpenAiFacility {
-
-    static final String PROMPT = "Expand the following text";
 
     ExpandFacility(OpenAiService service) {
         super(service);
@@ -47,14 +43,11 @@ class ExpandFacility extends OpenAiFacility {
 
     @Override
     public List<Setting> getSettings() {
-        return COMPLETION_SETTINGS;
+        return SETTINGS;
     }
 
     @Override
     public Solution execute(ValueMap args) {
-        ValueMap newArgs = new VersionableValueMap(args)
-            .putIfMissing(CoreConstants.PN_PROMPT, PROMPT)
-            .putIfMissing(OpenAiConstants.PN_MODEL, OpenAiServiceConfig.DEFAULT_COMPLETION_MODEL);
-        return getService().executeCompletion(newArgs);
+        return getService().generateText(args);
     }
 }
