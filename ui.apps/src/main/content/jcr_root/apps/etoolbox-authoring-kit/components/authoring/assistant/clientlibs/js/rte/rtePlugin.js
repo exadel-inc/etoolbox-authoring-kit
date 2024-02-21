@@ -92,7 +92,7 @@
                             this.currentSelection);
                         RTE.Selection.selectBookmark(this.editorKernel.editContext, bookmark);
                     }
-                    this.editorKernel.relayCmd('inserthtml', RTE.Utils.htmlEncode(text));
+                    this.editorKernel.relayCmd('inserthtml', text);
                 }
             };
             ns.Assistant.openRequestDialog(dialogSetup);

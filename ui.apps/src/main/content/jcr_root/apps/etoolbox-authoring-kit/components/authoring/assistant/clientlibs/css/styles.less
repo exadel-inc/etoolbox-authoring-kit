@@ -171,13 +171,12 @@ coral-icon[icon="assistant-mono"] {
     }
 
     .coral3-Dialog-header {
+        overflow: hidden;
         .citation {
-            &:before {
-                content: '"';
-            }
-            &:after {
-                content: '"';
-            }
+            color: #aaa;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
 

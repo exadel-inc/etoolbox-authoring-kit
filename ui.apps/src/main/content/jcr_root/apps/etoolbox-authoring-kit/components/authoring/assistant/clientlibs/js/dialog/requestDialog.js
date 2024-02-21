@@ -149,7 +149,7 @@
         ns.Assistant.setLoadingState($dialog, 'Processing request');
 
         const headerText = getHeaderText(setup.settings.title || command);
-        const headerTextWithExtract = headerText + (text.trim().length ? ` <span class="citation">${text.trim()}</span>` : '');
+        const headerTextWithExtract = headerText + (text.trim().length ? ` <span class="citation">${stripTags(text)}</span>` : '');
 
         $dialog.attr(ns.Assistant.ATTR_TITLE, headerText);
         $dialog.find('coral-dialog-header').html(headerTextWithExtract);
@@ -218,6 +218,12 @@
         let commandTitle = /(\w+\.)+\w+/.test(title) ? title.split('.').slice(0, -1) : [title];
         commandTitle = commandTitle.slice(-1)[0];
         return commandTitle.substring(0, 1).toUpperCase() + commandTitle.substring(1).toLowerCase();
+    }
+
+    function stripTags(text) {
+        const container = document.createElement('div');
+        container.innerHTML = text;
+        return (container.textContent || container.innerText).trim();
     }
 
     async function populateOptionList($dialog, solution) {

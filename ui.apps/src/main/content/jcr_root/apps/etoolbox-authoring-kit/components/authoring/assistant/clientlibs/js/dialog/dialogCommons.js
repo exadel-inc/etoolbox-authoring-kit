@@ -75,7 +75,7 @@ const SELECTOR_WAIT = 'coral-wait';
     $(document)
         .on('coral-overlay:close', `.${ns.Assistant.CLS_ASSISTANT_DIALOG}`, handleDialogClose);
 
-    function handleDialogClose(/*e*/) {
+    function handleDialogClose() {
         const $this = $(this);
         const existingAbortController = $this.data(ns.Assistant.DATA_KEY_ABORT_CONTROLLER);
         existingAbortController && existingAbortController.abort();
