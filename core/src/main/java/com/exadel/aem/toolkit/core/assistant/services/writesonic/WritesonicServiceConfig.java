@@ -19,7 +19,7 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
 import com.exadel.aem.toolkit.core.utils.HttpClientFactory;
 
-@ObjectClassDefinition(name = "EToolbox Authoring Kit - Assistant: Writesonic Integration")
+@ObjectClassDefinition(name = "EToolbox Authoring Assistant: Writesonic Integration")
 public @interface WritesonicServiceConfig {
 
     String DEFAULT_ENGINE = "good";

@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.core.assistant.services.pixabay;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
-@ObjectClassDefinition(name = "EToolbox Authoring Kit - Assistant: Pixabay Integration")
+@ObjectClassDefinition(name = "EToolbox Authoring Assistant: Pixabay Integration")
 public @interface PixabayServiceConfig {
 
     @AttributeDefinition(name = "Search Endpoint")

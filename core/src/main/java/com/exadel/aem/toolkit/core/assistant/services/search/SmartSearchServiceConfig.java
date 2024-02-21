@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.core.assistant.services.search;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
-@ObjectClassDefinition(name = "EToolbox Authoring Kit - Assistant: SmartSearch Service")
+@ObjectClassDefinition(name = "EToolbox Authoring Assistant: SmartSearch Service")
 public @interface SmartSearchServiceConfig {
 
     @AttributeDefinition(name = "Text Search - Root")
