@@ -18,9 +18,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.request.RequestParameterMap;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -39,6 +43,8 @@ public abstract class SimpleFacility implements Facility {
     protected static final String ICON_TEXT_REMOVE = "textExclude";
 
     protected static final String EXCEPTION_INVALID_REQUEST = "Invalid request";
+
+    private static final String PROMPTS_DICTIONARY = "/conf/etoolbox-authoring-kit/settings/assistant/prompts";
 
     /**
      * Default constructor
@@ -85,7 +91,7 @@ public abstract class SimpleFacility implements Facility {
      * @param request {@link SlingHttpServletRequest} instance
      * @return {@link ValueMap} containing the arguments
      */
-    protected static ValueMap getArguments(SlingHttpServletRequest request) {
+    protected ValueMap getArguments(SlingHttpServletRequest request) {
         RequestParameterMap parameters = request.getRequestParameterMap();
         VersionableValueMap result = new VersionableValueMap();
         for (Map.Entry<String, RequestParameter[]> entry : parameters.entrySet()) {
@@ -99,6 +105,19 @@ public abstract class SimpleFacility implements Facility {
                 result.put(entry.getKey(), Arrays.stream(values).map(RequestParameter::getString).toArray(String[]::new));
             }
         }
+        if (StringUtils.isBlank(result.get(CoreConstants.PN_PROMPT, String.class))) {
+            String storedPrompt = getStoredPrompt(request, getId());
+            if (StringUtils.isNotBlank(storedPrompt)) {
+                result.put(CoreConstants.PN_PROMPT, storedPrompt);
+            }
+        }
         return result;
+    }
+
+    protected String getStoredPrompt(SlingHttpServletRequest request, String id) {
+        Resource promptsDictionary = request.getResourceResolver().getResource(PROMPTS_DICTIONARY);
+        return promptsDictionary != null
+                ? promptsDictionary.getValueMap().get(id, String.class)
+                : StringUtils.EMPTY;
     }
 }

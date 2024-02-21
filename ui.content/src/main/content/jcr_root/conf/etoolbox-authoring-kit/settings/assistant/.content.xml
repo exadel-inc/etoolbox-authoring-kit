@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="sling:Folder">
+    <prompts
+        jcr:primaryType="nt:unstructured"
+        text.correct.oai="Correct spelling and grammar in the following text"
+        text.expand.oai="Please expand the following text"
+        text.rephrase.oai="Make this text sound friendly and conversational. Stick to the modern American English grammar and style"
+        text.shorten.oai="Please shorten the following text"
+        tags.oai="Create no more than 10 keywords that describe the following text. Make sure that every keyword is a meaningful word or a short phrase. Do not offer a functional part of speech or introductory words as a keyword. Do not use the same word as a keyword more than once. Do not add any markup, numbers or bullets"
+
+        summary.page.create.oai="Generate as many as %d ideas for an article on the following topic"
+        title.page.create.oai="Create a title for the following text"
+        subtitle.page.create.oai="Summarize the following text in %d words"
+        imageprompt.page.create.oai="Create a prompt for the DALL-E image generator to create an image on the following topic: &quot;%s&quot;. The prompt must specify an arbitrary type of framing, an arbitrary shoot context, an arbitrary type of lighting, and an arbitrary usage context. Example: 'A close up studio photographic portrait of a robot, soft lighting, a photo from Life Magazine'. The result must not exceed 400 characters."
+        title.page.findings.oai="Formulate 2 findings (no more than 12 words each) suitable for a conclusion of an article from the following text"
+    />
+</jcr:root>
