@@ -16,6 +16,7 @@ package com.exadel.aem.toolkit.it;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.SelenideElement;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
@@ -37,6 +38,8 @@ public class IgnoreFreshnessTest {
 
     @BeforeClass
     public static void login() {
+        Configuration.timeout = AemConnection.TIMEOUT;
+        Configuration.pollingInterval = AemConnection.POLLING_INTERVAL;
         AemConnection.login();
         AemConnection.open("/editor.html/content/etoolbox-authoring-kit-test/ignoreFreshness.html");
     }

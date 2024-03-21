@@ -21,6 +21,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
@@ -40,6 +41,8 @@ public class OptionProviderTest {
 
     @BeforeClass
     public static void login() {
+        Configuration.timeout = AemConnection.TIMEOUT;
+        Configuration.pollingInterval = AemConnection.POLLING_INTERVAL;
         AemConnection.login();
     }
 
@@ -57,7 +60,7 @@ public class OptionProviderTest {
             .stream()
             .map(option -> option.getAttribute("value"))
             .toArray(String[]::new);
-        Assert.assertArrayEquals(new String[] {"none", "en", "ja", "zh", "ww"}, greetingValues);
+        Assert.assertArrayEquals(new String[]{"none", "en", "ja", "zh", "ww"}, greetingValues);
         SelenideElement selectedGreetingOption = dialog.$("coral-select[name='./greeting'] coral-select-item[selected]");
         selectedGreetingOption.shouldHave(Condition.attribute("value", "en"));
     }
@@ -70,7 +73,7 @@ public class OptionProviderTest {
             .stream()
             .map(option -> option.getAttribute(CoreConstants.PN_VALUE))
             .toArray(String[]::new);
-        Assert.assertArrayEquals(new String[] {"none", "linkedin", "myspace", "rss"}, socialChannelsValues);
+        Assert.assertArrayEquals(new String[]{"none", "linkedin", "myspace", "rss"}, socialChannelsValues);
         SelenideElement checkedSocialChannelOption = dialog.$("coral-radio[name='./socialChannel'][checked] input");
         checkedSocialChannelOption.shouldHave(Condition.attribute(CoreConstants.PN_VALUE, "rss"));
     }
@@ -83,7 +86,7 @@ public class OptionProviderTest {
             .stream()
             .map(SelenideElement::getOwnText)
             .toArray(String[]::new);
-        Assert.assertArrayEquals(new String[] {"Nested-Container", "Empty"}, pageLabels);
+        Assert.assertArrayEquals(new String[]{"Nested-Container", "Empty"}, pageLabels);
     }
 
     @Test
@@ -94,7 +97,7 @@ public class OptionProviderTest {
             .stream()
             .map(option -> option.getAttribute(CoreConstants.PN_VALUE))
             .toArray(String[]::new);
-        Assert.assertArrayEquals(new String[] {"fruit:apple", "fruit:banana", "fruit:orange"}, fruitValues);
+        Assert.assertArrayEquals(new String[]{"fruit:apple", "fruit:banana", "fruit:orange"}, fruitValues);
         SelenideElement checkedFruitOption = dialog.$("coral-radio[name='./fruit'][checked] input");
         checkedFruitOption.shouldHave(Condition.attribute(CoreConstants.PN_VALUE, "fruit:banana"));
     }
@@ -108,7 +111,7 @@ public class OptionProviderTest {
             .map(SelenideElement::getOwnText)
             .toArray(String[]::new);
         Assert.assertArrayEquals(
-            new String[] {"None", "Blue", "Green", "Indigo", "Orange", "Red", "Violet", "Yellow"},
+            new String[]{"None", "Blue", "Green", "Indigo", "Orange", "Red", "Violet", "Yellow"},
             colorLabels);
         SelenideElement selectedColorOption = dialog.$("coral-select[name='./color1'] coral-select-item[selected]");
         Assert.assertEquals("Orange", selectedColorOption.getOwnText());
@@ -122,7 +125,7 @@ public class OptionProviderTest {
             .stream()
             .map(option -> option.getAttribute(CoreConstants.PN_VALUE))
             .toArray(String[]::new);
-        Assert.assertArrayEquals(new String[] {"#FF0000", "#00FF00", "#0000FF", "#000000"}, colorValues);
+        Assert.assertArrayEquals(new String[]{"#FF0000", "#00FF00", "#0000FF", "#000000"}, colorValues);
     }
 
     @Test
@@ -139,29 +142,32 @@ public class OptionProviderTest {
         multisourceSelectionOptions.shouldBe(CollectionCondition.size(3));
 
         multisourceSelectionOptions.get(0).click();
-        Selenide.Wait().until(webDriver ->
-            dialog.$$(SELECTOR_MULTISOURCE_ITEM).shouldBe(CollectionCondition.size(3)));
+        Selenide.Wait()
+            .until(webDriver ->
+                dialog.$$(SELECTOR_MULTISOURCE_ITEM).shouldBe(CollectionCondition.size(3)));
         String[] optionValues = dialog.$$(SELECTOR_MULTISOURCE_ITEM)
             .asFixedIterable()
             .stream()
             .map(element -> element.getAttribute(CoreConstants.PN_VALUE))
             .toArray(String[]::new);
-        Assert.assertArrayEquals(new String[] {"carrot", "lettuce", "potato"}, optionValues);
+        Assert.assertArrayEquals(new String[]{"carrot", "lettuce", "potato"}, optionValues);
 
         multisourceSelectionOptions.get(1).click();
-        Selenide.Wait().until(webDriver ->
-            dialog.$$(SELECTOR_MULTISOURCE_ITEM).shouldBe(CollectionCondition.size(0)));
+        Selenide.Wait()
+            .until(webDriver ->
+                dialog.$$(SELECTOR_MULTISOURCE_ITEM).shouldBe(CollectionCondition.size(0)));
 
         multisourceSelectionOptions.get(2).click();
-        Selenide.Wait().until(webDriver ->
-            dialog.$$(SELECTOR_MULTISOURCE_ITEM).shouldBe(CollectionCondition.size(3)));
+        Selenide.Wait()
+            .until(webDriver ->
+                dialog.$$(SELECTOR_MULTISOURCE_ITEM).shouldBe(CollectionCondition.size(3)));
 
         optionValues = dialog.$$(SELECTOR_MULTISOURCE_ITEM)
             .asFixedIterable()
             .stream()
             .map(element -> element.getAttribute(CoreConstants.PN_VALUE))
             .toArray(String[]::new);
-        Assert.assertArrayEquals(new String[] {"apple", "banana", "orange"}, optionValues);
+        Assert.assertArrayEquals(new String[]{"apple", "banana", "orange"}, optionValues);
     }
 
     @After

@@ -13,7 +13,6 @@
  */
 package com.exadel.aem.toolkit.it;
 
-import java.time.Duration;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -26,6 +25,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import com.google.common.collect.ImmutableMap;
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 import com.codeborne.selenide.SelenideElement;
@@ -66,6 +66,8 @@ public class ListsTest {
 
     @BeforeClass
     public static void login() {
+        Configuration.timeout = AemConnection.TIMEOUT;
+        Configuration.pollingInterval = AemConnection.POLLING_INTERVAL;
         AemConnection.login();
     }
 
@@ -224,8 +226,9 @@ public class ListsTest {
         }
 
         EditModeUtil.getInsertChildOptions(overlays.last()).first().click();
-        Selenide.Wait().withTimeout(Duration.ofSeconds(5)).until((webDriver) ->
-            Selenide.$$(SELECTOR_OVERLAY).size() == (existingItemProcessor != null ? 5 : 2));
+        Selenide.Wait()
+            .until((webDriver) ->
+                Selenide.$$(SELECTOR_OVERLAY).size() == (existingItemProcessor != null ? 5 : 2));
 
         listItemDialog = EditModeUtil.openComponentDialog("*/listitem", ACTION_CONFIGURE);
         newItemProcessor.accept(listItemDialog);

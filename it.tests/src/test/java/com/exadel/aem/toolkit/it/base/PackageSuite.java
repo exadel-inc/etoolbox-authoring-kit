@@ -208,7 +208,7 @@ public class PackageSuite extends Runner {
                     e.getCause()
                 ));
                 if (method.isAnnotationPresent(Order.class)) {
-                    // It makes sense to terminate the testing flow  in case of failure for only ordered methods
+                    // It makes sense to terminate the testing flow in case of failure for only ordered methods
                     // (assuming that a subsequent method relies on the current one)
                     break;
                 }

@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.openqa.selenium.Keys;
 import com.codeborne.selenide.CollectionCondition;
 import com.codeborne.selenide.Condition;
+import com.codeborne.selenide.Configuration;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.Selenide;
 
@@ -50,6 +51,8 @@ public class AllowedChildrenTest {
 
     @BeforeClass
     public static void login() {
+        Configuration.timeout = AemConnection.TIMEOUT;
+        Configuration.pollingInterval = AemConnection.POLLING_INTERVAL;
         AemConnection.login();
     }
 
