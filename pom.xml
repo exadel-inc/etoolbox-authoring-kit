@@ -461,8 +461,8 @@
             </dependency>
             <dependency>
                 <groupId>com.exadel.etoolbox</groupId>
-                <artifactId>etoolbox-coconut-core</artifactId>
-                <version>1.0.0-SNAPSHOT</version>
+                <artifactId>etoolbox-anydiff-core</artifactId>
+                <version>1.0.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

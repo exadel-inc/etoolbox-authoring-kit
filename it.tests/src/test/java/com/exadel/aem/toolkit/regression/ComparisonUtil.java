@@ -30,11 +30,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Assert;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.etoolbox.coconut.Comparator;
-import com.exadel.etoolbox.coconut.OutputType;
-import com.exadel.etoolbox.coconut.diff.Diff;
-import com.exadel.etoolbox.coconut.filter.Filter;
-import com.exadel.etoolbox.coconut.filter.FilterFactory;
+import com.exadel.etoolbox.anydiff.AnyDiff;
+import com.exadel.etoolbox.anydiff.OutputType;
+import com.exadel.etoolbox.anydiff.diff.Diff;
+import com.exadel.etoolbox.anydiff.filter.Filter;
+import com.exadel.etoolbox.anydiff.filter.FilterFactory;
 
 class ComparisonUtil {
 
@@ -51,7 +51,7 @@ class ComparisonUtil {
             RegressionTest.LOG.info("There are no different packages");
             return true;
         }
-        Comparator comparator = new Comparator()
+        AnyDiff comparator = new AnyDiff()
             .left(oldPackages, "Expected")
             .right(newPackages, "Actual")
             .filter(PACKAGE_FILTER);
@@ -69,7 +69,7 @@ class ComparisonUtil {
             differences = comparator.compare();
         }
 
-        boolean result = Comparator.isMatch(differences);
+        boolean result = AnyDiff.isMatch(differences);
         if (!differences.isEmpty()) {
             report(differences);
         }

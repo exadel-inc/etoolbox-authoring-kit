@@ -29,11 +29,11 @@ import org.slf4j.LoggerFactory;
 import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
 import com.exadel.aem.toolkit.plugin.writers.PackageWriter;
-import com.exadel.etoolbox.coconut.Comparator;
-import com.exadel.etoolbox.coconut.OutputType;
-import com.exadel.etoolbox.coconut.diff.Diff;
-import com.exadel.etoolbox.coconut.diff.DiffEntry;
-import com.exadel.etoolbox.coconut.filter.Filter;
+import com.exadel.etoolbox.anydiff.AnyDiff;
+import com.exadel.etoolbox.anydiff.OutputType;
+import com.exadel.etoolbox.anydiff.diff.Diff;
+import com.exadel.etoolbox.anydiff.diff.DiffEntry;
+import com.exadel.etoolbox.anydiff.filter.Filter;
 
 class RenderingUtil {
 
@@ -59,13 +59,13 @@ class RenderingUtil {
 
         PackageWriter.forFileSystem(fileSystem, TestConstants.DEFAULT_PROJECT_NAME).write(testable);
 
-        List<Diff> differences = new Comparator()
+        List<Diff> differences = new AnyDiff()
             .left(sampleFilesPath, "Expected")
             .right(effectiveCreatedFilesPath, "Actual")
             .filter(XML_NAMESPACE_FILTER)
             .compare();
 
-        boolean result = Comparator.isMatch(differences);
+        boolean result = AnyDiff.isMatch(differences);
         if (!result) {
             reportDifferences(differences);
         }
