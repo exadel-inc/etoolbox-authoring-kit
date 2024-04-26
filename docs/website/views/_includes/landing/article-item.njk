@@ -7,11 +7,5 @@
     {% endif %}
     <h5 class="article-item-title">{{ article.title }}</h5>
     <span class="article-item-date">{{ article.date }}</span>
-    <ul class="article-item-taglist unstyled-list mb-1">
-      {% for tag in article.tags %}
-        <li class="article-item-taglist-tag">#{{ tag }}</li>
-      {% endfor %}
-    </ul>
-    <p class="article-item-description mb-1">{{ article.content }}</p>
   </a>
 {% endmacro %}
