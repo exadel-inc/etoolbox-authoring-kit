@@ -10,12 +10,21 @@ order: 3
 
 Built-in plug-in actions are:
 * `visibility` - hide the element if the Query result is 'falsy'. <u>This is the default action that is applied when no action is specified.</u>
+
 * `tab-visibility` - hide the tab or the element's parent tab if the Query result is 'falsy'
-* `set` - set the Query result as the field's value (undefined Query result skipped)
-* `set-if-blank` - set the Query result as the field's value only if the current value is blank (undefined Query result skipped)
+
+* `set` - set the Query result as the field's value (`undefined` Query result skipped).
+  Supports optional `path` parameter to set the value to the nested property of the field.
+
+* `set-if-blank` - set the Query result as the field's value only if the current value is blank (`undefined` Query result skipped).
+  Supports optional `path` parameter to set the value to the nested property of the field.
+
 * `readonly` - set the readonly marker of the field from the Query result.
+
 * `required` - set the required marker of the field from the Query result.
+
 * `validate` - set the validation state of the field from the Query result.
+
 * `disabled` - set the field's disabled state from the Query result. Supports multiple actions effect for the same field.
 
 ### Async actions
