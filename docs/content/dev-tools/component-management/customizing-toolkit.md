@@ -291,11 +291,11 @@ Read more on debugging a Maven plugin e.g. [here](https://spin.atomicobject.com/
 
 ### Running integration tests
 
-Starting from version _2.3.0_, the ToolKit supports integration tests powered by [Selenide](https://selenide.org). They are mainly for checking the browser-bound functions as well as checking the connection to a live AEM server and/or 3rd-party services on the Internet.
+The ToolKit supports integration tests powered by [Selenide](https://selenide.org). They are mainly for checking the browser-bound functions and rely on the connection to a live AEM server and/or 3rd-party services on the Internet.
 
 The integration tests are localed in the `it.tests` module. Important: unlike unit tests, integration tests are not run in frames of a "regular" build. To run them, you need to specify the dedicated Maven profile like the following:
 ```
-mvn clean install -Pintegration
+mvn clean test -Pintegration
 ```
 
 As the integration tests start, a synthetic content package containing test data will be created and deployed to a live AEM instance (the one specified by the _aem.host_ and/or _aem.port_ properties). You can find the data in AEM under _/apps/etoolbox-authoring-kit-test_ and also in the same folders under _/conf_ and _/content_.
@@ -308,6 +308,47 @@ After the integration tests are run, the synthetic package and its content are r
 
 A complete command line for running integration tests with different properties specified may look like the following:
 ```
-mvn clean install -PautoInstallPackage -Pintegration -D"aem.host"=192.168.0.81 -D"aem.port"=8080 -D"aem.login"=siteadmin -D"aem.password"=MyPa$$w0rd -Dnouninstall=true
-
+mvn clean test -Pintegration -D"aem.host"=192.168.0.81 -D"aem.port"=8080 -D"aem.login"=siteadmin -D"aem.password"=MyPa$$w0rd -Dnouninstall=true
 ```
+
+### Doing regression testing
+
+The ToolKit supports regression testing as well. Regression testing is done using an external AEM project. The aim is to make sure that a <newer> version of ToolKit (namely, the plugin) produces essentially the same XML markup as an <older> one. The <older> version is considered a "reference" and is used as a baseline for comparison.
+
+To run regression tests, you need to specify the dedicated Maven profile like the following:
+```
+mvn test -Pregression "-Dproject=e:\projects\aem\my_project -Deak.version=${version}"
+```
+The focus here is the _-Dproject=..._ option. It is the command line to build the target project.
+
+The ToolKit will navigate to the folder e:\projects\aem\my_project_ (and expectedly will find project's POM file in it). It will build the project (without doing unit tests and deployment) with the version of ToolKit that is specified in the project. It will collect the content packages created  upon the build.
+
+Then it will switch the version of ToolKit to the latest one and run the build for the second time. The content packages will be collected again. Then the "former" and the "newer" packages will be compared content-wise. If there are no significant disparities, the test is passed. Otherwise, the test is failed.
+
+We assume that your project has a _Maven property_ that stores the version of ToolKit, and the dependencies within your project use that property (like `<dependency><groupId>com.exadel.etoolbox</groupId><artifactId>...</artifactId><version>${eak.version}</dependency>`). Name of the property does not matter. But you are expected
+ to mention it in the _-Dproject=..._ as shown above. The _${version}_ part is the placeholder that will be used by the regression code.
+
+Within _-Dproject=..._, you can specify more property keys that are specific for your project if you need to. You can also specify the _-pl_ option to select particular modules for the build, or also some _-P_ keys to specify build profiles, etc. Do not forget to enclose _-Dproject=..._ in double quotes if there are spaces inside.
+
+You can process more than one project at a time. Separate projects in the _-Dproject=..._ option with a semicolon.
+
+We've said that the second part of the regression is building a target project with the current ToolKit version. If you however wish to test another version, specify it with the optional switch like `-Deak.version=1.2.3-SNAPSHOT`.`
+
+Besides, you can override the _Maven_ executable used to build the target AEM project by specifying `-Dmaven.cmd=/path/to/mvn/or/a/cmd/file`. Optionally you can specify a local Maven repository address if it differs from _$HOME$/.m2_, with `-Dmaven.dir=/path/to/maven/repository`.
+
+#### Filtering disparities
+
+Certain disparities that may be found in regression testing are expected and, therefore, can be omitted. This is done with the _filters_ option. A filter is a JavaScript file composed per the EToolbox-Coconut documentation.
+
+By default, the filters are looked for at the current project's path in the `eak.regression/filters` subdirectory. E.g., `/home/projects/my-aem-project/eak.regression/filters`.
+
+This subdirectory can contain another subdir that refers to the "older" and "newer" ToolKit's versions delimited with _-to-_ like in the following example: `/home/projects/my-aem-project/eak.regression/filters/2.4.0-to-2.4.1-SNAPSHOT`. If such a subdirectory exists, the filters are borrowed from it. But if the there isn't a subdir matching the "older" and "newer" versions, the filters are borrowed from just `eak.regression/filters`.
+
+The comparison is done inside a temp folder. By default, the folder is erased after the regression is done. If you want to keep it, specify `-Dnocleanup=true`.
+
+#### Regression tips
+
+Be sure to _build_ the ToolKit completely before doing the regression, or else include the _install_ phase into the regression Maven run.
+
+Also, make sure that your target project(-s) are fully built with the newest changes, especially if you do regression with a selection of modules (via _-pl_). Otherwise there may occur a dependency resolution issue, or else some compilation errors.
+
