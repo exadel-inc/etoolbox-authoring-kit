@@ -78,6 +78,18 @@ public class FieldSetWidget {
     @Multiple
     private SampleFieldSetWithComplexMultifield fieldSet6;
 
+    @DialogField(
+        label="Fieldset 7",
+        description = "Fieldset definition containing a composite multifield with a nested name-prefixed fieldset"
+    )
+    @FieldSet(namePrefix = "node5/")
+    @Multiple
+    private SampleFieldSetWithComplexMultifield fieldSet7;
+
+    /* ----------------
+       Sample fieldsets
+       ---------------- */
+
     private static class SampleFieldSet {
         @DialogField(
             label = "Field 1 Label",
@@ -127,6 +139,20 @@ public class FieldSetWidget {
         private List<ComplexMultifieldItem> multifieldItems;
     }
 
+    private static class SampleFieldSetWithDeepMultifield {
+        @DialogField
+        @TextField
+        private String fieldsetTitle;
+
+        @DialogField
+        @MultiField
+        private List<MultifieldItemWithNestedFieldSet> multifieldItems;
+    }
+
+    /* -----------------------
+       Sample multifield items
+       ----------------------- */
+
     private static class SimpleMultifieldItem {
         @DialogField
         @TextField
@@ -142,4 +168,15 @@ public class FieldSetWidget {
         @TextField
         private String description;
     }
+
+    private static class MultifieldItemWithNestedFieldSet {
+        @DialogField
+        @TextField
+        private String title;
+
+        @DialogField
+        @FieldSet(namePrefix = "node6_")
+        private SimpleMultifieldItem nestedFieldSet;
+    }
+
 }

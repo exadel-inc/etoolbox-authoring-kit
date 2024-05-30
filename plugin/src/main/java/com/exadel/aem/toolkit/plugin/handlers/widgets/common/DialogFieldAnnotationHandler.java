@@ -50,9 +50,13 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
 
         String prefix = target.getNamePrefix();
         // A prefix must be ignored in a multifield's descendant field unless this is the "field" container or this is
-        // the only multifield's field
+        // the only multifield's field. However, we respect the "part" of the prefix that might be set already "inside"
+        // the multifield by, e.g., a nested fieldset
         if (isCompositeMultifieldField(target)) {
-            prefix = StringUtils.EMPTY;
+            Target multifieldAncestor = getClosestMultifield(target);
+            assert multifieldAncestor != null;
+            String ancestorPrefix = multifieldAncestor.getNamePrefix();
+            prefix = StringUtils.removeStart(prefix, ancestorPrefix);
         }
         // In case there are multiple sources in multifield container, their "name" values must not be prepended
         // with "./" which is by default
