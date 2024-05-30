@@ -16,8 +16,8 @@
                     <fieldSet1
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
-                        disabled="{Boolean}false"
                         name="./fieldSet1"
+                        disabled="{Boolean}false"
                         fieldDescription="Fieldset definition with source class specified"
                         fieldLabel="Fieldset 1"
                         renderHidden="{Boolean}false"
@@ -58,8 +58,8 @@
                     <fieldSet2
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
-                        disabled="{Boolean}false"
                         name="./fieldSet2"
+                        disabled="{Boolean}false"
                         fieldDescription="Fieldset definition with implicit source class"
                         fieldLabel="Fieldset 2"
                         renderHidden="{Boolean}false"
@@ -106,6 +106,184 @@
                                 required="{Boolean}false"/>
                         </items>
                     </fieldSet2>
+                    <fieldSet3
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
+                        name="./fieldSet3"
+                        disabled="{Boolean}false"
+                        fieldDescription="Fieldset definition containing a one-field multifield"
+                        fieldLabel="Fieldset 3"
+                        renderHidden="{Boolean}false"
+                        required="{Boolean}false">
+                        <items jcr:primaryType="nt:unstructured">
+                            <fieldsetTitle
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                name="./node1_fieldsetTitle"
+                                disabled="{Boolean}false"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"/>
+                            <multifieldItems
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                disabled="{Boolean}false"
+                                multifieldSpecial="This is added to Multifields"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false">
+                                <field
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    name="./node1_multifieldTitle"
+                                    disabled="{Boolean}false"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false"/>
+                            </multifieldItems>
+                        </items>
+                    </fieldSet3>
+                    <fieldSet4
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/fieldset"
+                        name="./fieldSet4"
+                        disabled="{Boolean}false"
+                        fieldDescription="Fieldset definition containing a composite multifield"
+                        fieldLabel="Fieldset 4"
+                        renderHidden="{Boolean}false"
+                        required="{Boolean}false">
+                        <items jcr:primaryType="nt:unstructured">
+                            <fieldsetTitle
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                disabled="{Boolean}false"
+                                name="./node2_fieldsetTitle"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"/>
+                            <multifieldItems
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                composite="{Boolean}true"
+                                disabled="{Boolean}false"
+                                multifieldSpecial="This is added to Multifields"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false">
+                                <field
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/container"
+                                    name="./node2_multifieldItems">
+                                    <items jcr:primaryType="nt:unstructured">
+                                        <title
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                            disabled="{Boolean}false"
+                                            name="title"
+                                            renderHidden="{Boolean}false"
+                                            required="{Boolean}false"/>
+                                        <description
+                                            jcr:primaryType="nt:unstructured"
+                                            sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                            disabled="{Boolean}false"
+                                            name="description"
+                                            renderHidden="{Boolean}false"
+                                            required="{Boolean}false"/>
+                                    </items>
+                                </field>
+                            </multifieldItems>
+                        </items>
+                    </fieldSet4>
+                    <fieldSet5
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                        composite="{Boolean}true"
+                        disabled="{Boolean}false"
+                        fieldDescription="Fieldset definition containing a one-field multifield by @Multiple"
+                        fieldLabel="Fieldset 5"
+                        multifieldSpecial="This is added to Multifields"
+                        renderHidden="{Boolean}false"
+                        required="{Boolean}false">
+                        <field
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/container"
+                            name="./fieldSet5">
+                            <items jcr:primaryType="nt:unstructured">
+                                <fieldsetTitle
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    disabled="{Boolean}false"
+                                    name="node3/fieldsetTitle"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false"/>
+                                <multifieldItems
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                    disabled="{Boolean}false"
+                                    multifieldSpecial="This is added to Multifields"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false">
+                                    <field
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                        disabled="{Boolean}false"
+                                        name="./node3/multifieldTitle"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}false"/>
+                                </multifieldItems>
+                            </items>
+                        </field>
+                    </fieldSet5>
+                    <fieldSet6
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                        composite="{Boolean}true"
+                        disabled="{Boolean}false"
+                        fieldDescription="Fieldset definition containing a composite multifield by @Multiple"
+                        fieldLabel="Fieldset 6"
+                        multifieldSpecial="This is added to Multifields"
+                        renderHidden="{Boolean}false"
+                        required="{Boolean}false">
+                        <field
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/container"
+                            name="./fieldSet6">
+                            <items jcr:primaryType="nt:unstructured">
+                                <fieldsetTitle
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                    disabled="{Boolean}false"
+                                    name="node4/fieldsetTitle"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false"/>
+                                <multifieldItems
+                                    jcr:primaryType="nt:unstructured"
+                                    sling:resourceType="granite/ui/components/coral/foundation/form/multifield"
+                                    composite="{Boolean}true"
+                                    disabled="{Boolean}false"
+                                    multifieldSpecial="This is added to Multifields"
+                                    renderHidden="{Boolean}false"
+                                    required="{Boolean}false">
+                                    <field
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/container"
+                                        name="./node4/multifieldItems">
+                                        <items jcr:primaryType="nt:unstructured">
+                                            <title
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                disabled="{Boolean}false"
+                                                name="title"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}false"/>
+                                            <description
+                                                jcr:primaryType="nt:unstructured"
+                                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                                disabled="{Boolean}false"
+                                                name="description"
+                                                renderHidden="{Boolean}false"
+                                                required="{Boolean}false"/>
+                                        </items>
+                                    </field>
+                                </multifieldItems>
+                            </items>
+                        </field>
+                    </fieldSet6>
                 </items>
             </column>
         </items>

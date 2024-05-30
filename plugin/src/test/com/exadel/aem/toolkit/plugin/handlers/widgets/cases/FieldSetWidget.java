@@ -13,6 +13,8 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widgets.cases;
 
+import java.util.List;
+
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
@@ -21,7 +23,9 @@ import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.Hidden;
+import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
 
 @AemComponent(
     path = DEFAULT_COMPONENT_NAME,
@@ -35,14 +39,44 @@ public class FieldSetWidget {
             description = "Fieldset definition with source class specified"
     )
     @FieldSet(value = SampleFieldSet.class, namePostfix = "21")
-    String fieldSet1;
+    private String fieldSet1;
 
     @DialogField(
         label="Fieldset 2",
         description = "Fieldset definition with implicit source class"
     )
     @FieldSet(namePrefix = "second_")
-    SampleFieldSetDescendant fieldSet2;
+    private SampleFieldSetDescendant fieldSet2;
+
+    @DialogField(
+        label="Fieldset 3",
+        description = "Fieldset definition containing a one-field multifield"
+    )
+    @FieldSet(namePrefix = "node1_")
+    private SampleFieldSetWithSimpleMultifield fieldSet3;
+
+    @DialogField(
+        label="Fieldset 4",
+        description = "Fieldset definition containing a composite multifield"
+    )
+    @FieldSet(namePrefix = "node2_")
+    private SampleFieldSetWithComplexMultifield fieldSet4;
+
+    @DialogField(
+        label="Fieldset 5",
+        description = "Fieldset definition containing a one-field multifield by @Multiple"
+    )
+    @FieldSet(namePrefix = "node3/")
+    @Multiple
+    private SampleFieldSetWithSimpleMultifield fieldSet5;
+
+    @DialogField(
+        label="Fieldset 6",
+        description = "Fieldset definition containing a composite multifield by @Multiple"
+    )
+    @FieldSet(namePrefix = "node4/")
+    @Multiple
+    private SampleFieldSetWithComplexMultifield fieldSet6;
 
     private static class SampleFieldSet {
         @DialogField(
@@ -50,18 +84,18 @@ public class FieldSetWidget {
             description = "Field 1 description"
         )
         @TextField
-        String textField;
+        private String textField;
 
         @DialogField(
             label = "Field 2 Label",
             description = "Field 2 description"
         )
         @Checkbox
-        String checkboxField;
+        private String checkboxField;
 
         @DialogField(name = "textField@Delete?!")
         @Hidden
-        String textFieldEraser;
+        private String textFieldEraser;
     }
 
     private static class SampleFieldSetDescendant extends SampleFieldSet {
@@ -70,6 +104,42 @@ public class FieldSetWidget {
             description = "Field 3 description"
         )
         @TextField
-        String extraField;
+        private String extraField;
+    }
+
+    private static class SampleFieldSetWithSimpleMultifield {
+        @DialogField
+        @TextField
+        private String fieldsetTitle;
+
+        @DialogField
+        @MultiField
+        private List<SimpleMultifieldItem> multifieldItems;
+    }
+
+    private static class SampleFieldSetWithComplexMultifield {
+        @DialogField
+        @TextField
+        private String fieldsetTitle;
+
+        @DialogField
+        @MultiField
+        private List<ComplexMultifieldItem> multifieldItems;
+    }
+
+    private static class SimpleMultifieldItem {
+        @DialogField
+        @TextField
+        private String multifieldTitle;
+    }
+
+    private static class ComplexMultifieldItem {
+        @DialogField
+        @TextField
+        private String title;
+
+        @DialogField
+        @TextField
+        private String description;
     }
 }
