@@ -20,7 +20,7 @@
     <parent>
         <groupId>com.exadel.etoolbox</groupId>
         <artifactId>etoolbox-authoring-kit</artifactId>
-        <version>2.5.1</version>
+        <version>2.5.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>etoolbox-authoring-kit-it.tests</artifactId>
@@ -71,10 +71,32 @@
                                 <aem.host>${aem.host}</aem.host>
                                 <aem.port>${aem.port}</aem.port>
                                 <aem.login>${aem.login}</aem.login>
-                                <aem.password>${aem.login}</aem.password>
+                                <aem.password>${aem.password}</aem.password>
                             </systemPropertyVariables>
                             <includes>
                                 <include>**/AllTests.class</include>
+                            </includes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>regression</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <skipTests>false</skipTests>
+                            <systemPropertyVariables>
+                                <eak.group>${project.parent.groupId}</eak.group>
+                                <eak.id>${project.parent.artifactId}</eak.id>
+                                <eak.version>${project.parent.version}</eak.version>
+                            </systemPropertyVariables>
+                            <includes>
+                                <include>**/RegressionTest.class</include>
                             </includes>
                         </configuration>
                     </plugin>
@@ -105,12 +127,24 @@
             <artifactId>selenide</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.exadel.etoolbox</groupId>
+            <artifactId>etoolbox-anydiff-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.code.findbugs</groupId>
+            <artifactId>jsr305</artifactId>
         </dependency>
         <dependency>
             <groupId>com.google.jimfs</groupId>
@@ -139,6 +173,14 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpmime</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

@@ -25,6 +25,18 @@
                             path="/path/to/acs/list"
                             sling:resourceType="acs/list/resource/type"/>
                     </acsListOptions>
+                    <customDatasourceOptions
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/select"
+                        disabled="{Boolean}false"
+                        fieldLabel="Custom Datasource"
+                        name="./customDatasourceOptions"
+                        renderHidden="{Boolean}false"
+                        required="{Boolean}false">
+                        <datasource
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="acs/list/resource/type"/>
+                    </customDatasourceOptions>
                 </items>
             </column>
         </items>

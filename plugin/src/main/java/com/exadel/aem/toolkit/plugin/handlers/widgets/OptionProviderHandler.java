@@ -71,12 +71,14 @@ abstract class OptionProviderHandler {
      * @param target     {@code Target} instance to store data in
      */
     void appendDataSourceData(DataSource dataSource, Target target) {
-        if (StringUtils.isAnyBlank(dataSource.path(), dataSource.resourceType())) {
+        if (StringUtils.isAllBlank(dataSource.path(), dataSource.resourceType())) {
             return;
         }
         Target datasourceElement = target.getOrCreateTarget(CoreConstants.NN_DATASOURCE)
-            .attribute(CoreConstants.PN_PATH, dataSource.path())
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, dataSource.resourceType());
+        if (StringUtils.isNotBlank(dataSource.path())) {
+            datasourceElement.attribute(CoreConstants.PN_PATH, dataSource.path());
+        }
         Arrays.stream(dataSource.properties())
             .forEach(property -> datasourceElement.attribute(property.name(), property.value()));
     }

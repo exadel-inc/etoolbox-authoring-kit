@@ -104,4 +104,10 @@ public class SelectWidget {
             deleteHint = false
     )
     String acsListOptions;
+
+    @DialogField(label="Custom Datasource")
+    @Select(
+        datasource = @DataSource(resourceType = "acs/list/resource/type")
+    )
+    String customDatasourceOptions;
 }
