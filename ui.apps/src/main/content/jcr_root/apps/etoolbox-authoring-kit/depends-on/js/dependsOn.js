@@ -61,7 +61,8 @@
     };
 
     // Track new component initialization
-    $document.off('foundation-contentloaded.dependsOn')
+    $document
+        .off('foundation-contentloaded.dependsOn')
         .on('foundation-contentloaded.dependsOn', (e) => ns.initialize((e && e.target) || document));
 
     // Track reference field changes
@@ -72,13 +73,14 @@
         .off('change:value.dependsOn').on('change:value.dependsOn', '[data-dependsonref]', handleChange);
 
     // Track input event
-    const handleChangeDebounced = $.debounce(750, handleChange);
     $document
-        .off('input.dependsOn').on('input', '[data-dependsonref]:not([data-dependsonreflazy])', handleChangeDebounced);
+        .off('input.dependsOn')
+        .on('input', '[data-dependsonref]:not([data-dependsonreflazy])', ns.debounce(handleChange, 750));
 
     // Track collection change to update dynamic references
     $document
-        .off('coral-collection:remove.dependsOn coral-collection:add.dependsOn').on('coral-collection:remove.dependsOn coral-collection:add.dependsOn', 'coral-multifield', (e) => {
+        .off('coral-collection:remove.dependsOn coral-collection:add.dependsOn')
+        .on('coral-collection:remove.dependsOn coral-collection:add.dependsOn', 'coral-multifield', (e) => {
             // We should actualize references on coral-collection:remove and coral-collection:add too.
             ns.ElementReferenceRegistry.handleChange(e);
             ns.ElementReferenceRegistry.actualize();
