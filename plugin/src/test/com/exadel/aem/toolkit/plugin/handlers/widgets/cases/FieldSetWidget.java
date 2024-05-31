@@ -34,57 +34,30 @@ import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
 @Dialog
 @SuppressWarnings("unused")
 public class FieldSetWidget {
-    @DialogField(
-            label="Fieldset 1",
-            description = "Fieldset definition with source class specified"
-    )
+
     @FieldSet(value = SampleFieldSet.class, namePostfix = "21")
     private String fieldSet1;
 
-    @DialogField(
-        label="Fieldset 2",
-        description = "Fieldset definition with implicit source class"
-    )
     @FieldSet(namePrefix = "second_")
     private SampleFieldSetDescendant fieldSet2;
 
-    @DialogField(
-        label="Fieldset 3",
-        description = "Fieldset definition containing a one-field multifield"
-    )
     @FieldSet(namePrefix = "node1_")
     private SampleFieldSetWithSimpleMultifield fieldSet3;
 
-    @DialogField(
-        label="Fieldset 4",
-        description = "Fieldset definition containing a composite multifield"
-    )
     @FieldSet(namePrefix = "node2_")
     private SampleFieldSetWithComplexMultifield fieldSet4;
 
-    @DialogField(
-        label="Fieldset 5",
-        description = "Fieldset definition containing a one-field multifield by @Multiple"
-    )
     @FieldSet(namePrefix = "node3/")
     @Multiple
     private SampleFieldSetWithSimpleMultifield fieldSet5;
 
-    @DialogField(
-        label="Fieldset 6",
-        description = "Fieldset definition containing a composite multifield by @Multiple"
-    )
+    @DialogField
     @FieldSet(namePrefix = "node4/")
     @Multiple
     private SampleFieldSetWithComplexMultifield fieldSet6;
 
-    @DialogField(
-        label="Fieldset 7",
-        description = "Fieldset definition containing a composite multifield with a nested name-prefixed fieldset"
-    )
     @FieldSet(namePrefix = "node5/")
-    @Multiple
-    private SampleFieldSetWithComplexMultifield fieldSet7;
+    private SampleFieldSetWithDeepMultifield fieldSet7;
 
     /* ----------------
        Sample fieldsets
