@@ -13,6 +13,8 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.widgets.cases;
 
+import java.util.List;
+
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.DEFAULT_COMPONENT_NAME;
 
 import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
@@ -21,7 +23,9 @@ import com.exadel.aem.toolkit.api.annotations.widgets.Checkbox;
 import com.exadel.aem.toolkit.api.annotations.widgets.DialogField;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.Hidden;
+import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
 import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
+import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Multiple;
 
 @AemComponent(
     path = DEFAULT_COMPONENT_NAME,
@@ -30,19 +34,34 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 @Dialog
 @SuppressWarnings("unused")
 public class FieldSetWidget {
-    @DialogField(
-            label="Fieldset 1",
-            description = "Fieldset definition with source class specified"
-    )
-    @FieldSet(value = SampleFieldSet.class, namePostfix = "21")
-    String fieldSet1;
 
-    @DialogField(
-        label="Fieldset 2",
-        description = "Fieldset definition with implicit source class"
-    )
+    @FieldSet(value = SampleFieldSet.class, namePostfix = "21")
+    private String fieldSet1;
+
     @FieldSet(namePrefix = "second_")
-    SampleFieldSetDescendant fieldSet2;
+    private SampleFieldSetDescendant fieldSet2;
+
+    @FieldSet(namePrefix = "node1_")
+    private SampleFieldSetWithSimpleMultifield fieldSet3;
+
+    @FieldSet(namePrefix = "node2_")
+    private SampleFieldSetWithComplexMultifield fieldSet4;
+
+    @FieldSet(namePrefix = "node3/")
+    @Multiple
+    private SampleFieldSetWithSimpleMultifield fieldSet5;
+
+    @DialogField
+    @FieldSet(namePrefix = "node4/")
+    @Multiple
+    private SampleFieldSetWithComplexMultifield fieldSet6;
+
+    @FieldSet(namePrefix = "node5/")
+    private SampleFieldSetWithDeepMultifield fieldSet7;
+
+    /* ----------------
+       Sample fieldsets
+       ---------------- */
 
     private static class SampleFieldSet {
         @DialogField(
@@ -50,18 +69,18 @@ public class FieldSetWidget {
             description = "Field 1 description"
         )
         @TextField
-        String textField;
+        private String textField;
 
         @DialogField(
             label = "Field 2 Label",
             description = "Field 2 description"
         )
         @Checkbox
-        String checkboxField;
+        private String checkboxField;
 
         @DialogField(name = "textField@Delete?!")
         @Hidden
-        String textFieldEraser;
+        private String textFieldEraser;
     }
 
     private static class SampleFieldSetDescendant extends SampleFieldSet {
@@ -70,6 +89,67 @@ public class FieldSetWidget {
             description = "Field 3 description"
         )
         @TextField
-        String extraField;
+        private String extraField;
     }
+
+    private static class SampleFieldSetWithSimpleMultifield {
+        @DialogField
+        @TextField
+        private String fieldsetTitle;
+
+        @DialogField
+        @MultiField
+        private List<SimpleMultifieldItem> multifieldItems;
+    }
+
+    private static class SampleFieldSetWithComplexMultifield {
+        @DialogField
+        @TextField
+        private String fieldsetTitle;
+
+        @DialogField
+        @MultiField
+        private List<ComplexMultifieldItem> multifieldItems;
+    }
+
+    private static class SampleFieldSetWithDeepMultifield {
+        @DialogField
+        @TextField
+        private String fieldsetTitle;
+
+        @DialogField
+        @MultiField
+        private List<MultifieldItemWithNestedFieldSet> multifieldItems;
+    }
+
+    /* -----------------------
+       Sample multifield items
+       ----------------------- */
+
+    private static class SimpleMultifieldItem {
+        @DialogField
+        @TextField
+        private String multifieldTitle;
+    }
+
+    private static class ComplexMultifieldItem {
+        @DialogField
+        @TextField
+        private String title;
+
+        @DialogField
+        @TextField
+        private String description;
+    }
+
+    private static class MultifieldItemWithNestedFieldSet {
+        @DialogField
+        @TextField
+        private String title;
+
+        @DialogField
+        @FieldSet(namePrefix = "node6_")
+        private SimpleMultifieldItem nestedFieldSet;
+    }
+
 }
