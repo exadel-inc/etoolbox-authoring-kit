@@ -48,7 +48,6 @@ import com.exadel.aem.toolkit.plugin.annotations.cases.NestedAnnotations;
 @Dialog(title = "Scripted Component Dialog")
 @Ignore(members = @ClassMember("moreOptions"))
 @Setting(name = "inheritedDescription", value = "From ScriptedComponent")
-@Setting(name = "inheritedValue", value = "From ParentScriptedComponent")
 @SuppressWarnings("unused")
 public class ScriptedComponent extends ScriptedParent {
     @DialogField(label = "${@textFieldTitle || 'Default title'}")
@@ -138,6 +137,10 @@ public class ScriptedComponent extends ScriptedParent {
 
     @FieldSet
     private ScriptedFieldset2 fieldset2;
+
+    @FieldSet
+    @Setting(name = "inheritedEmptyText", value = "From ScriptedComponent")
+    private ScriptedFieldset3 fieldset3;
 
     @MultiField(ScriptedMultifieldEntry.class)
     @Setting(name = "greeting", value = "Hi there")

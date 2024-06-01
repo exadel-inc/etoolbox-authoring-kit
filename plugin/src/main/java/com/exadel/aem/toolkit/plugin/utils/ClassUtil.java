@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.Ignore;
 import com.exadel.aem.toolkit.api.annotations.widgets.accessory.IgnoreFields;
+import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.adapters.ClassMemberSetting;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
@@ -80,8 +81,8 @@ public class ClassUtil {
      * Retrieves a list of {@link Source} objects representing manageable members that belong to a certain {@code Class}
      * (and its superclasses) and match the criteria represented by a {@code Predicate}
      * @param sourceClass    The class to extract sources from
-     * @param upstreamMember Nullable {@code Member} reference that signifies the context in which the current class
-     *                       members are retrieved. See {@link Sources#fromMember(Member, Class, Member)} for detail
+     * @param upstreamSource Nullable {@code MemberSource} reference that signifies the context in which the current class
+     *                       members are retrieved. See {@link Sources#fromMember(Member, Class, MemberSource)} for detail
      * @param condition      Nullable {@code Predicate<Member>} instance that helps to pick up appropriate fields and
      *                       methods
      * @param ordered        True to perform proper sources ordering (considers the {@code @DialogField(ranking=..,)}
@@ -93,7 +94,7 @@ public class ClassUtil {
     // in a version after 2.0.2
     public static List<Source> getSources(
         Class<?> sourceClass,
-        Member upstreamMember,
+        MemberSource upstreamSource,
         Predicate<Source> condition,
         boolean ordered) {
         List<Source> raw = new ArrayList<>();
@@ -105,7 +106,7 @@ public class ClassUtil {
                 ? Arrays.stream(classEntry.getMethods())
                 : Stream.concat(Arrays.stream(classEntry.getDeclaredFields()), Arrays.stream(classEntry.getDeclaredMethods()));
             List<Source> classMemberSources = classMembersStream
-                .map(member -> Sources.fromMember(member, sourceClass, upstreamMember))
+                .map(member -> Sources.fromMember(member, sourceClass, upstreamSource))
                 .filter(source -> source.isValid() && (condition == null || condition.test(source)))
                 .collect(Collectors.toList());
             raw.addAll(classMemberSources);
