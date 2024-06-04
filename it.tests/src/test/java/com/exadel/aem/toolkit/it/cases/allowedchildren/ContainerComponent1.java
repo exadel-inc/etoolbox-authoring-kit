@@ -23,7 +23,8 @@ import com.exadel.aem.toolkit.it.cases.Constants;
     title = "Container Component 1",
     componentGroup = Constants.GROUP_COMPONENTS,
     isContainer = true,
-    disableTargeting = true
+    disableTargeting = true,
+    views = VideoChildMixin.class
 )
 @Dialog
 @AllowedChildren(
@@ -32,10 +33,6 @@ import com.exadel.aem.toolkit.it.cases.Constants;
         Constants.JCR_COMPONENTS_ROOT + "/audio"
     },
     pageResourceTypes = "etoolbox-authoring-kit-test/components/pages/editable-template-page-descendant"
-)
-@AllowedChildren(
-    value = Constants.JCR_COMPONENTS_ROOT + "/video",
-    classes = ContainerComponent2.class
 )
 public class ContainerComponent1 {
 }
