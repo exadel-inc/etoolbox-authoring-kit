@@ -18,9 +18,9 @@ import org.junit.Test;
 
 public class StringTransformationTest {
 
-    private static final String SAMPLE1 = "L0rem Ipsum! Do1or Sit Amet";
-    private static final String SAMPLE2 = "Lorem Ipsum  dolor-sit-Amet";
-    private static final String SAMPLE3 = "Lorem_Ipsum__dolor_Sit_Amet";
+    private static final String SAMPLE1 = "L0rem IPSum! Do1or Sit Amet";
+    private static final String SAMPLE2 = "Lorem IPSum  dolor-sit-Amet";
+    private static final String SAMPLE3 = "Lorem_IPSum__dolor_Sit_Amet";
 
     @Test
     public void shouldConvertToLowerCase() {

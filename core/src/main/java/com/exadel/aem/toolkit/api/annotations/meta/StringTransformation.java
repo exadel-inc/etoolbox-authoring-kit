@@ -108,6 +108,9 @@ public enum StringTransformation {
             return value;
         }
         String[] words = StringUtils.split(value, " -_");
-        return Stream.of(words).map(StringUtils::capitalize).collect(Collectors.joining(StringUtils.SPACE));
+        return Stream.of(words)
+            .map(StringUtils::lowerCase)
+            .map(StringUtils::capitalize)
+            .collect(Collectors.joining(StringUtils.SPACE));
     }
 }
