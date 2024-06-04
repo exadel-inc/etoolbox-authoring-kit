@@ -13,11 +13,13 @@
  */
 package com.exadel.aem.toolkit.plugin.sources;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.Streams;
@@ -38,6 +40,8 @@ class ComponentSourceImpl extends ClassSourceImpl implements ComponentSource {
 
     private final String componentPath;
 
+    private List<Source> extraViews;
+
     /**
      * Initializes a class instance storing a reference to the {@code Class} that serves as the metadata source
      * @param value The metadata source
@@ -46,6 +50,10 @@ class ComponentSourceImpl extends ClassSourceImpl implements ComponentSource {
         super(value);
         componentPath = preparePath();
     }
+
+    /* -----------------------
+       ComponentSource members
+       ----------------------- */
 
     /**
      * {@inheritDoc}
@@ -77,6 +85,20 @@ class ComponentSourceImpl extends ClassSourceImpl implements ComponentSource {
             .concat(Stream.of((Source) this), Arrays.stream(referencedViews).map(Sources::fromClass))
             .distinct()
             .collect(Collectors.toList());
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void merge(Source view) {
+        if (!(view instanceof ClassSourceImpl) || view instanceof ComponentSourceImpl) {
+            return;
+        }
+        if (extraViews == null) {
+            extraViews = new ArrayList<>();
+        }
+        extraViews.add(view);
     }
 
     /**
@@ -127,5 +149,27 @@ class ComponentSourceImpl extends ClassSourceImpl implements ComponentSource {
             + CoreConstants.SEPARATOR_SLASH
             + effectivePath;
         return StringUtils.strip(result, CoreConstants.SEPARATOR_SLASH);
+    }
+
+    /* --------------
+       Source members
+       -------------- */
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public <T> T adaptTo(Class<T> type) {
+        T result = super.adaptTo(type);
+        if (result != null || CollectionUtils.isEmpty(extraViews)) {
+            return result;
+        }
+        for (Source extraView : extraViews) {
+            result = extraView.adaptTo(type);
+            if (result != null) {
+                return result;
+            }
+        }
+        return null;
     }
 }
