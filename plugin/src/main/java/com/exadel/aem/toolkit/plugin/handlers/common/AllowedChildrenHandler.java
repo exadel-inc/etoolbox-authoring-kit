@@ -19,8 +19,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -40,6 +41,7 @@ import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.metadata.Metadata;
+import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
 import com.exadel.aem.toolkit.plugin.utils.ArrayUtil;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
@@ -64,7 +66,18 @@ public class AllowedChildrenHandler implements Handler {
      */
     @Override
     public void accept(Source source, Target target) {
-        source.tryAdaptTo(AllowedChildren[].class).ifPresent(adaptation -> populatePolicies(adaptation, target));
+        ComponentSource componentSource = source.adaptTo(ComponentSource.class);
+        if (componentSource != null) {
+            AllowedChildren[] rules = componentSource.getViews()
+                .stream()
+                .map(viewSource -> viewSource.adaptTo(AllowedChildren[].class))
+                .filter(ArrayUtils::isNotEmpty)
+                .flatMap(Arrays::stream)
+                .toArray(AllowedChildren[]::new);
+            populatePolicies(rules, target);
+        } else {
+            source.tryAdaptTo(AllowedChildren[].class).ifPresent(rules -> populatePolicies(rules, target));
+        }
     }
 
     /**
@@ -77,7 +90,8 @@ public class AllowedChildrenHandler implements Handler {
         List<AllowedChildren> allowedChildrenList = Arrays.stream(rules)
             .filter(rule -> isEditConfig(target) == (PolicyTarget.CURRENT == rule.targetContainer()))
             .map(AllowedChildrenHandler::combineValues)
-            .collect(Collectors.toList());
+            .collect(RuleAccumulator::new, RuleAccumulator::add, RuleAccumulator::addAll)
+            .getList();
         if (allowedChildrenList.isEmpty()) {
             return;
         }
@@ -99,9 +113,13 @@ public class AllowedChildrenHandler implements Handler {
         return Scopes.CQ_EDIT_CONFIG.equals(target.getScope());
     }
 
+    /* -------------
+       Merging rules
+       ------------- */
+
     /**
-     * Called from {@link AllowedChildrenHandler#populatePolicies(AllowedChildren[], Target)} to combine
-     * the rule's values (i.e., components that are referenced either by path or by class)
+     * Combines the path- (resource type-) related properties of an {@link AllowedChildren} rule to simplify the build-up
+     * of a rule being serialized
      * @param rule {@link AllowedChildren} instance
      * @return Modified {@link AllowedChildren} instance
      */
@@ -118,6 +136,96 @@ public class AllowedChildrenHandler implements Handler {
             CoreConstants.PN_VALUE,
             effectiveValues.stream().distinct().toArray(String[]::new));
         return (AllowedChildren) Metadata.from(rule, modification);
+    }
+
+    /**
+     * Combines the path- (resource type-) related properties of two different {@link AllowedChildren} rules. This method
+     * assumes that {@link #combineValues(AllowedChildren)} has been called before and considers only the contents of the
+     * {@code value} property
+     * @param left {@link AllowedChildren} instance which stands for the base of combining
+     * @param right {@link AllowedChildren} instance which stands for the extension of combining
+     * @return The combined {@link AllowedChildren} instance
+     */
+    private static AllowedChildren combineValues(AllowedChildren left, AllowedChildren right) {
+        if (ArrayUtils.isEmpty(right.value())) {
+            return left;
+        }
+        if (ArrayUtils.isEmpty(left.value())) {
+            return right;
+        }
+        String[] mergedValues = Stream.concat(Arrays.stream(left.value()), Arrays.stream(right.value()))
+            .distinct()
+            .toArray(String[]::new);
+        Map<String, Object> modification = Collections.singletonMap(CoreConstants.PN_VALUE, mergedValues);
+        return (AllowedChildren) Metadata.from(left, modification);
+    }
+
+    /**
+     * Called by {@link #populatePolicies(AllowedChildren[], Target)} to reduce the stream of {@link AllowedChildren}
+     * rules by merging the items that are only different in their {@code value} properties
+     */
+    private static class RuleAccumulator {
+        private final List<AllowedChildren> rules = new ArrayList<>();
+
+        /**
+         * Adds a new {@link AllowedChildren} rule to the accumulator. If a rule with the same properties already exists,
+         * the content of the {@code value} property is merged into the existing rule
+         * @param rule {@code AllowedChildren} object
+         */
+        void add(AllowedChildren rule) {
+            if (rule == null) {
+                return;
+            }
+            if (rules.isEmpty()) {
+                rules.add(rule);
+                return;
+            }
+            AllowedChildren existingMatch = rules.stream().filter(r -> isMatch(r, rule)).findFirst().orElse(null);
+            if (existingMatch != null) {
+                rules.set(rules.indexOf(existingMatch), combineValues(existingMatch, rule));
+            } else {
+                rules.add(rule);
+            }
+        }
+
+        /**
+         * Adds all {@link AllowedChildren} rules from another {@code RuleAccumulator} instance to the current one
+         * @param other {@code RuleAccumulator} object
+         */
+        void addAll(RuleAccumulator other) {
+            if (other == null || CollectionUtils.isEmpty(other.getList())) {
+                return;
+            }
+            other.getList().forEach(this::add);
+        }
+
+        /**
+         * Retrieves the list of {@link AllowedChildren} rules accumulated so far
+         * @return A non-null {@code List} instance
+         */
+        List<AllowedChildren> getList() {
+            return rules;
+        }
+
+        /**
+         * Gets whether the two {@link AllowedChildren} rules are equal in all requisites except the {@code value}
+         * property
+         * @param left  A nullable {@code AllowedChildren} object
+         * @param right A nullable {@code AllowedChildren} object
+         * @return True or false
+         */
+        private static boolean isMatch(AllowedChildren left, AllowedChildren right) {
+            if (left == null || right == null) {
+                return false;
+            }
+            return left.mode() == right.mode()
+                && left.targetContainer() == right.targetContainer()
+                && ArrayUtil.equals(left.pagePaths(), right.pagePaths())
+                && ArrayUtil.equals(left.pageResourceTypes(), right.pageResourceTypes())
+                && ArrayUtil.equals(left.parents(), right.parents())
+                && ArrayUtil.equals(left.resourceNames(), right.resourceNames())
+                && ArrayUtil.equals(left.templates(), right.templates());
+        }
     }
 
     /* -------------
