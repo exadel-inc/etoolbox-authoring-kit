@@ -13,8 +13,6 @@
  */
 package com.exadel.aem.toolkit.plugin.sources;
 
-import java.lang.reflect.Member;
-
 import com.exadel.aem.toolkit.api.handlers.EmbeddedMemberSource;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
@@ -48,10 +46,10 @@ public interface ModifiableMemberSource extends EmbeddedMemberSource {
     void setReportingClass(Class<?> value);
 
     /**
-     * Assigns the {@link Member} value that the underlying Java field or method will be considered "reported by". This
-     * facility is designed for members of entities such as fieldsets. This method gives the ability to query for
+     * Assigns the {@link MemberSource} value that the underlying Java field or method will be considered "reported by".
+     * This facility is designed for members of entities such as fieldsets. This method gives the ability to query for
      * metadata attached to the field/method of a class that uses the fieldset
-     * @param value {@code Member} reference
+     * @param value {@code MemberSource} reference
      */
-    void setUpstreamMember(Member value);
+    void setUpstreamSource(MemberSource value);
 }
