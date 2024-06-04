@@ -11,12 +11,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core;
+package com.exadel.aem.toolkit;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
+import com.exadel.aem.toolkit.api.annotations.meta.StringTransformationTest;
 import com.exadel.aem.toolkit.core.injectors.ChildInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.ChildrenInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.EToolboxListInjectorTest;
@@ -45,6 +46,8 @@ import com.exadel.aem.toolkit.core.policymanagement.filters.TopLevelPolicyFilter
  */
 @RunWith(Suite.class)
 @SuiteClasses({
+    StringTransformationTest.class,
+
     ListHelperTest.class,
     ListPageUtilTest.class,
     ListResourceUtilTest.class,
