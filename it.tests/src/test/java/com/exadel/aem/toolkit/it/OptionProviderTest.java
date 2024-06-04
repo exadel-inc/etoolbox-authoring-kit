@@ -86,7 +86,7 @@ public class OptionProviderTest {
             .stream()
             .map(SelenideElement::getOwnText)
             .toArray(String[]::new);
-        Assert.assertArrayEquals(new String[]{"Nested-Container", "Empty"}, pageLabels);
+        Assert.assertArrayEquals(new String[]{"Nested Container", "Empty"}, pageLabels);
     }
 
     @Test
