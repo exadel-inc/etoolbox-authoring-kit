@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -193,7 +192,7 @@ public class AllowedChildrenHandler implements Handler {
          * @param other {@code RuleAccumulator} object
          */
         void addAll(RuleAccumulator other) {
-            if (other == null || CollectionUtils.isEmpty(other.getList())) {
+            if (other == null || other.getList() == null) {
                 return;
             }
             other.getList().forEach(this::add);

@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import com.google.common.collect.Streams;
@@ -161,7 +160,7 @@ class ComponentSourceImpl extends ClassSourceImpl implements ComponentSource {
     @Override
     public <T> T adaptTo(Class<T> type) {
         T result = super.adaptTo(type);
-        if (result != null || CollectionUtils.isEmpty(extraViews)) {
+        if (result != null || extraViews == null) {
             return result;
         }
         for (Source extraView : extraViews) {
