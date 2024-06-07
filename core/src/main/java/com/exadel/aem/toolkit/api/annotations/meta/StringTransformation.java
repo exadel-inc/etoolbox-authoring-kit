@@ -18,7 +18,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
-import com.google.common.base.CaseFormat;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 
@@ -93,9 +92,14 @@ public enum StringTransformation {
         if (StringUtils.isBlank(value)) {
             return value;
         }
-        return value.contains(CoreConstants.SEPARATOR_HYPHEN)
-            ? CaseFormat.LOWER_HYPHEN.to(CaseFormat.LOWER_CAMEL, value.toLowerCase().replace(CHAR_SPACE, CHAR_HYPHEN))
-            : CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, value.toLowerCase().replace(CHAR_SPACE, CHAR_UNDERSCORE));
+        String[] words = value.contains(CoreConstants.SEPARATOR_HYPHEN)
+            ? StringUtils.split(value, " -")
+            : StringUtils.split(value, " _");
+        return words[0].toLowerCase() + Stream.of(words)
+            .skip(1)
+            .map(StringUtils::lowerCase)
+            .map(StringUtils::capitalize)
+            .collect(Collectors.joining());
     }
 
     /**

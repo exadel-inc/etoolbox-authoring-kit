@@ -13,11 +13,13 @@
  */
 package com.exadel.aem.toolkit.api.annotations.meta;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
 public class StringTransformationTest {
 
+    private static final String SAMPLE0 = "LoReM";
     private static final String SAMPLE1 = "L0rem IPSum! Do1or Sit Amet";
     private static final String SAMPLE2 = "Lorem IPSum  dolor-sit-Amet";
     private static final String SAMPLE3 = "Lorem_IPSum__dolor_Sit_Amet";
@@ -34,6 +36,8 @@ public class StringTransformationTest {
 
     @Test
     public void shouldConvertToCamelCase() {
+        Assert.assertEquals(StringUtils.EMPTY, StringTransformation.CAMELCASE.apply(StringUtils.EMPTY));
+        Assert.assertEquals("lorem", StringTransformation.CAMELCASE.apply(SAMPLE0));
         Assert.assertEquals("l0remIpsum!Do1orSitAmet", StringTransformation.CAMELCASE.apply(SAMPLE1));
         Assert.assertEquals("loremIpsumDolorSitAmet", StringTransformation.CAMELCASE.apply(SAMPLE2));
         Assert.assertEquals("loremIpsumDolorSitAmet", StringTransformation.CAMELCASE.apply(SAMPLE3));
@@ -41,6 +45,8 @@ public class StringTransformationTest {
 
     @Test
     public void shouldCapitalize() {
+        Assert.assertEquals(StringUtils.EMPTY, StringTransformation.CAPITALIZE.apply(StringUtils.EMPTY));
+        Assert.assertEquals("Lorem", StringTransformation.CAPITALIZE.apply(SAMPLE0));
         Assert.assertEquals("L0rem Ipsum! Do1or Sit Amet", StringTransformation.CAPITALIZE.apply(SAMPLE1));
         Assert.assertEquals("Lorem Ipsum Dolor Sit Amet", StringTransformation.CAPITALIZE.apply(SAMPLE2));
         Assert.assertEquals("Lorem Ipsum Dolor Sit Amet", StringTransformation.CAPITALIZE.apply(SAMPLE3));
