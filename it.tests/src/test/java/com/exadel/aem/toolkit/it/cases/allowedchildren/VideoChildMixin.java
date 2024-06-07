@@ -13,27 +13,17 @@
  */
 package com.exadel.aem.toolkit.it.cases.allowedchildren;
 
-import com.exadel.aem.toolkit.api.annotations.main.AemComponent;
-import com.exadel.aem.toolkit.api.annotations.main.Dialog;
 import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
 import com.exadel.aem.toolkit.api.annotations.policies.PolicyTarget;
 import com.exadel.aem.toolkit.it.cases.Constants;
 
-@AemComponent(
-    path = Constants.JCR_COMPONENTS_ROOT + "/myparsys",
-    title = "Sample Parsys Component",
-    componentGroup = Constants.GROUP_COMPONENTS,
-    resourceSuperType = "foundation/components/parsys",
-    isContainer = true,
-    disableTargeting = true,
-    views = VideoChildMixin.class
-)
-@Dialog
 @AllowedChildren(
-    value = {
-        Constants.JCR_COMPONENTS_ROOT + "/audio"
-    },
+    value = Constants.JCR_COMPONENTS_ROOT + "/video",
+    classes = ContainerComponent2.class
+)
+@AllowedChildren(
+    value = Constants.JCR_COMPONENTS_ROOT + "/video",
     targetContainer = PolicyTarget.CURRENT
 )
-public class ParsysComponent {
+public class VideoChildMixin {
 }

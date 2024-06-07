@@ -148,4 +148,28 @@ public class AllowedChildrenTestCases {
     )
     public static class ContainerEditConfig {
     }
+
+    @AemComponent(
+        title = TestConstants.DEFAULT_COMPONENT_TITLE,
+        path = TestConstants.DEFAULT_COMPONENT_NAME,
+        views = View2.class
+    )
+    @AllowedChildren(
+        classes = ComplexComponent1.class,
+        pagePaths = {"page/Path1"},
+        targetContainer = PolicyTarget.CURRENT,
+        mode = PolicyMergeMode.MERGE
+    )
+    public static class ContainerWithViews {
+    }
+
+    @AllowedChildren(
+        value = "restype1",
+        classes = ComplexComponent2.class,
+        pagePaths = {"page/Path2"},
+        targetContainer = PolicyTarget.CURRENT,
+        mode = PolicyMergeMode.MERGE
+    )
+    static class View2 {
+    }
 }

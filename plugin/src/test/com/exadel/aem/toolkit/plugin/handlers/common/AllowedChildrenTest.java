@@ -53,4 +53,9 @@ public class AllowedChildrenTest {
     public void testContainerWithEditConfig() {
         pluginContext.test(AllowedChildrenTestCases.ContainerEditConfig.class, "handlers/common/policies/allowedChildren/editConfig");
     }
+
+    @Test
+    public void testContainerWithViews() {
+        pluginContext.test(AllowedChildrenTestCases.ContainerWithViews.class, "handlers/common/policies/allowedChildren/withViews");
+    }
 }

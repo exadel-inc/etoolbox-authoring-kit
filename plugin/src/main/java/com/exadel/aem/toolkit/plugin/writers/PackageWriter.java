@@ -64,7 +64,6 @@ public class PackageWriter implements AutoCloseable {
     private static final String COMPONENT_DATA_MISSING_EXCEPTION_MESSAGE = "No data to build .content.xml file while processing component ";
     private static final String COMPONENT_PATH_MISSING_EXCEPTION_MESSAGE = "Component path missing in class ";
     private static final String INVALID_PROJECT_EXCEPTION_MESSAGE = "Invalid project";
-    private static final String MULTIPLE_MODULES_EXCEPTION_MESSAGE = "Multiple modules available for %s while processing component %s";
     private static final String UNRECOGNIZED_MODULE_EXCEPTION_MESSAGE = "Unrecognized component module %s while processing component %s";
 
     /* -----------------------------
@@ -232,14 +231,9 @@ public class PackageWriter implements AutoCloseable {
             }
 
             for (PackageEntryWriter matchedWriter : matchedWriters) {
-                if (result.containsKey(matchedWriter) && !Scopes.COMPONENT.equals(matchedWriter.getScope())) {
-                    InvalidSettingException ex = new InvalidSettingException(String.format(
-                        MULTIPLE_MODULES_EXCEPTION_MESSAGE,
-                        matchedWriter.getScope(),
-                        component.getName()
-                    ));
-                    PluginRuntime.context().getExceptionHandler().handle(ex);
-                } else if (!result.containsKey(matchedWriter)) {
+                if (result.get(matchedWriter) instanceof ComponentSource) {
+                    ((ComponentSource) result.get(matchedWriter)).merge(view);
+                } else {
                     result.put(matchedWriter, view);
                 }
             }
