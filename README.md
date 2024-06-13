@@ -15,7 +15,7 @@ The ToolKit provides the fastest way to supplement an AEM component based on a S
 
 The ToolKit has many options to make authoring interfaces rich, flexible, and responsive with minimal effort. No deep knowledge of Granite&trade;, Coral&trade;, or AEM clientlibs is needed. A scope of fine interactivity features is ready out of the box with minimal to no manual setup.
 
-The ToolKit is compliant with the newest facilities of AEM 6.4/6.5, Granite UI, and Coral v.3+, and has support for Coral v.2.
+The ToolKit is compliant with the newest facilities of AEM 6.5, Granite UI, and Coral v.3+, and has support for Coral v.2.
 
 The ToolKit is developed in the course of Exadel&trade; Marketing Technology Practice (the MarTech) as a part of **Exadel Toolbox** initiative.
 
