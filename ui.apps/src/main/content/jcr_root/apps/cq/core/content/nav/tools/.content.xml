@@ -8,7 +8,7 @@
                   jcr:description="Manage collections of structured data"
                   order="2000"
                   href="/etoolbox-lists.html"
-                  icon="spectrum-etoolbox-lists"
+                  icon="etoolbox-lists"
                   sling:resourceType="crx/core/components/welcome/tool">
         </lists>
     </etoolbox>
