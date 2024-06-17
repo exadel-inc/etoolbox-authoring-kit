@@ -83,7 +83,7 @@ Suppose that you have marked a `private String sampleText;` in your *HelloWorld.
 To achieve this, add the `@Extends` annotation (the one that contains a pointer to *sampleText*) to *anotherText* field. Whatever widget annotation you defined for the *sampleText* field will now be "inherited" by *anotherText*.
 <br>You can still add another `@TextField` to *anotherText* with properties that were not specified in *sampleText* or have different values there. Thereby "inheritance with overriding" is achieved. See the following snippet:
 ```java
-public class CustomPropetiesDialog {
+public class CustomPropertiesDialog {
     @DialogField(label = "My text field")
     @Extends(value = HelloWorld.class, field = "sampleText")
     @TextField(emptyText = "Enter your text here")
@@ -98,3 +98,112 @@ Note: it is possible that the "parent" field in its own turn `@Extends`-es some 
 You should still make sure that all the fields involved have the same component annotation. A field marked with, say, `@DatePicker` will not extend some `@Checkbox` field, and so on.
 
 Also pay attention so that when you extend a field and add another field-specific annotation to override some properties (like in the sample above), property values are either replaced or appended (like adding values from an array-typed property of "child" to the array-typed property of "parent"), but not erased. You cannot replace a non-empty value of a "parent" with a blank, or empty, value of a "child." So take care to design your "inheritance tree" starting from fields with more abstract, less populated component annotations, and then shifting to more specific ones.
+
+## Scripting widget properties' values
+
+Imagine that you have a fieldset `ButtonFieldSet` that comprises settings for a button such as "label", "hyperlink", "does it open in a new window?" and so on. Naturally, this fieldset contains a number of annotated fields, such as `@TextField`, `@Checkbox`, etc., and is reused across several components.
+
+Now suppose that the requirement is such that in some of your components your "hyperlink" field must have the default value _https://google.com_, and in some other components it should be _https://bing.com_. Also, in some cases the "open in a new window" checkbox should be checked by default, and in some other cases it should be unchecked.
+
+In this situation you would like to use some _variable_ (or, in other words, _scripted value_) with your reusable fieldset. It is so that in `MyComponentA` you use the the fieldset with the "default hyperlink" set to Google, and in `MyComponentB` you use the same fieldset with the "default hyperlink" set to Bing.
+
+Here is a sample of how you can achieve this with the ToolKit:
+
+```java
+public class MyComponentA {
+    @FieldSet
+    @Setting(name = "defaultHyperlink", value = "https://google.com"),
+    @Setting(name = "openInNewWindow", value = "{Boolean}true")
+    private ButtonFieldSet buttonFieldSet;
+}
+```
+
+```java
+public class MyComponentB {
+    @FieldSet
+    @Setting(name = "defaultHyperlink", value = "https://bing.com"),
+    @Setting(name = "openInNewWindow", value = "{Boolean}false")
+    private ButtonFieldSet buttonFieldSet;
+}
+```
+
+```java
+public class ButtonFieldSet {
+    @DialogField
+    @TextField
+    private String label;
+
+    @DialogField
+    @TextField(value = "${ @defaultHyperlink }")
+    private String hyperlink;
+
+    @DialogField
+    @Checkbox(value = "${ @openInNewWindow }")
+    private boolean openInNewWindow;
+}
+```
+
+The overall idea is that you declare a "named variable" with the `@Setting` annotation and then you "insert" it elsewhere into a String-typed property of another annotation using the string template like `${ @variableName }`. The format `@{ @variableName }` is also supported.
+
+The string template does not have to be the only content of a property value. You can combine it with other text, like `value = "https://www.google.com/${@defaultPath}"`.
+
+Every kind of property can be scripted except for properties of the `@Setting` annotation itself.
+
+Surely, you cannot pass a string template to a boolean-typed or a numeric property. There is however a workaround. If you need to turn a non-string value into a variable, pass it via an additional `@Property` annotation like in the following example:
+
+```java
+public class MyComponent {
+    @FieldSet
+    @Setting(name = "minValue", value = "{Double}0.0")
+    @Setting(name = "maxValue", value = "{Double}100.0")
+    private MyFieldset myFieldset;
+}
+
+// ...
+public class MyFieldset {
+    @DialogField
+    @NumberField(min = 0 /* an optional un-scripted default */, max = 1 /* another optional default */)
+    @Property(name = "min", value = "${@minValue}")
+    @Property(name = "max", value = "${@maxValue}")
+    private double value;
+}
+
+```
+
+##### What are the places you can declare your settings in?
+
+Basically, the ToolKit supports four sorts of settngs:
+1) Settings that are attached to the same class member they are used (usually does not make much sense but is possible).
+2) Settings that are attached to the <u>class</u> where the said member is declared or to any of its <u>superclasses</u>.
+3) Settings that are attached to the <u>member of another class</u> that has the type of the class in which the settings are used. In the code, this is referred to as the "upstream member".
+
+> To put it simple, imagine that there is a field named _title_ in a class named _MyFieldset_. Then, there is a field named _titleFieldset_ of type _MyFieldset_ in a class named _MyComponent_.
+> <br>In this case `MyComponent.titleFieldset` is the _upstream member_ for `MyFieldset.title`. If you annotate `MyComponent.titleFieldset` with `@Setting`, this annotation is respected as the upstream setting when rendering any annotation declared at `MyFieldset.title` .
+
+4) Settings that are attached to the <u>class where the upstream member is declared</u> or to any of its <u>superclasses</u>.
+
+As you see it, there is some "stack" of variables that can affect rendering of the current field, and these vars can belong to different "scopes". If there are variables with the same name, the values are overridden from the most "remote" scope to the most "close" one. That is, settings declared at level #4 in the list above are overridden by settings declared at level #3, then by level #2, and finally by level #1.
+
+##### Scripting expressions syntax
+
+Expressions within the `${}` or `@{}` brackets are not limited to just settings' names. They basically follow the (simplified) JavaScript syntax. Therefore, you can, for example, refer to a setting with a fallback value like `${@mySetting || 'default value'}` or use a ternary like `${@mySetting ? 'value if true' : 'value if false'}`. You can also use arithmetic operations, string concatenation, and so on.
+
+Inside the expression, you can use the special `@this` object (alias `source`). `@this` refers, naturally, to the class member that is being currently rendered.
+
+With `@this.class` you can get the declaring class of the current member. Then you can retrieve some "properties" of the class, like `@this.class.name` or `@this.class.parent`, or else a collection of `@this.class.ancestors`.
+
+With `@this.context` (alias `@this.upstream`) you can reach the "upstream" class member (see definition above) if the expression is being used inside a fieldset.
+
+There is a way to retrieve a property of a declared annotation with, e.g., `@this.annotation('DialogField').label`. You can also get all the declared annotations with `@this.annotations()`. Same way you can get a particular annotation or all the annotations of the declaring class with `@this.class.annotation('Dialog')` or `@this.class.annotations()[1]`. See more of it in the [test classes](https://github.com/exadel-inc/etoolbox-authoring-kit/tree/master/plugin/src/test/com/exadel/aem/toolkit/plugin/handlers/common/cases/components).
+
+##### Property scripting or DependsOn?
+
+From the first look on them, the interpolatable string templates discussed above appear similar to the [DependsOn](../depends-on/introduction.md) queries. You must however understand the difference between them.
+
+Both techniques alter the view and/or behavior of a Touch UI dialog conditionally.
+
+_DependsOn_ does this dynamically (in runtime) in the browser. In a common scenario, _DependsOn_ is used to modify the state of a dialog widget after the user interacted with another widget of the same dialog (like showing or hiding a text field upon checking or unchecking a box).
+
+_Property scripting_ with `@Setting`s this statically at the time of project building. It is used, e.g., to make a text field inside a fieldset display its default value as "Foo" when used within "MyComponentA" and "Bar" when used within "MyComponentB" -- all without the need to create two different fieldsets.
+
+You cannot however make a scripted template react to a user action like you would do with a _DependsOn_ query. Also, you cannot refer to `@some_variable` declared with `@Setting` from a _DependsOn_ query, and vice versa. All in all, property scripting and _DependsOn_ modify the Touch UI experience from different angles and "live" in different worlds.

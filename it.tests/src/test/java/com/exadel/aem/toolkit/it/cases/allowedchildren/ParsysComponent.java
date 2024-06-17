@@ -25,12 +25,12 @@ import com.exadel.aem.toolkit.it.cases.Constants;
     componentGroup = Constants.GROUP_COMPONENTS,
     resourceSuperType = "foundation/components/parsys",
     isContainer = true,
-    disableTargeting = true
+    disableTargeting = true,
+    views = VideoChildMixin.class
 )
 @Dialog
 @AllowedChildren(
     value = {
-        Constants.JCR_COMPONENTS_ROOT + "/video",
         Constants.JCR_COMPONENTS_ROOT + "/audio"
     },
     targetContainer = PolicyTarget.CURRENT

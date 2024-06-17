@@ -49,13 +49,20 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
         String slingSuffix = getSlingSuffixByDialogFieldProperty(dialogField);
 
         String prefix = target.getNamePrefix();
-        // In case there are multiple sources in multifield container, their "name" values must not be preceded
+        // A prefix must be ignored in a multifield's descendant field unless this is the "field" container or this is
+        // the only multifield's field. However, we respect the "part" of the prefix that might be set already "inside"
+        // the multifield by, e.g., a nested fieldset
+        if (isCompositeMultifieldField(target)) {
+            Target multifieldAncestor = getClosestMultifield(target);
+            assert multifieldAncestor != null;
+            String ancestorPrefix = multifieldAncestor.getNamePrefix();
+            prefix = StringUtils.removeStart(prefix, ancestorPrefix);
+        }
+        // In case there are multiple sources in multifield container, their "name" values must not be prepended
         // with "./" which is by default
         // see https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/
         // jcr_root/libs/granite/ui/components/coral/foundation/form/multifield/index.html#examples
-        // That is why we must alter the default name prefix for the ongoing set of sources
-        Target multifieldAncestor = target.findParent(t -> ResourceTypes.MULTIFIELD.equals(t.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE)));
-        if (multifieldAncestor == null || multifieldAncestor.equals(target.getParent())) {
+        if (!isDeepMultifieldDescendant(target)) {
             prefix = mergeWithPrefix(DialogConstants.RELATIVE_PATH_PREFIX, prefix);
         }
 
@@ -104,8 +111,8 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
     /**
      * Called by {@link DialogFieldAnnotationHandler#accept(Source, Target)} to merge parts of a field name avoiding
      * prefix collisions
-     * @param left  Left part of the merging, usually a field prefix
-     * @param right Right part of the merging, usually a field name
+     * @param left  The left part of the merging, usually a field prefix
+     * @param right The right part of the merging, usually a field name
      * @return String value
      */
     private static String mergeWithPrefix(String left, String right) {
@@ -117,5 +124,46 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
             return right;
         }
         return left + right;
+    }
+
+    /* --------------------
+       Multifield utilities
+       -------------------- */
+
+    /**
+     * Called by {@link DialogFieldAnnotationHandler#accept(Source, Target)} to determine if the current target
+     * represents a widget inside a composite multifield
+     * @param target {@link Target} object being processed
+     * @return True or false
+     */
+    private static boolean isCompositeMultifieldField(Target target) {
+        Target multifieldAncestor = getClosestMultifield(target);
+        if (multifieldAncestor == null) {
+            return false;
+        }
+        return multifieldAncestor.getAttribute(DialogConstants.PN_COMPOSITE, StringUtils.EMPTY).equals("{Boolean}true");
+    }
+
+    /**
+     * Called by {@link DialogFieldAnnotationHandler#accept(Source, Target)} to determine if the current target is
+     * situated inside a multifield node but is NOT an immediate multifield descendant
+     * @param target {@link Target} object being processed
+     * @return True or false
+     */
+    private static boolean isDeepMultifieldDescendant(Target target) {
+        Target multifieldAncestor = getClosestMultifield(target);
+        if (multifieldAncestor == null) {
+            return false;
+        }
+        return !multifieldAncestor.equals(target.getParent());
+    }
+
+    /**
+     * Retrieves the closest ancestor of the provided target which represents a multifield node if there is any
+     * @param target {@link Target} object being processed
+     * @return {@link Target} instance or null
+     */
+    private static Target getClosestMultifield(Target target) {
+        return target.findParent(t -> ResourceTypes.MULTIFIELD.equals(t.getAttribute(DialogConstants.PN_SLING_RESOURCE_TYPE)));
     }
 }

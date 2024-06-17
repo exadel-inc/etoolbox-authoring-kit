@@ -83,7 +83,9 @@ The easiest way to create a *MultiField* is with the `@Multiple` annotation. Jus
 
 On the other hand, if you add `@Multiple` to a field marked with `@FieldSet`, a *composite* multifield will be created (much like the one you could have adding `@MultiField` annotation itself). Moreover, you can add `@Multiple` to a mere `@MultiField`-marked field and enjoy a sort of "multifield of multifields."
 
-Please note, however, that `@Multiple` is primarily designed for easy, "quick give me a multifield out of my single widget" cases. For more complicated cases it lacks tweaking capabilities that `@MultiField` itself has.
+<em>If you choose to use `@Multiple` together with `@FieldSet`, make sure that the `@DialogField` annotation is also present. In other `@FieldSet` use cases it is not necessary to add `@DialogField`.</em>
+
+Please note that `@Multiple` is primarily designed for easy, "quick give me a multifield out of my single widget" cases. For more complicated cases it lacks tweaking capabilities that `@MultiField` itself has.
 
 <hr/>
 <h2 id="see-also" class="h3">See also</h2>

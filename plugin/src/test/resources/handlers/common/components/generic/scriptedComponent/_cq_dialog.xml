@@ -267,6 +267,46 @@
                             </nestedMultifield2>
                         </items>
                     </fieldset2>
+                    <fieldset3
+                        jcr:primaryType="nt:unstructured"
+                        sling:resourceType="granite/ui/components/coral/foundation/form/fieldset">
+                        <items jcr:primaryType="nt:unstructured">
+                            <text
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                name="./text"
+                                disabled="{Boolean}false"
+                                renderHidden="{Boolean}false"
+                                required="{Boolean}false"
+                                value="From ParentScriptedComponent"/>
+                            <nestedFieldset
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/form/fieldset">
+                                <items jcr:primaryType="nt:unstructured">
+                                    <nestedTitle
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                        name="./nestedTitle"
+                                        disabled="{Boolean}false"
+                                        emptyText="From ScriptedComponent"
+                                        fieldLabel="Title"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}false"
+                                        value="From ParentScriptedComponent"/>
+                                    <nestedDescription
+                                        jcr:primaryType="nt:unstructured"
+                                        sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                        name="./nestedDescription"
+                                        disabled="{Boolean}false"
+                                        emptyText="From ScriptedComponent"
+                                        fieldLabel="Description"
+                                        renderHidden="{Boolean}false"
+                                        required="{Boolean}false"
+                                        value="From ScriptedComponent"/>
+                                </items>
+                            </nestedFieldset>
+                        </items>
+                    </fieldset3>
                     <moreFieldsets
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="granite/ui/components/coral/foundation/form/multifield"

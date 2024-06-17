@@ -11,17 +11,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.maven.xmlcomparator;
+package com.exadel.aem.toolkit.it.cases.allowedchildren;
 
-class XmlComparatorConstants {
+import com.exadel.aem.toolkit.api.annotations.policies.AllowedChildren;
+import com.exadel.aem.toolkit.api.annotations.policies.PolicyTarget;
+import com.exadel.aem.toolkit.it.cases.Constants;
 
-    static final int DEFAULT_LOG_INDENT_WIDTH = 1;
-    static final int DEFAULT_LOG_TABLE_WIDTH = 80;
-
-    static final String LOG_COLUMN_SEPARATOR = " | ";
-
-    static final String ATTRIBUTE_SEPARATOR = "/@";
-
-    private XmlComparatorConstants() {
-    }
+@AllowedChildren(
+    value = Constants.JCR_COMPONENTS_ROOT + "/video",
+    classes = ContainerComponent2.class
+)
+@AllowedChildren(
+    value = Constants.JCR_COMPONENTS_ROOT + "/video",
+    targetContainer = PolicyTarget.CURRENT
+)
+public class VideoChildMixin {
 }

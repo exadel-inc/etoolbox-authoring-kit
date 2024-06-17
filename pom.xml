@@ -4,7 +4,7 @@
 
     <groupId>com.exadel.etoolbox</groupId>
     <artifactId>etoolbox-authoring-kit</artifactId>
-    <version>2.5.1</version>
+    <version>2.5.2</version>
 
     <name>Exadel Toolbox Authoring Kit</name>
     <description>Automates generating and managing rich and responsive authoring interfaces for Adobe Experience Manager</description>
@@ -17,8 +17,8 @@
 
     <developers>
         <developer>
-            <id>exadel-dmtp</id>
-            <name>Exadel DMTP Team</name>
+            <id>exadel-dx</id>
+            <name>Exadel DX Team</name>
             <organization>Exadel, Inc.</organization>
             <organizationUrl>https://exadel.com</organizationUrl>
             <roles>
@@ -440,6 +440,15 @@
                 </plugins>
             </build>
         </profile>
+        <profile>
+            <id>regression</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <modules>
+                <module>it.tests</module>
+            </modules>
+        </profile>
     </profiles>
 
     <dependencyManagement>
@@ -448,6 +457,12 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
                 <version>1.3.5</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.exadel.etoolbox</groupId>
+                <artifactId>etoolbox-anydiff-core</artifactId>
+                <version>1.0.0</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -524,8 +539,8 @@
             </dependency>
             <dependency>
                 <groupId>javax.servlet</groupId>
-                <artifactId>servlet-api</artifactId>
-                <version>2.5</version>
+                <artifactId>javax.servlet-api</artifactId>
+                <version>3.1.0</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -573,19 +588,24 @@
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-core</artifactId>
-                <version>3.6.1</version>
+                <version>3.8.6</version>
                 <type>jar</type>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-model</artifactId>
+                <version>3.8.6</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven.plugin-tools</groupId>
                 <artifactId>maven-plugin-annotations</artifactId>
-                <version>3.4</version>
+                <version>3.6.4</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.maven</groupId>
                 <artifactId>maven-plugin-api</artifactId>
-                <version>3.0</version>
+                <version>3.8.6</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
@@ -651,12 +671,6 @@
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-api</artifactId>
                 <version>2.0.5</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.xmlunit</groupId>
-                <artifactId>xmlunit-core</artifactId>
-                <version>2.6.3</version>
                 <scope>test</scope>
             </dependency>
             <dependency>

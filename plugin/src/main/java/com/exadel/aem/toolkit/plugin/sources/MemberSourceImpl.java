@@ -20,7 +20,7 @@ import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
-import java.util.List;
+import java.util.LinkedList;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -28,6 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.main.Setting;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceType;
 import com.exadel.aem.toolkit.api.annotations.widgets.FieldSet;
 import com.exadel.aem.toolkit.api.annotations.widgets.MultiField;
+import com.exadel.aem.toolkit.api.handlers.EmbeddedMemberSource;
 import com.exadel.aem.toolkit.api.handlers.MemberSource;
 import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.api.markers._Default;
@@ -42,14 +43,12 @@ import com.exadel.aem.toolkit.plugin.utils.MemberUtil;
  */
 class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
 
-    private static final List<String> FALSY_VALUES = Arrays.asList("false", "0", "0.0", "null", "undefined");
-
     private final Class<?> componentType;
 
     private final Member member;
     private Class<?> declaringClass;
     private Class<?> reportingClass;
-    private Member upstreamMember;
+    private MemberSource upstreamSource;
 
     private String name;
 
@@ -118,16 +117,16 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
      * {@inheritDoc}
      */
     @Override
-    public Member getUpstreamMember() {
-        return this.upstreamMember;
+    public MemberSource getUpstreamSource() {
+        return this.upstreamSource;
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public void setUpstreamMember(Member value) {
-        this.upstreamMember = value;
+    public void setUpstreamSource(MemberSource value) {
+        this.upstreamSource = value;
     }
 
     /**
@@ -203,22 +202,40 @@ class MemberSourceImpl extends SourceImpl implements ModifiableMemberSource {
      * <br>- to the class where the current member is defined and all its superclasses/interfaces;
      * <br>- to the "upstream" member of the related class that triggered rendering of the current class;
      * <br>- and then to all the ancestors of that "upstream" class
-     * @see Sources#fromMember(Member, Class, Member)
+     * @see Sources#fromMember(Member, Class, MemberSource)
      */
     @Override
     DataStack getDataStack() {
         DataStack result = new DataStack();
-        if (upstreamMember != null) {
-            for (Class<?> ancestor : ClassUtil.getInheritanceTree(upstreamMember.getDeclaringClass())) {
+
+        // Collect the vector of upstreams for the current sources
+        LinkedList<MemberSource> upstreamSources = new LinkedList<>();
+        MemberSource currentUpstreamSource = upstreamSource;
+        while (currentUpstreamSource instanceof EmbeddedMemberSource) {
+            upstreamSources.add(currentUpstreamSource);
+            currentUpstreamSource = ((EmbeddedMemberSource) currentUpstreamSource).getUpstreamSource();
+        }
+
+        // Add to the stack the settings stored at the class level in the declaring classes of upstream members
+        // (less significant)
+        upstreamSources.descendingIterator().forEachRemaining(upstream -> {
+            for (Class<?> ancestor : ClassUtil.getInheritanceTree(upstream.getDeclaringClass())) {
                 result.append(ancestor.getAnnotationsByType(Setting.class));
             }
-        }
+        });
+
+        // Add to the stack the settings stored at the class level in the declaring class of the current member and all
+        // the parent classes of the declaring class
         for (Class<?> ancestor : ClassUtil.getInheritanceTree(getDeclaringClass())) {
             result.append(ancestor.getAnnotationsByType(Setting.class));
         }
-        if (upstreamMember != null) {
-            result.append(((AnnotatedElement) upstreamMember).getAnnotationsByType(Setting.class));
-        }
+
+        // Add to the stack the settings stored at the member level in all the upstream members
+        upstreamSources.descendingIterator().forEachRemaining(upstream -> {
+            result.append(upstream.adaptTo(Setting[].class));
+        });
+
+        // Add to the stack the settings stored at the member level locally (most significant)
         result.append(adaptTo(Setting[].class));
         return result;
     }

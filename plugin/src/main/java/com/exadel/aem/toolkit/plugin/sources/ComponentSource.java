@@ -60,6 +60,13 @@ public interface ComponentSource extends Source {
     List<Source> getViews();
 
     /**
+     * Includes data from the provided {@code Source} object to be used in combination with the data backed by the
+     * original component class
+     * @param view A {@code Source} instance; a non-null object that represents a a Java class is expected
+     */
+    void merge(Source view);
+
+    /**
      * Gets whether the current {@code ComponentSource} instance has the path that is equal to the path provided or else
      * contains the given chunk of a path
      * @param path String value; a non-empty string is expected

@@ -18,6 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
 
+import org.apache.commons.lang3.StringUtils;
 import org.mozilla.javascript.Callable;
 import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
@@ -32,6 +33,7 @@ class MemberAdapter extends AbstractAdapter implements Annotated, Callable {
 
     private static final String PN_CLASS = "class";
     private static final String PN_CONTEXT = "context";
+    private static final String PN_UPSTREAM = "upstream";
 
     private final Member reflectedMember;
     private final Member upstreamMember;
@@ -80,7 +82,7 @@ class MemberAdapter extends AbstractAdapter implements Annotated, Callable {
         if (PN_CLASS.equals(name) && reflectedMember.getDeclaringClass() != null) {
             return new ClassAdapter(reflectedMember.getDeclaringClass());
         }
-        if (PN_CONTEXT.equals(name) && upstreamMember != null) {
+        if (StringUtils.equalsAny(name, PN_CONTEXT, PN_UPSTREAM) && upstreamMember != null) {
             return new MemberAdapter(upstreamMember);
         }
         if (METHOD_ANNOTATION.equals(name)) {

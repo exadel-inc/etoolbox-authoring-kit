@@ -56,14 +56,14 @@ public class Sources {
      * @param value          {@code Method} or a {@code Field} for which a source facade is created
      * @param reportingClass Optional {@code Class<?>} pointer determining the class that "reports" to the ToolKit Maven
      *                       plugin about the current member. See {@link MemberSource#getReportingClass()}
-     * @param upstreamMember Optional {@code Member} reference that triggered rendering of the class that contains the
-     *                       current member. See {@link ModifiableMemberSource#getUpstreamMember()} ()}
+     * @param upstreamSource Optional {@code MemberSource} reference that triggered rendering of the class that contains
+     *                       the current member. See {@link ModifiableMemberSource#getUpstreamSource()}
      * @return {@code Source} instance
      */
-    public static Source fromMember(Member value, Class<?> reportingClass, Member upstreamMember) {
+    public static Source fromMember(Member value, Class<?> reportingClass, MemberSource upstreamSource) {
         ModifiableMemberSource result = new MemberSourceImpl(value);
         result.setReportingClass(reportingClass);
-        result.setUpstreamMember(upstreamMember);
+        result.setUpstreamSource(upstreamSource);
         return result;
     }
 

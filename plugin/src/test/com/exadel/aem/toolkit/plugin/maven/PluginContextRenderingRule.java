@@ -91,7 +91,7 @@ public class PluginContextRenderingRule extends PluginContextRule {
             ? fileSystem.getPath(TestConstants.PACKAGE_ROOT_PATH + createdFilesPath)
             : null;
         try {
-            boolean result = FileRenderingUtil.doRenderingTest(
+            boolean result = RenderingUtil.doTest(
                 fileSystem,
                 component.getName(),
                 effectivePath,

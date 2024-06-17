@@ -14,21 +14,48 @@
 package com.exadel.aem.toolkit.api.annotations.meta;
 
 import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import com.google.common.base.CaseFormat;
+
+import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * Enumerates transformations of a string value that can be applied when rendering as an attribute of a Granite UI entity
  */
 public enum StringTransformation {
 
+    /**
+     * No transformation is applied (default value)
+     */
     NONE(null),
+
+    /**
+     * The string is converted to uppercase
+     */
     UPPERCASE(String::toUpperCase),
+
+    /**
+     * The string is converted to lowercase
+     */
     LOWERCASE(String::toLowerCase),
-    CAMELCASE(string -> CaseFormat.LOWER_UNDERSCORE.to(CaseFormat.LOWER_CAMEL, string.toLowerCase())),
-    CAPITALIZE(string -> WordUtils.capitalizeFully(string, ' ', '-'));
+
+    /**
+     * The string is split into words delimited by a space, a hyphen, or an underscore. The words are then merged
+     * into a {@code camelCase} string
+     */
+    CAMELCASE(StringTransformation::toCamelCase),
+
+    /**
+     * The string is split into words delimited by a space, a hyphen, or an underscore. The first letter of each
+     * word is capitalized. The words are then merged with a space between them
+     */
+    CAPITALIZE(StringTransformation::capitalize);
+
+    private static final char CHAR_SPACE = ' ';
+    private static final char CHAR_HYPHEN = '-';
+    private static final char CHAR_UNDERSCORE = '_';
 
     private final UnaryOperator<String> transformation;
 
@@ -52,4 +79,42 @@ public enum StringTransformation {
         return transformation.apply(value);
     }
 
+    /* ---------------
+       Transformations
+       --------------- */
+
+    /**
+     * Converts a string to camelCase
+     * @param value The string to be transformed
+     * @return Resulting string value
+     */
+    private static String toCamelCase(String value) {
+        if (StringUtils.isBlank(value)) {
+            return value;
+        }
+        String[] words = value.contains(CoreConstants.SEPARATOR_HYPHEN)
+            ? StringUtils.split(value, " -")
+            : StringUtils.split(value, " _");
+        return words[0].toLowerCase() + Stream.of(words)
+            .skip(1)
+            .map(StringUtils::lowerCase)
+            .map(StringUtils::capitalize)
+            .collect(Collectors.joining());
+    }
+
+    /**
+     * Capitalizes the first letter of each word in the provided string
+     * @param value The string to be transformed
+     * @return Resulting string value
+     */
+    private static String capitalize(String value) {
+        if (StringUtils.isBlank(value)) {
+            return value;
+        }
+        String[] words = StringUtils.split(value, " -_");
+        return Stream.of(words)
+            .map(StringUtils::lowerCase)
+            .map(StringUtils::capitalize)
+            .collect(Collectors.joining(StringUtils.SPACE));
+    }
 }
