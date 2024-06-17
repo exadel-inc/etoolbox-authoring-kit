@@ -2,91 +2,91 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://authoring-kit.com/content/authoring-tools/etoolbox-lists</loc>
-    <lastmod>2024-02-12T11:15:57.978Z</lastmod>
+    <lastmod>2024-06-17T21:44:24.493Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/allowed-components</loc>
-    <lastmod>2024-02-12T11:15:57.970Z</lastmod>
+    <lastmod>2024-06-17T21:44:24.485Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/injectors</loc>
-    <lastmod>2024-02-12T11:15:57.966Z</lastmod>
-  </url>
-  <url>
-    <loc>https://authoring-kit.com/content/getting-started/common-use-cases</loc>
-    <lastmod>2024-02-12T11:15:57.966Z</lastmod>
+    <lastmod>2024-06-17T21:44:24.481Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/option-provider</loc>
-    <lastmod>2024-02-12T11:15:57.966Z</lastmod>
+    <lastmod>2024-06-17T21:44:24.481Z</lastmod>
+  </url>
+  <url>
+    <loc>https://authoring-kit.com/content/getting-started/common-use-cases</loc>
+    <lastmod>2024-06-17T21:44:24.481Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/getting-started/installation</loc>
-    <lastmod>2024-02-12T11:15:57.966Z</lastmod>
+    <lastmod>2024-06-17T21:44:24.481Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/component-management/additional-properties</loc>
-    <lastmod>2024-02-12T11:15:57.974Z</lastmod>
-  </url>
-  <url>
-    <loc>https://authoring-kit.com/content/dev-tools/component-management/customizing-toolkit</loc>
-    <lastmod>2024-02-12T11:15:57.974Z</lastmod>
+    <lastmod>2024-06-17T21:44:24.489Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/component-management/component-structure</loc>
-    <lastmod>2024-02-12T11:15:57.974Z</lastmod>
+    <lastmod>2024-06-17T21:44:24.489Z</lastmod>
+  </url>
+  <url>
+    <loc>https://authoring-kit.com/content/dev-tools/component-management/customizing-toolkit</loc>
+    <lastmod>2024-06-17T21:44:24.489Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/component-management/dialog-layout</loc>
-    <lastmod>2024-02-12T11:15:57.974Z</lastmod>
+    <lastmod>2024-06-17T21:44:24.489Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/component-management/reusing-code</loc>
-    <lastmod>2024-02-12T11:15:57.970Z</lastmod>
+    <lastmod>2024-06-17T21:44:24.485Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/depends-on/api</loc>
-    <lastmod>2024-02-12T11:15:57.970Z</lastmod>
-  </url>
-  <url>
-    <loc>https://authoring-kit.com/content/dev-tools/depends-on/introduction</loc>
-    <lastmod>2024-02-12T11:15:57.970Z</lastmod>
+    <lastmod>2024-06-17T21:44:24.485Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/depends-on/examples</loc>
-    <lastmod>2024-02-12T11:15:57.970Z</lastmod>
+    <lastmod>2024-06-17T21:44:24.485Z</lastmod>
+  </url>
+  <url>
+    <loc>https://authoring-kit.com/content/dev-tools/depends-on/introduction</loc>
+    <lastmod>2024-06-17T21:44:24.485Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/depends-on/usage</loc>
-    <lastmod>2024-02-12T11:15:57.970Z</lastmod>
-  </url>
-  <url>
-    <loc>https://authoring-kit.com/content/dev-tools/component-management/dialog-fields/configuring-multifield</loc>
-    <lastmod>2024-02-12T11:15:57.978Z</lastmod>
+    <lastmod>2024-06-17T21:44:24.485Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/component-management/dialog-fields/configuring-fieldset</loc>
-    <lastmod>2024-02-12T11:15:57.978Z</lastmod>
+    <lastmod>2024-06-17T21:44:24.493Z</lastmod>
+  </url>
+  <url>
+    <loc>https://authoring-kit.com/content/dev-tools/component-management/dialog-fields/configuring-multifield</loc>
+    <lastmod>2024-06-17T21:44:24.493Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/component-management/dialog-fields/configuring-rte</loc>
-    <lastmod>2024-02-12T11:15:57.978Z</lastmod>
+    <lastmod>2024-06-17T21:44:24.493Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/component-management/dialog-fields/dialog-field</loc>
-    <lastmod>2024-02-12T11:15:57.974Z</lastmod>
+    <lastmod>2024-06-17T21:44:24.489Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/dev-tools/component-management/dialog-fields/widgets</loc>
-    <lastmod>2024-02-12T11:15:57.974Z</lastmod>
+    <lastmod>2024-06-17T21:44:24.489Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com/content/getting-started/popular-articles</loc>
-    <lastmod>2024-02-12T11:15:57.966Z</lastmod>
+    <lastmod>2024-06-17T21:44:24.477Z</lastmod>
   </url>
   <url>
     <loc>https://authoring-kit.com</loc>
-    <lastmod>2024-02-12T11:15:38.710Z</lastmod>
+    <lastmod>2024-06-17T21:44:08.688Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
