@@ -78,7 +78,7 @@ public class PluginSettings {
      * Initializes a {@code Builder} instance used to populate a {@link PluginSettings} object with values
      * @return {@code Builder} object
      */
-    public static Builder builder() {
+    static Builder builder() {
         return new Builder();
     }
 
@@ -110,6 +110,7 @@ public class PluginSettings {
          * @return This instance
          * @see PluginSettings#getPathBase(Class)
          */
+        @SuppressWarnings("UnusedReturnValue")
         public Builder referenceEntry(String pathValue, String referenceValue) {
             if (StringUtils.isAnyBlank(pathValue, referenceValue)) {
                 return this;
