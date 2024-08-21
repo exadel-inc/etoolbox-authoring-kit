@@ -13,10 +13,12 @@
  */
 package com.exadel.aem.toolkit.plugin.maven;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
 import com.exadel.aem.toolkit.plugin.utils.ClassUtil;
@@ -29,9 +31,12 @@ public class PluginSettings {
 
     public static final PluginSettings EMPTY = new PluginSettings();
 
+    private static final int HASH_SEED = 7;
+    private static final int HASH_FACTOR = 31;
+
     private String defaultPathBase;
 
-    private List<ReferenceEntry> referenceEntries;
+    private Set<ReferenceEntry> referenceEntries;
 
     private String terminateOn;
 
@@ -78,7 +83,7 @@ public class PluginSettings {
      * Initializes a {@code Builder} instance used to populate a {@link PluginSettings} object with values
      * @return {@code Builder} object
      */
-    public static Builder builder() {
+    static Builder builder() {
         return new Builder();
     }
 
@@ -87,7 +92,7 @@ public class PluginSettings {
      */
     static class Builder {
         private String pathBase;
-        private List<ReferenceEntry> referenceEntries;
+        private Set<ReferenceEntry> referenceEntries;
         private String terminateOn;
 
         /**
@@ -110,12 +115,13 @@ public class PluginSettings {
          * @return This instance
          * @see PluginSettings#getPathBase(Class)
          */
+        @SuppressWarnings("UnusedReturnValue")
         public Builder referenceEntry(String pathValue, String referenceValue) {
             if (StringUtils.isAnyBlank(pathValue, referenceValue)) {
                 return this;
             }
             if (referenceEntries == null) {
-                referenceEntries = new ArrayList<>();
+                referenceEntries = new LinkedHashSet<>();
             }
             referenceEntries.add(new ReferenceEntry(pathValue, referenceValue));
             return this;
@@ -178,6 +184,32 @@ public class PluginSettings {
          */
         public boolean matches(Class<?> component) {
             return ClassUtil.matchesReference(component, referenceBase);
+        }
+
+        /**
+         * Compares the current instance with another object
+         * @param other Another object
+         * @return True if the objects are equal, false otherwise
+         */
+        @Override
+        public boolean equals(Object other) {
+            if (this == other) {
+                return true;
+            }
+            if (other == null || getClass() != other.getClass()) {
+                return false;
+            }
+            ReferenceEntry that = (ReferenceEntry) other;
+            return new EqualsBuilder().append(pathBase, that.pathBase).append(referenceBase, that.referenceBase).isEquals();
+        }
+
+        /**
+         * Calculates the hash code of the current instance
+         * @return Integer value
+         */
+        @Override
+        public int hashCode() {
+            return new HashCodeBuilder(HASH_SEED, HASH_FACTOR).append(pathBase).append(referenceBase).toHashCode();
         }
     }
 }
