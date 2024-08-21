@@ -237,6 +237,7 @@ public class PluginMojo extends AbstractMojo {
                 .stream()
                 .filter(plugin -> PLUGIN_ARTIFACT_ID.equals(plugin.getArtifactId()))
                 .map(ConfigurationContainer::getConfiguration)
+                .filter(Xpp3Dom.class::isInstance)
                 .map(Xpp3Dom.class::cast)
                 .findFirst()
                 .orElse(null);
