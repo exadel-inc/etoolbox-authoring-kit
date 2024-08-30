@@ -26,6 +26,9 @@
         visibility: function ($el, state) {
             $el.find(DATEPICKER_INPUT_SELECTOR).attr('readonly', state ? null : '');
             ns.ElementAccessors.DEFAULT_ACCESSOR.visibility($el, state);
+        },
+        set: function ($el, value) {
+            $el.prop('value', new Date(value));
         }
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

@@ -28,6 +28,7 @@ import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.execution.MavenSession;
 import org.apache.maven.model.ConfigurationContainer;
+import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Component;
@@ -218,7 +219,7 @@ public class PluginMojo extends AbstractMojo {
     }
 
     /**
-     * Scans the module structure of the current Maven installation to retrieve the ToolKit's plugin configurations and
+     * Scans the module structure of the current Maven setup to retrieve the ToolKit's plugin configurations and
      * stores the matches between AEM component Java packages and repository paths. The references are passed to the
      * {@link PluginSettings} builder
      * @param builder {@link PluginSettings.Builder} instance
@@ -232,25 +233,44 @@ public class PluginMojo extends AbstractMojo {
             .collect(Collectors.toList());
 
         for (MavenProject contentPackage : contentPackages) {
-            Xpp3Dom pluginConfig = contentPackage
+            Plugin pluginDefinition = contentPackage
                 .getBuildPlugins()
                 .stream()
                 .filter(plugin -> PLUGIN_ARTIFACT_ID.equals(plugin.getArtifactId()))
-                .map(ConfigurationContainer::getConfiguration)
-                .map(Xpp3Dom.class::cast)
                 .findFirst()
                 .orElse(null);
-            if (pluginConfig == null) {
+            if (pluginDefinition == null) {
                 continue;
             }
-            String pathBase = Optional.ofNullable(pluginConfig.getChild(CONFIG_KEY_PATH_BASE))
-                .map(Xpp3Dom::getValue)
-                .orElse(null);
-            String referenceBase = Optional.ofNullable(pluginConfig.getChild(CONFIG_KEY_REFERENCE_BASE))
-                .map(Xpp3Dom::getValue)
-                .orElse(null);
-            builder.referenceEntry(pathBase, referenceBase);
+            Optional.ofNullable(pluginDefinition.getConfiguration())
+                .filter(Xpp3Dom.class::isInstance)
+                .map(Xpp3Dom.class::cast)
+                .ifPresent(config -> populateReferenceEntry(config, builder));
+            pluginDefinition
+                .getExecutions()
+                .stream()
+                .map(ConfigurationContainer::getConfiguration)
+                .filter(Xpp3Dom.class::isInstance)
+                .map(Xpp3Dom.class::cast)
+                .forEach(config -> populateReferenceEntry(config, builder));
         }
+    }
+
+    /**
+     * Extracts the path and reference base from the provided configuration and passes them to the
+     * {@link PluginSettings} builder
+     * @param config  A {@link Xpp3Dom} object representing a configuration of the ToolKit's plugin or one of its
+     *                executions
+     * @param builder {@link PluginSettings.Builder} instance
+     */
+    private void populateReferenceEntry(Xpp3Dom config, PluginSettings.Builder builder) {
+        String pathBase = Optional.ofNullable(config.getChild(CONFIG_KEY_PATH_BASE))
+            .map(Xpp3Dom::getValue)
+            .orElse(null);
+        String referenceBase = Optional.ofNullable(config.getChild(CONFIG_KEY_REFERENCE_BASE))
+            .map(Xpp3Dom::getValue)
+            .orElse(null);
+        builder.referenceEntry(pathBase, referenceBase);
     }
 
     /**
