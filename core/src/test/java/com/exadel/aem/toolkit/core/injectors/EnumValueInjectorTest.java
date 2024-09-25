@@ -14,6 +14,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.TestConstants;
 import com.exadel.aem.toolkit.core.injectors.models.enums.Colors;
@@ -31,7 +32,7 @@ public class EnumValueInjectorTest {
     private static final List<Colors> EXPECTED_COLOR_COLLECTION = Arrays.asList(Colors.YELLOW, Colors.ORANGE);
 
     @Rule
-    public final AemContext context = new AemContext();
+    public final AemContext context = AemContextFactory.newInstance();
 
     /* -----------
        Preparation
@@ -39,10 +40,10 @@ public class EnumValueInjectorTest {
 
     @Before
     public void beforeTest() {
-        context.addModelsForClasses(MODELS_PACKAGE_NAME);
         EnumValueInjector enumValueInjector = new EnumValueInjector();
         context.registerInjectActivateService(enumValueInjector);
         context.registerInjectActivateService(new DelegateInjector(enumValueInjector));
+        context.addModelsForClasses(MODELS_PACKAGE_NAME);
         context.load().json("/com/exadel/aem/toolkit/core/injectors/enumInjector.json", TestConstants.ROOT_RESOURCE);
         context.request().setResource(context.resourceResolver().getResource("/content/jcr:content/resource"));
     }
@@ -60,6 +61,7 @@ public class EnumValueInjectorTest {
         assertEquals(EXPECTED_COLOR.name(), model.getObjectValue());
         assertEquals(EXPECTED_COLOR, model.getValueSupplier().getValue());
         assertEquals(EXPECTED_COLOR, model.getConstructorValue());
+        assertEquals(EXPECTED_COLOR, model.getDefaultValue());
     }
 
     @Test
@@ -75,6 +77,7 @@ public class EnumValueInjectorTest {
         assertEquals(EXPECTED_COLOR.name(), model.getObjectValue());
         assertArrayEquals(EXPECTED_COLOR_ARRAY, model.getValueSupplier().getValue());
         assertArrayEquals(EXPECTED_COLOR_ARRAY, model.getConstructorValue());
+        assertArrayEquals(EXPECTED_COLOR_ARRAY, model.getDefaultValue());
     }
 
     @Test
@@ -93,6 +96,7 @@ public class EnumValueInjectorTest {
         assertTrue(CollectionUtils.isEqualCollection(EXPECTED_COLOR_COLLECTION, model.getValueSupplier().getValue()));
         assertNotNull(model.getConstructorValue());
         assertTrue(CollectionUtils.isEqualCollection(EXPECTED_COLOR_COLLECTION, model.getConstructorValue()));
+        assertTrue(CollectionUtils.isEqualCollection(EXPECTED_COLOR_COLLECTION, model.getDefaultValue()));
     }
 
     @Test
@@ -107,5 +111,6 @@ public class EnumValueInjectorTest {
         assertArrayEquals(EXPECTED_COLOR_ARRAY, model.getValue());
         assertArrayEquals(EXPECTED_COLOR_ARRAY, model.getValueSupplier().getValue());
         assertArrayEquals(EXPECTED_COLOR_ARRAY, model.getConstructorValue());
+        assertArrayEquals(EXPECTED_COLOR_ARRAY, model.getDefaultValue());
     }
 }

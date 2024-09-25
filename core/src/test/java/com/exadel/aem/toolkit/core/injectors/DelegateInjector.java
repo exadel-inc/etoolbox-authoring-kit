@@ -19,8 +19,12 @@ import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.spi.DisposalCallbackRegistry;
 import org.apache.sling.models.spi.Injector;
+import org.apache.sling.models.spi.injectorspecific.AbstractInjectAnnotationProcessor2;
+import org.apache.sling.models.spi.injectorspecific.InjectAnnotationProcessor2;
+import org.apache.sling.models.spi.injectorspecific.StaticInjectAnnotationProcessorFactory;
 import org.osgi.framework.Constants;
 import org.osgi.service.component.annotations.Component;
 
@@ -31,9 +35,9 @@ import com.exadel.aem.toolkit.core.injectors.utils.AdaptationUtil;
  * Sling models for different injection scenarios
  */
 @Component(
-    service = Injector.class,
+    service = {Injector.class, StaticInjectAnnotationProcessorFactory.class},
     property = Constants.SERVICE_RANKING + ":Integer=" + BaseInjector.SERVICE_RANKING)
-public class DelegateInjector implements Injector {
+public class DelegateInjector implements Injector, StaticInjectAnnotationProcessorFactory {
 
     static final String NAME = "eak-delegate-injector";
 
@@ -61,40 +65,56 @@ public class DelegateInjector implements Injector {
         RequestProperty requestProperty = annotatedElement.getAnnotation(RequestProperty.class);
         String effectiveName = StringUtils.defaultIfBlank(requestProperty.name(), name);
 
+        Injectable value = null;
         if (delegate instanceof RequestAttributeInjector) {
-            return ((RequestAttributeInjector) delegate).getValue(
+            RequestAttributeInjector requestAttributeInjector = (RequestAttributeInjector) delegate;
+            value = Injectable.of(requestAttributeInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
                 effectiveName,
-                type);
-        }
+                type));
 
-        if (delegate instanceof RequestParamInjector) {
-            return ((RequestParamInjector) delegate).getValue(
+        } else if (delegate instanceof RequestParamInjector) {
+            RequestParamInjector requestParamInjector = (RequestParamInjector) delegate;
+            value = Injectable.of(requestParamInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
                 effectiveName,
-                type);
-        }
+                type));
 
-        if (delegate instanceof RequestSelectorsInjector) {
-            return ((RequestSelectorsInjector) delegate).getValue(
+        } else if (delegate instanceof RequestSelectorsInjector) {
+            RequestSelectorsInjector requestSelectorsInjector = (RequestSelectorsInjector) delegate;
+            value = Injectable.of(requestSelectorsInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
-                type);
-        }
+                type));
 
-        if (delegate instanceof RequestSuffixInjector) {
-            return ((RequestSuffixInjector) delegate).getValue(
+        } else if (delegate instanceof RequestSuffixInjector) {
+            RequestSuffixInjector requestSuffixInjector = (RequestSuffixInjector) delegate;
+            value = Injectable.of(requestSuffixInjector.getValue(
                 AdaptationUtil.getRequest(adaptable),
-                type);
-        }
+                type));
 
-        if (delegate instanceof EnumValueInjector) {
-            return ((EnumValueInjector) delegate).getValue(
+        } else if (delegate instanceof EnumValueInjector) {
+            EnumValueInjector enumValueInjector = (EnumValueInjector) delegate;
+            value = Injectable.of(enumValueInjector.getValue(
                 adaptable,
                 effectiveName,
                 StringUtils.EMPTY,
-                type);
+                type));
         }
+        return delegate instanceof BaseInjector
+            ? ((BaseInjector<?>) delegate).defaultIfEmpty(value, type, annotatedElement)
+            : null;
+    }
 
-        return null;
+    @Override
+    public InjectAnnotationProcessor2 createAnnotationProcessor(AnnotatedElement element) {
+        if (!element.isAnnotationPresent(RequestProperty.class)) {
+            return null;
+        }
+        return new AbstractInjectAnnotationProcessor2() {
+            @Override
+            public boolean hasDefault() {
+                return element.isAnnotationPresent(Default.class);
+            }
+        };
     }
 }

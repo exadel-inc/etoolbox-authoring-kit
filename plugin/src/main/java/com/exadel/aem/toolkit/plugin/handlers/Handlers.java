@@ -28,6 +28,7 @@ import com.exadel.aem.toolkit.plugin.handlers.common.CqChildEditConfigHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.CqDialogHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.CqEditConfigHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.CqHtmlTagHandler;
+import com.exadel.aem.toolkit.plugin.handlers.common.MaxChildrenHandler;
 import com.exadel.aem.toolkit.plugin.handlers.common.PropertyMappingHandler;
 import com.exadel.aem.toolkit.plugin.handlers.dependson.DependsOnHandler;
 import com.exadel.aem.toolkit.plugin.handlers.editconfig.DropTargetsHandler;
@@ -54,12 +55,17 @@ public class Handlers {
     private static final BiConsumer<Source, Target> CASUAL_ANNOTATIONS_HANDLER = new CasualAnnotationsHandler();
     private static final BiConsumer<Source, Target> PROPERTY_MAPPING_HANDLER = new PropertyMappingHandler();
     private static final BiConsumer<Source, Target> ALLOWED_CHILDREN_HANDLER = new AllowedChildrenHandler();
+    private static final BiConsumer<Source, Target> MAX_CHILDREN_HANDLER = new MaxChildrenHandler();
 
     // UI-specific handlers
-    private static final BiConsumer<Source, Target> CHILD_EDIT_CONFIG_HANDLER = new CqChildEditConfigHandler().andThen(ALLOWED_CHILDREN_HANDLER);
+    private static final BiConsumer<Source, Target> CHILD_EDIT_CONFIG_HANDLER = new CqChildEditConfigHandler()
+        .andThen(ALLOWED_CHILDREN_HANDLER)
+        .andThen(MAX_CHILDREN_HANDLER);
     private static final BiConsumer<Source, Target> COMPONENT_HANDLER = new ComponentHandler();
     private static final BiConsumer<Source, Target> DIALOG_HANDLER = new CqDialogHandler();
-    private static final BiConsumer<Source, Target> EDIT_CONFIG_HANDLER = new CqEditConfigHandler().andThen(ALLOWED_CHILDREN_HANDLER);
+    private static final BiConsumer<Source, Target> EDIT_CONFIG_HANDLER = new CqEditConfigHandler()
+        .andThen(ALLOWED_CHILDREN_HANDLER)
+        .andThen(MAX_CHILDREN_HANDLER);
     private static final BiConsumer<Source, Target> HTML_TAG_HANDLER = new CqHtmlTagHandler();
     private static final Map<String, BiConsumer<Source, Target>> UI_HANDLERS = ImmutableMap.<String, BiConsumer<Source, Target>>builder()
         .put(Scopes.COMPONENT, COMPONENT_HANDLER)
@@ -97,7 +103,7 @@ public class Handlers {
     private static final BiConsumer<Source, Target> EDIT_CONFIG_INPLACE_HANDLER = new InplaceEditingHandler();
     private static final BiConsumer<Source, Target> EDIT_CONFIG_LISTENERS_HANDLER = new ListenersHandler();
 
-    // Complete editConfig chains
+    // Complete editConfig chain
     private static final BiConsumer<Source, Target> EDIT_CONFIG_HANDLER_CHAIN =
         EDIT_CONFIG_DROP_TARGETS_HANDLER
         .andThen(EDIT_CONFIG_FORM_PARAMS_HANDLER)
@@ -113,8 +119,8 @@ public class Handlers {
     }
 
     /**
-     * Retrieves a handler conveyor for rendering a scope-specific UI, such as a dialog, a design dialog, or an
-     * in-place editing config
+     * Retrieves a handler conveyor for rendering a scope-specific UI, such as a dialog, a design dialog, or an in-place
+     * editing config
      * @param scope Non-blank string representing the scope
      * @return {@code BiConsumer<Source, Target>} instance representing the conveyor
      */

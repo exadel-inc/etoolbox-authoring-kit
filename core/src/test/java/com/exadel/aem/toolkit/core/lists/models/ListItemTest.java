@@ -17,15 +17,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-
-import com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel;
-
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
+
+import com.exadel.aem.toolkit.core.AemContextFactory;
+import com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel;
 
 public class ListItemTest {
 
@@ -33,7 +32,7 @@ public class ListItemTest {
     private static final String LIST_ITEM_PATH = "/jcr:content/list/list_item_1006003058";
 
     @Rule
-    public AemContext context = new AemContext(ResourceResolverType.RESOURCERESOLVER_MOCK);
+    public AemContext context = AemContextFactory.newInstance();
     private ListItemModel listItem;
 
     @Before

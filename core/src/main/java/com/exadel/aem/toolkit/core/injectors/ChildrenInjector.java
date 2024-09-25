@@ -25,7 +25,7 @@ import java.util.stream.StreamSupport;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -86,27 +86,28 @@ public class ChildrenInjector extends BaseInjector<Children> {
     /**
      * {@inheritDoc}
      */
+    @Nonnull
     @Override
-    public Object getValue(Object adaptable, String name, Type type, Children annotation) {
+    public Injectable getValue(Object adaptable, String name, Type type, Children annotation) {
 
         Resource adaptableResource = AdaptationUtil.getResource(adaptable);
         if (adaptableResource == null) {
-            return null;
+            return Injectable.EMPTY;
         }
 
         if (!isSupportedCollectionOrElseSingularType(type) && !Object.class.equals(type)) {
-            return null;
+            return Injectable.EMPTY;
         }
 
         String targetResourcePath = StringUtils.defaultIfBlank(annotation.name(), name);
         Resource currentResource = adaptableResource.getChild(targetResourcePath);
         if (currentResource == null) {
-            return null;
+            return Injectable.EMPTY;
         }
 
         List<Object> children = getFilteredInjectables(adaptable, currentResource, type, annotation);
         if (CollectionUtils.isEmpty(children)) {
-            return null;
+            return Injectable.EMPTY;
         }
 
         return CastUtil.toType(children, type);

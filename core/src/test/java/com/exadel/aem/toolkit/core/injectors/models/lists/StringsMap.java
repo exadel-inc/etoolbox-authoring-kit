@@ -52,6 +52,11 @@ public class StringsMap extends RequestAdapterBase<Map<String, String>> {
     }
 
     @Override
+    public Map<String, String> getDefaultValue() {
+        return null;
+    }
+
+    @Override
     public ValueSupplier<Map<String, String>> getValueSupplier() {
         return supplier;
     }

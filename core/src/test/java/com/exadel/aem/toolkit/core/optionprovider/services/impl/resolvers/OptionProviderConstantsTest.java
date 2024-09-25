@@ -31,6 +31,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
+import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.TestConstants;
 import com.exadel.aem.toolkit.core.injectors.models.enums.ColorConstants;
@@ -42,7 +43,7 @@ public class OptionProviderConstantsTest {
     private static final String EXCLUSION_PARAM = "&exclude=none,*more";
 
     @Rule
-    public final AemContext context = new AemContext();
+    public final AemContext context = AemContextFactory.newInstance();
 
     private OptionProviderService optionProvider;
 

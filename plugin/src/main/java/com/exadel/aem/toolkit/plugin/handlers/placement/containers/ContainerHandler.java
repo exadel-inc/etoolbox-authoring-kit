@@ -13,7 +13,6 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.placement.containers;
 
-import java.lang.reflect.Member;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -125,7 +124,7 @@ abstract class ContainerHandler {
             } else {
                 renderedMembers = ClassUtil.getSources(
                     hostClass,
-                    host.adaptTo(Member.class),
+                    host.adaptTo(MemberSource.class),
                     nonIgnoredMembersFilter,
                     false);
             }

@@ -313,7 +313,6 @@
                         jcr:title="Success"
                         sling:resourceType="granite/ui/components/coral/foundation/form/responses/openprompt"
                         open="/bin/wcmcommand?cmd=open&amp;_charset_=utf-8&amp;path={Path}"
-                        redirect="/etoolbox-lists.html${granite:encodeURIPath(requestPathInfo.suffix)}"
                         text="Your page has been created."/>
                 <items jcr:primaryType="nt:unstructured">
                     <content jcr:primaryType="nt:unstructured"

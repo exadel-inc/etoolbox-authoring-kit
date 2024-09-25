@@ -128,4 +128,20 @@ public class ValidatorsTest {
             ValidationException.class,
             "Title property is missing for dialog");
     }
+
+    @Test
+    public void testWrongDropTarget() {
+        pluginContext.testThrows(
+            ValidatorTestCases.InvalidDropTargetConfig.class,
+            ValidationException.class,
+            "Invalid drop target");
+    }
+
+    @Test
+    public void testWrongDropTarget2() {
+        pluginContext.testThrows(
+            ValidatorTestCases.InvalidDropTargetConfig2.class,
+            ValidationException.class,
+            "' ' provided");
+    }
 }

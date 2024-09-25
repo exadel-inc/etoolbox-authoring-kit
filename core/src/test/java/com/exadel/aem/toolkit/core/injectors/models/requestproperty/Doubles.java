@@ -18,6 +18,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
@@ -33,6 +34,10 @@ public class Doubles extends RequestAdapterBase<Double> {
     @RequestProperty
     private Double value;
 
+    @RequestProperty
+    @Default(doubleValues = 1.1d)
+    private Double defaultValue;
+
     @Self
     private Supplier supplier;
 
@@ -41,9 +46,15 @@ public class Doubles extends RequestAdapterBase<Double> {
         super(value);
     }
 
+    @Override
     @Nullable
     public Double getValue() {
         return value;
+    }
+
+    @Override
+    public Double getDefaultValue() {
+        return defaultValue;
     }
 
     @Override

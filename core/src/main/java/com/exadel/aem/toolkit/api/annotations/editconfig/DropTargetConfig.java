@@ -18,6 +18,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestriction;
+import com.exadel.aem.toolkit.api.annotations.meta.ValueRestrictions;
 
 /**
  * Defines a target for a drag-and-drop operation in Granite UI. Upon processing this annotation, a {@code
@@ -46,11 +48,13 @@ public @interface DropTargetConfig {
      * Maps to the {@code propertyName} attribute of {@code cq:editConfig/cq:dropTargets/<targetName>} node
      * @return Non-blank string
      */
+    @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String propertyName();
 
     /**
      * Used to specify tag name of the current {@code cq:editConfig/cq:dropTargets} subnode
      * @return Non-blank string
      */
+    @ValueRestriction(ValueRestrictions.NOT_BLANK)
     String nodeName();
 }

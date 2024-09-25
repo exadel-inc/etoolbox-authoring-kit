@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
@@ -35,6 +36,10 @@ public class LongCollections extends RequestAdapterBase<Collection<Long>> {
     @RequestProperty
     private Collection<Long> value;
 
+    @RequestProperty
+    @Default(floatValues = {42.1f, 43.2f, 44.3f})
+    private Collection<Long> defaultValue;
+
     @Self
     private Supplier supplier;
 
@@ -46,6 +51,11 @@ public class LongCollections extends RequestAdapterBase<Collection<Long>> {
     @Nullable
     public Collection<Long> getValue() {
         return value;
+    }
+
+    @Override
+    public Collection<Long> getDefaultValue() {
+        return defaultValue;
     }
 
     @Override

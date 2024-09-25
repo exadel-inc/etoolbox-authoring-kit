@@ -60,6 +60,11 @@ public class SimpleListItems extends RequestAdapterBase<List<SimpleListItem>> {
         return (List<SimpleListItem>) value;
     }
 
+    @Override
+    public List<SimpleListItem> getDefaultValue() {
+        return null;
+    }
+
     public SimpleListItem[] getArrayValue() {
         return arrayValue;
     }

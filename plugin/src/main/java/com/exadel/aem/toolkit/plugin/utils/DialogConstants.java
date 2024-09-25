@@ -36,6 +36,7 @@ public class DialogConstants {
 
     public static final String OPENING_CURLY = "{";
     public static final String CLOSING_CURLY = "}";
+    public static final String TEMPLATE_START = "${";
 
     public static final String NN_ACCORDION = "accordion";
     public static final String NN_ALLOW_BASICS = "allowBasics";

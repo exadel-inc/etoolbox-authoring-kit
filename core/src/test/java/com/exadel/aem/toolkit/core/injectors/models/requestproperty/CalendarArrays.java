@@ -41,6 +41,7 @@ public class CalendarArrays extends RequestAdapterBase<Calendar[]> {
         super(value);
     }
 
+    @Override
     public Calendar[] getValue() {
         assert value != null;
         Calendar[] result = new Calendar[value.length];
@@ -48,6 +49,11 @@ public class CalendarArrays extends RequestAdapterBase<Calendar[]> {
             result[i] = (Calendar) value[i];
         }
         return result;
+    }
+
+    @Override
+    public Calendar[] getDefaultValue() {
+        return null;
     }
 
     @Override

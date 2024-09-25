@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
@@ -38,13 +39,32 @@ public class DoubleCollections extends RequestAdapterBase<Collection<Double>> {
     @Self
     private Supplier supplier;
 
+    @RequestProperty
+    @Default(doubleValues = {42.1d, 43.1d, 44.1d})
+    private List<Double> defaultValue;
+
+    @RequestProperty
+    @Default(doubleValues = {42.1d, 43.1d, 44.1d})
+    private String defaultStringValue;
+
     @Inject
     public DoubleCollections(@RequestProperty @Named(CoreConstants.PN_VALUE) Collection<Double> value) {
         super(value);
     }
 
+    @Override
     public Collection<Double> getValue() {
         return value;
+    }
+
+    @Override
+    public Collection<Double> getDefaultValue() {
+        return defaultValue;
+    }
+
+    @Override
+    public String getDefaultStringValue() {
+        return defaultStringValue;
     }
 
     @Override

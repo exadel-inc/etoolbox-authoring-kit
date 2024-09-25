@@ -140,22 +140,26 @@ public @interface Dialog {
     String helpPath() default "";
 
     /**
-     * Renders as the {@code height} attribute of component's {@code cq:dialog} node. If no value provided,
-     * default {@code 480} is used
+     * Renders as the {@code height} attribute of component's {@code cq:dialog} node
      * @return Double-typed number
      */
-    @PropertyRendering(scope = Scopes.CQ_DIALOG)
+    @PropertyRendering(
+        scope = Scopes.CQ_DIALOG,
+        ignoreValues = "0.0"
+    )
     @ValueRestriction(ValueRestrictions.POSITIVE)
-    double height() default 480;
+    double height() default 0;
 
     /**
-     * Renders as the {@code width} attribute of component's {@code cq:dialog} node. If no value provided,
-     * default {@code 560} is used
+     * Renders as the {@code width} attribute of component's {@code cq:dialog} node
      * @return Double-typed number
      */
-    @PropertyRendering(scope = Scopes.CQ_DIALOG)
+    @PropertyRendering(
+        scope = Scopes.CQ_DIALOG,
+        ignoreValues = "0.0"
+    )
     @ValueRestriction(ValueRestrictions.POSITIVE)
-    double width() default 560;
+    double width() default 0;
 
     /**
      * When set to true, renders as the {@code disableTargeting} attribute of the component root node with its value

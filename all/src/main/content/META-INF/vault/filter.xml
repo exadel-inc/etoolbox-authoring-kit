@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <workspaceFilter version="1.0">
-    <!-- The following filters clear old directories in JCR. They can be removed after v.2 release -->
-    <filter root="/etc/packages/authoring-toolkit"/>
-    <filter root="/etc/packages/aem-authoring-toolkit"/>
+    <!-- The following filters clear irrelevant directories in JCR -->
+    <filter root="/etc/packages/com.exadel.etoolbox/etoolbox-authoring-kit-plus"/>
 </workspaceFilter>

@@ -18,6 +18,7 @@ import javax.inject.Named;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
@@ -33,6 +34,14 @@ public class BooleanArrays extends RequestAdapterBase<Boolean[]> {
     @RequestProperty
     private boolean[] value;
 
+    @RequestProperty
+    @Default(booleanValues = {true, true, false})
+    private boolean[] defaultValue;
+
+    @RequestProperty
+    @Default(booleanValues = {true, true, false})
+    private String defaultStringValue;
+
     @Self
     private Supplier supplier;
 
@@ -41,8 +50,19 @@ public class BooleanArrays extends RequestAdapterBase<Boolean[]> {
         super(value);
     }
 
+    @Override
     public Boolean[] getValue() {
         return ArrayUtils.toObject(value);
+    }
+
+    @Override
+    public Boolean[] getDefaultValue() {
+        return ArrayUtils.toObject(defaultValue);
+    }
+
+    @Override
+    public String getDefaultStringValue() {
+        return defaultStringValue;
     }
 
     @Override
@@ -51,7 +71,6 @@ public class BooleanArrays extends RequestAdapterBase<Boolean[]> {
     }
 
     @Model(adaptables = SlingHttpServletRequest.class, defaultInjectionStrategy = DefaultInjectionStrategy.OPTIONAL)
-    @SuppressWarnings("oV") // @Model can be used with an interface
     public interface Supplier extends ValueSupplier<Boolean[]> {
         @RequestProperty(name = CoreConstants.PN_VALUE)
         @Override

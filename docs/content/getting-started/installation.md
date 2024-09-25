@@ -11,7 +11,7 @@ seoTitle: Installation - Exadel Authoring Kit
 <dependency>
    <groupId>com.exadel.etoolbox</groupId>
    <artifactId>etoolbox-authoring-kit-core</artifactId>
-   <version>2.4.0</version> <!-- Prefer the latest stable version whenever possible -->
+   <version>2.5.3</version> <!-- Prefer the latest stable version whenever possible -->
    <scope>provided</scope> <!-- Do not use compile or runtime scope!-->
 </dependency>
 ```
@@ -21,7 +21,7 @@ seoTitle: Installation - Exadel Authoring Kit
 <plugin>
     <groupId>com.exadel.etoolbox</groupId>
     <artifactId>etoolbox-authoring-kit-plugin</artifactId>
-    <version>2.4.0</version>
+    <version>2.5.3</version>
     <executions>
         <execution>
             <goals>
@@ -32,7 +32,7 @@ seoTitle: Installation - Exadel Authoring Kit
     <configuration>
         <!-- RECOMMENDED: Place here the path to the node under which your component nodes are stored -->
         <componentsPathBase>jcr_root/apps/acme/components</componentsPathBase>
-        <!-- RECOMMENDED: Specify root package for component classes that match the current package -->
+        <!-- RECOMMENDED: Specify root package for component classes that match the current package. Multiple values can be separated with a comma  -->
         <componentsReferenceBase>com.acme.project.components.*</componentsReferenceBase>
         <!-- OPTIONAL: specify list of exceptions that would cause this plugin to terminate -->
         <terminateOn>ALL</terminateOn>
@@ -79,7 +79,7 @@ You need to do two steps.
 <dependency>
     <groupId>com.exadel.etoolbox</groupId>
     <artifactId>etoolbox-authoring-kit-all</artifactId>
-    <version>2.4.0</version>
+    <version>2.5.3</version>
     <type>content-package</type>
 </dependency>
 ```

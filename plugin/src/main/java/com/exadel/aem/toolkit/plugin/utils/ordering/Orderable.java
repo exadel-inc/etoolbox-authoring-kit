@@ -13,6 +13,9 @@
  */
 package com.exadel.aem.toolkit.plugin.utils.ordering;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Presents an abstraction of an entity able to be managed by an ordering routine
  * @param <T> Type of the entity
@@ -23,9 +26,10 @@ class Orderable<T> {
     private final T value;
     private final String id;
     private final int rank;
+    private boolean placeAnnotated;
 
-    private Orderable<T> before;
-    private Orderable<T> after;
+    private List<Orderable<T>> before = new ArrayList<>();
+    private List<Orderable<T>> after = new ArrayList<>();
 
     private int positionInAllNodes;
 
@@ -71,7 +75,7 @@ class Orderable<T> {
      * Retrieves the {@code before} reference hint associated with this instance
      * @return {@code Orderable} object
      */
-    public Orderable<T> getBefore() {
+    public List<Orderable<T>> getBefore() {
         return before;
     }
 
@@ -79,7 +83,7 @@ class Orderable<T> {
      * Assigns to the current instance an {@code Orderable} object that would represent its {@code before} hint
      * @param before {@code Orderable} instance
      */
-    void setBefore(Orderable<T> before) { // package-friendly setter for test cases
+    void setBefore(List<Orderable<T>> before) { // package-friendly setter for test cases
         this.before = before;
     }
 
@@ -87,7 +91,7 @@ class Orderable<T> {
      * Retrieves the {@code after} reference hint associated with this instance
      * @return {@code Orderable} object
      */
-    public Orderable<T> getAfter() {
+    public List<Orderable<T>> getAfter() {
         return after;
     }
 
@@ -95,7 +99,7 @@ class Orderable<T> {
      * Assigns to the current instance an {@code Orderable} object that would represent its {@code after} hint
      * @param after {@code Orderable} instance
      */
-    public void setAfter(Orderable<T> after) { // package-friendly setter for test cases
+    public void setAfter(List<Orderable<T>> after) { // package-friendly setter for test cases
         this.after = after;
     }
 

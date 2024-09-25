@@ -16,7 +16,7 @@ package com.exadel.aem.toolkit.plugin.utils;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.ArrayUtils;
-import org.codehaus.plexus.util.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 
@@ -49,5 +49,26 @@ public class ArrayUtil {
             .splitAsStream(value[0])
             .map(String::trim)
             .toArray(String[]::new);
+    }
+
+    /**
+     * Gets whether the two provided string arrays are equal entry-wise
+     * @param left  First array; a nullable object
+     * @param right Second array; a nullable object
+     * @return True or false
+     */
+    public static boolean equals(String[] left, String[] right) {
+        if (!ArrayUtils.isSameLength(left, right)) {
+            return false;
+        }
+        if (ArrayUtils.getLength(left) == 0) {
+            return true;
+        }
+        for (int i = 0; i < left.length; i++) {
+            if (!StringUtils.equals(left[i], right[i])) {
+                return false;
+            }
+        }
+        return true;
     }
 }

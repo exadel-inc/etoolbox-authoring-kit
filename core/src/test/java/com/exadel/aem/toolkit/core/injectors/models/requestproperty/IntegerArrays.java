@@ -18,6 +18,7 @@ import javax.inject.Named;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.models.annotations.Default;
 import org.apache.sling.models.annotations.DefaultInjectionStrategy;
 import org.apache.sling.models.annotations.Model;
 import org.apache.sling.models.annotations.injectorspecific.Self;
@@ -33,6 +34,14 @@ public class IntegerArrays extends RequestAdapterBase<Integer[]> {
     @RequestProperty
     private int[] value;
 
+    @RequestProperty
+    @Default(intValues = {42, 43, 44})
+    private int[] defaultValue;
+
+    @RequestProperty
+    @Default(intValues = {42, 43, 44})
+    private String defaultStringValue;
+
     @Self
     private Supplier supplier;
 
@@ -41,8 +50,19 @@ public class IntegerArrays extends RequestAdapterBase<Integer[]> {
         super(value);
     }
 
+    @Override
     public Integer[] getValue() {
         return ArrayUtils.toObject(value);
+    }
+
+    @Override
+    public Integer[] getDefaultValue() {
+        return ArrayUtils.toObject(defaultValue);
+    }
+
+    @Override
+    public String getDefaultStringValue() {
+        return defaultStringValue;
     }
 
     @Override
