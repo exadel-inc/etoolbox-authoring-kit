@@ -1,6 +1,4 @@
 const neostandard = require('neostandard');
-const globals = require('globals');
-const stylistic = require('@stylistic/eslint-plugin');
 
 module.exports = [
     ...neostandard(),
@@ -17,7 +15,8 @@ module.exports = [
                 projectService: true
             },
             globals: {
-                ...globals.jquery,
+                '$': 'readonly',
+                'jQuery': 'readonly',
                 'Granite': 'writable',
                 'Coral': 'readonly'
             }
@@ -27,9 +26,6 @@ module.exports = [
         }
     },
     {
-        plugins: {
-            '@stylistic': stylistic
-        },
         rules: {
             '@stylistic/indent': [
                 'error', 4, {
