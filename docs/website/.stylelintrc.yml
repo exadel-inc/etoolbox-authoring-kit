@@ -46,7 +46,12 @@ rules:
   # and could lead to unexpected results
   no-invalid-double-slash-comments: true
   # Disallow unknown properties
-  property-no-unknown: true
+  property-no-unknown:
+    - true
+    - ignoreProperties:
+        - /-webkit-/
+        - /-moz-/
+        - box-orient
   # Use double colon notation for applicable pseudo-elements
   selector-pseudo-element-colon-notation: double
   # Disallow unknown pseudo-class selectors
