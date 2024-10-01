@@ -5,7 +5,7 @@ import {boolAttr} from '@exadel/esl/modules/esl-utils/decorators/bool-attr';
 import {memoize} from '@exadel/esl/modules/esl-utils/decorators/memoize';
 import {getTouchPoint} from '@exadel/esl/modules/esl-utils/dom/events/misc';
 
-import type {Point} from '@exadel/esl/modules/esl-utils/dom/events/misc';
+import type {Point} from '@exadel/esl/modules/esl-utils/dom/point';
 
 export class EAKZoomImage extends ESLBaseElement {
   static is = 'eak-zoom-image';
