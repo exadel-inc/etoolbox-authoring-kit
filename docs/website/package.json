@@ -25,10 +25,7 @@
   "dependencies": {
     "@exadel/esl": "^5.0.0-beta.34",
     "@juggle/resize-observer": "^3.4.0",
-    "@webcomponents/custom-elements": "1.6.0",
-    "@webcomponents/webcomponents-platform": "1.0.1",
     "chokidar": "^3.5.3",
-    "intersection-observer": "^0.12.2",
     "prism-themes": "^1.9.0",
     "prismjs": "^1.29.0",
     "promise-polyfill": "^8.3.0",
@@ -37,7 +34,7 @@
   },
   "devDependencies": {
     "@11ty/eleventy": "^2.0.1",
-    "@11ty/eleventy-dev-server": "^1.0.4",
+    "@11ty/eleventy-dev-server": "^2.0.4",
     "@types/smoothscroll-polyfill": "^0.3.1",
     "@typescript-eslint/eslint-plugin": "^6.2.0",
     "@typescript-eslint/parser": "^6.2.0",
