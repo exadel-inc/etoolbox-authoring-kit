@@ -8,5 +8,6 @@ module.exports = [
 
   ...require('./eslint.config.ignore'),
   ...require('@exadel/eslint-config-esl').typescript,
-  ...require('@exadel/eslint-config-esl').recommended
+  ...require('@exadel/eslint-config-esl').recommended,
+  ...require('@exadel/eslint-plugin-esl').recommended
 ];
