@@ -25,7 +25,6 @@
   "dependencies": {
     "@exadel/esl": "^5.0.0-beta.36",
     "@juggle/resize-observer": "^3.4.0",
-    "chokidar": "^3.5.3",
     "prism-themes": "^1.9.0",
     "prismjs": "^1.29.0",
     "promise-polyfill": "^8.3.0",
@@ -38,6 +37,7 @@
     "@exadel/eslint-config-esl": "^5.0.0-beta.36",
     "@exadel/eslint-plugin-esl": "^5.0.0-beta.36",
     "@types/smoothscroll-polyfill": "^0.3.4",
+    "chokidar": "^4.0.1",
     "chokidar-cli": "^3.0.0",
     "clean-css-cli": "^5.6.3",
     "concurrently": "^9.0.1",
