@@ -123,3 +123,7 @@ public class MyComponent {
     String optionList;
 }
 ```
+
+## Retrieving Lists' content via HTTP
+
+You website's authoring logic may require fetching the content of a list via HTTP - e.g., with an AJAX request. EToolbox provides a servlet that delivers a flat array of items in JSON format. The data will be stripped of all the "system" properties like _jcr:created_, etc. Request it with the `.list.` selector and `.json` extension. Example: `/content/path/to/your/lists/sampleList.list.json`.
