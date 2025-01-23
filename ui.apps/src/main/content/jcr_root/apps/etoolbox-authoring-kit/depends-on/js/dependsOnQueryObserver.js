@@ -132,7 +132,7 @@
             const queryResult = ns.QueryProcessor.evaluateQuery(this.parsedQuery, this.$el);
             try {
                 ns.ActionRegistry.getAction(this.action).call(this, queryResult, this.data, this);
-            } catch(e) {
+            } catch (e) {
                 console.debug('[DependsOn]: Error while updating', e);
             }
 
