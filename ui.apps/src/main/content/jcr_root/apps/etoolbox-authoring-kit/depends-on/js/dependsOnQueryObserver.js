@@ -135,7 +135,6 @@
             } catch (e) {
                 console.debug('[DependsOn]: Error while updating', e);
             }
-
         }
     }
 
