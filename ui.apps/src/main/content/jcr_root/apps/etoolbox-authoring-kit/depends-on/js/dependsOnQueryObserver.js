@@ -130,7 +130,12 @@
                 return true;
             }
             const queryResult = ns.QueryProcessor.evaluateQuery(this.parsedQuery, this.$el);
-            ns.ActionRegistry.getAction(this.action).call(this, queryResult, this.data, this);
+            try {
+                ns.ActionRegistry.getAction(this.action).call(this, queryResult, this.data, this);
+            } catch(e) {
+                console.debug('[DependsOn]: Error while updating', e);
+            }
+
         }
     }
 
