@@ -133,7 +133,7 @@
             try {
                 ns.ActionRegistry.getAction(this.action).call(this, queryResult, this.data, this);
             } catch (e) {
-                console.debug('[DependsOn]: Error while updating', e);
+                console.debug('[DependsOn]: Error while executing an action', e);
             }
         }
     }
