@@ -17,28 +17,25 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.servlet.Servlet;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
-import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.lists.ListConstants;
+import com.exadel.aem.toolkit.core.lists.models.internal.ListItemModel;
 
 /**
  * Delivers content of an Exadel Toolbox List as a JSON array
@@ -88,17 +85,10 @@ public class ListsJsonServlet extends SlingSafeMethodsServlet {
             if (!ListConstants.LIST_ITEM_RESOURCE_TYPE.equals(item.getResourceType())) {
                 continue;
             }
-            ValueMap valueMap = item.getValueMap();
-            Map<String, Object> userValues = valueMap
-                .entrySet()
-                .stream()
-                .filter(entry -> JcrConstants.JCR_TITLE.equals(entry.getKey())
-                    || !StringUtils.contains(entry.getKey(), CoreConstants.SEPARATOR_COLON))
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-            if (userValues.isEmpty()) {
-                continue;
+            ListItemModel listItemModel = item.adaptTo(ListItemModel.class);
+            if (listItemModel != null) {
+                result.add(listItemModel.getProperties());
             }
-            result.add(userValues);
         }
 
         response.setContentType(CoreConstants.CONTENT_TYPE_JSON);
