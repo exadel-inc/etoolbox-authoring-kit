@@ -89,22 +89,4 @@ public class ListsJsonServletTest {
 
         assertEquals(HttpStatus.SC_NOT_FOUND, context.response().getStatus());
     }
-
-/*
-    @Test
-    public void testDoGetPageNotFound() throws ServletException, IOException {
-        context.request().setResource(context.resourceResolver().getResource("/content/nonexistent"));
-        servlet.doGet(context.request(), context.response());
-
-        assertEquals(HttpStatus.SC_NOT_FOUND, context.response().getStatus());
-    }
-
-    @Test
-    public void testDoGetListNotFound() throws ServletException, IOException {
-        context.request().setResource(context.resourceResolver().getResource(PAGE_PATH + "/jcr:content/empty"));
-        servlet.doGet(context.request(), context.response());
-
-        assertEquals(HttpStatus.SC_NOT_FOUND, context.response().getStatus());
-    }
-*/
 }
