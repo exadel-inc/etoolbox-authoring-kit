@@ -8,7 +8,7 @@ on:
     workflow_dispatch:
 
 env:
-    node-version: 18.x
+    node-version: 20.x
 
 jobs:
     ui-lint-main:
@@ -16,10 +16,11 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            -   uses: actions/checkout@v3
+            -   uses: actions/checkout@v4
             -   name: Use Node v${{ env.node-version }}
-                uses: actions/setup-node@v3
+                uses: actions/setup-node@v4
                 with:
+                    cache: 'npm'
                     node-version: ${{ env.node-version }}
             -   name: Install NPM Dependencies
                 run: npm ci
@@ -33,10 +34,11 @@ jobs:
         runs-on: ubuntu-latest
 
         steps:
-            -   uses: actions/checkout@v3
+            -   uses: actions/checkout@v4
             -   name: Use Node v${{ env.node-version }}
-                uses: actions/setup-node@v3
+                uses: actions/setup-node@v4
                 with:
+                    cache: 'npm'
                     node-version: ${{ env.node-version }}
             -   name: Install NPM Dependencies
                 run: npm ci
