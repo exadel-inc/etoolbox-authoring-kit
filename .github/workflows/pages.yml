@@ -36,6 +36,7 @@ jobs:
                 uses: actions/setup-node@v4
                 with:
                     cache: 'npm'
+                    cache-dependency-path: '**/package-lock.json'
                     node-version: ${{ env.node-version }}
             -   name: Install NPM Dependencies
                 run: npm ci
