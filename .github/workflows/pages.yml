@@ -6,17 +6,36 @@ on:
     workflow_dispatch:
 
 env:
-    node-version: 18.x
+    node-version: 20.x
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+    contents: read
+    pages: write
+    id-token: write
+    actions: read
+
+# Allows only one concurrent deployment, skipping runs queued between the run in-progress and latest queued.
+# However, do NOT cancel in-progress runs as we want to allow these production deployments to complete.
+concurrency:
+    group: "pages"
+    cancel-in-progress: false
 
 jobs:
-    deploy-gh-pages:
+    # Build job
+    build-site:
+        name: Build
         runs-on: ubuntu-latest
-
         steps:
-            -   uses: actions/checkout@v3
+            -   name: Checkout
+                uses: actions/checkout@v4
+            -   name: Setup Pages
+                id: pages
+                uses: actions/configure-pages@v5
             -   name: Use Node v${{ env.node-version }}
-                uses: actions/setup-node@v3
+                uses: actions/setup-node@v4
                 with:
+                    cache: 'npm'
                     node-version: ${{ env.node-version }}
             -   name: Install NPM Dependencies
                 run: npm ci
@@ -24,8 +43,22 @@ jobs:
             -   name: Build
                 run: npm run build
                 working-directory: docs/website
-            -   name: Deploy
-                uses: JamesIves/github-pages-deploy-action@v4
+                env:
+                    SITE_BASE_URL: ${{ steps.pages.outputs.base_url }}
+            -   name: Upload artifact
+                uses: actions/upload-pages-artifact@v3
                 with:
-                    branch: gh-pages
-                    folder: docs/website/dist
+                    path: ./docs/website/dist
+
+    # Deployment job
+    deploy-site:
+        name: Deploy
+        environment:
+            name: github-pages
+            url: ${{ steps.deployment.outputs.page_url }}
+        runs-on: ubuntu-latest
+        needs: build-site
+        steps:
+            -   name: Deploy to GitHub Pages
+                id: deployment
+                uses: actions/deploy-pages@v4
