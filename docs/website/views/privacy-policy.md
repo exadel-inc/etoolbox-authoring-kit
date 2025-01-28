@@ -48,4 +48,4 @@ By using our Website, you signify your acceptance of this policy and terms of se
 
 If you have any questions about this privacy policy, the practices of our Website, or your dealings with our Website, please contact us.
 
-<time datetime="2024-10-16">10/16/24</time>
+<time datetime="2025-02-01">02/01/25</time>
