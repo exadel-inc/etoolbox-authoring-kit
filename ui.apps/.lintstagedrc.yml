@@ -1,0 +1,3 @@
+# Versions of pom and package.json should be in sync
+"../pom.xml":
+    - "npm run sync-version"

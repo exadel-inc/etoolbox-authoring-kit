@@ -5,13 +5,16 @@
   "private": true,
   "devDependencies": {
     "eslint": "^9.19.0",
+    "husky": "^9.1.7",
     "neostandard": "^0.12.0"
   },
   "directories": {
     "doc": "src/main/content/jcr_root/apps/etoolbox-authoring-kit/depends-on/docs"
   },
   "scripts": {
-    "lint": "eslint \"src/main/content/jcr_root/apps/**/*.js\""
+    "lint": "eslint \"src/main/content/jcr_root/apps/**/*.js\"",
+    "sync-version": "node sync-version.js",
+    "prepare": "cd .. && husky"
   },
   "license": "Apache-2.0",
   "repository": "https://github.com/exadel-inc/etoolbox-authoring-kit/tree/master/ui.apps/src/main/content/jcr_root/apps/etoolbox-authoring-kit/depends-on"
