@@ -1,19 +1,23 @@
 const {isDev} = require('./env.config');
-const htmlmin = require('html-minifier');
+const {minify} = require('html-minifier-terser');
 
 const MINIFICATION_CFG = {
-  useShortDoctype: true,
-  removeComments: true,
   collapseWhitespace: true,
   conservativeCollapse: true,
   keepClosingSlash: true,
   minifyJS: true,
-  minifyCSS: true
+  minifyCSS: true,
+  removeComments: true,
+  useShortDoctype: true,
+  ignoreCustomFragments: [
+    /<%[\s\S]*?%>/,
+    /<\?[\s\S]*?\?>/
+  ]
 };
 
-function minifier(content, outputPath) {
+async function minifier(content, outputPath) {
   if (!outputPath || !outputPath.endsWith('.html')) return content;
-  return htmlmin.minify(content, MINIFICATION_CFG);
+  return await minify(content, MINIFICATION_CFG);
 }
 
 module.exports = (config) => {
