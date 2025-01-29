@@ -61,26 +61,4 @@
     ns.ActionRegistry.register('disabled', function setDisabled(state) {
         ns.ElementAccessors.requestDisable(this.$el, state, this);
     });
-
-    /**
-     * Set the field value from the query result, skip undefined query results
-     * query type: string
-     * */
-    ns.ActionRegistry.register('set', function setValue(value) {
-        if (value !== undefined) {
-            ns.ElementAccessors.setValue(this.$el, value);
-        }
-    });
-
-    /**
-     * Set the field value from the query result only if the field value is blank,
-     * skip undefined query results
-     * query type: string
-     * */
-    ns.ActionRegistry.register('set-if-blank', function setValueIfBlank(value) {
-        const current = ns.ElementAccessors.getValue(this.$el);
-        if ((current === '' || current === null || current === undefined) && value !== undefined) {
-            ns.ElementAccessors.setValue(this.$el, value);
-        }
-    });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
