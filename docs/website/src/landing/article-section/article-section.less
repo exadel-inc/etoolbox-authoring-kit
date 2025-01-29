@@ -24,14 +24,23 @@
     display: block;
     margin-bottom: 30px;
 
-    @media @md-xl {
+    @media (min-width: 500px) {
       display: grid;
+      margin-bottom: 30px;
+      grid-template-columns: repeat(2, 1fr);
+      grid-template-areas:
+        'first first'
+        'second third'
+        'fourth fifth';
+      grid-gap: 10px;
+    }
+
+    @media @md-xl {
       grid-template-columns: repeat(3, 1fr);
       grid-template-areas:
         'first second third'
         'first fourth fifth';
       margin-bottom: 50px;
-      grid-gap: 10px;
     }
   }
 
@@ -51,6 +60,10 @@
       background: @light-blue-bg;
     }
 
+    @media (min-width: 500px) {
+      height: 100%;
+    }
+
     @media @md-xl {
       padding: 20px;
       height: 100%;
@@ -68,17 +81,22 @@
       font-size: 20px;
     }
 
-    &-taglist {
-      display: flex;
-      flex-wrap: wrap;
-      margin: 10px 0;
+    &-description {
+      font-size: 16px;
+      line-height: 24px;
+      margin-top: 10px;
 
-      &-tag {
-        flex: 0 0 auto;
-        padding: 0 5px 0 0;
-        color: @landing-sec-blue;
-        font-size: 0.875rem;
-        font-weight: 500;
+      // 4 lines of text
+      max-height: 24px * 4;
+      overflow: hidden;
+
+      @supports (-webkit-line-clamp: 4) {
+        // Modern truncation
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        -webkit-box-orient: vertical;
+        line-clamp: 4;
+        box-orient: vertical;
       }
     }
 
@@ -106,17 +124,6 @@
 
       &.esl-image {
         height: auto;
-      }
-    }
-
-    &-description {
-      font-size: 1rem;
-
-      @media @md-xl {
-        overflow: hidden;
-        display: -webkit-box;
-        -webkit-line-clamp: 3;
-        -webkit-box-orient: vertical;
       }
     }
   }

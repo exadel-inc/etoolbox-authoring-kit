@@ -2,16 +2,13 @@
   <a class="article-link" href="{{ article.link }}" target="_blank">
     {% if isFirst %}
       <div class="article-item-img-container">
-        <esl-image class="article-item-img img-container img-container-4-3" data-src="{{ article.img }}" lazy alt="{{ article.title }}" mode="cover"></esl-image>
+        <esl-image class="article-item-img img-container img-container-16-9" data-src="{{ article.image }}" lazy alt="{{ article.title }}" mode="cover"></esl-image>
       </div>
     {% endif %}
     <h5 class="article-item-title">{{ article.title }}</h5>
     <span class="article-item-date">{{ article.date }}</span>
-    <ul class="article-item-taglist unstyled-list mb-1">
-      {% for tag in article.tags %}
-        <li class="article-item-taglist-tag">#{{ tag }}</li>
-      {% endfor %}
-    </ul>
-    <p class="article-item-description mb-1">{{ article.content }}</p>
+    {% if article.description %}
+      <p class="article-item-description mb-1">{{ article.description }}</p>
+    {% endif %}
   </a>
 {% endmacro %}

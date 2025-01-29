@@ -84,10 +84,10 @@ landing:
     description: >
       Insights on AEM and Adobe Experience Manager use cases with technical tips and tricks
       from the creators of MarTech solutions
-    cta: https://exadel.com/news/?categories%5B0%5D=aem
+    cta: https://exadel.com/news/tag/aem/
     ctaText: See more
 
-    feed: https://exadel.com/news/feed?categories%5B0%5D=aem
+    feed: https://exadel.com/feed/?tags=aem
     baseUrl: 'https://exadel.com'
     count: 5
 

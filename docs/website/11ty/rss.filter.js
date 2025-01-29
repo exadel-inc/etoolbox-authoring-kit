@@ -1,8 +1,11 @@
 const {JSDOM} = require('jsdom');
 const Parser = require('rss-parser');
-const parser = new Parser();
+
+const parser = new Parser({defaultRSS: 2.0});
+const timeout = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 class EAKRssService {
+  static META_FETCH_TIMEOUT = 5000;
   static DATE_FORMATTER = new Intl.DateTimeFormat('en-US', {
     day: 'numeric',
     month: 'long',
@@ -11,41 +14,50 @@ class EAKRssService {
 
   static async load({feed, count, baseUrl, fallback}, callback) {
     const items = await EAKRssService.loadFeed(feed);
-    const result = items
-      .concat(fallback.items || [])
-      .slice(0, count)
-      .map((item) => EAKRssService.parseItems(item, baseUrl, fallback.image));
-    callback(null, result);
+    // Load meta for each item
+    const result = await Promise.all(items.slice(0, count).map(async (item) => {
+      const meta = await Promise.race([EAKRssService.loadMeta(item.link), timeout(EAKRssService.META_FETCH_TIMEOUT)]);
+      return Object.assign({}, item, meta || {});
+    }));
+    // Add fallback items and limit result
+    callback(null, result.concat(fallback.items || []).slice(0, count));
   }
 
   static async loadFeed(feed) {
     try {
       const feedContent = await parser.parseURL(feed);
-      return feedContent.items;
+      return feedContent.items.map(EAKRssService.parseItem);
     } catch {
       console.error('Feed fetching error');
     }
     return [];
   }
 
-  static parseItems(item, baseUrl, imgFallback) {
+  static parseItem(item) {
     const {title, link, pubDate} = item;
-    const tags = item.tags || item.categories;
-    const content = item.contentSnippet || item.content;
-    const img = item.img || EAKRssService.extractImg(item, baseUrl) || imgFallback;
     const date = EAKRssService.DATE_FORMATTER.format(new Date(pubDate));
-    return {title, link, img, content, date, tags};
+    return {title, link, date};
   }
 
-  static extractImg(item, baseUrl) {
+  static async loadMeta(link) {
+    const result = {};
     try {
-      const {window} = new JSDOM(item['content:encoded']);
-      const image = window.document.querySelector('img');
-      const imageSrc = image.src;
-      return imageSrc.startsWith('/') ? (baseUrl + imageSrc) : imageSrc;
+      // Load page content
+      const content = await (await fetch(link)).text();
+      // Parse with JSDOM
+      const {window} = new JSDOM(content);
+
+      // Resolve image
+      const image = window.document.querySelector('meta[property="og:image"]');
+      if (image) Object.assign(result, {image: image.content});
+
+      // Resolve description
+      const description = window.document.querySelector('meta[property="og:description"]');
+      if (description) Object.assign(result, {description: description.content});
     } catch {
-      return '';
+      console.error('Meta fetching error');
     }
+    return result;
   }
 }
 

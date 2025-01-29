@@ -1,8 +1,7 @@
-import {ESLBaseElement, attr} from '@exadel/esl/modules/esl-base-element/core';
+import {ESLBaseElement} from '@exadel/esl/modules/esl-base-element/core';
 import {ready} from '@exadel/esl/modules/esl-utils/decorators/ready';
 import {isIE} from '@exadel/esl/modules/esl-utils/environment/device-detector';
-import {bind} from '@exadel/esl/modules/esl-utils/decorators/bind';
-import {memoize} from '@exadel/esl/modules/esl-utils/decorators/memoize';
+import {bind, memoize, attr} from '@exadel/esl/modules/esl-utils/decorators';
 import {range} from '@exadel/esl/modules/esl-utils/misc/array';
 
 export class EAKBanner extends ESLBaseElement {
