@@ -103,7 +103,7 @@ public class RichTextEditorWidget {
             indentSize = 1,
             maxUndoSteps = 25,
             htmlLinkRules = @HtmlLinkRules(
-                    targetInternal = LinkTarget.MANUAL,
+                    targetInternal = LinkTarget.PARENT,
                     targetExternal = LinkTarget.BLANK,
                     protocols = {"http:", "https:"},
                     defaultProtocol = "http:"

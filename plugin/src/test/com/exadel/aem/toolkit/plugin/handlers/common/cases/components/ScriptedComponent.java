@@ -76,7 +76,7 @@ public class ScriptedComponent extends ScriptedParent {
             },
             maxUndoSteps = 25,
             htmlLinkRules = @HtmlLinkRules(
-                    targetInternal = LinkTarget.MANUAL,
+                    targetInternal = LinkTarget.TOP,
                     targetExternal = LinkTarget.BLANK,
                     protocols = {"http:", "https:"},
                     defaultProtocol = "http:"
