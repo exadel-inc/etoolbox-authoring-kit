@@ -131,8 +131,8 @@
                                 protocols="[http:,https:]">
                                 <targetConfig jcr:primaryType="nt:unstructured"
                                     mode="auto"
-                                    targetExternal="blank"
-                                    targetInternal="manual"/>
+                                    targetExternal="_blank"
+                                    targetInternal="_top"/>
                             </links>
                         </htmlRules>
                         <granite:data

@@ -53,14 +53,14 @@ public @interface HtmlLinkRules {
     /**
      * Defines the {@code target} attribute for a link to an internal resource
      * @see LinkTarget
-     * @return One of {@code LinkTarget} values
+     * @return String value
      */
-    LinkTarget targetInternal() default LinkTarget.AUTO;
+    String targetInternal() default LinkTarget.AUTO;
 
     /**
      * Defines the {@code target} attribute for a link to an external resource
      * @see LinkTarget
-     * @return One of {@code LinkTarget} values
+     * @return String value
      */
-    LinkTarget targetExternal() default LinkTarget.AUTO;
+    String targetExternal() default LinkTarget.AUTO;
 }

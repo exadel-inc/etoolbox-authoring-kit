@@ -225,7 +225,7 @@
                         </rtePlugins>
                         <htmlRules jcr:primaryType="nt:unstructured">
                             <links jcr:primaryType="nt:unstructured" defaultProtocol="http:" protocols="[http:,https:]">
-                                <targetConfig jcr:primaryType="nt:unstructured" mode="auto" targetExternal="blank" targetInternal="manual"/>
+                                <targetConfig jcr:primaryType="nt:unstructured" mode="auto" targetExternal="_blank" targetInternal="_parent"/>
                             </links>
                         </htmlRules>
                     </text>
