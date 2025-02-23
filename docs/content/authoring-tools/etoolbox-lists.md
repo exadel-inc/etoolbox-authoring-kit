@@ -126,4 +126,6 @@ public class MyComponent {
 
 ## Retrieving Lists' content via HTTP
 
-You website's authoring logic may require fetching the content of a list via HTTP - e.g., with an AJAX request. EToolbox provides a servlet that delivers a flat array of items in JSON format. The data will be stripped of all the "system" properties like _jcr:created_, etc. Request it with the `.list.` selector and `.json` extension. Example: `/content/path/to/your/lists/sampleList.list.json`.
+Your website's authoring logic may require fetching the content of a list via HTTP — e.g., with an AJAX request. This can be achieved with the OptionSource / [OptionProvider](../dev-tools/option-provider.md) servlet. Make a GET request to `/apps/etoolbox-authoring-kit/datasources/option-provider.json?path=<path_to_EToolbox_list>`.
+
+By default, the servlet returns a JSON array of objects with `text` and `value` properties matching the same-named attributes of list items. You will probably want to modify the mapping. To say, a typical EToolbox List makes use of `jcr:title` and `value` attributes. Add `&textMember=jcr:title` to expose _jcr:title_. Similarly, you can alter the `valueMember` parameter, add some `attributeMembers`, etc. Please remember that if an item doesn't have a non-blank mapping for both _text_ and _value_, it won't be displayed.
