@@ -1,6 +1,6 @@
 {
   "name": "eak-website",
-  "version": "2.5.4",
+  "version": "2.5.4-SNAPSHOT",
   "description": "EAK website package definition",
   "main": "index.js",
   "scripts": {
