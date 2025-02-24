@@ -14,26 +14,27 @@
 package com.exadel.aem.toolkit.api.annotations.widgets.rte;
 
 /**
- * Contains possible values of {@link HtmlLinkRules#targetExternal()} and {@link HtmlLinkRules#targetInternal()} properties
+ * Enumerates values of {@link HtmlLinkRules#targetExternal()} and {@link HtmlLinkRules#targetInternal()} properties.
+ * These properties define the value of `target` attribute for an anchor tag
  */
-public enum LinkTarget {
-    AUTO {
-        @Override
-        public String toString() {
-            return "";
-        }
-    },
-    MANUAL {
-        @Override
-        public String toString() {
-            return "manual";
-        }
-    },
-    BLANK {
-        @Override
-        public String toString() {
-            return "blank";
-        }
-    },
+public class LinkTarget {
 
+    public static final String AUTO = "";
+
+    public static final String BLANK = "_blank";
+
+    @Deprecated
+    public static final String MANUAL = "manual";
+
+    public static final String PARENT = "_parent";
+
+    public static final String SELF = AUTO;
+
+    public static final String TOP = "_top";
+
+    /**
+     * Default (instantiation-preventing) constructor
+     */
+    private LinkTarget() {
+    }
 }

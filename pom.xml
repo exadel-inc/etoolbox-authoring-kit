@@ -4,7 +4,7 @@
 
     <groupId>com.exadel.etoolbox</groupId>
     <artifactId>etoolbox-authoring-kit</artifactId>
-    <version>2.5.3</version>
+    <version>2.5.4</version>
 
     <name>Exadel Toolbox Authoring Kit</name>
     <description>Automates generating and managing rich and responsive authoring interfaces for Adobe Experience Manager</description>
@@ -462,25 +462,25 @@
             <dependency>
                 <groupId>com.exadel.etoolbox</groupId>
                 <artifactId>etoolbox-anydiff-core</artifactId>
-                <version>1.0.0</version>
+                <version>1.1.1</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>2.13.4</version>
+                <version>2.18.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-core</artifactId>
-                <version>2.13.4</version>
+                <version>2.18.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>2.13.4.2</version>
+                <version>2.18.0</version>
                 <scope>compile</scope>
             </dependency>
             <dependency>

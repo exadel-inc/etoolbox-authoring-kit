@@ -20,7 +20,6 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -59,7 +58,6 @@ import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService
         "sling.servlet.methods=" + HttpConstants.METHOD_GET
     })
 public class OptionProviderServlet extends SlingSafeMethodsServlet {
-    private static final String CONTENT_TYPE_JSON = "application/json;charset=utf-8";
 
     private static final String QUERY_KEY_OUTPUT = "output";
     private static final String QUERY_VALUE_JSON = "json";
@@ -74,28 +72,28 @@ public class OptionProviderServlet extends SlingSafeMethodsServlet {
      * @param response {@code SlingHttpServletResponse} instance
      */
     @Override
-    protected void doGet(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response)
+        throws ServletException, IOException {
 
         List<Resource> options = optionProvider.getOptions(request);
 
-        if (CollectionUtils.isEmpty(options) && isJsonOutput(request)) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        if (!isJsonOutput(request)) {
+            DataSource ds = new SimpleDataSource(options.iterator());
+            request.setAttribute(DataSource.class.getName(), ds);
             return;
         }
 
-        if (isJsonOutput(request)) {
-            response.setContentType(CONTENT_TYPE_JSON);
-            response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
-            try {
-                response.getWriter().print(getJsonOutput(options));
-            } catch (JSONException | NullPointerException e) {
-                throw new ServletException(e);
-            }
+        response.setCharacterEncoding(StandardCharsets.UTF_8.toString());
+        response.setContentType(CoreConstants.CONTENT_TYPE_JSON);
+        if (CollectionUtils.isEmpty(options)) {
+            response.getWriter().write(CoreConstants.ARRAY_OPENING + CoreConstants.ARRAY_CLOSING);
             return;
         }
-
-        DataSource ds = new SimpleDataSource(options.iterator());
-        request.setAttribute(DataSource.class.getName(), ds);
+        try {
+            response.getWriter().print(getJsonOutput(options));
+        } catch (JSONException | NullPointerException e) {
+            throw new ServletException(e);
+        }
     }
 
     /**
@@ -104,6 +102,9 @@ public class OptionProviderServlet extends SlingSafeMethodsServlet {
      * @return True or false
      */
     private static boolean isJsonOutput(SlingHttpServletRequest request) {
+        if (QUERY_VALUE_JSON.equalsIgnoreCase(request.getRequestPathInfo().getExtension())) {
+            return true;
+        }
         RequestParameter jsonParameter = request.getRequestParameter(QUERY_KEY_OUTPUT);
         if (jsonParameter == null) {
             return false;
