@@ -17,7 +17,9 @@
     "watch:ts": "webpack --watch",
     "lint": "concurrently \"npm:lint:js\" \"npm:lint:css\"",
     "lint:js": "eslint \"src/**/*.{ts,js}\" --max-warnings 3",
-    "lint:css": "stylelint \"src/**/*.less\""
+    "lint:css": "stylelint \"src/**/*.less\"",
+    "sync-version": "node sync-version.js",
+    "prepare": "cd ../.. && husky"
   },
   "keywords": [],
   "author": "",
@@ -46,6 +48,7 @@
     "foreach-cli": "^1.8.1",
     "glob": "^11.0.1",
     "html-minifier-terser": "^7.2.0",
+    "husky": "^9.1.7",
     "js-yaml": "^4.1.0",
     "jsdom": "^26.0.0",
     "kleur": "^4.1.5",

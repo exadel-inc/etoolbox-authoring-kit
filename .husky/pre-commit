@@ -1,0 +1,13 @@
+
+# Check if node & npm are installed
+if ! command -v node &> /dev/null; then
+  echo "Node is not installed. Lint Staged checks will be skipped."
+  exit 0
+fi
+
+# Run Lint Staged Checks
+cd ui.apps
+npx lint-staged --verbose
+
+cd ../docs/website
+npx lint-staged --verbose
