@@ -6,5 +6,7 @@
     <filter root="/apps/etoolbox-authoring-kit">
         <exclude pattern="/apps/etoolbox-authoring-kit/fixes(/.*)?"/>
         <exclude pattern="/apps/etoolbox-authoring-kit/samples(/.*)?"/>
+        <!-- Jest Test Sources -->
+        <exclude pattern="/apps/etoolbox-authoring-kit/(.*)?/tests/(/.*)?"/>
     </filter>
 </workspaceFilter>
