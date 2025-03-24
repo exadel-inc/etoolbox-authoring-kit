@@ -33,7 +33,7 @@
      * query type: boolean
      * */
     ns.ActionRegistry.register('visibility', function setVisibility(state) {
-        ns.ElementAccessors.setVisibility(this.$el, state);
+        ns.ElementAccessors.setVisibility(this.$el, state, this);
     });
 
     /**
@@ -41,9 +41,9 @@
      * query type: boolean
      * */
     ns.ActionRegistry.register('required', function setRequired(state) {
+        state = ns.ElementAccessors.setRequired(this.$el, state, this);
         // Update label according to state
         ns.ElementAccessors.setLabelRequired(this.$el, state);
-        ns.ElementAccessors.setRequired(this.$el, state);
     });
 
     /**
@@ -51,7 +51,7 @@
      * query type: boolean
      * */
     ns.ActionRegistry.register('readonly', function setReadonly(state) {
-        ns.ElementAccessors.setReadonly(this.$el, state);
+        ns.ElementAccessors.setReadonly(this.$el, state, this);
     });
 
     /**
@@ -59,7 +59,7 @@
      * query type: boolean
      * */
     ns.ActionRegistry.register('disabled', function setDisabled(state) {
-        ns.ElementAccessors.requestDisable(this.$el, state, this);
+        ns.ElementAccessors.setDisabled(this.$el, state, this);
     });
 
     /**

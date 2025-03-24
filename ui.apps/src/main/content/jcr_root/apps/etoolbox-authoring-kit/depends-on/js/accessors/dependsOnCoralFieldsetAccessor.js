@@ -25,7 +25,7 @@
         selector: FIELDSET_SELECTOR,
         disabled: function ($el, state, actor) {
             $el.find(TARGETS_SELECTOR).each(function () {
-                ns.ElementAccessors.requestDisable($(this), state, actor);
+                ns.ElementAccessors.setDisabled($(this), state, actor);
             });
         }
     });

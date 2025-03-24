@@ -127,61 +127,55 @@
          * @param {boolean} [notify] - produce change event
          * */
         static setValue($el, value, notify = true) {
-            ElementAccessors._findAccessorHandler($el, 'set')($el, value, notify);
+            return ElementAccessors._findAccessorHandler($el, 'set')($el, value, notify);
         }
 
         /**
          * Set the required state of $el
+         * Can act as managed state handler, so is will respect the actor that requested the change.
          * @param {JQuery} $el - target element
          * @param {boolean} value - state to set
+         * @param {object} [actor] - component that requests change
          * */
-        static setRequired($el, value) {
-            ElementAccessors._findAccessorHandler($el, 'required')($el, value);
+        static setRequired($el, value, actor) {
+            return ElementAccessors._findMangedAccessorHandler($el, 'required')($el, value, actor);
         }
 
         /**
-         * Set the readonly state of $el
+         * Set the readonly state of $el.
+         * Can act as managed state handler, so is will respect the actor that requested the change.
          * @param {JQuery} $el - target element
          * @param {boolean} value - state to set
+         * @param {object} [actor] - component that requests change
          * */
-        static setReadonly($el, value) {
-            ElementAccessors._findAccessorHandler($el, 'readonly')($el, value);
+        static setReadonly($el, value, actor) {
+            return ElementAccessors._findMangedAccessorHandler($el, 'readonly')($el, value, actor);
         }
 
         /**
-         * Set visibility of $el
+         * Set visibility of $el.
+         * Can act as managed state handler, so is will respect the actor that requested the change.
          * @param {JQuery} $el - target element
          * @param {boolean} value - state to set
+         * @param {object} [actor] - component that requests change
          * */
-        static setVisibility($el, value) {
-            ElementAccessors._findAccessorHandler($el, 'visibility')($el, value);
+        static setVisibility($el, value, actor) {
+            return ElementAccessors._findMangedAccessorHandler($el, 'visibility', true)($el, value, actor);
         }
 
         /**
-         * Set the disabled state of $el
+         * Set the disabled state of $el.
+         * Can act as managed state handler, so is will respect the actor that requested the change.
          * @param {JQuery} $el - target element
          * @param {boolean} value - state to set
+         * @param {object} [actor] - component that requests change
          * */
-        static setDisabled($el, value) {
-            ElementAccessors._findAccessorHandler($el, 'disabled')($el, value);
-            // Clear other actors
-            const actors = $el.data('disable-actors');
-            actors && actors.clear();
+        static setDisabled($el, value, actor) {
+            return ElementAccessors._findMangedAccessorHandler($el, 'disabled')($el, value, actor);
         }
 
-        /**
-         * Set the disabled state of $el. Field becomes enabled only if all of disable requesters (actors) have requested enabling.
-         * @param {JQuery} $el - target element
-         * @param {boolean} value - state to set
-         * @param {object} actor - component that requests change
-         * */
-        static requestDisable($el, value, actor = null) {
-            const actors = $el.data('disable-actors') || new Set();
-            value ? actors.add(actor) : actors.delete(actor);
-            $el.data('disable-actors', actors);
-            const state = actors.size > 0;
-            ElementAccessors._findAccessorHandler($el, 'disabled')($el, state, actor);
-        }
+        /** @deprecated alias for setDisabled */
+        static get requestDisable() { return ElementAccessors.setDisabled; }
 
         /**
          * Find target element to be used as accessors root
@@ -251,6 +245,18 @@
             ns.toggleAsterisk($label, required);
         }
 
+        static _getManagedState($el, type, value, actor) {
+            const name = type + '-actors';
+            const actors = $el.data(name) || new Set();
+            value ? actors.add(actor) : actors.delete(actor);
+            $el.data(name, actors);
+            return actors.size > 0;
+        }
+
+        static _clearManagedState($el, type) {
+            $el.data(type + '-actors', null);
+        }
+
         static _findAccessor($el, type) {
             for (let i = accessorsList.length - 1, accessor; i >= 0; --i) {
                 accessor = accessorsList[i];
@@ -264,6 +270,20 @@
         static _findAccessorHandler($el, type) {
             const accessor = ElementAccessors._findAccessor($el, type);
             return (typeof accessor[type] === 'function') ? accessor[type].bind(accessor) : accessor[type];
+        }
+
+        static _findMangedAccessorHandler($el, type, inverted) {
+            const handler = ElementAccessors._findAccessorHandler($el, type);
+            return ($el, value, actor) => {
+                if (!actor) {
+                    handler($el, value, actor);
+                    this._clearManagedState($el, type);
+                    return value;
+                }
+                const state = ElementAccessors._getManagedState($el, type, inverted ? !value : value, actor);
+                handler($el, inverted ? !state : state, actor);
+                return inverted ? !state : state;
+            };
         }
     }
 
