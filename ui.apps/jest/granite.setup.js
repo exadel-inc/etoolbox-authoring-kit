@@ -10,7 +10,7 @@ window.Granite.$ = window.Granite.JQuery = $;
 window.Granite.HTTP = {};
 window.Granite.author = {};
 
-// JQuery Extend functions
+// JQuery Extend
 
 // $.adaptTo
 $.fn.adaptTo = function (key) {
@@ -21,8 +21,23 @@ $.fn.adaptTo = function (key) {
             }
         };
     }
+    if (key === 'foundation-validation-helper') {
+        return {
+            getSubmittables: function () {
+                // do nothing
+                // return $(this);
+            }
+        };
+    }
     return null;
 };
+
+// :-foundation-submittable pseudo selector
+$.expr.pseudos['-foundation-submittable'] = $.expr.createPseudo(function () {
+    return function (el) {
+        return $(el).is('input, select, textarea, button');
+    };
+});
 
 // Test manipulation API
 window.Granite._emulateDialogReady = function (dialog) {
