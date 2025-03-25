@@ -8,14 +8,20 @@ const { SourceMapGenerator } = require('source-map');
  * Note: it does not resolve the clientlib dependencies, it just emulates concatenation of the files.
  */
 module.exports = {
-    process(src, filename) {
+    getContent(src, filename) {
         const baseDir = path.dirname(filename);
-        const files = src.split('\n')
+        return src.split('\n')
             .map((line) => line.trim())
             .filter(line => line && !line.startsWith('#'))
             .map(file => path.resolve(baseDir, file.trim()));
-
+    },
+    getCacheKey(src, filename) {
+        const files = this.getContent(src, filename);
+        return files.reduce((key, file) => key + fs.statSync(file).mtimeMs, '');
+    },
+    process(src, filename) {
         let code = '';
+        const files = this.getContent(src, filename);
         const map = new SourceMapGenerator({ file: filename });
         for (const file of files) {
             try {
