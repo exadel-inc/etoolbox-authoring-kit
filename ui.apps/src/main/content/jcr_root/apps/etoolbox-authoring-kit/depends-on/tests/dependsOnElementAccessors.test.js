@@ -145,4 +145,201 @@ describe('DependsOn: ElementAccessors', () => {
             expect($el.attr('disabled')).toBeUndefined();
         });
     });
+
+    describe('ElementAccessors supports managed disable', () => {
+        test('ElementAccessors sets disabled upon first actor', () => {
+            const $el = $('<input />');
+            const actor1 = {};
+            const actor2 = {};
+            ElementAccessors.setDisabled($el, true, actor1);
+            expect($el.attr('disabled')).toBeDefined();
+            ElementAccessors.setDisabled($el, true, actor2);
+            expect($el.attr('disabled')).toBeDefined();
+        });
+
+        test('ElementAccessors unsets disabled as soon as all actors are gone', () => {
+            const $el = $('<input/>');
+            const actor1 = {};
+            const actor2 = {};
+            ElementAccessors.setDisabled($el, true, actor1);
+            ElementAccessors.setDisabled($el, true, actor2);
+            expect($el.attr('disabled')).toBeDefined();
+            ElementAccessors.setDisabled($el, false, actor1);
+            expect($el.attr('disabled')).toBeDefined();
+            ElementAccessors.setDisabled($el, false, actor2);
+            expect($el.attr('disabled')).toBeUndefined();
+        });
+
+        test('ElementAccessors unsets disabled as soon as all actors are gone (mixed order)', () => {
+            const $el = $('<input/>');
+            const actor1 = {};
+            const actor2 = {};
+            ElementAccessors.setDisabled($el, true, actor1);
+            ElementAccessors.setDisabled($el, true, actor2);
+            expect($el.attr('disabled')).toBeDefined();
+            ElementAccessors.setDisabled($el, false, actor2);
+            expect($el.attr('disabled')).toBeDefined();
+            ElementAccessors.setDisabled($el, false, actor1);
+            expect($el.attr('disabled')).toBeUndefined();
+        });
+
+        test('ElementAccessors actor-less disable management clears all actors', () => {
+            const $el = $('<input/>');
+            const actor1 = {};
+            const actor2 = {};
+            ElementAccessors.setDisabled($el, true, actor1);
+            ElementAccessors.setDisabled($el, true, actor2);
+            expect($el.attr('disabled')).toBeDefined();
+            ElementAccessors.setDisabled($el, false);
+            expect($el.attr('disabled')).toBeUndefined();
+        });
+    });
+
+    describe('ElementAccessors supports managed readonly', () => {
+        test('ElementAccessors sets readonly upon first actor', () => {
+            const $el = $('<input />');
+            const actor1 = {};
+            const actor2 = {};
+            ElementAccessors.setReadonly($el, true, actor1);
+            expect($el.attr('readonly')).toBeDefined();
+            ElementAccessors.setReadonly($el, true, actor2);
+            expect($el.attr('readonly')).toBeDefined();
+        });
+
+        test('ElementAccessors unsets readonly as soon as all actors are gone', () => {
+            const $el = $('<input/>');
+            const actor1 = {};
+            const actor2 = {};
+            ElementAccessors.setReadonly($el, true, actor1);
+            ElementAccessors.setReadonly($el, true, actor2);
+            expect($el.attr('readonly')).toBeDefined();
+            ElementAccessors.setReadonly($el, false, actor1);
+            expect($el.attr('readonly')).toBeDefined();
+            ElementAccessors.setReadonly($el, false, actor2);
+            expect($el.attr('readonly')).toBeUndefined();
+        });
+
+        test('ElementAccessors unsets readonly as soon as all actors are gone (mixed order)', () => {
+            const $el = $('<input/>');
+            const actor1 = {};
+            const actor2 = {};
+            ElementAccessors.setReadonly($el, true, actor1);
+            ElementAccessors.setReadonly($el, true, actor2);
+            expect($el.attr('readonly')).toBeDefined();
+            ElementAccessors.setReadonly($el, false, actor2);
+            expect($el.attr('readonly')).toBeDefined();
+            ElementAccessors.setReadonly($el, false, actor1);
+            expect($el.attr('readonly')).toBeUndefined();
+        });
+
+        test('ElementAccessors actor-less readonly management clears all actors', () => {
+            const $el = $('<input/>');
+            const actor1 = {};
+            const actor2 = {};
+            ElementAccessors.setReadonly($el, true, actor1);
+            ElementAccessors.setReadonly($el, true, actor2);
+            expect($el.attr('readonly')).toBeDefined();
+            ElementAccessors.setReadonly($el, false);
+            expect($el.attr('readonly')).toBeUndefined();
+        });
+    });
+
+    describe('ElementAccessors supports managed required', () => {
+        test('ElementAccessors sets required upon first actor', () => {
+            const $el = $('<input />');
+            const actor1 = {};
+            const actor2 = {};
+            ElementAccessors.setRequired($el, true, actor1);
+            expect($el.attr('required')).toBeDefined();
+            ElementAccessors.setRequired($el, true, actor2);
+            expect($el.attr('required')).toBeDefined();
+        });
+
+        test('ElementAccessors unsets required as soon as all actors are gone', () => {
+            const $el = $('<input/>');
+            const actor1 = {};
+            const actor2 = {};
+            ElementAccessors.setRequired($el, true, actor1);
+            ElementAccessors.setRequired($el, true, actor2);
+            expect($el.attr('required')).toBeDefined();
+            ElementAccessors.setRequired($el, false, actor1);
+            expect($el.attr('required')).toBeDefined();
+            ElementAccessors.setRequired($el, false, actor2);
+            expect($el.attr('required')).toBeUndefined();
+        });
+
+        test('ElementAccessors unsets required as soon as all actors are gone (mixed order)', () => {
+            const $el = $('<input/>');
+            const actor1 = {};
+            const actor2 = {};
+            ElementAccessors.setRequired($el, true, actor1);
+            ElementAccessors.setRequired($el, true, actor2);
+            expect($el.attr('required')).toBeDefined();
+            ElementAccessors.setRequired($el, false, actor2);
+            expect($el.attr('required')).toBeDefined();
+            ElementAccessors.setRequired($el, false, actor1);
+            expect($el.attr('required')).toBeUndefined();
+        });
+
+        test('ElementAccessors actor-less required management clears all actors', () => {
+            const $el = $('<input/>');
+            const actor1 = {};
+            const actor2 = {};
+            ElementAccessors.setRequired($el, true, actor1);
+            ElementAccessors.setRequired($el, true, actor2);
+            expect($el.attr('required')).toBeDefined();
+            ElementAccessors.setRequired($el, false);
+            expect($el.attr('required')).toBeUndefined();
+        });
+    });
+
+    describe('ElementAccessors supports managed visibility', () => {
+        // Note: setVisibility is an inverted method, so managed visibility collects requests to hide
+        test('ElementAccessors sets hidden upon first actor', () => {
+            const $el = $('<input/>');
+            const actor1 = {};
+            const actor2 = {};
+            ElementAccessors.setVisibility($el, false, actor1);
+            expect($el.attr('hidden')).toBeDefined();
+            ElementAccessors.setVisibility($el, false, actor2);
+            expect($el.attr('hidden')).toBeDefined();
+        });
+
+        test('ElementAccessors unsets hidden as soon as all actors are gone', () => {
+            const $el = $('<input/>');
+            const actor1 = {};
+            const actor2 = {};
+            ElementAccessors.setVisibility($el, false, actor1);
+            ElementAccessors.setVisibility($el, false, actor2);
+            expect($el.attr('hidden')).toBeDefined();
+            ElementAccessors.setVisibility($el, true, actor1);
+            expect($el.attr('hidden')).toBeDefined();
+            ElementAccessors.setVisibility($el, true, actor2);
+            expect($el.attr('hidden')).toBeUndefined();
+        });
+
+        test('ElementAccessors unsets hidden as soon as all actors are gone (mixed order)', () => {
+            const $el = $('<input/>');
+            const actor1 = {};
+            const actor2 = {};
+            ElementAccessors.setVisibility($el, false, actor1);
+            ElementAccessors.setVisibility($el, false, actor2);
+            expect($el.attr('hidden')).toBeDefined();
+            ElementAccessors.setVisibility($el, true, actor2);
+            expect($el.attr('hidden')).toBeDefined();
+            ElementAccessors.setVisibility($el, true, actor1);
+            expect($el.attr('hidden')).toBeUndefined();
+        });
+
+        test('ElementAccessors actor-less visibility management clears all actors', () => {
+            const $el = $('<input/>');
+            const actor1 = {};
+            const actor2 = {};
+            ElementAccessors.setVisibility($el, false, actor1);
+            ElementAccessors.setVisibility($el, false, actor2);
+            expect($el.attr('hidden')).toBeDefined();
+            ElementAccessors.setVisibility($el, true);
+            expect($el.attr('hidden')).toBeUndefined();
+        });
+    });
 });
