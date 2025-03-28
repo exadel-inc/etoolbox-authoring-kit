@@ -132,7 +132,7 @@
 
         /**
          * Set the required state of $el
-         * Can act as managed state handler, so is will respect the actor that requested the change.
+         * Can act as managed state handler, so will respect the actor that requested the change.
          * @param {JQuery} $el - target element
          * @param {boolean} value - state to set
          * @param {object} [actor] - component that requests change
