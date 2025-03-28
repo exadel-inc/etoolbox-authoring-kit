@@ -4,7 +4,7 @@ module.exports = {
     testRegex: '/tests/(.+)\\.test\\.js$',
     moduleFileExtensions: ['js', 'json', 'html'],
     setupFiles: [
-        './jest/granite.setup.js'
+        './jest/granite.mocks.js'
     ],
     transform: {
         // Clientlib importer

@@ -21,15 +21,22 @@ $.fn.adaptTo = function (key) {
             }
         };
     }
+    if (key === 'foundation-field') {
+        return this.__mock_foundation_api || null;
+    }
     if (key === 'foundation-validation-helper') {
         return {
             getSubmittables: function () {
                 // do nothing
-                // return $(this);
             }
         };
     }
     return null;
+};
+// Mock API setter
+$.fn.mockFoundationField = function (api) {
+    this.__mock_foundation_api = api;
+    return this;
 };
 
 // :-foundation-submittable pseudo selector
