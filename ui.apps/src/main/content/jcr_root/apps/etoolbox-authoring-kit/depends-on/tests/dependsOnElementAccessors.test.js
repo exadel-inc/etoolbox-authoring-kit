@@ -1,3 +1,4 @@
+require('../../utils/js.txt');
 require('../js.txt');
 
 describe('DependsOn: ElementAccessors', () => {
