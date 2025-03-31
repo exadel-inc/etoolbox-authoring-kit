@@ -4,15 +4,25 @@ require('../js.txt');
 describe('DependsOn: ActionRegistry', () => {
     const { ActionRegistry } = Granite.DependsOnPlugin;
 
-    describe('Test ActionRegistry base action availability (legacy)', () => {
+    describe('Test ActionRegistry base action availability', () => {
         test.each([
-            'visibility',
-            'disabled',
+            'show',
+            'hide',
+            'enable',
+            'disable',
             'required',
             'readonly',
             'set',
             'set-if-blank'
         ])('Default action "%s" should be available', (name) => {
+            expect(ActionRegistry.getAction(name)).toBeDefined();
+        });
+
+        test.each([
+            'visibility',
+            'enabled',
+            'disabled',
+        ])('Alias action "%s" should be available', (name) => {
             expect(ActionRegistry.getAction(name)).toBeDefined();
         });
     });

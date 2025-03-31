@@ -15,26 +15,55 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Yana Bernatskaya (YanaBr)
  *
- * DependsOn Coral 3 Basic Actions.
+ * DependsOn Form Field State Basic Actions.
  *
  * Defined actions:
- * - visibility - set the field visibility (and also hide the form field wrapper);
- * - required - set the required state of the field;
- * - readonly - set the readonly state of the field;
- * - disabled - set the disabled state of the field;
- * - set - set the field value from the query result;
- * - set-if-blank - set the field value from the query result only if the field value is blank
+ * - `show` (or `visibility`) - show the field and the form field wrapper;
+ * - `hide` - hide the field and the form field wrapper;
+ * - `required` - set the required state of the field;
+ * - `readonly` - set the readonly state of the field;
+ * - `disable` (or `disabled`) - set the disabled state of the field;
+ * - `enable` - set the enabled state of the field;
  * */
 (function ($, ns) {
     'use strict';
 
     /**
-     * Change the visibility of the field and the form field wrapper
+     * Shows the field and the form field wrapper if the query result is truthy
      * query type: boolean
      * */
-    ns.ActionRegistry.register('visibility', function setVisibility(state) {
+    ns.ActionRegistry.register('show', function show(state) {
         ns.ElementAccessors.setVisibility(this.$el, state, this);
     });
+    /** Legacy `visibility` alias for show action */
+    ns.ActionRegistry.registerAlias('visibility', 'show');
+
+    /**
+     * Hides the field and the form field wrapper if the query result is truthy
+     * query type: boolean
+     * */
+    ns.ActionRegistry.register('hide', function hide(state) {
+        ns.ElementAccessors.setVisibility(this.$el, !state, this);
+    });
+
+    /**
+     * Disable the field if the query result is truthy
+     * query type: boolean
+     * */
+    ns.ActionRegistry.register('disable', function setDisabled(state) {
+        ns.ElementAccessors.setDisabled(this.$el, state, this);
+    });
+    /** Legacy `disabled` alias for disable action */
+    ns.ActionRegistry.registerAlias('disabled', 'disable');
+
+    /**
+     * Enable the field if the query result is truthy
+     */
+    ns.ActionRegistry.register('enable', function setEnabled(state) {
+        ns.ElementAccessors.setDisabled(this.$el, !state, this);
+    });
+    /** Legacy `enabled` alias for enable action */
+    ns.ActionRegistry.registerAlias('enabled', 'enable');
 
     /**
      * Change the required state of the field
@@ -52,35 +81,5 @@
      * */
     ns.ActionRegistry.register('readonly', function setReadonly(state) {
         ns.ElementAccessors.setReadonly(this.$el, state, this);
-    });
-
-    /**
-     * Change the disabled state of the field
-     * query type: boolean
-     * */
-    ns.ActionRegistry.register('disabled', function setDisabled(state) {
-        ns.ElementAccessors.setDisabled(this.$el, state, this);
-    });
-
-    /**
-     * Set the field value from the query result, skip undefined query results
-     * query type: string
-     * */
-    ns.ActionRegistry.register('set', function setValue(value) {
-        if (value !== undefined) {
-            ns.ElementAccessors.setValue(this.$el, value);
-        }
-    });
-
-    /**
-     * Set the field value from the query result only if the field value is blank,
-     * skip undefined query results
-     * query type: string
-     * */
-    ns.ActionRegistry.register('set-if-blank', function setValueIfBlank(value) {
-        const current = ns.ElementAccessors.getValue(this.$el);
-        if ((current === '' || current === null || current === undefined) && value !== undefined) {
-            ns.ElementAccessors.setValue(this.$el, value);
-        }
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

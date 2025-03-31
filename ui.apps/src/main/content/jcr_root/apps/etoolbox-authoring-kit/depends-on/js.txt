@@ -30,6 +30,7 @@ js/accessors/dependsOnCoralFieldsetAccessor.js
 
 # Actions
 js/actions/dependsOnCoralBasicActions.js
+js/actions/dependsOnCoralSetActions.js
 js/actions/dependsOnCoralValidateAction.js
 js/actions/dependsOnFetchAction.js
 js/actions/dependsOnCoralTabAction.js
