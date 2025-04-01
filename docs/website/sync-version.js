@@ -17,7 +17,12 @@ const toSemver = (version) => {
 (async() => {
     console.log('Checking pom.xml version...');
     const rootPom = await fs.readFile('../../pom.xml', 'utf-8');
-    const rootPomVersion = rootPom.match(/<version>(.*?)<\/version>/)[1];
+    const versionMatch = rootPom.match(/<version>(.*?)<\/version>/);
+    if (!versionMatch) {
+        console.error('Error: <version> tag not found in pom.xml');
+        process.exit(1);
+    }
+    const rootPomVersion = versionMatch[1];
     const pomVersion = toSemver(rootPomVersion.trim());
 
     console.log('Pom version resolved:', pomVersion);
