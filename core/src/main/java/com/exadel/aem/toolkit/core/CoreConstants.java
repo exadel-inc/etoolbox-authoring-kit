@@ -60,6 +60,8 @@ public class CoreConstants {
     public static final String EQUALITY_SIGN = "=";
     public static final String WILDCARD = "*";
 
+    public static final String CONTENT_TYPE_JSON = "application/json;charset=utf-8";
+
     /**
      * Default (instantiation-restricting) constructor
      */

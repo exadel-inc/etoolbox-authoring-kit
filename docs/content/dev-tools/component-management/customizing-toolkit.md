@@ -313,7 +313,7 @@ mvn clean test -Pintegration -D"aem.host"=192.168.0.81 -D"aem.port"=8080 -D"aem.
 
 ### Doing regression testing
 
-The ToolKit supports regression testing as well. Regression testing is done using an external AEM project. The aim is to make sure that a <newer> version of ToolKit (namely, the plugin) produces essentially the same XML markup as an <older> one. The <older> version is considered a "reference" and is used as a baseline for comparison.
+The ToolKit supports regression testing as well. Regression testing is done using an external AEM project. The aim is to make sure that a _newer_ version of ToolKit (namely, the plugin) produces essentially the same XML markup as an _older_ one. The _older_ version is used as a baseline for comparison.
 
 To run regression tests, you need to specify the dedicated Maven profile like the following:
 ```

@@ -1,7 +1,8 @@
-const neostandard = require('neostandard');
+import globals from 'globals';
+import standard from 'neostandard';
 
-module.exports = [
-    ...neostandard(),
+export default [
+    ...standard(),
     {
         files: ['**/*.js'],
         rules: {
@@ -15,10 +16,13 @@ module.exports = [
                 projectService: true
             },
             globals: {
-                '$': 'readonly',
-                'jQuery': 'readonly',
-                'Granite': 'writable',
-                'Coral': 'readonly'
+                // Default global variables
+                ...globals.browser,
+                ...globals.jquery,
+                ...globals.jest,
+                // Custom global variables
+                Granite: 'writable',
+                Coral: 'readonly'
             }
         },
         linterOptions: {
@@ -29,7 +33,7 @@ module.exports = [
         rules: {
             '@stylistic/indent': [
                 'error', 4, {
-                    'SwitchCase': 1
+                    SwitchCase: 1
                 }
             ],
             '@stylistic/operator-linebreak': [2, 'after'],
@@ -37,9 +41,9 @@ module.exports = [
             '@stylistic/space-before-function-paren': [
                 'error',
                 {
-                    'anonymous': 'always',
-                    'named': 'never',
-                    'asyncArrow': 'never'
+                    anonymous: 'always',
+                    named: 'never',
+                    asyncArrow: 'never'
                 }
             ]
         }
