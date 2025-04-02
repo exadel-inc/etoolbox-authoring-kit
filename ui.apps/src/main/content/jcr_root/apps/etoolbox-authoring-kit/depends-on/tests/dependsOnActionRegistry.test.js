@@ -32,7 +32,7 @@ describe('DependsOn: ActionRegistry', () => {
             expect(ActionRegistry.getAction('test-action')).toBe(testAction);
         });
 
-        test('Overriding the action with existing name throws warn massage', () => {
+        test('Overriding the action with existing name throws warn message', () => {
             ActionRegistry.register('test-action', () => {});
             expect(ActionRegistry.getAction('test-action')).not.toBe(testAction);
             expect(consoleWarnSpy).toHaveBeenCalledWith(expect.stringContaining('overridden'));
