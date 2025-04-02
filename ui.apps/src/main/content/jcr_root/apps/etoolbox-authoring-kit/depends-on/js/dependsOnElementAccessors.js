@@ -46,6 +46,9 @@
             $el.val(value);
             notify && $el.trigger('change');
         },
+        placeholder: function ($el, value) {
+            $el.attr('placeholder', value);
+        },
         readonly: function ($el, state) {
             $el.attr('readonly', state ? 'true' : null);
         },
@@ -128,6 +131,11 @@
          * */
         static setValue($el, value, notify = true) {
             return ElementAccessors._findAccessorHandler($el, 'set')($el, value, notify);
+        }
+
+        /** Set form field placeholder */
+        static setPlaceholder($el, value) {
+            return ElementAccessors._findAccessorHandler($el, 'placeholder')($el, value);
         }
 
         /**

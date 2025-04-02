@@ -29,9 +29,9 @@ js/accessors/dependsOnCoral2AutocompleteAccessor.js
 js/accessors/dependsOnCoralFieldsetAccessor.js
 
 # Actions
-js/actions/dependsOnCoralBasicActions.js
-js/actions/dependsOnCoralSetActions.js
-js/actions/dependsOnCoralValidateAction.js
+js/actions/dependsOnStateActions.js
+js/actions/dependsOnSetActions.js
+js/actions/dependsOnValidateAction.js
 js/actions/dependsOnFetchAction.js
 js/actions/dependsOnCoralTabAction.js
 js/actions/dependsOnUpdateOptionsAction.js

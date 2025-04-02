@@ -45,4 +45,11 @@
             ns.ElementAccessors.setValue(this.$el, value);
         }
     });
+
+    /** Set the form field placeholder */
+    ns.ActionRegistry.register('placeholder', function setPlaceholder(value) {
+        if (value !== undefined) {
+            ns.ElementAccessors.setPlaceholder(this.$el, value);
+        }
+    });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

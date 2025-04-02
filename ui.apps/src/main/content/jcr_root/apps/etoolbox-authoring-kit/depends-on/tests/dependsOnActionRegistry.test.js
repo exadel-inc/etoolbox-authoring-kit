@@ -12,6 +12,7 @@ describe('DependsOn: ActionRegistry', () => {
             'disable',
             'required',
             'readonly',
+            'placeholder',
             'set',
             'set-if-blank'
         ])('Default action "%s" should be available', (name) => {
