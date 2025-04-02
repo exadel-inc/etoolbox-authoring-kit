@@ -8,15 +8,25 @@ order: 3
 
 ## Actions
 
-Built-in plug-in actions are:
-* `visibility` - hide the element if the Query result is 'falsy'. <u>This is the default action that is applied when no action is specified.</u>
+### Built-in State Actions
+There is a list of built-in form field state actions.
+They are use boolean query results.
+Note: as an agreement due compatibility state actions named shortly by the managed state name.
+Here is a list of the available actions:
+* `visible` (or `visibility`) - hide the element if the Query result is 'falsy'. <u>This is the default action that is applied when no action is specified.</u>
+* `hidden` - hide the element if the Query result is 'truthy'
 * `tab-visibility` - hide the tab or the element's parent tab if the Query result is 'falsy'
-* `set` - set the Query result as the field's value (undefined Query result skipped)
-* `set-if-blank` - set the Query result as the field's value only if the current value is blank (undefined Query result skipped)
 * `readonly` - set the readonly marker of the field from the Query result.
 * `required` - set the required marker of the field from the Query result.
-* `validate` - set the validation state of the field from the Query result.
 * `disabled` - set the field's disabled state from the Query result. Supports multiple actions effect for the same field.
+* `enabled` - unset the field's disabled state from the Query result. Supports multiple actions effect for the same field.
+
+### Built-in Form Field Actions
+* `set` - set the Query result as the field's value (undefined Query result skipped)
+* `set-if-blank` - set the Query result as the field's value only if the current value is blank (undefined Query result skipped)
+* `set-placeholder` - set the Query result as the field's placeholder (undefined Query result skipped)
+
+* `validate` - set the validation state of the field from the Query result.
 
 ### Async actions
 
@@ -82,6 +92,9 @@ Granite.DependsOnPlugin.ElementAccessors.registerAccessor({
     set: function($el, value) {
         $el.val(value);
     },
+    placeholder: function ($el, value) {
+        $el.attr('placeholder', value);
+    },
     required: function($el, val) {
         $el.attr('required', val ? 'true' : null);
         $el.attr('aria-required', val ? 'true' : null);
@@ -103,6 +116,21 @@ Granite.DependsOnPlugin.ElementAccessors.registerAccessor({
     }
 });
 ```
+
+### Custom Accessor
+You can create a custom accessor to override the default behavior of the DependsOn plugin.
+Or you can use adaptive accessors to provide a custom accessor for a specific component property.
+
+Here is a list of public methods to control or use DependsOn ElementsAccessors:
+
+* `Granite.DependsOnPlugin.ElementAccessors.registerAccessor(accessor)` - register a new accessor
+  Note if you register a new accessor with selector `*` it will override the default accessor bhaviour.
+  Such accessors are not bubble and used only if there is no custom accessor definition for the specific component.
+* `Granite.DependsOnPlugin.ElementAccessors.getAccessor($el, type)` - get the accessor for the element
+  Accessor property returns as it is, function accessor will be bound to the accessor object.
+* `Granite.DependsOnPlugin.ElementAccessors.getManagedAccessor($el, type, inverced)` - get the accessor for the element
+  Returnce wrapped boolean state accessor wrapped with ManagedState utility. That means accessor will support actor based state management disalowing state change if not all of the actors "free" target state.
+  The `inverced` parameter is used to define which truthy or falsy state should be used as `free` state from actor prespective.
 
 ## Query Syntax
 
@@ -191,3 +219,33 @@ Static action’s params can be passed through data attributes with the followin
   e.g. `data-dependson-validate-msg` will be used by `validate` action as invalid state message
 - for multiple actions of the same type additional actions params should end with `-{index}` (1 for the second action, 2 for the third).
   e.g. `data-dependson-validate-msg-1` will be used by second `validate` action as invalid state message
+
+### Multiple State Actions
+The default statate actions use managed state implementation, which means that u can define multiple queries with the same actions for the same field.
+
+For example multiple `disable` actions will be treated as disjunctive state:
+```html
+<granite:data
+    data-dependson="query1; query2"
+    data-dependson-action="disable; disable"/>
+```
+is equivalent to:
+```html
+<granite:data
+    data-dependson="query1 || query2"
+    data-dependson-action="disable"/>
+```
+
+Multiple positive sate actions will be treated as conjunctive state.
+For example multiple `visible` actions will be treated as conjunctive state:
+```html
+<granite:data
+    data-dependson="query1; query2"
+    data-dependson-action="visible; visible"/>
+```
+is equivalent to:
+```html
+<granite:data
+    data-dependson="query1 && query2"
+    data-dependson-action="visible"/>
+```
