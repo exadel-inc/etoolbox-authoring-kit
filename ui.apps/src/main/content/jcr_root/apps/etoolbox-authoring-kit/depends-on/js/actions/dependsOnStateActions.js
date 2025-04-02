@@ -18,12 +18,12 @@
  * DependsOn Form Field State Basic Actions.
  *
  * Defined actions:
- * - `show` (or `visibility`) - show the field and the form field wrapper;
- * - `hide` - hide the field and the form field wrapper;
+ * - `visible` (or `visibility`) - show the field and the form field wrapper;
+ * - `hidden` - hide the field and the form field wrapper;
  * - `required` - set the required state of the field;
  * - `readonly` - set the readonly state of the field;
- * - `disable` (or `disabled`) - set the disabled state of the field;
- * - `enable` - set the enabled state of the field;
+ * - `disabled` - set the disabled state of the field;
+ * - `enabled` - set the enabled state of the field;
  * */
 (function ($, ns) {
     'use strict';
@@ -32,17 +32,17 @@
      * Shows the field and the form field wrapper if the query result is truthy
      * query type: boolean
      * */
-    ns.ActionRegistry.register('show', function show(state) {
+    ns.ActionRegistry.register('visible', function show(state) {
         ns.ElementAccessors.setVisibility(this.$el, state, this);
     });
-    /** Legacy `visibility` alias for show action */
-    ns.ActionRegistry.registerAlias('visibility', 'show');
+    /** `visibility` alias for `visible` action */
+    ns.ActionRegistry.registerAlias('visibility', 'visible');
 
     /**
      * Hides the field and the form field wrapper if the query result is truthy
      * query type: boolean
      * */
-    ns.ActionRegistry.register('hide', function hide(state) {
+    ns.ActionRegistry.register('hidden', function hide(state) {
         ns.ElementAccessors.setVisibility(this.$el, !state, this);
     });
 
@@ -50,20 +50,16 @@
      * Disable the field if the query result is truthy
      * query type: boolean
      * */
-    ns.ActionRegistry.register('disable', function setDisabled(state) {
+    ns.ActionRegistry.register('disabled', function setDisabled(state) {
         ns.ElementAccessors.setDisabled(this.$el, state, this);
     });
-    /** Legacy `disabled` alias for disable action */
-    ns.ActionRegistry.registerAlias('disabled', 'disable');
 
     /**
      * Enable the field if the query result is truthy
      */
-    ns.ActionRegistry.register('enable', function setEnabled(state) {
+    ns.ActionRegistry.register('enabled', function setEnabled(state) {
         ns.ElementAccessors.setDisabled(this.$el, !state, this);
     });
-    /** Legacy `enabled` alias for enable action */
-    ns.ActionRegistry.registerAlias('enabled', 'enable');
 
     /**
      * Change the required state of the field

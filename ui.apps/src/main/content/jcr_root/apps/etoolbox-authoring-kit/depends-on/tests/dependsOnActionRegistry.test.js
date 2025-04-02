@@ -6,24 +6,17 @@ describe('DependsOn: ActionRegistry', () => {
 
     describe('Test ActionRegistry base action availability', () => {
         test.each([
-            'show',
-            'hide',
-            'enable',
-            'disable',
-            'required',
-            'readonly',
-            'placeholder',
-            'set',
-            'set-if-blank'
-        ])('Default action "%s" should be available', (name) => {
-            expect(ActionRegistry.getAction(name)).toBeDefined();
-        });
-
-        test.each([
             'visibility',
+            'visible',
+            'hidden',
             'enabled',
             'disabled',
-        ])('Alias action "%s" should be available', (name) => {
+            'required',
+            'readonly',
+            'set',
+            'set-if-blank',
+            'set-placeholder'
+        ])('Default action "%s" should be available', (name) => {
             expect(ActionRegistry.getAction(name)).toBeDefined();
         });
     });

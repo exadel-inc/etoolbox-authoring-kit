@@ -26,11 +26,9 @@
     const actionRegistryMap = {};
 
     class ActionRegistry {
-        /**
-         * Default action name
-         * */
+        /** Default action name */
         static get DEFAULT() {
-            return 'show';
+            return 'visible';
         }
 
         /**

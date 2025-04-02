@@ -47,7 +47,7 @@
     });
 
     /** Set the form field placeholder */
-    ns.ActionRegistry.register('placeholder', function setPlaceholder(value) {
+    ns.ActionRegistry.register('set-placeholder', function setPlaceholder(value) {
         if (value !== undefined) {
             ns.ElementAccessors.setPlaceholder(this.$el, value);
         }
