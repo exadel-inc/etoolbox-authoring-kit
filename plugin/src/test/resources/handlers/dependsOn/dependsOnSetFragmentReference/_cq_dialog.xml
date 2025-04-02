@@ -24,7 +24,7 @@
                         <granite:data
                                 jcr:primaryType="nt:unstructured"
                                 dependsOn="@referenceType === 'fragment'"
-                                dependsOnAction="visibility"/>
+                                dependsOnAction="visible"/>
                     </fragmentPath>
                 </items>
             </column>
