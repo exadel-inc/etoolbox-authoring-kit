@@ -21,7 +21,7 @@
 (function ($, ns) {
     'use strict';
 
-    class MangedStateHelper {
+    class ManagedStateHelper {
         static get($el, type) {
             const name = type + '-actors';
             const actors = $el.data(name);
@@ -54,5 +54,5 @@
         }
     }
 
-    ns.MangedStateHelper = MangedStateHelper;
+    ns.ManagedStateHelper = ManagedStateHelper;
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

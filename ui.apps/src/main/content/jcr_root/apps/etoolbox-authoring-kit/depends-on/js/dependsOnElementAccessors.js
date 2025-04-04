@@ -64,7 +64,7 @@
         /** Returns manged state accessor wrapper */
         static getManagedAccessor($el, type, inverted) {
             const accessor = this.getAccessor($el, type);
-            return ns.MangedStateHelper.wrap(accessor, type, inverted);
+            return ns.ManagedStateHelper.wrap(accessor, type, inverted);
         }
 
         /**
