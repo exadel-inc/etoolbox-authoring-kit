@@ -124,12 +124,12 @@ Or you can use adaptive accessors to provide a custom accessor for a specific co
 Here is a list of public methods to control or use DependsOn ElementsAccessors:
 
 * `Granite.DependsOnPlugin.ElementAccessors.registerAccessor(accessor)` - register a new accessor
-  Note if you register a new accessor with selector `*` it will override the default accessor bhaviour.
+  Note if you register a new accessor with selector `*` it will override the default accessor behaviour.
   Such accessors are not bubble and used only if there is no custom accessor definition for the specific component.
 * `Granite.DependsOnPlugin.ElementAccessors.getAccessor($el, type)` - get the accessor for the element
   Accessor property returns as it is, function accessor will be bound to the accessor object.
 * `Granite.DependsOnPlugin.ElementAccessors.getManagedAccessor($el, type, inverced)` - get the accessor for the element
-  Returnce wrapped boolean state accessor wrapped with ManagedState utility. That means accessor will support actor based state management disalowing state change if not all of the actors "free" target state.
+  Returns wrapped boolean state accessor wrapped with ManagedState utility. That means accessor will support actor based state management disalowing state change if not all of the actors "free" target state.
   The `inverced` parameter is used to define which truthy or falsy state should be used as `free` state from actor prespective.
 
 ## Query Syntax
