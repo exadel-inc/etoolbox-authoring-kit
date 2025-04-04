@@ -3,6 +3,11 @@
     - "npm run sync-version"
 
 # Pre-commit JS source validation
+"*.js":
+    - "eslint"
+    - "jest --silent --bail --passWithNoTests --findRelatedTests"
+
 "*.ts":
     - "eslint"
+    - "tsc --noEmit"
     - "jest --silent --bail --passWithNoTests --findRelatedTests"
