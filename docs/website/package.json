@@ -2,6 +2,7 @@
   "name": "eak-website",
   "version": "2.5.4-SNAPSHOT",
   "description": "EAK website package definition",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "start": "npm run build:prepare && concurrently --kill-others \"npm:watch:content\" \"npm:watch:less\" \"npm:watch:ts\" \"npm:watch:eleventy\"",
@@ -34,7 +35,7 @@
     "smoothscroll-polyfill": "^0.4.4"
   },
   "devDependencies": {
-    "@11ty/eleventy": "^2.0.1",
+    "@11ty/eleventy": "^3.0.0",
     "@11ty/eleventy-dev-server": "^2.0.6",
     "@exadel/eslint-config-esl": "^5.0.0",
     "@exadel/eslint-plugin-esl": "^5.0.0",

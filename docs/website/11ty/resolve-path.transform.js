@@ -1,15 +1,16 @@
-const path = require('path');
-const {blue} = require('kleur');
-const {JSDOM} = require('jsdom');
-const {Minimatch} = require('minimatch');
-const {rewriteRules} = require('./site.config');
-const {url} = require('./site.config');
+import path, {dirname} from 'path';
+import color from 'kleur';
+import {JSDOM} from 'jsdom';
+import {Minimatch} from 'minimatch';
+import {siteConfig} from './site.config.js';
+
+
 
 const ROOT_PATH = path.resolve('../../..');
 const DOCS_PATH = path.join(ROOT_PATH, 'docs');
 
 class PathResolver {
-  static rules = rewriteRules.map(PathResolver.createRule);
+  static rules = siteConfig.rewriteRules.map(PathResolver.createRule);
 
   static createRule({glob, regexp, value}) {
     if (typeof regexp === 'string') regexp = new RegExp(regexp, 'i');
@@ -28,7 +29,7 @@ class PathResolver {
   }
 
   static isExternal(urlString) {
-    const domain = new URL(url).hostname;
+    const domain = new URL(siteConfig.url).hostname;
 
     try {
       const link = new URL(urlString);
@@ -43,7 +44,7 @@ class PathResolver {
   static resolveLinks(dom, filePath) {
     dom.querySelectorAll('a[href]').forEach((link) => {
       const resolved = PathResolver.resolveLink(link.href, filePath);
-      if (resolved !== link.href) console.info(blue(`Rewrite link "${link.href}" to "${resolved}"`));
+      if (resolved !== link.href) console.info(color.blue(`Rewrite link "${link.href}" to "${resolved}"`));
       link.href = resolved;
 
       if (PathResolver.isExternal(link.href)) {
@@ -56,7 +57,7 @@ class PathResolver {
   static resolveImages(dom, filePath) {
     dom.body.querySelectorAll('img[src^="."]').forEach((img) => {
       const resolved = PathResolver.resolveLink(img.src, filePath);
-      if (resolved !== img.src) console.info(blue(`Rewrite image source "${img.src}" to "${resolved}"`));
+      if (resolved !== img.src) console.info(color.blue(`Rewrite image source "${img.src}" to "${resolved}"`));
 
       const zoomImg = dom.createElement('eak-zoom-image');
       zoomImg.setAttribute('data-src', resolved);
@@ -89,6 +90,6 @@ class PathResolver {
   }
 }
 
-module.exports = (config) => {
+export default (config) => {
   config.addTransform('resolve.link', PathResolver.resolve);
 };

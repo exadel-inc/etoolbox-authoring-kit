@@ -8,7 +8,7 @@ function equalByUrl(collection, url) {
   return collection.filter((item) => item.data.page.filePathStem === url);
 }
 
-module.exports = (config) => {
+export default (config) => {
   config.addFilter('equalByUrl', equalByUrl);
   config.addFilter('includesUrl', includesUrl);
 };

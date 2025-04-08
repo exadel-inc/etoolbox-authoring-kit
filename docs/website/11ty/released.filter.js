@@ -1,4 +1,4 @@
-const {isDev} = require('./env.config');
+import {context} from './env.config.js';
 
 const identical = (values) => values;
 const draftsFilter = (values) => {
@@ -8,7 +8,7 @@ const draftsFilter = (values) => {
   });
 };
 
-module.exports = function (config) {
-  config.addFilter('released', isDev ? identical : draftsFilter);
+export default (config) => {
+  config.addFilter('released', context.isDev ? identical : draftsFilter);
   config.addFilter('releasedStrict', draftsFilter);
 };

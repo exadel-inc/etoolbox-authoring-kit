@@ -1,5 +1,5 @@
-const {JSDOM} = require('jsdom');
-const Parser = require('rss-parser');
+import {JSDOM} from 'jsdom';
+import Parser from 'rss-parser';
 
 const parser = new Parser({defaultRSS: 2.0});
 const timeout = (ms) => new Promise(resolve => setTimeout(resolve, ms));
@@ -61,6 +61,6 @@ class EAKRssService {
   }
 }
 
-module.exports = (config) => {
+export default (config) => {
   config.addNunjucksAsyncFilter('feed', EAKRssService.load);
 };

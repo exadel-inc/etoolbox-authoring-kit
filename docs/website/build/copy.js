@@ -1,9 +1,11 @@
-const fs = require('fs');
-const path = require('path');
-const del = require('del');
-const {glob} = require('glob');
-const chokidar = require('chokidar');
+import fs from 'fs';
+import del from 'del';
+import path, {dirname} from 'path';
+import {glob} from 'glob';
+import chokidar from 'chokidar';
+import {fileURLToPath} from "url";
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
 const INPUT_DIR = path.resolve(__dirname, '../../content');
 const INPUT_GLOB = '**/*.{md,html,njk}';
 const OUTPUT_DIR = path.resolve(__dirname, '../views/content');

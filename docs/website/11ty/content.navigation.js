@@ -1,4 +1,4 @@
-module.exports = (config) => {
+export default (config) => {
   function getNavPath(path) {
     const parts = path.split('/');
     const isIndex = path.endsWith('/index');

@@ -1,4 +1,4 @@
-module.exports = (config) => {
+export default (config) => {
   /** Generic sort njk filter */
   const sortFilter = (comparer) => (values) => {
     if (!values || !Array.isArray(values)) {
