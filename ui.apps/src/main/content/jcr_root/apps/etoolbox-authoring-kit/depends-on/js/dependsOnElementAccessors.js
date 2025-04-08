@@ -44,7 +44,7 @@
             return Object.assign({}, DEFAULT_ACCESSOR);
         }
 
-        /** Find proper accessor by selector */
+        /** Finds proper accessor by selector */
         static findAccessor($el, type) {
             for (let i = accessorsList.length - 1, accessor; i >= 0; --i) {
                 accessor = accessorsList[i];
@@ -68,7 +68,7 @@
         }
 
         /**
-         * Register an accessor.
+         * Registers an accessor.
          * Accessor descriptor should contain selector property - css selector to determine target element types.
          * @param {object} accessorDescriptor
          * */
@@ -110,13 +110,13 @@
             return ElementAccessors.getAccessor($el, 'set')($el, value, notify);
         }
 
-        /** Set form field placeholder */
+        /** Sets form field placeholder */
         static setPlaceholder($el, value) {
             return ElementAccessors.getAccessor($el, 'placeholder')($el, value);
         }
 
         /**
-         * Set visibility of $el.
+         * Sets visibility of $el.
          * Can act as managed state handler, so is will respect the actor that requested the change.
          * @param {JQuery} $el - target element
          * @param {boolean} value - state to set
@@ -127,7 +127,7 @@
         }
 
         /**
-         * Set the required state of $el
+         * Sets the required state of $el
          * Can act as managed state handler, so will respect the actor that requested the change.
          * @param {JQuery} $el - target element
          * @param {boolean} value - state to set
@@ -138,7 +138,7 @@
         }
 
         /**
-         * Set the readonly state of $el.
+         * Sets the readonly state of $el.
          * Can act as managed state handler, so is will respect the actor that requested the change.
          * @param {JQuery} $el - target element
          * @param {boolean} value - state to set

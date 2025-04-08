@@ -47,7 +47,7 @@
     });
 
     /**
-     * Disable the field if the query result is truthy
+     * Disables the field if the query result is truthy
      * query type: boolean
      * */
     ns.ActionRegistry.register('disabled', function setDisabled(state) {
@@ -55,14 +55,14 @@
     });
 
     /**
-     * Enable the field if the query result is truthy
+     * Enables the field if the query result is truthy
      */
     ns.ActionRegistry.register('enabled', function setEnabled(state) {
         ns.ElementAccessors.setDisabled(this.$el, !state, this);
     });
 
     /**
-     * Change the required state of the field
+     * Changes the required state of the field
      * query type: boolean
      * */
     ns.ActionRegistry.register('required', function setRequired(state) {
@@ -72,7 +72,7 @@
     });
 
     /**
-     * Change the readonly state of the field
+     * Changes the readonly state of the field
      * query type: boolean
      * */
     ns.ActionRegistry.register('readonly', function setReadonly(state) {

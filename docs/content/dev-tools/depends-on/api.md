@@ -10,8 +10,8 @@ order: 3
 
 ### Built-in State Actions
 There is a list of built-in form field state actions.
-They are use boolean query results.
-Note: as an agreement due compatibility state actions named shortly by the managed state name.
+They use boolean query results.
+Note: as an agreement due to compatibility state actions named shortly by the managed state name.
 Here is a list of the available actions:
 * `visible` (or `visibility`) - hide the element if the Query result is 'falsy'. <u>This is the default action that is applied when no action is specified.</u>
 * `hidden` - hide the element if the Query result is 'truthy'
@@ -124,13 +124,13 @@ Or you can use adaptive accessors to provide a custom accessor for a specific co
 Here is a list of public methods to control or use DependsOn ElementsAccessors:
 
 * `Granite.DependsOnPlugin.ElementAccessors.registerAccessor(accessor)` - register a new accessor
-  Note if you register a new accessor with selector `*` it will override the default accessor behaviour.
-  Such accessors are not bubble and used only if there is no custom accessor definition for the specific component.
+  Note if you register a new accessor with selector `*`, it will override the default accessor behaviour.
+  Such accessors are not bubble and are used only if there is no custom accessor definition for the specific component.
 * `Granite.DependsOnPlugin.ElementAccessors.getAccessor($el, type)` - get the accessor for the element
-  Accessor property returns as it is, function accessor will be bound to the accessor object.
+  Accessor property returns as it is, the function accessor will be bound to the accessor object.
 * `Granite.DependsOnPlugin.ElementAccessors.getManagedAccessor($el, type, inverced)` - get the accessor for the element
-  Returns wrapped boolean state accessor wrapped with ManagedState utility. That means accessor will support actor based state management disalowing state change if not all of the actors "free" target state.
-  The `inverced` parameter is used to define which truthy or falsy state should be used as `free` state from actor prespective.
+  Returns wrapped boolean state accessor wrapped with ManagedState utility. That means accessor will support actor based state management disallowing state change if not all of the actors "free" target state.
+  The `inverced` parameter is used to define which truthy or falsy state should be used as `free` state from actor perspective.
 
 ## Query Syntax
 
@@ -221,9 +221,9 @@ Static action’s params can be passed through data attributes with the followin
   e.g. `data-dependson-validate-msg-1` will be used by second `validate` action as invalid state message
 
 ### Multiple State Actions
-The default statate actions use managed state implementation, which means that u can define multiple queries with the same actions for the same field.
+The default state actions use managed state implementation, which means that u can define multiple queries with the same actions for the same field.
 
-For example multiple `disable` actions will be treated as disjunctive state:
+For example, multiple `disable` actions will be treated as disjunctive state:
 ```html
 <granite:data
     data-dependson="query1; query2"
@@ -236,8 +236,8 @@ is equivalent to:
     data-dependson-action="disable"/>
 ```
 
-Multiple positive sate actions will be treated as conjunctive state.
-For example multiple `visible` actions will be treated as conjunctive state:
+Multiple positive state actions will be treated as conjunctive state.
+For example, multiple `visible` actions will be treated as conjunctive state:
 ```html
 <granite:data
     data-dependson="query1; query2"

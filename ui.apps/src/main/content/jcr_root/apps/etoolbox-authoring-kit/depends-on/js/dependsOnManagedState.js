@@ -16,7 +16,7 @@
  * @author Alexey Stsefanovich (ala'n)
  *
  * DependsOn Managed State Helper - utility to make state updates actor aware.
- * If multiple actors are requested to update the state, state returns to false only if all actors are free state.
+ * If multiple actors are requested to update the state, state returns to false only if all actors are free states.
  * */
 (function ($, ns) {
     'use strict';

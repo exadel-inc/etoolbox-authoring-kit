@@ -87,7 +87,7 @@
             return actionFn;
         }
 
-        /** Register alias action */
+        /** Registers alias action */
         static registerAlias(name, alias) {
             const action = ActionRegistry.getAction(alias);
             if (!action) {
