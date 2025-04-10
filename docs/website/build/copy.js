@@ -1,14 +1,14 @@
 import fs from 'fs';
-import del from 'del';
 import path, {dirname} from 'path';
+import {fileURLToPath} from 'url';
+import del from 'del';
 import {glob} from 'glob';
 import chokidar from 'chokidar';
-import {fileURLToPath} from "url";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const INPUT_DIR = path.resolve(__dirname, '../../content');
+const FILE_ROOT = dirname(fileURLToPath(import.meta.url));
+const INPUT_DIR = path.resolve(FILE_ROOT, '../../content');
 const INPUT_GLOB = '**/*.{md,html,njk}';
-const OUTPUT_DIR = path.resolve(__dirname, '../views/content');
+const OUTPUT_DIR = path.resolve(FILE_ROOT, '../views/content');
 const TIMESTAMP_PATH = path.join(OUTPUT_DIR, '/timestamp.tmp');
 
 const DELAY = 2000;
@@ -25,12 +25,12 @@ const getPaths = (fileName) => {
   const fileInitPath = fileName.replace('\.\.\\content\\', '');
   const inputPath = path.join(INPUT_DIR, '/', fileInitPath);
   const outputPath = path.join(OUTPUT_DIR, '/', fileInitPath);
-  return { inputPath, outputPath };
+  return {inputPath, outputPath};
 }
 
 const createFileCopy = async (inputPath, outputPath) => {
   const parsedContent = await getContent(inputPath);
-  await fs.promises.mkdir(path.dirname(outputPath), { recursive: true });
+  await fs.promises.mkdir(path.dirname(outputPath), {recursive: true});
   await fs.promises.writeFile(outputPath, parsedContent);
 }
 
@@ -46,7 +46,7 @@ const updateTimestamp = async () => {
 
   const filePaths = glob.sync(INPUT_GLOB, {cwd: INPUT_DIR});
   for (const filePath of filePaths) {
-    const { inputPath, outputPath } = getPaths(filePath);
+    const {inputPath, outputPath} = getPaths(filePath);
     await createFileCopy(inputPath, outputPath);
     console.log(`\t - ${filePath} - copied`);
   }
@@ -56,7 +56,7 @@ if (process.argv.includes('watch')) {
   const pathsToUpdate = new Set();
   const updateData = async () => {
     for (const filePath of pathsToUpdate) {
-      const { inputPath, outputPath } = getPaths(filePath);
+      const {inputPath, outputPath} = getPaths(filePath);
       const isDeleted = !fs.existsSync(inputPath);
 
       if (isDeleted) {

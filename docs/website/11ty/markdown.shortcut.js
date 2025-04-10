@@ -1,11 +1,11 @@
 import path, {dirname} from 'path';
 import {fileURLToPath} from 'url';
-import {JSDOM} from 'jsdom';
 import {readFile} from 'fs/promises';
+import {JSDOM} from 'jsdom';
 import {markdown} from './markdown.lib.js';
 import {siteConfig} from './site.config.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const FILE_ROOT = dirname(fileURLToPath(import.meta.url));
 
 const recursiveCheckLinks = (arr, link, element, key) => {
   arr.forEach((el) => {
@@ -15,10 +15,10 @@ const recursiveCheckLinks = (arr, link, element, key) => {
     if (!el.hasOwnProperty('fileName') && Object.keys(el).length === 1) {
       const elKey = Object.keys(el)[0];
       const newKey =  key + '/' + elKey;
-      recursiveCheckLinks(el[elKey], link,element, newKey);
+      recursiveCheckLinks(el[elKey], link, element, newKey);
     }
-  })
-}
+  });
+};
 
 class MDRenderer {
   static async render(filePath, startAnchor, endAnchor) {
@@ -54,7 +54,7 @@ class MDRenderer {
 
   /** Read file and render markdown */
   static async parseFile(filePath) {
-    const absolutePath = path.resolve(__dirname, '../', filePath);
+    const absolutePath = path.resolve(FILE_ROOT, '../', filePath);
     const data = await readFile(absolutePath);
     const content = data.toString();
     return markdown.render(content);
@@ -89,10 +89,10 @@ class MDRenderer {
   static changeImgPath(dom) {
     const imgArr = dom.querySelectorAll('img');
     const imgPath = '/assets/img';
-    imgArr.forEach(elem => {
+    imgArr.forEach((elem) => {
       const srcLink = elem.getAttribute('src');
-      if(srcLink.startsWith('../img/')) elem.setAttribute('src', srcLink.replace('../img', imgPath ));
-      if(srcLink.startsWith('./docs/img/')) elem.setAttribute('src', srcLink.replace('./docs/img', imgPath));
+      if (srcLink.startsWith('../img/')) elem.setAttribute('src', srcLink.replace('../img', imgPath));
+      if (srcLink.startsWith('./docs/img/')) elem.setAttribute('src', srcLink.replace('./docs/img', imgPath));
     });
   }
 }

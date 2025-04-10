@@ -17,7 +17,7 @@
     "watch:less": "chokidar --initial \"**/*.less\" -c \"npm run build:less\"",
     "watch:ts": "webpack --watch",
     "lint": "concurrently \"npm:lint:js\" \"npm:lint:css\"",
-    "lint:js": "eslint \"src/**/*.{ts,js}\" --max-warnings 3",
+    "lint:js": "eslint \"*.{ts,js}\" --max-warnings 3",
     "lint:css": "stylelint \"src/**/*.less\"",
     "sync-version": "node sync-version.js",
     "prepare": "cd ../.. && husky"
@@ -39,6 +39,7 @@
     "@11ty/eleventy-dev-server": "^2.0.8",
     "@exadel/eslint-config-esl": "^5.3.1",
     "@exadel/eslint-plugin-esl": "^5.3.1",
+    "@exadel/stylelint-config-esl": "^5.3.2",
     "@types/smoothscroll-polyfill": "^0.3.4",
     "chokidar": "^4.0.3",
     "chokidar-cli": "^3.0.0",

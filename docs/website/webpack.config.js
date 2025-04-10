@@ -1,8 +1,7 @@
-//const path = require('path');
 import path, {dirname} from 'path';
 import {fileURLToPath} from 'url';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const FILE_ROOT = dirname(fileURLToPath(import.meta.url));
 
 export default {
   mode: 'development',
@@ -28,7 +27,7 @@ export default {
     }]
   },
   output: {
-    path: path.resolve(__dirname, 'dist/bundles'),
+    path: path.resolve(FILE_ROOT, 'dist/bundles'),
     filename: '[name].js'
   }
 };

@@ -4,6 +4,9 @@ plugins:
 # Use LESS preprocessor
 customSyntax: postcss-less
 
+extends:
+  - '@exadel/stylelint-config-esl'
+
 rules:
   # Prettier integration
   prettier/prettier:
