@@ -22,6 +22,7 @@ const getContent = async (inputPath) => {
 };
 
 const getPaths = (fileName) => {
+  // eslint-disable-next-line no-useless-escape
   const fileInitPath = fileName.replace('\.\.\\content\\', '');
   const inputPath = path.join(INPUT_DIR, '/', fileInitPath);
   const outputPath = path.join(OUTPUT_DIR, '/', fileInitPath);
