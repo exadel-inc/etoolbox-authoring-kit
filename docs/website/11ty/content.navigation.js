@@ -35,7 +35,7 @@ export default (config) => {
     let page = currentPage.parentPage;
     while (page) {
       pages.push(page);
-      page = page.parentPage
+      page = page.parentPage;
     }
     return pages.reverse().slice(1);
   });

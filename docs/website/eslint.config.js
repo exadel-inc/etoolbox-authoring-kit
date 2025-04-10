@@ -4,15 +4,13 @@ import {recommended as eslRecommended} from '@exadel/eslint-plugin-esl';
 export default [
   {
     ignores: [
-      // Common configuration
-      'eslint.config.js',
       // Common directories
       'node_modules/**',
       'dist/**',
     ]
   },
   {
-    files: ['**/*.js','**/*.ts', '**/*.tsx'],
+    files: ['**/*.js', '**/*.ts', '**/*.tsx'],
     linterOptions: {
       reportUnusedDisableDirectives: 'warn'
     }

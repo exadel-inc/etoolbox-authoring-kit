@@ -1,5 +1,5 @@
 import yaml from 'js-yaml';
 
 export default (config) => {
-  config.addDataExtension('yml', contents => yaml.load(contents));
+  config.addDataExtension('yml', (contents) => yaml.load(contents));
 };

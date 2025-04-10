@@ -11,6 +11,6 @@ export default (config) => {
     const {port} = config.serverOptions;
     if (!port || global.hasOpened) return;
     await outUrl.open(`http://localhost:${port}`);
-    global.hasOpened = true;
+    global && (global.hasOpened = true);
   });
 };

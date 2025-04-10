@@ -2,7 +2,7 @@ import {JSDOM} from 'jsdom';
 import Parser from 'rss-parser';
 
 const parser = new Parser({defaultRSS: 2.0});
-const timeout = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+const timeout = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 class EAKRssService {
   static META_FETCH_TIMEOUT = 5000;

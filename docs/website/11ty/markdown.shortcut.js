@@ -7,12 +7,13 @@ import {siteConfig} from './site.config.js';
 
 const FILE_ROOT = dirname(fileURLToPath(import.meta.url));
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const recursiveCheckLinks = (arr, link, element, key) => {
   arr.forEach((el) => {
-    if (el.hasOwnProperty('fileName') && el.fileName === link) {
+    if (Object.prototype.hasOwnProperty.call(el, 'fileName') && el.fileName === link) {
       element.setAttribute('href', `/${[key]}/${link.replace('.md', '')}`);
     }
-    if (!el.hasOwnProperty('fileName') && Object.keys(el).length === 1) {
+    if (!Object.prototype.hasOwnProperty.call(el, 'fileName') && Object.keys(el).length === 1) {
       const elKey = Object.keys(el)[0];
       const newKey =  key + '/' + elKey;
       recursiveCheckLinks(el[elKey], link, element, newKey);

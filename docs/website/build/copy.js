@@ -19,20 +19,20 @@ const getContent = async (inputPath) => {
   const file = await fs.promises.readFile(inputPath);
   const content = file.toString();
   return content.replace(/(^)(<!--|-->)/gm, '$1---');
-}
+};
 
 const getPaths = (fileName) => {
   const fileInitPath = fileName.replace('\.\.\\content\\', '');
   const inputPath = path.join(INPUT_DIR, '/', fileInitPath);
   const outputPath = path.join(OUTPUT_DIR, '/', fileInitPath);
   return {inputPath, outputPath};
-}
+};
 
 const createFileCopy = async (inputPath, outputPath) => {
   const parsedContent = await getContent(inputPath);
   await fs.promises.mkdir(path.dirname(outputPath), {recursive: true});
   await fs.promises.writeFile(outputPath, parsedContent);
-}
+};
 
 const deleteFile = async (outputPath) => fs.promises.unlink(outputPath);
 
@@ -61,7 +61,7 @@ if (process.argv.includes('watch')) {
 
       if (isDeleted) {
         await deleteFile(outputPath);
-        console.log(`\t - ${filePath} - deleted`)
+        console.log(`\t - ${filePath} - deleted`);
       } else {
         await createFileCopy(inputPath, outputPath);
         console.log(`\t - ${filePath} - updated`);

@@ -1,5 +1,5 @@
-import {context} from './env.config.js';
 import {minify} from 'html-minifier-terser';
+import {context} from './env.config.js';
 
 const MINIFICATION_CFG = {
   collapseWhitespace: true,

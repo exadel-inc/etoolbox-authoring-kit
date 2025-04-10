@@ -1,10 +1,8 @@
-import path, {dirname} from 'path';
+import path from 'path';
 import color from 'kleur';
 import {JSDOM} from 'jsdom';
 import {Minimatch} from 'minimatch';
 import {siteConfig} from './site.config.js';
-
-
 
 const ROOT_PATH = path.resolve('../../..');
 const DOCS_PATH = path.join(ROOT_PATH, 'docs');
