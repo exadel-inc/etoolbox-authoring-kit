@@ -17,7 +17,7 @@
     "watch:less": "chokidar --initial \"**/*.less\" -c \"npm run build:less\"",
     "watch:ts": "webpack --watch",
     "lint": "concurrently \"npm:lint:js\" \"npm:lint:css\"",
-    "lint:js": "eslint \"*.{ts,js}\" \"**/*.{ts,js}\" --max-warnings 3",
+    "lint:js": "eslint \"**/*.{ts,js}\" --max-warnings 3",
     "lint:css": "stylelint \"src/**/*.less\"",
     "sync-version": "node sync-version.js",
     "prepare": "cd ../.. && husky"
