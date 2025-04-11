@@ -20,7 +20,7 @@
      * @param {function} wrapper
      * @returns {function} - wrapped function
      */
-    function decorate(fn, wrapper) {
+    ns.decorate = function decorate(fn, wrapper) {
         if (fn.wrapper === wrapper) return fn;
         const fnDecorated = function decoratedCondition(...args) {
             try {
@@ -33,7 +33,7 @@
         fnDecorated.original = fn;
         fnDecorated.wrapper = wrapper;
         return fnDecorated;
-    }
+    };
 
     /**
      * Executes listener for the given editable
@@ -41,7 +41,7 @@
      * @param {string} name
      * @param {Array} params
      */
-    function executeListener(editable, name, ...params) {
+    ns.executeListener = function executeListener(editable, name, ...params) {
         if (!editable.config || !editable.config.editConfig) return null;
         if (typeof editable.config.editConfig.listeners[name] === 'function') {
             try {
@@ -51,9 +51,18 @@
             }
         }
         return null;
-    }
+    };
 
-    // Public API
-    ns.decorate = decorate;
-    ns.executeListener = executeListener;
+    /**
+     * Debounce function wrapper
+     * @param {function} fn
+     * @param {number} timeout
+     */
+    ns.debounce = function (fn, timeout) {
+        let timer;
+        return function (...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn.apply(this, args), timeout);
+        };
+    };
 }((Granite.EAKUtils = Granite.EAKUtils || {})));

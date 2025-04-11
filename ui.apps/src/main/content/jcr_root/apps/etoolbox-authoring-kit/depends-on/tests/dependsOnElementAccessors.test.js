@@ -1,3 +1,4 @@
+require('../../utils/js.txt');
 require('../js.txt');
 
 describe('DependsOn: ElementAccessors', () => {
@@ -93,6 +94,14 @@ describe('DependsOn: ElementAccessors', () => {
             const $el = $('<input />');
             ElementAccessors.setValue($el, 'test');
             expect($el.val()).toBe('test');
+        });
+    });
+
+    describe('ElementAccessors: placeholder (default accessor)', () => {
+        test('ElementAccessors sets placeholder', () => {
+            const $el = $('<input />');
+            ElementAccessors.setPlaceholder($el, 'test');
+            expect($el.attr('placeholder')).toBe('test');
         });
     });
 
@@ -340,6 +349,43 @@ describe('DependsOn: ElementAccessors', () => {
             expect($el.attr('hidden')).toBeDefined();
             ElementAccessors.setVisibility($el, true);
             expect($el.attr('hidden')).toBeUndefined();
+        });
+    });
+
+    describe('ElementAccessors support custom accessor definition', () => {
+        test('ElementAccessors does not allow accessor without selector', () => {
+            const accessor = {
+                visibility: jest.fn()
+            };
+            expect(() => ElementAccessors.registerAccessor(accessor)).toThrowError();
+        });
+
+        describe('ElementAccessors allows custom accessors', () => {
+            const def = {
+                selector: 'input.test',
+                visibility: jest.fn()
+            };
+            ElementAccessors.registerAccessor(def);
+
+            beforeEach(() => def.visibility.mockReset());
+            test('ElementAccessors should return custom accessor', () => {
+                const $el = $('<input class="test"/>');
+                ElementAccessors.getAccessor($el, 'visibility')($el, false);
+                expect(def.visibility).toHaveBeenCalledWith($el, false);
+                expect($el.attr('hidden')).toBeUndefined();
+            });
+            test('ElementAccessors should not return custom accessor if selector does not match', () => {
+                const $el = $('<div class="test"/>');
+                ElementAccessors.getAccessor($el, 'visibility')($el, false);
+                expect(def.visibility).not.toHaveBeenCalled();
+                expect($el.attr('hidden')).toBeDefined();
+            });
+
+            test('ElementAccessors: the custom accessor should not clear undefined accessors', () => {
+                const $el = $('<input class="test"/>');
+                ElementAccessors.getAccessor($el, 'disabled')($el, true);
+                expect($el.attr('disabled')).toBeDefined();
+            });
         });
     });
 });

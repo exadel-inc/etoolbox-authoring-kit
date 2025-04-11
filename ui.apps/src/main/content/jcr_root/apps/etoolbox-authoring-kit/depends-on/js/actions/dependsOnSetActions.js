@@ -13,54 +13,16 @@
  */
 
 /**
- * @author Alexey Stsefanovich (ala'n), Yana Bernatskaya (YanaBr)
+ * @author Alexey Stsefanovich (ala'n)
  *
- * DependsOn Coral 3 Basic Actions.
+ * DependsOn Set Value Basic Actions.
  *
- * Defined actions:
- * - visibility - set the field visibility (and also hide the form field wrapper);
- * - required - set the required state of the field;
- * - readonly - set the readonly state of the field;
- * - disabled - set the disabled state of the field;
+ * Set actions:
  * - set - set the field value from the query result;
  * - set-if-blank - set the field value from the query result only if the field value is blank
  * */
 (function ($, ns) {
     'use strict';
-
-    /**
-     * Change the visibility of the field and the form field wrapper
-     * query type: boolean
-     * */
-    ns.ActionRegistry.register('visibility', function setVisibility(state) {
-        ns.ElementAccessors.setVisibility(this.$el, state, this);
-    });
-
-    /**
-     * Change the required state of the field
-     * query type: boolean
-     * */
-    ns.ActionRegistry.register('required', function setRequired(state) {
-        state = ns.ElementAccessors.setRequired(this.$el, state, this);
-        // Update label according to state
-        ns.ElementAccessors.setLabelRequired(this.$el, state);
-    });
-
-    /**
-     * Change the readonly state of the field
-     * query type: boolean
-     * */
-    ns.ActionRegistry.register('readonly', function setReadonly(state) {
-        ns.ElementAccessors.setReadonly(this.$el, state, this);
-    });
-
-    /**
-     * Change the disabled state of the field
-     * query type: boolean
-     * */
-    ns.ActionRegistry.register('disabled', function setDisabled(state) {
-        ns.ElementAccessors.setDisabled(this.$el, state, this);
-    });
 
     /**
      * Set the field value from the query result, skip undefined query results
@@ -81,6 +43,13 @@
         const current = ns.ElementAccessors.getValue(this.$el);
         if ((current === '' || current === null || current === undefined) && value !== undefined) {
             ns.ElementAccessors.setValue(this.$el, value);
+        }
+    });
+
+    /** Set the form field placeholder */
+    ns.ActionRegistry.register('set-placeholder', function setPlaceholder(value) {
+        if (value !== undefined) {
+            ns.ElementAccessors.setPlaceholder(this.$el, value);
         }
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

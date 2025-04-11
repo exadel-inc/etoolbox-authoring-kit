@@ -26,11 +26,9 @@
     const actionRegistryMap = {};
 
     class ActionRegistry {
-        /**
-         * Default action name
-         * */
+        /** Default action name */
         static get DEFAULT() {
-            return 'visibility';
+            return 'visible';
         }
 
         /**
@@ -87,6 +85,15 @@
             }
             actionRegistryMap[sanitizedName] = actionFn;
             return actionFn;
+        }
+
+        /** Registers alias action */
+        static registerAlias(name, alias) {
+            const action = ActionRegistry.getAction(alias);
+            if (!action) {
+                throw new Error(`[DependsOn]: cannot register alias "${name}" for unknown action "${alias}"`);
+            }
+            ActionRegistry.register(name, action);
         }
     }
 

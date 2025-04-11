@@ -17,7 +17,7 @@
  * if there are more child components inserted than the {@link MaxChildrenLimiter.LIMIT_RESOLVER_NAME} listener returns or
  * defined by {@link MaxChildrenLimiter.LIMIT_RESOLVER_PROPERTY} in policies or designs.
  */
-(function (ns, $, author) {
+(function (ns, $, utils, author) {
     'use strict';
 
     ns.MaxChildrenLimiter = ns.MaxChildrenLimiter || {};
@@ -47,7 +47,7 @@
      * @returns {number} - max children for the given editable
      */
     ns.MaxChildrenLimiter.getChildrenLimit = function getChildrenLimit(editable) {
-        const limit = ns.EAKUtils.executeListener(editable, ns.MaxChildrenLimiter.LIMIT_RESOLVER_NAME);
+        const limit = utils.executeListener(editable, ns.MaxChildrenLimiter.LIMIT_RESOLVER_NAME);
         if (typeof limit === 'number' || typeof limit === 'string') return +limit;
         return ns.MaxChildrenLimiter.resolveChildrenLimitFromPolicy(editable);
     };
@@ -111,7 +111,7 @@
     };
 
     /** Debounced version of {@link updateParsysZones} */
-    ns.MaxChildrenLimiter.updateParsysZonesDebounced = $.debounce(100, ns.MaxChildrenLimiter.updateParsysZones);
+    ns.MaxChildrenLimiter.updateParsysZonesDebounced = utils.debounce(ns.MaxChildrenLimiter.updateParsysZones, 100);
 
     const $document = $(document);
     $document.on('cq-layer-activated', function (ev) {
@@ -119,7 +119,7 @@
 
         // decorate insert action condition
         const action = author.edit.EditableActions.INSERT;
-        action.condition = ns.EAKUtils.decorate(action.condition, function (originalCondition, ...args) {
+        action.condition = utils.decorate(action.condition, function (originalCondition, ...args) {
             return ns.MaxChildrenLimiter.isInsertionAllowed(...args) && originalCondition.apply(this, args);
         });
 
@@ -130,4 +130,4 @@
         const UPDATE_EVENTS = 'cq-editables-updated.eak.limited-parsys cq-overlays-repositioned.eak.limited-parsys';
         $document.off(UPDATE_EVENTS).on(UPDATE_EVENTS, ns.MaxChildrenLimiter.updateParsysZonesDebounced);
     });
-}(Granite, Granite.$, Granite.author));
+}(Granite, Granite.$, Granite.EAKUtils, Granite.author));

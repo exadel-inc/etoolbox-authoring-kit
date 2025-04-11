@@ -22,7 +22,7 @@
                                          required="{Boolean}false">
                         <granite:data jcr:primaryType="nt:unstructured"
                                       dependsOn="@field1 === '\\;'"
-                                      dependsOnAction="visibility"/>
+                                      dependsOnAction="visible"/>
                     </literalEscapingTest>
                     <iifeQueryTest jcr:primaryType="nt:unstructured"
                                    sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
@@ -32,7 +32,7 @@
                                    required="{Boolean}false">
                         <granite:data jcr:primaryType="nt:unstructured"
                                       dependsOn="(function() { var sum = @a + @b\\; return sum * sum\\; })()"
-                                      dependsOnAction="visibility"/>
+                                      dependsOnAction="visible"/>
                     </iifeQueryTest>
                     <multipleActions jcr:primaryType="nt:unstructured"
                                      sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
@@ -42,7 +42,7 @@
                                      required="{Boolean}false">
                         <granite:data jcr:primaryType="nt:unstructured"
                                       dependsOn="'\\;' === '\\;';'\\;' === '\\;'"
-                                      dependsOnAction="visibility;required"/>
+                                      dependsOnAction="visible;required"/>
                     </multipleActions>
                     <literalEscapingSpecialCharactersTest jcr:primaryType="nt:unstructured"
                           sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
@@ -52,7 +52,7 @@
                           required="{Boolean}false">
                         <granite:data jcr:primaryType="nt:unstructured"
                             dependsOn="\['a', 'b', 'c', 'd', 'e','\[\]','t\\;rex'\].includes(@type(coral-multifield-item))\\;"
-                            dependsOnAction="visibility"/>
+                            dependsOnAction="visible"/>
                     </literalEscapingSpecialCharactersTest>
                 </items>
             </column>

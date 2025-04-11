@@ -22,6 +22,9 @@ $.fn.adaptTo = function (key) {
         };
     }
     if (key === 'foundation-field') {
+        if (typeof this.__mock_foundation_api === 'function') {
+            return this.__mock_foundation_api.call(this);
+        }
         return this.__mock_foundation_api || null;
     }
     if (key === 'foundation-validation-helper') {
@@ -36,6 +39,10 @@ $.fn.adaptTo = function (key) {
 // Mock API setter
 $.fn.mockFoundationField = function (api) {
     this.__mock_foundation_api = api;
+    return this;
+};
+$.fn.clearFoundationFieldMock = function () {
+    this.__mock_foundation_api = null;
     return this;
 };
 
