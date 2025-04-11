@@ -8,7 +8,7 @@
     "esModuleInterop": true,
     "target": "ES6",
     "downlevelIteration": true,
-    "module": "ES2015",
+    "module": "ES2022",
     "moduleResolution": "Node",
     "outDir": "./dist",
     "rootDir": "./"

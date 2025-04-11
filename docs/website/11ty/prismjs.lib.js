@@ -1,9 +1,9 @@
-const Prism = require('prismjs');
+import Prism from 'prismjs';
 
-require('prismjs/components/prism-java');
-require(`prismjs/components/prism-javascript`);
+import 'prismjs/components/prism-java.js';
+import 'prismjs/components/prism-javascript.js';
 
-const highlight = (str, lang) => {
+export const highlight = (str, lang) => {
   try {
     lang = lang || 'text';
     if (!Prism.languages[lang]) return `<!-- Error: Unsupported language '${lang}' -->`;
@@ -13,7 +13,7 @@ const highlight = (str, lang) => {
   }
 };
 
-const getOffset = (lines) => {
+export const getOffset = (lines) => {
   if (!lines.length) return 0;
   return lines.reduce((min, str) => {
     if (!str) return min;
@@ -23,7 +23,7 @@ const getOffset = (lines) => {
   }, Number.MAX_SAFE_INTEGER);
 };
 
-const normalize = (str) => {
+export const normalize = (str) => {
   const lines = str.split('\n');
   // Exclude first empty line if exists
   if (lines.length && !lines[0].trim()) lines.shift();
@@ -35,14 +35,12 @@ const normalize = (str) => {
   return lines.map((str) => str.substr(offset)).join('\n');
 };
 
-const highlightNormalized = (str, lang) => {
+export const highlightNormalized = (str, lang) => {
   const text = normalize(str);
   const code = highlight(text, lang);
   return `<pre><code class="language-${lang}">${code}</code></pre>`;
 };
 
-module.exports = (config) => {
+export default (config) => {
   config.addPairedNunjucksShortcode('code', highlightNormalized);
 };
-module.exports.highlight = highlight;
-module.exports.highlightNormalized = highlightNormalized;

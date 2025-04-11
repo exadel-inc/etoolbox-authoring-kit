@@ -1,6 +1,6 @@
-const fs = require('fs');
+import fs from 'fs';
 
-module.exports = (config) => {
+export default async (config) => {
   // Init all 11ty config modules
   const cfgFiles = fs.readdirSync('./11ty');
   for (const file of cfgFiles) {
@@ -8,7 +8,9 @@ module.exports = (config) => {
     if (file.startsWith('_')) continue;
     try {
       console.info(`Initializing module: ${file}`);
-      require('./11ty/' + file)(config);
+      const module = await import(`./11ty/${file}`);
+      module.default(config);
+
       console.info(`Module ${file} initialized.`);
     } catch (e) {
       console.error(`Module ${file} initialization failed`);

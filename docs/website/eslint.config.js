@@ -1,13 +1,26 @@
-module.exports = [
+import {lang, strict} from '@exadel/eslint-config-esl';
+import {recommended as eslRecommended} from '@exadel/eslint-plugin-esl';
+
+export default [
   {
-    files: ['**/*.ts', '**/*.js'],
+    ignores: [
+      // Common directories
+      'node_modules/**',
+      'dist/**',
+    ]
+  },
+  {
+    files: ['**/*.js', '**/*.ts', '**/*.tsx'],
     linterOptions: {
       reportUnusedDisableDirectives: 'warn'
     }
   },
 
-  ...require('./eslint.config.ignore'),
-  ...require('@exadel/eslint-config-esl').typescript,
-  ...require('@exadel/eslint-config-esl').recommended,
-  ...require('@exadel/eslint-plugin-esl').recommended
+  // Using shared ESL ESLint Config
+  ...lang.js,
+  ...lang.ts,
+  ...strict,
+
+  // ESL ESLint Plugin
+  ...eslRecommended
 ];

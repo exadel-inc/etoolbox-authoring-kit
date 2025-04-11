@@ -1,6 +1,9 @@
-const path = require('path');
+import path, {dirname} from 'path';
+import {fileURLToPath} from 'url';
 
-module.exports = {
+const FILE_ROOT = dirname(fileURLToPath(import.meta.url));
+
+export default {
   mode: 'development',
   devtool: 'source-map',
   entry: {
@@ -24,7 +27,7 @@ module.exports = {
     }]
   },
   output: {
-    path: path.resolve(__dirname, 'dist/bundles'),
+    path: path.resolve(FILE_ROOT, 'dist/bundles'),
     filename: '[name].js'
   }
 };
