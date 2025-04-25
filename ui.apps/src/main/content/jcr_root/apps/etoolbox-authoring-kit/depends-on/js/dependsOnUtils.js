@@ -163,11 +163,7 @@
      */
     ns.parseSafe = function (value) {
         try {
-            const jsonObject = JSON.parse(value);
-            if (Object.keys(jsonObject).length === 0) {
-                return null;
-            }
-            return jsonObject;
+            return JSON.parse(value);
         } catch (e) {
             return null;
         }
