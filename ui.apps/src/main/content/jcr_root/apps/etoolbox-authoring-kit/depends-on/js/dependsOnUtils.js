@@ -75,11 +75,7 @@
             case 'string':
                 return String(value);
             case 'json': {
-                const obj = ns.parseSafe(value);
-                if (obj) {
-                    return obj;
-                }
-                break;
+                return ns.parseSafe(value) || undefined;
             }
             default:
                 return value;
