@@ -55,7 +55,7 @@ public class ListHelper {
 
     private static final String MESSAGE_CANNOT_CREATE_LIST = "Cannot create a list";
     private static final String MESSAGE_CANNOT_RETRIEVE_MAP = "Cannot retrieve a map";
-    private static final String MESSAGE_NO_ITEMS = "The list at {} will be empty. No items available";
+    private static final String MESSAGE_NO_ITEMS = "The list at {} is empty. No items available";
 
     /**
      * Default (instantiation-restricting) constructor
