@@ -74,12 +74,13 @@ public class DependsOnTabHandler implements Handler {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(DependsOnHandler.EMPTY_VALUES_EXCEPTION_MESSAGE));
             return;
         }
-        if (target.exists(TAB_ITEMS_NODE_PATH + "/" + NamingUtil.getValidNodeName(value.tabTitle()))) {
+        String tabPath = TAB_ITEMS_NODE_PATH + "/" + NamingUtil.getValidNodeName(value.tabTitle());
+        if (target.exists(tabPath)) {
             Map<String, Object> dependsOnAttributes = ImmutableMap.of(
                 DialogConstants.PN_DEPENDS_ON, value.query(),
                 DialogConstants.PN_DEPENDS_ON_ACTION, DependsOnActions.TAB_VISIBILITY);
             target
-                .getTarget(TAB_ITEMS_NODE_PATH  + CoreConstants.SEPARATOR_SLASH  + value.tabTitle())
+                .getTarget(tabPath)
                 .getOrCreateTarget(CoreConstants.NN_GRANITE_DATA)
                 .attributes(dependsOnAttributes);
         } else {
