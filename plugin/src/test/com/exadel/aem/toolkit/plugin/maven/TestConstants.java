@@ -38,7 +38,7 @@ public class TestConstants {
     public static final String LABEL_TAB_4 = "Fourth tab";
     public static final String LABEL_TAB_5 = "Fifth tab";
     public static final String LABEL_TAB_6 = "Sixth tab";
-    public static final String LABEL_TAB_7 = "Seventh tab";
+    public static final String LABEL_TAB_7 = "Seventh / tab";
 
     public static final String PROPERTY_TIMESTAMP = "timestamp";
 
