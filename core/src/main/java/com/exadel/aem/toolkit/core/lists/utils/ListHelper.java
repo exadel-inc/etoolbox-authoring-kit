@@ -55,6 +55,7 @@ public class ListHelper {
 
     private static final String MESSAGE_CANNOT_CREATE_LIST = "Cannot create a list";
     private static final String MESSAGE_CANNOT_RETRIEVE_MAP = "Cannot retrieve a map";
+    private static final String MESSAGE_NO_ITEMS = "The list at {} will be empty. No items available";
 
     /**
      * Default (instantiation-restricting) constructor
@@ -103,8 +104,7 @@ public class ListHelper {
     @Nonnull
     public static <T> List<T> getList(ResourceResolver resourceResolver, String path, Class<T> itemType) {
         if (resourceResolver == null || StringUtils.isBlank(path) || itemType == null) {
-            reportInvalidArguments("Cannot retrieve a list");
-            return Collections.emptyList();
+            return reportInvalidArguments("Cannot retrieve a list", Collections.emptyList());
         }
         return getItemsStream(resourceResolver, path)
             .map(getMapperFunction(itemType))
@@ -154,8 +154,7 @@ public class ListHelper {
     @Nonnull
     public static Map<String, String> getMap(ResourceResolver resourceResolver, String path) {
         if (resourceResolver == null || StringUtils.isBlank(path)) {
-            reportInvalidArguments(MESSAGE_CANNOT_RETRIEVE_MAP);
-            return Collections.emptyMap();
+            reportInvalidArguments(MESSAGE_CANNOT_RETRIEVE_MAP, Collections.emptyMap());
         }
         return getMapInternal(
             resourceResolver,
@@ -180,8 +179,7 @@ public class ListHelper {
     @Nonnull
     public static <T> Map<String, T> getMap(ResourceResolver resourceResolver, String path, String keyName, Class<T> itemType) {
         if (resourceResolver == null || StringUtils.isAnyBlank(path, keyName) || itemType == null) {
-            reportInvalidArguments(MESSAGE_CANNOT_RETRIEVE_MAP);
-            return Collections.emptyMap();
+            return reportInvalidArguments(MESSAGE_CANNOT_RETRIEVE_MAP, Collections.emptyMap());
         }
         return getMapInternal(resourceResolver, path, keyName, getMapperFunction(itemType));
     }
@@ -206,12 +204,14 @@ public class ListHelper {
         String path,
         List<T> values) throws WCMException {
 
-        if (resourceResolver == null || StringUtils.isBlank(path) || CollectionUtils.isEmpty(values)) {
-            reportInvalidArguments(MESSAGE_CANNOT_CREATE_LIST);
-            return null;
+        if (resourceResolver == null || StringUtils.isBlank(path)) {
+            return reportInvalidArguments(MESSAGE_CANNOT_CREATE_LIST, null);
+        }
+        if (CollectionUtils.isEmpty(values)) {
+            reportNoItems(path);
         }
 
-        Class<?> modelType = values.get(0) != null ? values.get(0).getClass() : null;
+        Class<?> modelType = CollectionUtils.isNotEmpty(values) && values.get(0) != null ? values.get(0).getClass() : null;
         Function<Object, Map<String, Object>> mapping = ListResourceUtil.getMappingFunction(modelType);
         List<Resource> resources = values.stream()
             .map(mapping)
@@ -237,9 +237,12 @@ public class ListHelper {
         String path,
         Map<String, Object> values) throws WCMException {
 
-        if (resourceResolver == null || StringUtils.isBlank(path) || MapUtils.isEmpty(values)) {
-            reportInvalidArguments(MESSAGE_CANNOT_CREATE_LIST);
-            return null;
+        if (resourceResolver == null || StringUtils.isBlank(path)) {
+            return reportInvalidArguments(MESSAGE_CANNOT_CREATE_LIST, null);
+        }
+
+        if (MapUtils.isEmpty(values)) {
+            reportNoItems(path);
         }
 
         List<Resource> resources = ListResourceUtil.mapToValueMapResources(resourceResolver, values);
@@ -260,13 +263,16 @@ public class ListHelper {
         String path,
         Collection<Resource> resources) throws WCMException {
 
-        if (resourceResolver == null || StringUtils.isBlank(path) || CollectionUtils.isEmpty(resources)) {
-            reportInvalidArguments(MESSAGE_CANNOT_CREATE_LIST);
+        if (resourceResolver == null || StringUtils.isBlank(path)) {
+            return reportInvalidArguments(MESSAGE_CANNOT_CREATE_LIST, null);
+        }
+
+        if (CollectionUtils.isEmpty(resources)) {
+            reportNoItems(path);
         }
 
         Page listPage;
         try {
-            assert resourceResolver != null;
             Resource pageResource = resourceResolver.getResource(path);
             if (pageResource != null) {
                 LOG.debug("Will delete an existing list page at {}", path);
@@ -377,8 +383,20 @@ public class ListHelper {
     /**
      * Reports an error message when one or more arguments are invalid
      * @param message Message to be reported
+     * @param fallback The fallback value to be returned
+     * @return A nullable value
+     * @param <T> Type of the fallback value
      */
-    private static void reportInvalidArguments(String message) {
+    private static <T> T reportInvalidArguments(String message, T fallback) {
         LOG.error("{}. One or more provided arguments are null or blank", message);
+        return fallback;
+    }
+
+    /**
+     * Reports a warning message when no items are available at the given path
+     * @param path Path to the items list
+     */
+    private static void reportNoItems(String path) {
+        LOG.warn(MESSAGE_NO_ITEMS, path);
     }
 }
