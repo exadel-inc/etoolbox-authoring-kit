@@ -27,6 +27,8 @@ import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerFactory;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -87,20 +89,21 @@ public class XmlContextHelper implements XmlUtility {
        --------------------------------- */
 
     private final DocumentBuilder documentBuilder;
+    private final TransformerFactory transformerFactory;
     private final Document document;
 
     /**
      * Default constructor
-     * @param documentBuilder {@link DocumentBuilder} instance to be used as an XML document factory within this instance
      */
-    public XmlContextHelper(DocumentBuilder documentBuilder) {
-        this.documentBuilder = documentBuilder;
+    public XmlContextHelper() throws ParserConfigurationException {
+        this.documentBuilder = XmlFactory.newDocumentBuilder();
+        this.transformerFactory = TransformerFactory.newInstance();
         this.document = documentBuilder.newDocument();
     }
 
     /**
      * Retrieves the {@link DocumentBuilder} associated with the current instance
-     * @return {@code DocumentBuilder} instance
+     * @return {@code DocumentBuilder} object
      */
     public DocumentBuilder getDocumentBuilder() {
         return documentBuilder;
@@ -114,6 +117,13 @@ public class XmlContextHelper implements XmlUtility {
         return document;
     }
 
+    /**
+     * Retrieves the {@link TransformerFactory} associated with the current instance
+     * @return {@code TransformerFactory} object
+     */
+    public TransformerFactory getTransformerFactory() {
+        return transformerFactory;
+    }
 
     /* ----------------------------
        XmlUtility interface members

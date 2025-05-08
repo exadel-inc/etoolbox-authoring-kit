@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.utils;
+package com.exadel.aem.toolkit.plugin.runtime;
 
 import java.util.Map;
 import javax.xml.XMLConstants;
@@ -28,20 +28,7 @@ import com.google.common.collect.ImmutableMap;
 /**
  * Contains utility methods for creating and transforming XML entities
  */
-public class XmlFactory {
-
-    public static final String XML_NAMESPACE_PREFIX = "xmlns:";
-
-    /**
-     * XML namespaces typically present in an AEM component markup
-     */
-    public static final Map<String, String> XML_NAMESPACES = ImmutableMap.of(
-        "jcr", "http://www.jcp.org/jcr/1.0",
-        "nt", "http://www.jcp.org/jcr/nt/1.0",
-        "sling", "http://sling.apache.org/jcr/sling/1.0",
-        "cq", "http://www.day.com/jcr/cq/1.0",
-        "granite", "http://www.adobe.com/jcr/granite/1.0"
-    );
+class XmlFactory {
 
     /**
      * Security features as per XML External entity protection cheat sheet

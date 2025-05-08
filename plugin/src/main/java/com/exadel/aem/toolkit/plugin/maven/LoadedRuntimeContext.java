@@ -22,7 +22,6 @@ import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.exceptions.handlers.ExceptionHandlers;
 import com.exadel.aem.toolkit.plugin.runtime.ReflectionContextHelper;
 import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
-import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 /**
  * The implementation of {@link PluginRuntimeContext} for the ToolKit Maven plugin instance that has been properly
@@ -74,7 +73,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
     @Override
     public XmlContextHelper newXmlUtility() {
         try {
-            xmlRuntime = new XmlContextHelper(XmlFactory.newDocumentBuilder());
+            xmlRuntime = new XmlContextHelper();
         } catch (ParserConfigurationException e) {
             // Cannot proceed with the plugin flow if the XML subsystem fails this early
             throw new PluginException(XML_EXCEPTION_MESSAGE, e);

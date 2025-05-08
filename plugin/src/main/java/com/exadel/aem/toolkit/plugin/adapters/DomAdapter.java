@@ -50,12 +50,7 @@ public class DomAdapter {
             return sourceDocument;
         }
         if (sourceDocument == null) {
-            try {
-                sourceDocument = XmlFactory.newDocumentBuilder().newDocument();
-            } catch (ParserConfigurationException e) {
-                PluginRuntime.context().getExceptionHandler().handle(e);
-                return null;
-            }
+            sourceDocument = PluginRuntime.context().getXmlUtility().getDocumentBuilder().newDocument();
         }
         sourceDocument.appendChild(createElement(sourceDocument, target, true));
         return sourceDocument;
@@ -73,12 +68,7 @@ public class DomAdapter {
             return sourceDocument != null ? sourceDocument.getDocumentElement() : null;
         }
         if (sourceDocument == null) {
-            try {
-                sourceDocument = XmlFactory.newDocumentBuilder().newDocument();
-            } catch (ParserConfigurationException e) {
-                PluginRuntime.context().getExceptionHandler().handle(e);
-                return null;
-            }
+            sourceDocument = PluginRuntime.context().getXmlUtility().getDocumentBuilder().newDocument();
         }
         return createElement(sourceDocument, target, true);
     }
