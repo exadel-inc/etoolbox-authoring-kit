@@ -18,6 +18,24 @@ package com.exadel.aem.toolkit.api.annotations.main;
  * @see AemComponent#writeMode()
  */
 public enum WriteMode {
-    OPEN,
-    CREATE
+    /**
+     * If the folder for the current component does not exist, it is created. Otherwise, the behavior is the same as for
+     * {@link #OPEN}
+     */
+    CREATE,
+
+    /**
+     * In the folder of the current component, the content is merged with the newly stored content. E.g., if the
+     * component wants to store a {@code cq:dialog} node, and the folder already has a {@code _cq_dialog.xml} file, the
+     * new one is written, and then the old one is merged into it. If the component folder does not exist, an exception
+     * if thrown. This is the default behavior
+     */
+    MERGE,
+
+    /**
+     * The folder of the current component is cleaned up before writing file-wise. E.g., if the component needs to store
+     * a {@code cq:dialog} node, and the folder already has a {@code _cq_dialog.xml} file, the file is erased and a
+     * new one is written. If the component folder does not exist, an exception if thrown. This is the default behavior
+     */
+    OPEN
 }
