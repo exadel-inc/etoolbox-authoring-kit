@@ -155,7 +155,7 @@
     /**
      * Attempts to parse the string value into a JSON object
      * @param {string} value to parse
-     * @return {Object || null} parsed value or null in case of empty object or any exceptions
+     * @return {Object|null} parsed value or null if parsing fails due to an exception
      */
     ns.parseSafe = function (value) {
         try {
