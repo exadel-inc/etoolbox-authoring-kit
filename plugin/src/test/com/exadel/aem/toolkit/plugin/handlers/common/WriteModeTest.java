@@ -87,12 +87,12 @@ public class WriteModeTest {
                     fileSystem.getPath(TestConstants.PACKAGE_ROOT_PATH, TestConstants.DEFAULT_COMPONENT_NAME, "_cq_dialog.xml"),
                     "<jcr:root xmlns:jcr=\"http://www.jcp.org/jcr/1.0\" jcr:title=\"Test Component Alt\" width=\"{Double}1000.0\"><content><items><column><items><text required=\"{Boolean}true\" emptyText=\"Empty\"/></items></column></items></content></jcr:root>");
                 FileUtil.writeFile(
-                    fileSystem.getPath(TestConstants.PACKAGE_ROOT_PATH, TestConstants.DEFAULT_COMPONENT_NAME, "_cq_EditConfig.xml"),
+                    fileSystem.getPath(TestConstants.PACKAGE_ROOT_PATH, TestConstants.DEFAULT_COMPONENT_NAME, "_cq_editConfig.xml"),
                     "<jcr:root xmlns:jcr=\"http://www.jcp.org/jcr/1.0\" xmlns:nt=\"http://www.jcp.org/jcr/nt/1.0\" xmlns:cq=\"http://www.day.com/jcr/cq/1.0\" xmlns:sling=\"http://sling.apache.org/jcr/sling/1.0\" emptyText=\"Empty\">" +
                         "<cq:inplaceEditing jcr:primaryType=\"nt:unstructured\" sling:resourceType=\"cq:InplaceEditingConfig\" editorType=\"text\"><config editElementQuery=\".editable-header\" jcr:primaryType=\"nt:unstructured\" propertyName=\"./header\"/></cq:inplaceEditing>" +
                         "</jcr:root>");
                 FileUtil.writeFile(
-                    fileSystem.getPath(TestConstants.PACKAGE_ROOT_PATH, TestConstants.DEFAULT_COMPONENT_NAME, "_cq_ChildEditConfig.xml"),
+                    fileSystem.getPath(TestConstants.PACKAGE_ROOT_PATH, TestConstants.DEFAULT_COMPONENT_NAME, "_cq_childEditConfig.xml"),
                     "<jcr:root xmlns:jcr=\"http://www.jcp.org/jcr/1.0\" xmlns:cq=\"http://www.day.com/jcr/cq/1.0\"><cq:listeners aftercopy=\"REFRESH_SELF\"/></jcr:root>");
             });
     }
