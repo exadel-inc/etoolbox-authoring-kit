@@ -34,6 +34,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
@@ -56,6 +57,19 @@ import com.exadel.aem.toolkit.plugin.validators.Validation;
 @SuppressWarnings("deprecation") // XmlUtility is retained for compatibility reasons (used in legacy custom handlers)
 // This will be retired in a version after 2.0.2
 public class XmlContextHelper implements XmlUtility {
+
+    /**
+     * XML namespaces typically present in an AEM component markup
+     */
+    public static final Map<String, String> NAMESPACES = ImmutableMap.of(
+        "jcr", "http://www.jcp.org/jcr/1.0",
+        "nt", "http://www.jcp.org/jcr/nt/1.0",
+        "sling", "http://sling.apache.org/jcr/sling/1.0",
+        "cq", "http://www.day.com/jcr/cq/1.0",
+        "granite", "http://www.adobe.com/jcr/granite/1.0"
+    );
+
+    public static final String NAMESPACE_PREFIX = "xmlns:";
 
     /**
      * Default routine to manage the merging of two values of an XML attribute by suppressing existing value in favor of
