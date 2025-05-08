@@ -31,11 +31,11 @@ import com.exadel.aem.toolkit.api.annotations.widgets.TextField;
 @Dialog
 @Tabs({
     @Tab(title = "First tab"),
-    @Tab(title = "Second tab")
+    @Tab(title = "Second / tab")
 
 })
 @DependsOnTab(query = "test-query", tabTitle = "First tab")
-@DependsOnTab(query = "test-query", tabTitle = "Second tab")
+@DependsOnTab(query = "test-query", tabTitle = "Second / tab")
 @SuppressWarnings("unused")
 public class DependsOnTabAnnotation {
     @DialogField(label = "Field on the first tab")
@@ -45,6 +45,6 @@ public class DependsOnTabAnnotation {
 
     @DialogField(label = "Field on the second tab")
     @TextField
-    @Place("Second tab")
+    @Place("Second / tab")
     String field2;
 }
