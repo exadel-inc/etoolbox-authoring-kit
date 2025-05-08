@@ -13,6 +13,9 @@
  */
 package com.exadel.aem.toolkit.plugin.utils;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -24,6 +27,7 @@ import javax.xml.transform.TransformerFactory;
 
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -62,12 +66,26 @@ public class XmlFactory {
     }
 
     /**
-     * Creates a new {@link Document} instance compliant with XML entity protection policies
+     * Creates a new {@link Document} that follows XML security policies
      * @return Empty XML {@code Document}
      * @throws ParserConfigurationException if one or more security features cannot be assigned to the newly created document
      */
     public static Document newDocument() throws ParserConfigurationException {
         return createDocumentBuilder().newDocument();
+    }
+
+    /**
+     * Creates a new {@link Document} that follows XML security policies via reading and parsing the given XML file
+     * @param content XML file content to be parsed
+     * @return Empty XML {@code Document}
+     * @throws IOException if the file cannot be read
+     * @throws ParserConfigurationException if one or more security features cannot be assigned to the newly created document
+     * @throws SAXException if the file cannot be parsed
+     */
+    public static Document newDocument(byte[] content) throws IOException, ParserConfigurationException, SAXException {
+        try (InputStream input = new ByteArrayInputStream(content)) {
+            return createDocumentBuilder().parse(input);
+        }
     }
 
     /**
@@ -89,7 +107,7 @@ public class XmlFactory {
     }
 
     /**
-     * Creates a {@link Transformer} instance compliant with XML security attributes
+     * Creates a {@link Transformer} instance compliant with XML security policies
      * @return {@code Transformer} object
      * @throws TransformerConfigurationException in case security attributes cannot be set
      */
