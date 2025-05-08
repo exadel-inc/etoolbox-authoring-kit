@@ -13,19 +13,12 @@
  */
 package com.exadel.aem.toolkit.plugin.handlers.common;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 
-import org.apache.commons.lang3.StringUtils;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import static com.exadel.aem.toolkit.plugin.maven.TestConstants.RESOURCE_FOLDER_WIDGETS;
 
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComplexComponent1;
@@ -40,13 +33,12 @@ import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.MultiColum
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ScriptedComponent;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.viewpattern.component1.ComplexComponentHolder;
 import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
+import com.exadel.aem.toolkit.plugin.maven.FileUtil;
 import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
 import com.exadel.aem.toolkit.plugin.maven.TestConstants;
 import com.exadel.aem.toolkit.plugin.maven.ThrowsPluginException;
 
 public class ComponentsTest {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ComponentsTest.class);
 
     @ClassRule
     public static FileSystemRule fileSystemHost = new FileSystemRule();
@@ -103,32 +95,15 @@ public class ComponentsTest {
     @Test
     public void testComponentViewPattern() {
         Path targetPath = Paths.get(TestConstants.CONTENT_ROOT_PATH, "handlers/common/components/viewPattern/component1").toAbsolutePath();
-        String outdatedContentXml = readFile(Paths.get(TestConstants.CONTENT_ROOT_PATH, "handlers/common/editConfig/.content.xml"));
+        String outdatedContentXml = FileUtil.readFile(Paths.get(TestConstants.CONTENT_ROOT_PATH, "handlers/common/editConfig/.content.xml"));
         pluginContext.test(
             ComplexComponentHolder.class,
             targetPath,
-            fileSystem -> writeFile(fileSystem.getPath(TestConstants.PACKAGE_ROOT_PATH, TestConstants.DEFAULT_COMPONENT_NAME, ".content.xml"), outdatedContentXml));
+            fileSystem -> FileUtil.writeFile(fileSystem.getPath(TestConstants.PACKAGE_ROOT_PATH, TestConstants.DEFAULT_COMPONENT_NAME, ".content.xml"), outdatedContentXml));
     }
 
     @Test
     public void testScriptingSupport() {
         pluginContext.test(ScriptedComponent.class);
-    }
-
-    private static String readFile(Path path) {
-        try {
-            return String.join(StringUtils.EMPTY, Files.readAllLines(path));
-        } catch (IOException ex) {
-            LOG.error(ex.getMessage(), ex);
-        }
-        return StringUtils.EMPTY;
-    }
-
-    private static void writeFile(Path path, String content) {
-        try(BufferedWriter writer = Files.newBufferedWriter(path, StandardOpenOption.CREATE)) {
-            writer.write(content);
-        } catch (IOException ex) {
-            LOG.error(ex.getMessage(), ex);
-        }
     }
 }
