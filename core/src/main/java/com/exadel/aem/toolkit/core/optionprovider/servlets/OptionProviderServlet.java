@@ -14,9 +14,11 @@
 package com.exadel.aem.toolkit.core.optionprovider.servlets;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
@@ -26,14 +28,15 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
-import org.json.JSONException;
-import org.json.JSONWriter;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 import com.adobe.granite.ui.components.ds.DataSource;
 import com.adobe.granite.ui.components.ds.SimpleDataSource;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.api.annotations.widgets.radio.RadioGroup;
@@ -42,10 +45,10 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.OptionProviderService;
 
 /**
- * Allows setting custom data source for a widget that is supporting Granite datasources, such as a {@link RadioGroup}
+ * Allows setting a custom data source for a widget that works with Granite datasources, such as a {@link RadioGroup}
  * or a {@link Select}. Supports a number of settings that are either stored as attributes of the {@code datasource} node
- * in Granite UI setup or passed in an HTTP request as query arguments. Datasource options are rendered from either
- * a node tree, an Exadel Toolbox List / ACS List -like node structure ({@code [...]/node/jcr:content/list/[items]}),
+ * in Granite UI setup or passed to an HTTP request as query arguments. Datasource options are rendered from either
+ * a node tree, an EToolbox List / ACS List-like node structure ({@code [...]/node/jcr:content/list/[items]}),
  * or a tag folder
  * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
  * code</p>
@@ -91,13 +94,13 @@ public class OptionProviderServlet extends SlingSafeMethodsServlet {
         }
         try {
             response.getWriter().print(getJsonOutput(options));
-        } catch (JSONException | NullPointerException e) {
+        } catch (JsonProcessingException e) {
             throw new ServletException(e);
         }
     }
 
     /**
-     * Gets whether the current request has the {@code output=json} parameter
+     * Gets whether the current request is for JSON output judging by the request path or parameters
      * @param request {@code SlingHttpServletRequest} object
      * @return True or false
      */
@@ -113,44 +116,42 @@ public class OptionProviderServlet extends SlingSafeMethodsServlet {
     }
 
     /**
-     * Generates the JSON representation of the options list as requested by the user
-     * @param entries List of datasource options
+     * Generates the JSON representation of the option list as requested by the user
+     * @param options List of datasource options
      * @return JSON string
-     * @throws JSONException in case of a JSON format violation
-     * @throws IOException in case a writing operation fails
+     * @throws JsonProcessingException in case JSON serialization fails
      */
-    private static String getJsonOutput(List<Resource> entries) throws IOException, JSONException {
-        try (StringWriter stringWriter = new StringWriter()) {
-            JSONWriter jsonWriter = new JSONWriter(stringWriter);
-            jsonWriter.array();
-            for (Resource entry : entries) {
-                jsonWriter.object();
-                writeResourceAttributes(jsonWriter, entry);
-                jsonWriter.endObject();
-            }
-            jsonWriter.endArray();
-            return stringWriter.toString();
-        }
+    private static String getJsonOutput(List<Resource> options) throws JsonProcessingException {
+        List<Map<String, Object>> jsonEntries = options
+            .stream()
+            .map(resource -> {
+                ValueMap valueMap = resource.getValueMap();
+                Map<String, Object> entry = new LinkedHashMap<>();
+                entry.put(CoreConstants.PN_TEXT, valueMap.get(CoreConstants.PN_TEXT));
+                entry.put(CoreConstants.PN_VALUE, valueMap.get(CoreConstants.PN_VALUE));
+                appendResourceAttributes(entry, resource);
+                return entry;
+            })
+            .collect(Collectors.toList());
+        return new ObjectMapper().writeValueAsString(jsonEntries);
     }
 
     /**
-     * Called by {@link OptionProviderServlet#getJsonOutput(List)} to create internals on a JSON entity representing
-     * a single datasource option
-     * @param writer {@code JSONWriter} instance
-     * @param entry  {@code Resource} to take data from
-     * @throws JSONException in case of a JSON format violation
+     * Called by {@link OptionProviderServlet#getJsonOutput(List)} to create the attribute section on a JSON entity
+     * representing a single datasource option
+     * @param container {@code Map} object that accumulates JSON data
+     * @param entry     {@code Resource} to take data from
      */
-    private static void writeResourceAttributes(JSONWriter writer, Resource entry) throws JSONException {
-        writer.key(CoreConstants.PN_TEXT).value(entry.getValueMap().get(CoreConstants.PN_TEXT, String.class));
-        writer.key(CoreConstants.PN_VALUE).value(entry.getValueMap().get(CoreConstants.PN_VALUE, String.class));
+    private static void appendResourceAttributes(Map<String, Object> container, Resource entry) {
         Resource graniteData = entry.getChild(CoreConstants.NN_GRANITE_DATA);
         if (graniteData == null) {
             return;
         }
-        writer.key(CoreConstants.NN_GRANITE_DATA).object();
-        for (String attribute : graniteData.getValueMap().keySet()) {
-            writer.key(attribute).value(graniteData.getValueMap().get(attribute, String.class));
-        }
-        writer.endObject();
+        Map<String, String> attributes = graniteData.getValueMap().entrySet().stream()
+            .filter(e -> e.getValue() != null)
+            .collect(Collectors.toMap(
+                Map.Entry::getKey,
+                e -> e.getValue().toString()));
+        container.put(CoreConstants.NN_GRANITE_DATA, attributes);
     }
 }

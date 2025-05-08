@@ -29,7 +29,8 @@
     "option0": {
       "jcr:primaryType": "nt:unstructured",
       "jcr:title": "option 0",
-      "value": "value0"
+      "value": "value0",
+      "foo": "bar"
     },
     "option1": {
       "jcr:primaryType": "nt:unstructured",
