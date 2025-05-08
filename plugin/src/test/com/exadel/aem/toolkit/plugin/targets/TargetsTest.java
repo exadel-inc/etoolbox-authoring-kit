@@ -132,7 +132,7 @@ public class TargetsTest {
 
     @Test
     public void testXmlExport() throws ParserConfigurationException {
-        Document document = testable.adaptTo(DomAdapter.class).composeDocument(XmlFactory.newDocument());
+        Document document = testable.adaptTo(DomAdapter.class).composeDocument(XmlFactory.newDocumentBuilder().newDocument());
         Assert.assertEquals(NN_ROOT, document.getDocumentElement().getTagName());
         Assert.assertEquals(
             "{Long}[1,2,3]",

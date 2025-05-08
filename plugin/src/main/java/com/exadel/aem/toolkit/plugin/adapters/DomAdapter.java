@@ -52,7 +52,7 @@ public class DomAdapter {
         }
         if (sourceDocument == null) {
             try {
-                sourceDocument = XmlFactory.newDocument();
+                sourceDocument = XmlFactory.newDocumentBuilder().newDocument();
             } catch (ParserConfigurationException e) {
                 PluginRuntime.context().getExceptionHandler().handle(e);
                 return null;
@@ -75,7 +75,7 @@ public class DomAdapter {
         }
         if (sourceDocument == null) {
             try {
-                sourceDocument = XmlFactory.newDocument();
+                sourceDocument = XmlFactory.newDocumentBuilder().newDocument();
             } catch (ParserConfigurationException e) {
                 PluginRuntime.context().getExceptionHandler().handle(e);
                 return null;

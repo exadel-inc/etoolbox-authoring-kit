@@ -13,13 +13,14 @@
  */
 package com.exadel.aem.toolkit.plugin.writers;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.function.BiConsumer;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
@@ -39,7 +40,6 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
 import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
-import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 import com.exadel.aem.toolkit.plugin.utils.XmlMergeHelper;
 
 /**
@@ -138,7 +138,7 @@ abstract class PackageEntryWriter {
         Path existingFilePath = componentPath.resolve(getScope());
         try {
             if (Files.exists(existingFilePath)) {
-                return XmlFactory.newDocument(Files.readAllBytes(existingFilePath));
+                return openXml(Files.readAllBytes(existingFilePath));
             }
             // Since the markup could be stored by hand in e.g. _cq_dialog/.content.xml instead of _cq_dialog.xml,
             // we need to check for the "folder" version of the file as well
@@ -149,12 +149,18 @@ abstract class PackageEntryWriter {
             Path nestedFolderPath = componentPath.resolve(nestedFolder);
             Path nestedFilePath = nestedFolderPath.resolve(Scopes.COMPONENT);
             if (Files.exists(nestedFilePath)) {
-                return XmlFactory.newDocument(Files.readAllBytes(existingFilePath));
+                return openXml(Files.readAllBytes(existingFilePath));
             }
-        } catch (IOException | ParserConfigurationException | SAXException e) {
+        } catch (IOException | SAXException e) {
             PluginRuntime.context().getExceptionHandler().handle(e);
         }
         return null;
+    }
+
+    private Document openXml(byte[] content) throws IOException, SAXException {
+        try (InputStream input = new ByteArrayInputStream(content)) {
+            return PluginRuntime.context().getXmlUtility().getDocumentBuilder().parse(input);
+        }
     }
 
     /**

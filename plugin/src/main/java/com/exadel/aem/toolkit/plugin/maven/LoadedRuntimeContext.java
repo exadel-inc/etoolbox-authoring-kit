@@ -74,7 +74,7 @@ class LoadedRuntimeContext implements PluginRuntimeContext {
     @Override
     public XmlContextHelper newXmlUtility() {
         try {
-            xmlRuntime = new XmlContextHelper(XmlFactory.newDocument());
+            xmlRuntime = new XmlContextHelper(XmlFactory.newDocumentBuilder());
         } catch (ParserConfigurationException e) {
             // Cannot proceed with the plugin flow if the XML subsystem fails this early
             throw new PluginException(XML_EXCEPTION_MESSAGE, e);

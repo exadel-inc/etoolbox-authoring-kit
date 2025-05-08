@@ -13,9 +13,6 @@
  */
 package com.exadel.aem.toolkit.plugin.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -26,8 +23,6 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 
 import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 import com.google.common.collect.ImmutableMap;
 
 /**
@@ -66,35 +61,11 @@ public class XmlFactory {
     }
 
     /**
-     * Creates a new {@link Document} that follows XML security policies
-     * @return Empty XML {@code Document}
-     * @throws ParserConfigurationException if one or more security features cannot be assigned to the newly created document
+     * Creates a {@link DocumentBuilder} with specific XML security features set
+     * @return {@code DocumentBuilder} object
+     * @throws ParserConfigurationException in case security attributes cannot be set
      */
-    public static Document newDocument() throws ParserConfigurationException {
-        return createDocumentBuilder().newDocument();
-    }
-
-    /**
-     * Creates a new {@link Document} that follows XML security policies via reading and parsing the given XML file
-     * @param content XML file content to be parsed
-     * @return Empty XML {@code Document}
-     * @throws IOException if the file cannot be read
-     * @throws ParserConfigurationException if one or more security features cannot be assigned to the newly created document
-     * @throws SAXException if the file cannot be parsed
-     */
-    public static Document newDocument(byte[] content) throws IOException, ParserConfigurationException, SAXException {
-        try (InputStream input = new ByteArrayInputStream(content)) {
-            return createDocumentBuilder().parse(input);
-        }
-    }
-
-    /**
-     * Called by {@link XmlFactory#newDocument()} to create an instance of XML {@code DocumentBuilder}
-     * with specific XML security features set
-     * @return {@link DocumentBuilder} instance
-     * @throws ParserConfigurationException if one or more security features cannot be assigned to the newly created document
-     */
-    private static DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
+    public static DocumentBuilder newDocumentBuilder() throws ParserConfigurationException {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, StringUtils.EMPTY);
         documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, StringUtils.EMPTY);

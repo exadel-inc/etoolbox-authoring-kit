@@ -26,6 +26,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.xml.parsers.DocumentBuilder;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -71,18 +72,28 @@ public class XmlContextHelper implements XmlUtility {
        Instance members and constructors
        --------------------------------- */
 
+    private final DocumentBuilder documentBuilder;
     private final Document document;
 
     /**
      * Default constructor
-     * @param document {@code Document} instance to be used as a node factory within this instance
+     * @param documentBuilder {@link DocumentBuilder} instance to be used as an XML document factory within this instance
      */
-    public XmlContextHelper(Document document) {
-        this.document = document;
+    public XmlContextHelper(DocumentBuilder documentBuilder) {
+        this.documentBuilder = documentBuilder;
+        this.document = documentBuilder.newDocument();
     }
 
     /**
-     * Retrieves the current {@code Document}
+     * Retrieves the {@link DocumentBuilder} associated with the current instance
+     * @return {@code DocumentBuilder} instance
+     */
+    public DocumentBuilder getDocumentBuilder() {
+        return documentBuilder;
+    }
+
+    /**
+     * Retrieves the current {@link Document}
      * @return {@code Document} instance
      */
     public Document getDocument() {
