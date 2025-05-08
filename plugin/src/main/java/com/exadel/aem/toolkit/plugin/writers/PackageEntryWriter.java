@@ -157,6 +157,13 @@ abstract class PackageEntryWriter {
         return null;
     }
 
+    /**
+     * Parses the given byte array into a DOM {@link Document} object
+     * @param content Byte array representing the XML content
+     * @return {@link Document} object
+     * @throws IOException if the byte array cannot be read
+     * @throws SAXException if the data be parsed
+     */
     private Document openXml(byte[] content) throws IOException, SAXException {
         try (InputStream input = new ByteArrayInputStream(content)) {
             return PluginRuntime.context().getXmlUtility().getDocumentBuilder().parse(input);
