@@ -30,7 +30,7 @@
                     </firstTab>
                     <secondTab jcr:primaryType="nt:unstructured"
                                sling:resourceType="granite/ui/components/coral/foundation/container"
-                               jcr:title="Second tab">
+                               jcr:title="Second / tab">
                         <items jcr:primaryType="nt:unstructured">
                             <field2 jcr:primaryType="nt:unstructured"
                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
