@@ -33,6 +33,7 @@ import javax.xml.transform.TransformerConfigurationException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.project.MavenProject;
+import org.w3c.dom.Document;
 import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.main.WriteMode;
@@ -45,7 +46,6 @@ import com.exadel.aem.toolkit.plugin.exceptions.ValidationException;
 import com.exadel.aem.toolkit.plugin.maven.PluginInfo;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
-import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 /**
  * Implements actions needed to store collected/processed data into an AEM package, optimal for use in
@@ -163,7 +163,7 @@ public class PackageWriter implements AutoCloseable {
             PluginRuntime.context().getExceptionHandler().handle(e);
         }
 
-        // If there are not any dialog-specifying nodes present, the component will not be listed for adding
+        // If there are not any dialog-specifying nodes, the component will not be listed for adding
         // via "Insert new component" popup or component rail; also the in-place editing popup won't be displayed.
         // To mitigate this, we need to create a minimal cq:editConfig node
         if (viewsByWriter.keySet().stream().noneMatch(writer ->
@@ -177,8 +177,11 @@ public class PackageWriter implements AutoCloseable {
         }
 
         viewsByWriter.forEach((writer, view) -> {
+            Document existingDocument = (component.getWriteMode() == WriteMode.MERGE)
+                ? writer.openXml(fileSystemPath)
+                : null;
             writer.cleanUp(fileSystemPath);
-            writer.writeXml(view, fileSystemPath);
+            writer.writeXml(view, fileSystemPath, existingDocument);
         });
 
         return true;
@@ -278,7 +281,7 @@ public class PackageWriter implements AutoCloseable {
     public static PackageWriter forFileSystem(FileSystem fileSystem, String projectName) {
         List<PackageEntryWriter> writers;
         try {
-            Transformer transformer = XmlFactory.newDocumentTransformer();
+            Transformer transformer = PluginRuntime.context().getXmlUtility().getTransformerFactory().newTransformer();
             writers = Arrays.asList(
                 new ContentXmlWriter(transformer),
                 new CqDialogWriter(transformer, Scopes.CQ_DIALOG),

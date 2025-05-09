@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0" xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+    jcr:primaryType="nt:unstructured"
+    jcr:title="Lorem ipsum">
+    <content jcr:primaryType="nt:unstructured">
+        <!-- Comment -->
+        <items jcr:primaryType="nt:unstructured">
+            <first jcr:primaryType="nt:unstructured">
+                <items jcr:primaryType="nt:unstructured">
+                    <dolor jcr:primaryType="nt:unstructured">
+                        <value1 jcr:primaryType="nt:unstructured" value="{Long}1"/>
+                        <value2 jcr:primaryType="nt:unstructured" value="{Double}2.0"/>
+                    </dolor>
+                    <sit jcr:primaryType="nt:unstructured">
+                        <value1 jcr:primaryType="nt:unstructured" value="{Long}1"/>
+                    </sit>
+                </items>
+            </first>
+            <second jcr:primaryType="nt:unstructured">
+                <items jcr:primaryType="nt:unstructured">
+                    <consectetur jcr:primaryType="nt:unstructured">
+                        Adipiscing elit, seld do eiusmod tempor incididunt ut labore et dolore magna aliqua
+                    </consectetur>
+                </items>
+            </second>
+        </items>
+    </content>
+</jcr:root>

@@ -23,6 +23,7 @@ import com.google.common.base.CaseFormat;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
 
 /**
  * Helper class for creating standard-compliant names for XML entities designed to work together
@@ -161,7 +162,7 @@ class NamingHelper {
         String namespaceCapture = namespaceMatcher.find()
             ? namespaceMatcher.group().substring(0, namespaceMatcher.end() - 1)
             : null;
-        if (namespaceCapture != null && !XmlFactory.XML_NAMESPACES.containsKey(namespaceCapture)) {
+        if (namespaceCapture != null && !XmlContextHelper.NAMESPACES.containsKey(namespaceCapture)) {
             return value.replace(namespaceMatcher.group(), namespaceCapture);
         }
         return value;

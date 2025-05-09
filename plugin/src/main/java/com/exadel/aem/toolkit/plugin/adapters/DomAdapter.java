@@ -14,7 +14,6 @@
 package com.exadel.aem.toolkit.plugin.adapters;
 
 import java.util.Map;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -22,8 +21,8 @@ import org.w3c.dom.Element;
 import com.exadel.aem.toolkit.api.handlers.Adapts;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
+import com.exadel.aem.toolkit.plugin.runtime.XmlContextHelper;
 import com.exadel.aem.toolkit.plugin.utils.NamingUtil;
-import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
 
 /**
  * Adapts a {@link Target} instance to perform rendering it into a DOM {@code Document}
@@ -51,12 +50,7 @@ public class DomAdapter {
             return sourceDocument;
         }
         if (sourceDocument == null) {
-            try {
-                sourceDocument = XmlFactory.newDocument();
-            } catch (ParserConfigurationException e) {
-                PluginRuntime.context().getExceptionHandler().handle(e);
-                return null;
-            }
+            sourceDocument = PluginRuntime.context().getXmlUtility().getDocumentBuilder().newDocument();
         }
         sourceDocument.appendChild(createElement(sourceDocument, target, true));
         return sourceDocument;
@@ -74,12 +68,7 @@ public class DomAdapter {
             return sourceDocument != null ? sourceDocument.getDocumentElement() : null;
         }
         if (sourceDocument == null) {
-            try {
-                sourceDocument = XmlFactory.newDocument();
-            } catch (ParserConfigurationException e) {
-                PluginRuntime.context().getExceptionHandler().handle(e);
-                return null;
-            }
+            sourceDocument = PluginRuntime.context().getXmlUtility().getDocumentBuilder().newDocument();
         }
         return createElement(sourceDocument, target, true);
     }
@@ -99,8 +88,8 @@ public class DomAdapter {
         }
         target.getChildren().forEach(child -> element.appendChild(createElement(sourceDocument, child, false)));
         if (isRoot) {
-            XmlFactory.XML_NAMESPACES.forEach((key, value) ->
-                element.setAttribute(XmlFactory.XML_NAMESPACE_PREFIX + key, value));
+            XmlContextHelper.NAMESPACES.forEach((key, value) ->
+                element.setAttribute(XmlContextHelper.NAMESPACE_PREFIX + key, value));
         }
         return element;
     }

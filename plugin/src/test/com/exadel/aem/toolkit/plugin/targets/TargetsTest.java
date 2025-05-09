@@ -28,7 +28,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
-import com.exadel.aem.toolkit.plugin.utils.XmlFactory;
+import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
 public class TargetsTest {
     private static final String NN_ROOT = "root";
@@ -132,7 +132,7 @@ public class TargetsTest {
 
     @Test
     public void testXmlExport() throws ParserConfigurationException {
-        Document document = testable.adaptTo(DomAdapter.class).composeDocument(XmlFactory.newDocument());
+        Document document = testable.adaptTo(DomAdapter.class).composeDocument(PluginRuntime.context().getXmlUtility().getDocument());
         Assert.assertEquals(NN_ROOT, document.getDocumentElement().getTagName());
         Assert.assertEquals(
             "{Long}[1,2,3]",

@@ -41,6 +41,7 @@ import com.exadel.aem.toolkit.plugin.metadata.RenderingFilterTest;
 import com.exadel.aem.toolkit.plugin.metadata.scripting.ScriptingHelperTest;
 import com.exadel.aem.toolkit.plugin.sources.SourcesTest;
 import com.exadel.aem.toolkit.plugin.targets.TargetsTest;
+import com.exadel.aem.toolkit.plugin.utils.XmlMergeHelperTest;
 import com.exadel.aem.toolkit.plugin.utils.ordering.TopologicalSorterTest;
 import com.exadel.aem.toolkit.plugin.validators.ValidatorsTest;
 import com.exadel.aem.toolkit.plugin.writers.PackageInfoTest;
@@ -52,9 +53,10 @@ import com.exadel.aem.toolkit.plugin.writers.PackageInfoTest;
 @SuiteClasses({
     SourcesTest.class,
     TargetsTest.class,
-    MetadataTest.class,
     RenderingFilterTest.class,
     ScriptingHelperTest.class,
+    XmlMergeHelperTest.class,
+    TerminateOnTest.class,
 
     ComponentsTest.class,
     EditConfigTest.class,
@@ -75,9 +77,8 @@ import com.exadel.aem.toolkit.plugin.writers.PackageInfoTest;
     TopologicalSorterTest.class,
 
     ValidatorsTest.class,
-    TerminateOnTest.class,
-
-    PackageInfoTest.class
+    MetadataTest.class,
+    PackageInfoTest.class,
 })
 public class AllTests {
     @BeforeClass

@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.plugin.utils;
+package com.exadel.aem.toolkit.plugin.runtime;
 
 import java.util.Map;
 import javax.xml.XMLConstants;
@@ -23,26 +23,12 @@ import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 
 import org.apache.commons.lang3.StringUtils;
-import org.w3c.dom.Document;
 import com.google.common.collect.ImmutableMap;
 
 /**
  * Contains utility methods for creating and transforming XML entities
  */
-public class XmlFactory {
-
-    public static final String XML_NAMESPACE_PREFIX = "xmlns:";
-
-    /**
-     * XML namespaces typically present in an AEM component markup
-     */
-    public static final Map<String, String> XML_NAMESPACES = ImmutableMap.of(
-        "jcr", "http://www.jcp.org/jcr/1.0",
-        "nt", "http://www.jcp.org/jcr/nt/1.0",
-        "sling", "http://sling.apache.org/jcr/sling/1.0",
-        "cq", "http://www.day.com/jcr/cq/1.0",
-        "granite", "http://www.adobe.com/jcr/granite/1.0"
-    );
+class XmlFactory {
 
     /**
      * Security features as per XML External entity protection cheat sheet
@@ -62,21 +48,11 @@ public class XmlFactory {
     }
 
     /**
-     * Creates a new {@link Document} instance compliant with XML entity protection policies
-     * @return Empty XML {@code Document}
-     * @throws ParserConfigurationException if one or more security features cannot be assigned to the newly created document
+     * Creates a {@link DocumentBuilder} with specific XML security features set
+     * @return {@code DocumentBuilder} object
+     * @throws ParserConfigurationException in case security attributes cannot be set
      */
-    public static Document newDocument() throws ParserConfigurationException {
-        return createDocumentBuilder().newDocument();
-    }
-
-    /**
-     * Called by {@link XmlFactory#newDocument()} to create an instance of XML {@code DocumentBuilder}
-     * with specific XML security features set
-     * @return {@link DocumentBuilder} instance
-     * @throws ParserConfigurationException if one or more security features cannot be assigned to the newly created document
-     */
-    private static DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
+    public static DocumentBuilder newDocumentBuilder() throws ParserConfigurationException {
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, StringUtils.EMPTY);
         documentBuilderFactory.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, StringUtils.EMPTY);
@@ -89,7 +65,7 @@ public class XmlFactory {
     }
 
     /**
-     * Creates a {@link Transformer} instance compliant with XML security attributes
+     * Creates a {@link Transformer} instance compliant with XML security policies
      * @return {@code Transformer} object
      * @throws TransformerConfigurationException in case security attributes cannot be set
      */
