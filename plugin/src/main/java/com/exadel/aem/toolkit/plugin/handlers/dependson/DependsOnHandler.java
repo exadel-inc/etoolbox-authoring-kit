@@ -60,8 +60,8 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
     }
 
     /**
-     * Called by {@link DependsOnHandler#accept(Source, Target)} to store {@code DependsOnConfig} value in {@link Target}
-     * @param value  Current {@link DependsOnConfig} value
+     * Called by {@link DependsOnHandler#accept(Source, Target)} to store particular {@code DependsOn} value in {@link Target}
+     * @param value  Current {@link DependsOn} value
      * @param target Resulting {@code Target} object
      */
     private static void handleDependsOn(DependsOn value, Target target) {
