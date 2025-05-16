@@ -77,7 +77,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
         valueMap.put(DialogConstants.PN_DEPENDS_ON, escapedQuery);
 
         String actionValue = actions.length > 1
-            ? String.join(DialogConstants.SEPARATOR_SEMICOLON, actions)
+            ? String.join(DialogConstants.SEPARATOR_COMMA, actions)
             : actions[0];
         valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, actionValue);
         valueMap.putAll(buildParamsMap(value, 0));
@@ -109,13 +109,14 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
             .map(str -> StringUtils.replace(str, ";", "\\\\;"))
             .collect(Collectors.joining(DialogConstants.SEPARATOR_SEMICOLON));
         String actions = validDeclarations.stream()
-            .map(DependsOn::action)
-            .flatMap(Arrays::stream)
+            .map(dependsOn -> dependsOn.action().length > 1
+                ? String.join(DialogConstants.SEPARATOR_COMMA, dependsOn.action())
+                : dependsOn.action()[0])
+            .filter(StringUtils::isNotBlank)
             .collect(Collectors.joining(DialogConstants.SEPARATOR_SEMICOLON));
 
         valueMap.put(DialogConstants.PN_DEPENDS_ON, queries);
         valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, actions);
-
         Map<String, Integer> counter = new HashMap<>();
         validDeclarations.stream()
             .map(dependsOn -> DependsOnHandler.buildParamsMap(dependsOn, counter.merge(String.join(",", dependsOn.action()), 1, Integer::sum) - 1))
@@ -139,7 +140,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
             String paramName = StringUtils.joinWith(
                 CoreConstants.SEPARATOR_HYPHEN,
                 DialogConstants.PN_DEPENDS_ON,
-                String.join(DialogConstants.SEPARATOR_SEMICOLON, dependsOn.action()),
+                String.join(DialogConstants.SEPARATOR_COMMA, dependsOn.action()),
                 param.name());
             if (index > 0) {
                 paramName = StringUtils.joinWith(CoreConstants.SEPARATOR_HYPHEN, paramName, index);
