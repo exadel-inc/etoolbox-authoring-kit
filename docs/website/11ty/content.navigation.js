@@ -1,4 +1,4 @@
-module.exports = (config) => {
+export default (config) => {
   function getNavPath(path) {
     const parts = path.split('/');
     const isIndex = path.endsWith('/index');
@@ -35,7 +35,7 @@ module.exports = (config) => {
     let page = currentPage.parentPage;
     while (page) {
       pages.push(page);
-      page = page.parentPage
+      page = page.parentPage;
     }
     return pages.reverse().slice(1);
   });

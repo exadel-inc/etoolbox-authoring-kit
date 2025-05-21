@@ -99,16 +99,16 @@ public class PluginMojo extends AbstractMojo {
 
     // Customizable parameters
 
-    @Parameter(property = "classpathElements", readonly = true)
+    @Parameter(property = "classpathElements")
     private String classpathElements;
 
-    @Parameter(property = "componentsPathBase", readonly = true)
+    @Parameter(property = "componentsPathBase")
     private String componentsPathBase;
 
-    @Parameter(property = "componentsReferenceBase", readonly = true)
+    @Parameter(property = "componentsReferenceBase")
     private String componentsReferenceBase;
 
-    @Parameter(defaultValue = "java.io.IOException", property = "terminateOn", readonly = true)
+    @Parameter(defaultValue = "java.io.IOException", property = "terminateOn")
     private String terminateOn;
 
     /**

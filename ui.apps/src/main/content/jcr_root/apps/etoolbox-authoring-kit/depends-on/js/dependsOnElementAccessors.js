@@ -21,71 +21,10 @@
     'use strict';
 
     const FIELD_LABEL = '.coral-Form-fieldlabel';
-    const FIELD_WRAPPER = '.coral-Form-fieldwrapper';
     const SUBMITTABLES = ':-foundation-submittable';
 
+    const DEFAULT_ACCESSOR = {};
     const accessorsList = [];
-    const DEFAULT_ACCESSOR = {
-        preferableType: 'string',
-        findTarget: function ($el) {
-            if ($el.length > 1) {
-                console.warn('[DependsOn]: requested a reference with multiple targets, the first target is used.', $el);
-            }
-            return $el.first();
-        },
-        findWrapper: function ($el) {
-            return $el.closest(FIELD_WRAPPER);
-        },
-        get: function ($el) {
-            return $el.val() || '';
-        },
-        set: function ($el, value, notify) {
-            if (ns.isObject(value)) {
-                value = JSON.stringify(value);
-            }
-            $el.val(value);
-            notify && $el.trigger('change');
-        },
-        readonly: function ($el, state) {
-            $el.attr('readonly', state ? 'true' : null);
-        },
-        required: function ($el, val) {
-            const fieldApi = $el.adaptTo('foundation-field');
-            if (fieldApi && typeof fieldApi.setRequired === 'function') {
-                fieldApi.setRequired(val);
-            } else {
-                $el.attr('required', val ? 'true' : null);
-            }
-            ns.ElementAccessors.updateValidity($el, true);
-        },
-        visibility: function ($el, state) {
-            $el.attr('hidden', state ? null : 'true');
-            ns.ElementAccessors.findWrapper($el)
-                .attr('hidden', state ? null : 'true')
-                .attr('data-dependson-controllable', 'true');
-            // Force update validity if the field is hidden
-            if (!state) {
-                ns.ElementAccessors.updateValidity($el);
-            }
-            ns.ElementAccessors.clearValidity($el);
-            ns.ElementAccessors.updateSubmittables($el.parent());
-        },
-        disabled: function ($el, state) {
-            $el.attr('disabled', state ? 'true' : null);
-            ns.ElementAccessors.findWrapper($el).attr('disabled', state ? 'true' : null);
-
-            const fieldAPI = $el.adaptTo('foundation-field');
-            // Try to disable field by foundation api
-            if (fieldAPI && fieldAPI.setDisabled) {
-                fieldAPI.setDisabled(state);
-            }
-            // Force update validity if field disabled
-            if (state) {
-                ns.ElementAccessors.updateValidity($el);
-            }
-            ns.ElementAccessors.clearValidity($el);
-        }
-    };
 
     function validate(accessorDescriptor) {
         if (!accessorDescriptor) {
@@ -101,14 +40,55 @@
          * Default accessor definition
          * @readonly
          * */
-        static get DEFAULT_ACCESSOR() { return DEFAULT_ACCESSOR; }
+        static get DEFAULT_ACCESSOR() {
+            return Object.assign({}, DEFAULT_ACCESSOR);
+        }
+
+        /** Finds proper accessor by selector */
+        static findAccessor($el, type) {
+            for (let i = accessorsList.length - 1, accessor; i >= 0; --i) {
+                accessor = accessorsList[i];
+                if ($el.is(accessor.selector) && typeof accessor[type] !== 'undefined') {
+                    return accessor;
+                }
+            }
+            return DEFAULT_ACCESSOR;
+        }
+
+        /** Returns bind proper accessor or property by type */
+        static getAccessor($el, type) {
+            const accessor = this.findAccessor($el, type);
+            return (typeof accessor[type] === 'function') ? accessor[type].bind(accessor) : accessor[type];
+        }
+
+        /** Returns manged state accessor wrapper */
+        static getManagedAccessor($el, type, inverted) {
+            const accessor = this.getAccessor($el, type);
+            return ns.ManagedStateHelper.wrap(accessor, type, inverted);
+        }
+
+        /**
+         * Registers an accessor.
+         * Accessor descriptor should contain selector property - css selector to determine target element types.
+         * @param {object} accessorDescriptor
+         * */
+        static registerAccessor(accessorDescriptor) {
+            validate(accessorDescriptor);
+            if (accessorDescriptor.selector === '*') {
+                // Default accessors are merged
+                Object.assign(DEFAULT_ACCESSOR, accessorDescriptor);
+            } else {
+                // Custom accessors are added to the list
+                accessorsList.push(accessorDescriptor);
+            }
+        }
 
         /**
          * Get $el value
          * @param {JQuery} $el - target element
          * */
         static getValue($el) {
-            return ElementAccessors._findAccessorHandler($el, 'get')($el);
+            return ElementAccessors.getAccessor($el, 'get')($el);
         }
 
         /**
@@ -117,7 +97,7 @@
          * @returns {string}
          * */
         static getPreferableType($el) {
-            return ElementAccessors._findAccessorHandler($el, 'preferableType');
+            return ElementAccessors.getAccessor($el, 'preferableType');
         }
 
         /**
@@ -127,60 +107,56 @@
          * @param {boolean} [notify] - produce change event
          * */
         static setValue($el, value, notify = true) {
-            ElementAccessors._findAccessorHandler($el, 'set')($el, value, notify);
+            return ElementAccessors.getAccessor($el, 'set')($el, value, notify);
+        }
+
+        /** Sets form field placeholder */
+        static setPlaceholder($el, value) {
+            return ElementAccessors.getAccessor($el, 'placeholder')($el, value);
         }
 
         /**
-         * Set the required state of $el
+         * Sets visibility of $el.
+         * Can act as managed state handler, so is will respect the actor that requested the change.
          * @param {JQuery} $el - target element
          * @param {boolean} value - state to set
+         * @param {object} [actor] - component that requests change
          * */
-        static setRequired($el, value) {
-            ElementAccessors._findAccessorHandler($el, 'required')($el, value);
+        static setVisibility($el, value, actor) {
+            return this.getManagedAccessor($el, 'visibility', true)($el, value, actor);
         }
 
         /**
-         * Set the readonly state of $el
+         * Sets the required state of $el
+         * Can act as managed state handler, so will respect the actor that requested the change.
          * @param {JQuery} $el - target element
          * @param {boolean} value - state to set
+         * @param {object} [actor] - component that requests change
          * */
-        static setReadonly($el, value) {
-            ElementAccessors._findAccessorHandler($el, 'readonly')($el, value);
+        static setRequired($el, value, actor) {
+            return this.getManagedAccessor($el, 'required')($el, value, actor);
         }
 
         /**
-         * Set visibility of $el
+         * Sets the readonly state of $el.
+         * Can act as managed state handler, so is will respect the actor that requested the change.
          * @param {JQuery} $el - target element
          * @param {boolean} value - state to set
+         * @param {object} [actor] - component that requests change
          * */
-        static setVisibility($el, value) {
-            ElementAccessors._findAccessorHandler($el, 'visibility')($el, value);
+        static setReadonly($el, value, actor) {
+            return this.getManagedAccessor($el, 'readonly')($el, value, actor);
         }
 
         /**
-         * Set the disabled state of $el
+         * Set the disabled state of $el.
+         * Can act as managed state handler, so is will respect the actor that requested the change.
          * @param {JQuery} $el - target element
          * @param {boolean} value - state to set
+         * @param {object} [actor] - component that requests change
          * */
-        static setDisabled($el, value) {
-            ElementAccessors._findAccessorHandler($el, 'disabled')($el, value);
-            // Clear other actors
-            const actors = $el.data('disable-actors');
-            actors && actors.clear();
-        }
-
-        /**
-         * Set the disabled state of $el. Field becomes enabled only if all of disable requesters (actors) have requested enabling.
-         * @param {JQuery} $el - target element
-         * @param {boolean} value - state to set
-         * @param {object} actor - component that requests change
-         * */
-        static requestDisable($el, value, actor = null) {
-            const actors = $el.data('disable-actors') || new Set();
-            value ? actors.add(actor) : actors.delete(actor);
-            $el.data('disable-actors', actors);
-            const state = actors.size > 0;
-            ElementAccessors._findAccessorHandler($el, 'disabled')($el, state, actor);
+        static setDisabled($el, value, actor) {
+            return this.getManagedAccessor($el, 'disabled')($el, value, actor);
         }
 
         /**
@@ -189,7 +165,7 @@
          * @returns {JQuery}
          * */
         static findTarget($el) {
-            return ElementAccessors._findAccessorHandler($el, 'findTarget')($el);
+            return ElementAccessors.getAccessor($el, 'findTarget')($el);
         }
 
         /**
@@ -198,17 +174,7 @@
          * @returns {JQuery}
          * */
         static findWrapper($el) {
-            return ElementAccessors._findAccessorHandler($el, 'findWrapper')($el);
-        }
-
-        /**
-         * Register an accessor.
-         * Accessor descriptor should contain selector property - css selector to determine target element types.
-         * @param {object} accessorDescriptor
-         * */
-        static registerAccessor(accessorDescriptor) {
-            validate(accessorDescriptor);
-            accessorsList.push(accessorDescriptor);
+            return ElementAccessors.getAccessor($el, 'findWrapper')($el);
         }
 
         /**
@@ -251,20 +217,9 @@
             ns.toggleAsterisk($label, required);
         }
 
-        static _findAccessor($el, type) {
-            for (let i = accessorsList.length - 1, accessor; i >= 0; --i) {
-                accessor = accessorsList[i];
-                if (accessor.selector && $el.is(accessor.selector) && typeof accessor[type] !== 'undefined') {
-                    return accessor;
-                }
-            }
-            return ElementAccessors.DEFAULT_ACCESSOR;
-        }
-
-        static _findAccessorHandler($el, type) {
-            const accessor = ElementAccessors._findAccessor($el, type);
-            return (typeof accessor[type] === 'function') ? accessor[type].bind(accessor) : accessor[type];
-        }
+        // Legacy aliases
+        /** @deprecated alias for setDisabled */
+        static get requestDisable() { return ElementAccessors.setDisabled; }
     }
 
     ns.ElementAccessors = ElementAccessors;

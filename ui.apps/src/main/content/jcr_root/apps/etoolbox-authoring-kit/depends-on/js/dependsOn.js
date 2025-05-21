@@ -19,14 +19,14 @@
  *
  * Initializes QueryObserver and ElementReferences
  * */
-(function ($, ns) {
+(function ($, utils, ns) {
     'use strict';
 
     const $window = $(window);
     const $document = $(document);
 
     // Version to track actual DependsOn version from code/browser console
-    ns.version = '2.7.0';
+    ns.version = '2.8.0';
 
     /**
      * DependsOn entry point
@@ -75,7 +75,7 @@
     // Track input event
     $document
         .off('input.dependsOn')
-        .on('input', '[data-dependsonref]:not([data-dependsonreflazy])', ns.debounce(handleChange, 750));
+        .on('input.dependsOn', '[data-dependsonref]:not([data-dependsonreflazy])', utils.debounce(handleChange, 750));
 
     // Track collection change to update dynamic references
     $document
@@ -95,4 +95,4 @@
     $window.adaptTo('foundation-registry').register('foundation.validation.selector', {
         exclusion: '[data-dependson][hidden] *, [data-dependson-controllable][hidden] *'
     });
-})(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
+})(Granite.$, Granite.EAKUtils, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

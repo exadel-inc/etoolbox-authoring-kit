@@ -1,5 +1,5 @@
-const {isDev} = require('./env.config');
-const {minify} = require('html-minifier-terser');
+import {minify} from 'html-minifier-terser';
+import {context} from './env.config.js';
 
 const MINIFICATION_CFG = {
   collapseWhitespace: true,
@@ -20,8 +20,7 @@ async function minifier(content, outputPath) {
   return await minify(content, MINIFICATION_CFG);
 }
 
-module.exports = (config) => {
-  if (isDev) return;
+export default (config) => {
+  if (context.isDev) return;
   config.addTransform('htmlmin', minifier);
 };
-module.exports.minifier = minifier;

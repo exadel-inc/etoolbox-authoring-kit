@@ -18,7 +18,7 @@
  * Coral 3 DatePicker accessor
  * */
 (function ($, ns) {
-    const DATEPICKER_SELECTOR = 'coral-datepicker.coral-InputGroup';
+    const DATEPICKER_SELECTOR = 'coral-datepicker';
     const DATEPICKER_INPUT_SELECTOR = '.coral-InputGroup-input';
 
     ns.ElementAccessors.registerAccessor({

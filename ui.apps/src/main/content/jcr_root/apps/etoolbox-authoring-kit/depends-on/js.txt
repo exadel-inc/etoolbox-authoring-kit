@@ -2,6 +2,7 @@
 js/dependsOnUtils.js
 js/utils/dependsOnRequestCache.js
 
+js/dependsOnManagedState.js
 js/dependsOnElementAccessors.js
 js/references/dependsOnObservedReference.js
 js/references/dependsOnElementReference.js
@@ -13,6 +14,7 @@ js/dependsOnQueryProcessor.js
 js/dependsOnQueryObserver.js
 
 # Accessors
+js/accessors/dependsOnDefaultAccessors.js
 js/accessors/dependsOnCoralNoWrapperFieldsAccessor.js
 js/accessors/dependsOnCoralSwitcherAccessors.js
 js/accessors/dependsOnCoralRTEAccessor.js
@@ -29,8 +31,9 @@ js/accessors/dependsOnCoral2AutocompleteAccessor.js
 js/accessors/dependsOnCoralFieldsetAccessor.js
 
 # Actions
-js/actions/dependsOnCoralBasicActions.js
-js/actions/dependsOnCoralValidateAction.js
+js/actions/dependsOnStateActions.js
+js/actions/dependsOnSetActions.js
+js/actions/dependsOnValidateAction.js
 js/actions/dependsOnFetchAction.js
 js/actions/dependsOnCoralTabAction.js
 js/actions/dependsOnUpdateOptionsAction.js

@@ -19,10 +19,16 @@ package com.exadel.aem.toolkit.api.annotations.assets.dependson;
 @SuppressWarnings("unused")
 public class DependsOnActions {
 
+    /** Shows the element if the query result is 'truthy' */
+    public static final String VISIBLE = "visible";
+
+    /** Hides the element if the query result is 'truthy' */
+    public static final String HIDDEN = "hidden";
+
     /**
-     * Hides the element if the query result is 'falsy'
+     * Hides the element if the query result is 'falsy'. Alias for {@link #VISIBLE}
      */
-    public static final String VISIBILITY = "visibility";
+    public static final String VISIBILITY = VISIBLE;
 
     /**
      * Hides the tab (if applied to the tab) or element's parent tab (if applied to the element)
@@ -51,7 +57,12 @@ public class DependsOnActions {
     public static final String DISABLED = "disabled";
 
     /**
-     * Sets the query result as field's value (undefined query result is skipped)
+     * Unsets the field's disabled state based on the query result
+     */
+    public static final String ENABLED = "enabled";
+
+    /**
+     * Sets the query result as the field's value (undefined query result is skipped)
      */
     public static final String SET = "set";
 
@@ -59,6 +70,11 @@ public class DependsOnActions {
      * Sets the query result as field's value only if the current value is blank (undefined query result is skipped)
      */
     public static final String SET_IF_BLANK = "set-if-blank";
+
+    /**
+     * Sets the query result as form field's placeholder (undefined query result is skipped)
+     */
+    public static final String SET_PLACEHOLDER = "set-placeholder";
 
     /**
      * Asynchronous action to set value from request result

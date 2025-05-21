@@ -13,7 +13,9 @@
  */
 package com.exadel.aem.toolkit.plugin.writers;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,6 +28,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.lang3.StringUtils;
 import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Source;
@@ -37,6 +40,7 @@ import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 import com.exadel.aem.toolkit.plugin.sources.ComponentSource;
 import com.exadel.aem.toolkit.plugin.targets.Targets;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
+import com.exadel.aem.toolkit.plugin.utils.XmlMergeHelper;
 
 /**
  * Base class for routines that render XML files inside a component folder within an AEM package
@@ -102,19 +106,18 @@ abstract class PackageEntryWriter {
     /**
      * Called by {@link PackageWriter#write(ComponentSource)} before storing new XML entities into the component's
      * folder to remove redundant and obsolete XML entries
-     * @param componentPath {@link Path} representing a file within a file system the data is written to
+     * @param componentPath {@link Path} representing a folder within a file system the data is written to
      */
     final void cleanUp(Path componentPath) {
+        Path existingFilePath = componentPath.resolve(getScope());
         try {
-            Path existingFilePath = componentPath.resolve(getScope());
             Files.deleteIfExists(existingFilePath);
             if (!Scopes.COMPONENT.equals(getScope())) {
-                // We take into account that the markup could be stored by hand in e.g. _cq_dialog/.content.xml structure
-                // instead of _cq_dialog.xml file. Therefore, both the "file" and "folder" must be deleted,
-                // or we might end up with two versions of component markup within same package
-                Path nestedFolderPath = componentPath.resolve(StringUtils.substringBeforeLast(
-                    getScope(),
-                    DialogConstants.SEPARATOR_DOT));
+                // Since the markup could be stored by hand in e.g. _cq_dialog/.content.xml instead of _cq_dialog.xml
+                // file, both the "file" and "folder" must be deleted, or we might end up with two versions of component
+                // markup within the same package
+                String nestedFolder = StringUtils.substringBeforeLast(getScope(), DialogConstants.SEPARATOR_DOT);
+                Path nestedFolderPath = componentPath.resolve(nestedFolder);
                 Path nestedFilePath = nestedFolderPath.resolve(Scopes.COMPONENT);
                 Files.deleteIfExists(nestedFilePath);
                 Files.deleteIfExists(nestedFolderPath);
@@ -125,13 +128,57 @@ abstract class PackageEntryWriter {
     }
 
     /**
+     * Called by {@link PackageWriter#write(ComponentSource)} to open an existing XML file within the component's folder
+     * for merging with the new XML markup
+     * @param componentPath {@link Path} representing a folder within a file system the data is written to
+     * @return {@link Document} representing the existing XML file, or null if the file does not exist or cannot be
+     * parsed
+     */
+    final Document openXml(Path componentPath) {
+        Path existingFilePath = componentPath.resolve(getScope());
+        try {
+            if (Files.exists(existingFilePath)) {
+                return openXml(Files.readAllBytes(existingFilePath));
+            }
+            // Since the markup could be stored by hand in e.g. _cq_dialog/.content.xml instead of _cq_dialog.xml,
+            // we need to check for the "folder" version of the file as well
+            if (Scopes.COMPONENT.equals(getScope())) {
+                return null;
+            }
+            String nestedFolder = StringUtils.substringBeforeLast(getScope(), DialogConstants.SEPARATOR_DOT);
+            Path nestedFolderPath = componentPath.resolve(nestedFolder);
+            Path nestedFilePath = nestedFolderPath.resolve(Scopes.COMPONENT);
+            if (Files.exists(nestedFilePath)) {
+                return openXml(Files.readAllBytes(existingFilePath));
+            }
+        } catch (IOException | SAXException e) {
+            PluginRuntime.context().getExceptionHandler().handle(e);
+        }
+        return null;
+    }
+
+    /**
+     * Parses the given byte array into a DOM {@link Document} object
+     * @param content Byte array representing the XML content
+     * @return {@link Document} object
+     * @throws IOException if the byte array cannot be read
+     * @throws SAXException if the data be parsed
+     */
+    private Document openXml(byte[] content) throws IOException, SAXException {
+        try (InputStream input = new ByteArrayInputStream(content)) {
+            return PluginRuntime.context().getXmlUtility().getDocumentBuilder().parse(input);
+        }
+    }
+
+    /**
      * Used to store XML markup filled with annotation data taken from the current {@code Source} instance
      * @param source {@link Source} instance that delivers the rendering data
      * @param path   {@link Path} representing a file system entry the data is written to
+     * @param patch Optional {@link Document} to be merged into the resulting XML markup
      */
-    final void writeXml(Source source, Path path) {
+    final void writeXml(Source source, Path path, Document patch) {
         try (Writer writer = Files.newBufferedWriter(path.resolve(getScope()), StandardOpenOption.CREATE)) {
-            writeXml(source, writer);
+            writeXml(source, writer, patch);
         } catch (IOException e) {
             PluginRuntime.context().getExceptionHandler().handle(e);
         }
@@ -141,9 +188,11 @@ abstract class PackageEntryWriter {
      * Used to store XML markup filled with annotation data taken from current {@code Source} instance
      * @param source {@link Source} instance that delivers the rendering data
      * @param writer {@link Writer} managing the data storage procedure
+     * @param patch Optional {@link Document} to be merged into the resulting XML markup
      */
-    private void writeXml(Source source, Writer writer) {
+    private void writeXml(Source source, Writer writer, Document patch) {
         Document document = createDocument(source);
+        XmlMergeHelper.merge(document, patch);
         try {
             transformer.transform(new DOMSource(document), new StreamResult(writer));
         } catch (TransformerException e) {

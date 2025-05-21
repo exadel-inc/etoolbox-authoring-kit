@@ -818,7 +818,7 @@
                     </sixthTab>
                     <seventhTab
                         jcr:primaryType="nt:unstructured"
-                        jcr:title="Seventh tab"
+                        jcr:title="Seventh / tab"
                         sling:resourceType="granite/ui/components/coral/foundation/container">
                         <items jcr:primaryType="nt:unstructured">
                             <enableWidget

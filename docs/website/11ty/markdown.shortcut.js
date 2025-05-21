@@ -1,23 +1,25 @@
-const path = require('path');
-const fsAsync = require('fs').promises;
+import path, {dirname} from 'path';
+import {fileURLToPath} from 'url';
+import {readFile} from 'fs/promises';
+import {JSDOM} from 'jsdom';
+import {markdown} from './markdown.lib.js';
+import {siteConfig} from './site.config.js';
 
-const {JSDOM} = require('jsdom');
-const {markdown} = require('./markdown.lib');
+const FILE_ROOT = dirname(fileURLToPath(import.meta.url));
 
-const {github, rewriteRules, urlPrefix} = require('./site.config');
-
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const recursiveCheckLinks = (arr, link, element, key) => {
   arr.forEach((el) => {
-    if (el.hasOwnProperty('fileName') && el.fileName === link) {
+    if (Object.prototype.hasOwnProperty.call(el, 'fileName') && el.fileName === link) {
       element.setAttribute('href', `/${[key]}/${link.replace('.md', '')}`);
     }
-    if (!el.hasOwnProperty('fileName') && Object.keys(el).length === 1) {
+    if (!Object.prototype.hasOwnProperty.call(el, 'fileName') && Object.keys(el).length === 1) {
       const elKey = Object.keys(el)[0];
       const newKey =  key + '/' + elKey;
-      recursiveCheckLinks(el[elKey], link,element, newKey);
+      recursiveCheckLinks(el[elKey], link, element, newKey);
     }
-  })
-}
+  });
+};
 
 class MDRenderer {
   static async render(filePath, startAnchor, endAnchor) {
@@ -53,8 +55,8 @@ class MDRenderer {
 
   /** Read file and render markdown */
   static async parseFile(filePath) {
-    const absolutePath = path.resolve(__dirname, '../', filePath);
-    const data = await fsAsync.readFile(absolutePath);
+    const absolutePath = path.resolve(FILE_ROOT, '../', filePath);
+    const data = await readFile(absolutePath);
     const content = data.toString();
     return markdown.render(content);
   }
@@ -77,26 +79,25 @@ class MDRenderer {
     });
   }
   static processRewriteRules(linkPath) {
-    for (const [key, value] of Object.entries(rewriteRules)) {
+    for (const [key, value] of Object.entries(siteConfig.rewriteRules)) {
       if (!linkPath.endsWith(key)) continue;
-      if (value.startsWith('/')) return urlPrefix.replace(/^\//, '') + value;
+      if (value.startsWith('/')) return siteConfig.urlPrefix.replace(/^\//, '') + value;
       return value;
     }
-    return github.srcUrl + linkPath;
+    return siteConfig.github.srcUrl + linkPath;
   }
 
   static changeImgPath(dom) {
     const imgArr = dom.querySelectorAll('img');
     const imgPath = '/assets/img';
-    imgArr.forEach(elem => {
+    imgArr.forEach((elem) => {
       const srcLink = elem.getAttribute('src');
-      if(srcLink.startsWith('../img/')) elem.setAttribute('src', srcLink.replace('../img', imgPath ));
-      if(srcLink.startsWith('./docs/img/')) elem.setAttribute('src', srcLink.replace('./docs/img', imgPath));
+      if (srcLink.startsWith('../img/')) elem.setAttribute('src', srcLink.replace('../img', imgPath));
+      if (srcLink.startsWith('./docs/img/')) elem.setAttribute('src', srcLink.replace('./docs/img', imgPath));
     });
   }
 }
 
-module.exports = (config) => {
+export default (config) => {
   config.addNunjucksAsyncShortcode('mdRender', MDRenderer.render);
 };
-module.exports.MDRenderer = MDRenderer;

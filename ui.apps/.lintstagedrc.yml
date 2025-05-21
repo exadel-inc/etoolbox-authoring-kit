@@ -1,0 +1,13 @@
+# Versions of pom and package.json should be in sync
+"../pom.xml":
+    - "npm run sync-version"
+
+# Pre-commit JS source validation
+"*.js":
+    - "eslint"
+    - "jest --silent --bail --passWithNoTests --findRelatedTests"
+
+"*.ts":
+    - "eslint"
+    - "tsc --noEmit"
+    - "jest --silent --bail --passWithNoTests --findRelatedTests"

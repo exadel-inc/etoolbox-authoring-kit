@@ -184,17 +184,4 @@
         }
         return fn;
     };
-
-    /**
-     * Debounce function wrapper
-     * @param {function} fn
-     * @param {number} timeout
-     */
-    ns.debounce = function (fn, timeout) {
-        let timer;
-        return function (...args) {
-            clearTimeout(timer);
-            timer = setTimeout(() => fn.apply(this, args), timeout);
-        };
-    };
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

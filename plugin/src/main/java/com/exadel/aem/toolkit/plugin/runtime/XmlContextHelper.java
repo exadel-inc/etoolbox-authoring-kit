@@ -26,6 +26,9 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerFactory;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +36,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
+import com.google.common.collect.ImmutableMap;
 
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyMapping;
@@ -57,6 +61,19 @@ import com.exadel.aem.toolkit.plugin.validators.Validation;
 public class XmlContextHelper implements XmlUtility {
 
     /**
+     * XML namespaces typically present in an AEM component markup
+     */
+    public static final Map<String, String> NAMESPACES = ImmutableMap.of(
+        "jcr", "http://www.jcp.org/jcr/1.0",
+        "nt", "http://www.jcp.org/jcr/nt/1.0",
+        "sling", "http://sling.apache.org/jcr/sling/1.0",
+        "cq", "http://www.day.com/jcr/cq/1.0",
+        "granite", "http://www.adobe.com/jcr/granite/1.0"
+    );
+
+    public static final String NAMESPACE_PREFIX = "xmlns:";
+
+    /**
      * Default routine to manage the merging of two values of an XML attribute by suppressing existing value in favor of
      * a non-empty new one
      */
@@ -71,24 +88,42 @@ public class XmlContextHelper implements XmlUtility {
        Instance members and constructors
        --------------------------------- */
 
+    private final DocumentBuilder documentBuilder;
+    private final TransformerFactory transformerFactory;
     private final Document document;
 
     /**
      * Default constructor
-     * @param document {@code Document} instance to be used as a node factory within this instance
      */
-    public XmlContextHelper(Document document) {
-        this.document = document;
+    public XmlContextHelper() throws ParserConfigurationException {
+        this.documentBuilder = XmlFactory.newDocumentBuilder();
+        this.transformerFactory = TransformerFactory.newInstance();
+        this.document = documentBuilder.newDocument();
     }
 
     /**
-     * Retrieves the current {@code Document}
+     * Retrieves the {@link DocumentBuilder} associated with the current instance
+     * @return {@code DocumentBuilder} object
+     */
+    public DocumentBuilder getDocumentBuilder() {
+        return documentBuilder;
+    }
+
+    /**
+     * Retrieves the current {@link Document}
      * @return {@code Document} instance
      */
     public Document getDocument() {
         return document;
     }
 
+    /**
+     * Retrieves the {@link TransformerFactory} associated with the current instance
+     * @return {@code TransformerFactory} object
+     */
+    public TransformerFactory getTransformerFactory() {
+        return transformerFactory;
+    }
 
     /* ----------------------------
        XmlUtility interface members
