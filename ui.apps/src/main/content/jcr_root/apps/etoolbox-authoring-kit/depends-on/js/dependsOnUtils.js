@@ -74,8 +74,9 @@
                 return Number(value);
             case 'string':
                 return String(value);
-            case 'json':
-                return ns.parseSafe(value);
+            case 'json': {
+                return ns.parseSafe(value) || undefined;
+            }
             default:
                 return value;
         }
@@ -154,13 +155,13 @@
     /**
      * Attempts to parse the string value into a JSON object
      * @param {string} value to parse
-     * @return {Object} parsed value or an empty object in case of any exceptions
+     * @return {Object|null} parsed value or null if parsing fails due to an exception
      */
     ns.parseSafe = function (value) {
         try {
             return JSON.parse(value);
         } catch (e) {
-            return {};
+            return null;
         }
     };
 
