@@ -1,7 +1,7 @@
 {
   "name": "depends-on",
   "description": "A clientlib that executes defined action on dependent fields",
-  "version": "2.5.4-SNAPSHOT",
+  "version": "2.6.0",
   "private": true,
   "devDependencies": {
     "eslint": "^9.24.0",
