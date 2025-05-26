@@ -15,14 +15,13 @@ jobs:
                 with:
                     script: |
                         const {title, number} = context.payload.issue;
-                        const EAK_Number = `[EAK-${number}]`;
-                        const newTitle = title.includes(EAK_Number) ? title : EAK_Number + ` ${title.replace(/\[EAK-\d+\]\s*/, '')}`;
+                        const newTitle = `[EAK-${number}] ${title.replace(/^\[.*?\]/, '')}`;
 
                         if (newTitle !== title) {
                             await github.rest.issues.update({
                                 owner: context.repo.owner,
                                 repo: context.repo.repo,
-                                issue_number: context.payload.issue.number,
+                                issue_number: number,
                                 title: newTitle
                             });
                         }
