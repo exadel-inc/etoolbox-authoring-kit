@@ -4,6 +4,9 @@ on:
     issues:
         types: [ opened, edited ]
 
+env:
+    title-prefix: 'EAK'
+
 jobs:
     check_and_update_title:
         name: Update Title
@@ -15,7 +18,7 @@ jobs:
                 with:
                     script: |
                         const {title, number} = context.payload.issue;
-                        const newTitle = `[EAK-${number}] ${title.replace(/^\[.*?\]/, '')}`;
+                        const newTitle = `[${{env.title-prefix}}-${number}] ${title.replace(/^\[.*?\]/, '')}`;
 
                         if (newTitle !== title) {
                             await github.rest.issues.update({
