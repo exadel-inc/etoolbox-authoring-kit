@@ -1,0 +1,30 @@
+name: Update Issue Title with Issue Number
+
+on:
+    issues:
+        types: [ opened, edited ]
+
+env:
+    title-prefix: 'EAK'
+
+jobs:
+    check_and_update_title:
+        name: Update Title
+        runs-on: ubuntu-latest
+
+        steps:
+            -   name: Check and Update Issue Title
+                uses: actions/github-script@v7
+                with:
+                    script: |
+                        const {title, number} = context.payload.issue;
+                        const newTitle = `[${{env.title-prefix}}-${number}] ${title.replace(/^\[.*?\]/, '')}`;
+
+                        if (newTitle !== title) {
+                            await github.rest.issues.update({
+                                owner: context.repo.owner,
+                                repo: context.repo.repo,
+                                issue_number: number,
+                                title: newTitle
+                            });
+                        }
