@@ -84,6 +84,7 @@
 
         /**
          * Update observers instances
+         * NOTE: prefer to define actors for state accessors instead so they can handle it themselves
          * @param {JQuery} $el
          * @param {string[]} [actions]
          * @return {boolean} operation's state

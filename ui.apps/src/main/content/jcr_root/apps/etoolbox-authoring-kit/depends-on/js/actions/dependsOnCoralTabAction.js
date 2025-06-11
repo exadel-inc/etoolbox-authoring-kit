@@ -42,7 +42,7 @@
     /**
      * Toggle the visibility of every field on the tab
      */
-    function tabChildrenVisibility($tabPanel, state) {
+    function tabChildrenVisibility($tabPanel, state, locker) {
         $tabPanel.find(FIELD_SELECTOR).each((index, el) => {
             const $el = $(el);
 
@@ -50,10 +50,7 @@
             const isInnerEl = !!$el.parent().closest(FIELD_SELECTOR, ns.ElementAccessors.findWrapper($el)).length;
             if (!$el.is('[data-dependson]') && isInnerEl) return;
 
-            ns.ElementAccessors.setVisibility($el, state);
-            if (state) {
-                ns.QueryObserver.updateObservers($el, ['visibility']);
-            }
+            ns.ElementAccessors.setVisibility($el, state, locker);
         });
     }
 
@@ -75,6 +72,6 @@
             tabs.find((tab) => !tab.hidden).selected = true;
             // Last tab is automatically deselected
         }
-        tabChildrenVisibility(this.$tabPanel, state);
+        tabChildrenVisibility(this.$tabPanel, state, this);
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
