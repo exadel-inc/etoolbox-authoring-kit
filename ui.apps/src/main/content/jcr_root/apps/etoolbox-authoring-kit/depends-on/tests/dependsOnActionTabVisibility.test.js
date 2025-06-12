@@ -47,7 +47,7 @@ describe('DependsOn: ActionTabVisibility', () => {
             expect($('#tab-2').find('.coral-Form-field').not('[hidden]').length).toBeGreaterThan(1);
         });
 
-        describe('conditional fields sould depend on thair own conditions', () => {
+        describe('conditional fields should depend on their own conditions', () => {
             const activateTab = () => $('#enableTab').prop('checked', true).trigger('change');
             beforeEach(activateTab);
             test('Switch off conditional field should hide depending field', () => {
