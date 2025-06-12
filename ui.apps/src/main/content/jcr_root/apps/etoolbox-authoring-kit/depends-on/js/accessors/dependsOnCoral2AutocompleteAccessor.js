@@ -19,6 +19,7 @@
  * */
 (function ($, ns) {
     const AUTOCOMPLETE_SELECTOR = '.coral-Autocomplete';
+    const INPUT_SELECTOR = '.js-coral-Autocomplete-textfield';
 
     ns.ElementAccessors.registerAccessor({
         selector: AUTOCOMPLETE_SELECTOR,
@@ -30,6 +31,9 @@
             const api = $el.adaptTo('foundation-field');
             api && api.setValue(value);
             notify && $el.trigger('change');
+        },
+        placeholder: function ($el, value) {
+            $el.find(INPUT_SELECTOR).attr('placeholder', value);
         }
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
