@@ -357,7 +357,7 @@ describe('DependsOn: ElementAccessors', () => {
             const accessor = {
                 visibility: jest.fn()
             };
-            expect(() => ElementAccessors.registerAccessor(accessor)).toThrowError();
+            expect(() => ElementAccessors.registerAccessor(accessor)).toThrow();
         });
 
         describe('ElementAccessors allows custom accessors', () => {
