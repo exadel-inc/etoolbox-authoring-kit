@@ -4,10 +4,13 @@ module.exports = {
     testRegex: '/tests/(.+)\\.test\\.js$',
     moduleFileExtensions: ['js', 'json', 'html'],
     setupFiles: [
+        './jest/coral.mocks.js',
         './jest/granite.mocks.js'
     ],
     transform: {
         // Clientlib importer
-        '^.+js\\.txt$': './jest/clientlib.transform.js'
+        '^.+js\\.txt$': './jest/clientlib.transform.js',
+        // HTML text importer
+        '^.+\\.template\\.html$': './jest/template.transform.js'
     }
 };

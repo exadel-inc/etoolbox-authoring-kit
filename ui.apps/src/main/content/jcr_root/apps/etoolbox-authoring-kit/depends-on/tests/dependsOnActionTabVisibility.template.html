@@ -1,0 +1,72 @@
+<coral-dialog-content class="coral3-Dialog-content" id="coral-id-1040">
+    <div class="cq-dialog-content">
+        <coral-tabview class="coral3-TabView">
+            <coral-tablist target="#coral-id-891" tracking="off" class="coral3-TabList" orientation="horizontal"
+                           role="tablist" id="coral-id-892" aria-multiselectable="false">
+                <coral-tab
+                    class="coral3-Tab" role="tab" id="tab-1-control" aria-controls="tab-1" aria-invalid="false"
+                    aria-disabled="false" aria-selected="false" tabindex="-1">
+                    <coral-tab-label>Tab 1</coral-tab-label>
+                </coral-tab>
+                <coral-tab
+                    class="coral3-Tab is-selected" role="tab" id="tab-2-control" aria-controls="tab-2"
+                    aria-invalid="false" aria-disabled="false" aria-selected="true" tabindex="0">
+                    <coral-tab-label>CTA</coral-tab-label>
+                </coral-tab>
+            </coral-tablist>
+
+            <coral-panelstack id="coral-id-891" class="coral3-PanelStack" role="presentation">
+                <coral-panel class="coral3-Panel" role="region" id="tab-1" aria-labelledby="tab-1-control">
+                    <coral-panel-content>
+                        <div>
+                            <div class="coral-Form-fieldwrapper">
+                                <input data-dependsonref="enableTab"
+                                       id="enableTab"
+                                       name="enableTab"
+                                       type="checkbox"
+                                       class="coral-Form-field"/>
+                            </div>
+                        </div>
+                    </coral-panel-content>
+                </coral-panel>
+
+                <coral-panel class="coral3-Panel" role="region" id="tab-2" aria-labelledby="tab-2-control">
+                    <coral-panel-content>
+                        <div data-dependson="@enableTab" data-dependsonaction="tab-visibility">
+                            <section class="coral-Form-fieldset">
+                                <div class="coral-Form-fieldwrapper">
+                                    <input data-dependsonref="switchDependent"
+                                           id="switchDependent"
+                                           name="switchDependent"
+                                           type="checkbox"
+                                           class="coral-Form-field"/>
+                                </div>
+                                <div class="coral-Form-fieldwrapper">
+                                    <input data-dependson="@switchDependent"
+                                           data-dependsonaction="visible"
+                                           id="dependentOn"
+                                           name="dependentOn"
+                                           class="coral-Form-field"/>
+                                </div>
+                                <div class="coral-Form-fieldwrapper">
+                                    <input data-dependson="!@switchDependent"
+                                           data-dependsonaction="visible"
+                                           id="dependentOff"
+                                           name="dependentOff"
+                                           class="coral-Form-field"/>
+                                </div>
+                                <div class="coral-Form-fieldwrapper">
+                                    <input data-dependson="@switchDependent"
+                                           data-dependsonaction="hidden"
+                                           id="dependentOffAlt"
+                                           name="dependentOffAlt"
+                                           class="coral-Form-field"/>
+                                </div>
+                            </section>
+                        </div>
+                    </coral-panel-content>
+                </coral-panel>
+            </coral-panelstack>
+        </coral-tabview>
+    </div>
+</coral-dialog-content>

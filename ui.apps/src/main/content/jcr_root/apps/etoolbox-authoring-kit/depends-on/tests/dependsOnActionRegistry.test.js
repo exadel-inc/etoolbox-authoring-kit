@@ -39,8 +39,8 @@ describe('DependsOn: ActionRegistry', () => {
         });
 
         test('Incorrect action definition throws error', () => {
-            expect(() => ActionRegistry.register('test-action-1', null)).toThrowError();
-            expect(() => ActionRegistry.register('test-action-2', {})).toThrowError();
+            expect(() => ActionRegistry.register('test-action-1', null)).toThrow();
+            expect(() => ActionRegistry.register('test-action-2', {})).toThrow();
         });
 
         describe('ActionRegistry auto sanitize action name', () => {

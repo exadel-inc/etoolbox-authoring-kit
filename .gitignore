@@ -81,3 +81,6 @@ it.tests/build
 
 ### UI ###
 node_modules/
+
+### Jest Tests output ###
+coverage/
