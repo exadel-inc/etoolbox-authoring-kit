@@ -58,6 +58,7 @@
                 $el.attr('required', val ? 'true' : null);
             }
             ns.ElementAccessors.updateValidity($el, true);
+            ns.ElementAccessors.setLabelRequired($el, val);
         },
         visibility: function ($el, state) {
             $el.attr('hidden', state ? null : 'true');
