@@ -66,7 +66,7 @@
 
         if (applicableRule) {
             applicableRule.mode = applicableRule.mode || 'OVERRIDE';
-            applyRule(applicableRule, allowed, editable);
+            applyRule(applicableRule, allowed);
         }
         ns.PolicyResolver.cache.set(editable.path, allowed);
     }
@@ -254,9 +254,8 @@
      * Modifies the list of allowed components for the current container according to the mode specified in a rule
      * @param rule - matched rule
      * @param allowed - array of allowed components; modified within the method by reference
-     * @param editable - current container
      */
-    function applyRule(rule, allowed, editable) {
+    function applyRule(rule, allowed) {
         if (rule.mode === 'OVERRIDE') {
             allowed.length = 0;
         }
