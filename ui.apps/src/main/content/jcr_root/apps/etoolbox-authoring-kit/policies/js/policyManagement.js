@@ -23,6 +23,9 @@
     ns.PolicyResolver.cache = new Map();
 
     $(document).on('cq-editables-loaded', function (event) {
+        if (getCurrentLayerName() !== 'edit') {
+            return;
+        }
         if (window.eakApplyTopLevelPolicy) {
             event.editables.forEach((e) => window.eakApplyTopLevelPolicy(e));
         }
@@ -34,6 +37,17 @@
             resolve(allowed, componentList, this, rules);
         };
     };
+
+    /**
+     * Retrieves the name of the current TouchUI layer to decide whether the policy should be applied
+     * @returns {string|null}
+     */
+    function getCurrentLayerName() {
+        if (!Granite.author || !Granite.author.layerManager || !Granite.author.layerManager.getCurrentLayer) {
+            return null;
+        }
+        return (Granite.author.layerManager.getCurrentLayer() || '').toLowerCase();
+    }
 
     /**
      * Modifies the OOTB {@code _findAllowedComponentsFromPolicy} function to make it return an empty array instead of

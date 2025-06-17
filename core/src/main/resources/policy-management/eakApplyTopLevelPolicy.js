@@ -1,8 +1,4 @@
 window.eakApplyTopLevelPolicy = (editable) => {
-    const currentLayer = getCurrentLayerName();
-    if (currentLayer !== 'edit') {
-        return;
-    }
     const {config} = editable;
     const rules = JSON.parse('%s').rules;
     const containers = rules.flatMap((rule) => rule.containers);
@@ -19,9 +15,3 @@ window.eakApplyTopLevelPolicy = (editable) => {
     config.eakResourceName = resName;
 };
 
-function getCurrentLayerName() {
-    if (!Granite.author || !Granite.author.layerManager || !Granite.author.layerManager.getCurrentLayer) {
-        return null;
-    }
-    return (Granite.author.layerManager.getCurrentLayer() || '').toLowerCase();
-}
