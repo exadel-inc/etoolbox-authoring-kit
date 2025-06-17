@@ -18,7 +18,7 @@
  * Coral 3 MultiField accessor
  * */
 (function ($, ns) {
-    const MULTIFIELD_SELECTOR = '.coral3-Multifield';
+    const MULTIFIELD_SELECTOR = 'coral-multifield';
 
     ns.ElementAccessors.registerAccessor({
         selector: `${MULTIFIELD_SELECTOR}`,
