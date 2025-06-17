@@ -38,10 +38,10 @@
         const observers = ns.QueryObserver.get($el);
         console.group('Element Details');
         console.log('Element: ', $el.length > 1 ? $el : $el[0]);
-        console.group('Observers: ', observers.length > 0 ? '' : 'None');
+        console.group('Observers: %d found', observers.length);
         for (const observer of observers) {
             const { elements, groups, missing } = reportReferences(observer.parsedQuery);
-            console.group('%s = %s', observer.action, observer.parsedQuery);
+            console.groupCollapsed('%s = %s', observer.action, observer.parsedQuery);
             console.log('\tInstance: ', observer);
             console.log('\tOriginal query: ', observer.query);
             console.log('\tReferences: ', elements.length > 0 ? elements : 'None');
@@ -55,7 +55,7 @@
 
         const references = ns.ElementReferenceRegistry.refs
             .filter((ref) => ref.$el.is($el));
-        console.group('References: ');
+        console.groupCollapsed('References: %d found', references.length);
         console.log(references.length > 0 ? references : 'None');
         console.groupEnd();
 
