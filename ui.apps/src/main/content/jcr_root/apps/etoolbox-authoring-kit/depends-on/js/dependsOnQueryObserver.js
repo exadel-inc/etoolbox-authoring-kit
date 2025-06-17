@@ -41,6 +41,13 @@
         static get DATA_STORE() { return 'dependsonobserver'; }
 
         /**
+         * @returns {QueryObserver[]} - list of observers for the element
+         */
+        static get($el) {
+            return $el.data(QueryObserver.DATA_STORE) || [];
+        }
+
+        /**
          * Initialize dependson observer instances on the target
          * @param {JQuery} $el - target element
          * */
@@ -92,16 +99,13 @@
         static updateObservers($el, actions) {
             $el = ns.ElementAccessors.findTarget($el);
 
-            const observers = $el.data(QueryObserver.DATA_STORE);
-            if (!observers || !observers.length) return false;
-
+            const observers = QueryObserver.get($el);
             const targetObservers = actions ?
                 observers.filter((observer) => actions.indexOf(observer.action) !== -1) :
                 observers;
+
             if (!targetObservers.length) return false;
-
             targetObservers.forEach((observer) => observer.update());
-
             return true;
         }
 
