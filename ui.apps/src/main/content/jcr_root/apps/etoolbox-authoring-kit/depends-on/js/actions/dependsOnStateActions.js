@@ -66,9 +66,7 @@
      * query type: boolean
      * */
     ns.ActionRegistry.register('required', function setRequired(state) {
-        state = ns.ElementAccessors.setRequired(this.$el, state, this);
-        // Update label according to state
-        ns.ElementAccessors.setLabelRequired(this.$el, state);
+        ns.ElementAccessors.setRequired(this.$el, state, this);
     });
 
     /**

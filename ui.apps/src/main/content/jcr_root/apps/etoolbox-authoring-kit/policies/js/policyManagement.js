@@ -23,6 +23,9 @@
     ns.PolicyResolver.cache = new Map();
 
     $(document).on('cq-editables-loaded', function (event) {
+        if (getCurrentLayerName() !== 'edit') {
+            return;
+        }
         if (window.eakApplyTopLevelPolicy) {
             event.editables.forEach((e) => window.eakApplyTopLevelPolicy(e));
         }
@@ -34,6 +37,17 @@
             resolve(allowed, componentList, this, rules);
         };
     };
+
+    /**
+     * Retrieves the name of the current TouchUI layer to decide whether the policy should be applied
+     * @returns {string|null}
+     */
+    function getCurrentLayerName() {
+        if (!Granite.author || !Granite.author.layerManager || !Granite.author.layerManager.getCurrentLayer) {
+            return null;
+        }
+        return (Granite.author.layerManager.getCurrentLayer() || '').toLowerCase();
+    }
 
     /**
      * Modifies the OOTB {@code _findAllowedComponentsFromPolicy} function to make it return an empty array instead of
@@ -66,7 +80,7 @@
 
         if (applicableRule) {
             applicableRule.mode = applicableRule.mode || 'OVERRIDE';
-            applyRule(applicableRule, allowed, editable);
+            applyRule(applicableRule, allowed);
         }
         ns.PolicyResolver.cache.set(editable.path, allowed);
     }
@@ -254,9 +268,8 @@
      * Modifies the list of allowed components for the current container according to the mode specified in a rule
      * @param rule - matched rule
      * @param allowed - array of allowed components; modified within the method by reference
-     * @param editable - current container
      */
-    function applyRule(rule, allowed, editable) {
+    function applyRule(rule, allowed) {
         if (rule.mode === 'OVERRIDE') {
             allowed.length = 0;
         }

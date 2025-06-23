@@ -39,4 +39,5 @@ js/actions/dependsOnCoralTabAction.js
 js/actions/dependsOnUpdateOptionsAction.js
 
 # Init
+js/dependsOnDebug.js
 js/dependsOn.js

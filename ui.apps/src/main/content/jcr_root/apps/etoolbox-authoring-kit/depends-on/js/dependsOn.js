@@ -26,7 +26,7 @@
     const $document = $(document);
 
     // Version to track actual DependsOn version from code/browser console
-    ns.version = '2.8.0';
+    ns.version = '2.9.0';
 
     /**
      * DependsOn entry point
@@ -47,17 +47,6 @@
             // Execute callback if provided
             (typeof callback === 'function') && callback();
         }));
-    };
-
-    /** Log debug information to console */
-    ns.debug = function () {
-        console.log(`--- DependsOn v${ns.version} ---`);
-        console.log('Group References:');
-        ns.GroupReferenceRegistry.refs.forEach((ref) => console.log(ref));
-        console.log('Element References:');
-        ns.ElementReferenceRegistry.refs.forEach((ref) => console.log(ref));
-        console.log('Registered actions: ', ns.ActionRegistry.registeredActionNames);
-        console.log('--- DEBUG INFORMATION END ---');
     };
 
     // Track new component initialization

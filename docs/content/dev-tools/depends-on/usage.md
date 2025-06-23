@@ -39,3 +39,12 @@ DependsOn produces three types of debug notifications:
 
 The following expression can be evaluated in the browser console to see
 current DependsOn debug information (references, actions): `Granite.DependsOnPlugin.debug()`
+
+You can also use the `Granite.DependsOnPlugin.debug(element)` method to view debug information for a specific element.
+It will display all action observers and related references for the specified element.
+
+For example, to view debug information for a selected element in the browser console, you can use:
+
+```javascript
+Granite.DependsOnPlugin.debug($0);
+```

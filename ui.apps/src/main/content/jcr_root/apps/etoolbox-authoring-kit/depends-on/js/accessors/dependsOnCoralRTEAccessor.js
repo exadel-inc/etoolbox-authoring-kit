@@ -55,6 +55,7 @@
             $rteInput.each(function () { this.required = !!val; });
             $rteContainer.find(RTE_EDITOR_SELECTOR).attr('aria-required', !!val);
             ns.ElementAccessors.updateValidity($rteInput, true);
+            ns.ElementAccessors.setLabelRequired($el, val);
         },
         visibility: function ($el, val) {
             const $rteContainer = $el.closest(RTE_CONTAINER);
