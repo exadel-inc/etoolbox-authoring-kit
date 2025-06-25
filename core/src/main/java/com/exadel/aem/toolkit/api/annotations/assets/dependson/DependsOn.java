@@ -35,11 +35,11 @@ public @interface DependsOn {
     String query();
 
     /**
-     * Defines the {@code dependsOnAction} attribute value
-     * @return String value, one of {@link DependsOnActions} items or a custom-defined action name
+     * Defines the {@code dependsOnAction} attribute value(s)
+     * @return String value(s), items from {@link DependsOnActions} or custom-defined action names
      * @see DependsOnActions
      */
-    String action() default DependsOnActions.VISIBILITY;
+    String[] action() default {DependsOnActions.VISIBILITY};
 
     /**
      * Defines custom static parameters to be used by DependsOn actions
