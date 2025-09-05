@@ -100,6 +100,12 @@
                                     </includes>
                                 </resource>
                                 <resource>
+                                    <directory>${project.parent.basedir}/ui.config/target</directory>
+                                    <includes>
+                                        <include>${project.parent.artifactId}-ui.config-${project.version}.zip</include>
+                                    </includes>
+                                </resource>
+                                <resource>
                                     <directory>${project.parent.basedir}/ui.content/target</directory>
                                     <includes>
                                         <include>${project.parent.artifactId}-ui.content-${project.version}.zip</include>

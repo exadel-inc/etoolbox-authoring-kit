@@ -63,6 +63,7 @@
     <modules>
         <module>core</module>
         <module>ui.apps</module>
+        <module>ui.config</module>
         <module>ui.content</module>
         <module>plugin</module>
         <module>all</module>
