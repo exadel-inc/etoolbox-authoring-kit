@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root xmlns:jcr="http://www.jcp.org/jcr/1.0"
+          xmlns:cq="http://www.day.com/jcr/cq/1.0"
+          xmlns:granite="http://www.adobe.com/jcr/granite/1.0"
+          xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+          xmlns:nt="http://www.jcp.org/jcr/nt/1.0"
+          jcr:primaryType="cq:Page">
+    <jcr:content jcr:primaryType="nt:unstructured"
+                 jcr:title="Exadel Toolbox Configurator"
+                 sling:resourceType="granite/ui/components/shell/page"
+                 sling:vanityPath="/etoolbox/config">
+        <head jcr:primaryType="nt:unstructured">
+            <clientlibs
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/includeclientlibs"
+                    categories="[eak.config.console]"/>
+        </head>
+        <title jcr:primaryType="nt:unstructured"
+               sling:resourceType="granite/ui/components/coral/foundation/text"
+               granite:id="page-title"
+               text="Exadel Toolbox Configurator"/>
+        <actions jcr:primaryType="nt:unstructured">
+            <secondary jcr:primaryType="nt:unstructured">
+                <save
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/button"
+                    granite:id="button-save"
+                    granite:title="Save configuration in current AEM instance"
+                    disabled="{Boolean}true"
+                    icon="save"
+                    text="Save"
+                    variant="primary"/>
+                <reset
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/button"
+                    granite:id="button-reset"
+                    granite:title="Reset configuration in current AEM instance"
+                    disabled="{Boolean}true"
+                    icon="revert"
+                    text="Reset"
+                    variant="secondary"/>
+                <publish
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/button"
+                    granite:id="button-publish"
+                    granite:title="Publish configuration"
+                    disabled="{Boolean}true"
+                    icon="publish"
+                    text="Publish"
+                    variant="warning"/>
+                <unpublish
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/button"
+                    granite:id="button-unpublish"
+                    granite:title="Unpublish configuration"
+                    disabled="{Boolean}true"
+                    icon="publishRemove"
+                    text="Unpublish"
+                    variant="secondary"/>
+            </secondary>
+        </actions>
+        <content jcr:primaryType="nt:unstructured"
+                 sling:resourceType="granite/ui/components/coral/foundation/container">
+            <items jcr:primaryType="nt:unstructured">
+                <columns jcr:primaryType="nt:unstructured"
+                         sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"
+                         granite:class="u-coral-margin">
+                    <items jcr:primaryType="nt:unstructured">
+                        <form jcr:primaryType="nt:unstructured"
+                              granite:id="config"
+                              sling:resourceType="granite/ui/components/coral/foundation/form"
+                              method="post"
+                              foundationForm="true"
+                              dataPath="/conf/etoolbox/authoring-kit/configurator"
+                              action="/conf/etoolbox/authoring-kit/configurator${requestPathInfo.suffix}"
+                              style="vertical">
+                            <datasource
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="/bin/etoolbox/authoring-kit/configurator"/>
+                        </form>
+                    </items>
+                </columns>
+            </items>
+        </content>
+    </jcr:content>
+</jcr:root>
