@@ -13,7 +13,6 @@
  */
 package com.exadel.aem.toolkit.core.lists.utils;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,16 +35,12 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.lists.ListConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
+import com.exadel.aem.toolkit.core.utils.ValueMapUtil;
 
 /**
  * Contains methods for manipulation with List Resource
  */
 class ListResourceUtil {
-
-    private static final List<String> PROPERTIES_TO_IGNORE = Arrays.asList(
-        "jcr:createdBy", "jcr:created", "cq:lastModified", "cq:lastModifiedBy", "jcr:lastModified", "jcr:lastModifiedBy",
-        "cq:lastReplicationAction", "cq:lastReplicatedBy", "cq:lastReplicated"
-    );
 
     /**
      * Default (instantiation-restricting) constructor
@@ -66,9 +61,13 @@ class ListResourceUtil {
         Resource parent,
         Map<String, Object> properties)
         throws PersistenceException {
-        Map<String, Object> valueMapWithoutSystemProps = excludeSystemProperties(properties);
+        Map<String, Object> valueMapWithoutSystemProps = ValueMapUtil.excludeSystemProperties(properties);
+        valueMapWithoutSystemProps.put(JcrConstants.JCR_PRIMARYTYPE, JcrConstants.NT_UNSTRUCTURED);
         valueMapWithoutSystemProps.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ListConstants.LIST_ITEM_RESOURCE_TYPE);
-        resourceResolver.create(parent, ResourceUtil.createUniqueChildName(parent, CoreConstants.PN_LIST_ITEM), valueMapWithoutSystemProps);
+        resourceResolver.create(
+            parent,
+            ResourceUtil.createUniqueChildName(parent, CoreConstants.PN_LIST_ITEM),
+            valueMapWithoutSystemProps);
     }
 
     /**
@@ -127,16 +126,5 @@ class ListResourceUtil {
             };
         }
         return ObjectConversionUtil::toPropertyMap;
-    }
-
-    /**
-     * Filters the provided map of properties excluding the "system" properties not relevant for a list entry
-     * @param properties {@code Map} instance
-     * @return Filtered map
-     */
-    private static Map<String, Object> excludeSystemProperties(Map<String, Object> properties) {
-        return MapUtils.emptyIfNull(properties).entrySet().stream()
-            .filter(entry -> !PROPERTIES_TO_IGNORE.contains(entry.getKey()))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }
