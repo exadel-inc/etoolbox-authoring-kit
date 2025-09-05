@@ -20,6 +20,7 @@ import java.lang.annotation.Target;
 
 import com.exadel.aem.toolkit.api.annotations.meta.AnnotationRendering;
 import com.exadel.aem.toolkit.api.annotations.meta.PropertyRendering;
+import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * Used to define common properties of Granite UI <a href="https://helpx.adobe.com/experience-manager/6-5/sites/developing/using/reference-materials/granite-ui/api/jcr_root/libs/granite/ui/components/coral/foundation/form/field/index.html">
@@ -35,7 +36,7 @@ public @interface DialogField {
      * Used to define a label displayed beside this dialog component
      * @return String value (optional)
      */
-    @PropertyRendering(name = "fieldLabel")
+    @PropertyRendering(name = CoreConstants.PN_FIELD_LABEL)
     String label() default "";
 
     /**
