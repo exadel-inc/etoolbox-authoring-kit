@@ -188,48 +188,47 @@
     /**
      * Handles a click on the "Publish" button
      */
-    function onPublishClick() {
+    async function onPublishClick() {
         const foundationForm = $('#config').adaptTo('foundation-form');
-        let savingRoutine = Promise.resolve();
         if (foundationForm.isDirty()) {
-            savingRoutine = prompt('Unsaved changes', 'Save changes before publishing configuration?')
-                .then((action) => action === 'yes' ? save() : Promise.resolve());
+            const action = await prompt('Unsaved changes', 'Save changes before publishing configuration?');
+            if (action === 'yes') {
+                await save();
+            }
         }
-        savingRoutine.then(publish);
+        await publish();
     }
 
     /**
      * Handles a click on the "Reset" button
      */
-    function onResetClick() {
+    async function onResetClick() {
         const $form = $('#config');
-        let unpublishingRoutine = Promise.resolve();
         if (isPublished($form)) {
-            unpublishingRoutine = prompt('Published configuration', 'This configuration is published. Do you want to unpublish it before resetting?')
-                .then((action) => action === 'yes' ? unpublish() : Promise.resolve());
+            const action = await prompt('Published configuration', 'This configuration is published. Do you want to unpublish it before resetting?');
+            if (action === 'yes') {
+                await unpublish();
+            }
         }
-        unpublishingRoutine.then(reset);
+        await reset();
     }
 
     /**
      * Handles a click on the "Save" button
      */
-    function onSaveClick() {
-        save();
+    async function onSaveClick() {
+        await save();
     }
 
     /**
      * Handles a click on the "Unpublish" button
      */
-    function onUnpublishClick() {
-        unpublish()
-            .then(() => prompt('Unpublished configuration', 'Do you want to also reset this configuration on the current instance?')
-                .then((action) => {
-                    if (action === 'yes') {
-                        return reset();
-                    }
-                    return Promise.resolve();
-                }));
+    async function onUnpublishClick() {
+        await unpublish();
+        const action = await prompt('Unpublished configuration', 'Do you want to also reset this configuration on the current instance?');
+        if (action === 'yes') {
+            await reset();
+        }
     }
 
     $(document)
