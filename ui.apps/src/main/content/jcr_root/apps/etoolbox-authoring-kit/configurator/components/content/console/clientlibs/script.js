@@ -53,7 +53,7 @@
      */
     function replicate(command) {
         const $form = $('#config');
-            const publishPath = $form.attr('action') + `.${command}.html`;
+        const publishPath = $form.attr('action') + `.${command}.html`;
         return $.ajax({
             type: 'POST',
             url: publishPath
@@ -90,7 +90,6 @@
                 foundationUi.notify('Error', 'Failed to reset configuration: ' + message, 'error');
             })
             .promise();
-
     }
 
     /**
@@ -196,7 +195,7 @@
             savingRoutine = prompt('Unsaved changes', 'Save changes before publishing configuration?')
                 .then((action) => action === 'yes' ? save() : Promise.resolve());
         }
-        savingRoutine.then(publish)
+        savingRoutine.then(publish);
     }
 
     /**
@@ -226,11 +225,11 @@
         unpublish()
             .then(() => prompt('Unpublished configuration', 'Do you want to also reset this configuration on the current instance?')
                 .then((action) => {
-                if (action === 'yes') {
-                    return reset();
-                }
-                return Promise.resolve();
-            }));
+                    if (action === 'yes') {
+                        return reset();
+                    }
+                    return Promise.resolve();
+                }));
     }
 
     $(document)
@@ -240,4 +239,4 @@
         .on('click.eak', '#button-reset', onResetClick)
         .on('click.eak', '#button-save', onSaveClick)
         .on('click.eak', '#button-unpublish', onUnpublishClick);
-})(window, document, Granite.$)
+})(window, document, Granite.$);

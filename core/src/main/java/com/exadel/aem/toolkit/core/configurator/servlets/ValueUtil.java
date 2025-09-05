@@ -117,7 +117,7 @@ class ValueUtil {
                 .toArray(Object[]::new);
             return ArrayUtils.isEmpty(result) ? null : result;
         }
-        return new Object[] { source };
+        return new Object[] {source};
     }
 
     /**

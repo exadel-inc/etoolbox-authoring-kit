@@ -33,6 +33,12 @@ import com.exadel.aem.toolkit.core.utils.ValueMapUtil;
 class MapUtil {
 
     /**
+     * Default (instantiation-restricting) constructor
+     */
+    private MapUtil() {
+    }
+
+    /**
      * Converts a {@link ValueMap} instance to a {@link Dictionary} instance, excluding system properties and properties
      * with unsupported value types
      * @param properties The source value map
@@ -59,7 +65,7 @@ class MapUtil {
         if (dictionary == null) {
             return new ValueMapDecorator(new Hashtable<>());
         }
-        for (Enumeration<String> keys = dictionary.keys(); keys.hasMoreElements(); ) {
+        for (Enumeration<String> keys = dictionary.keys(); keys.hasMoreElements();) {
             String key = keys.nextElement();
             if ("service.pid".equals(key) || "service.factoryPid".equals(key)) {
                 continue;

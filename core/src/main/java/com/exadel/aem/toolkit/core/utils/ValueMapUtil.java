@@ -46,7 +46,7 @@ public class ValueMapUtil {
     /**
      * Default (instantiation-restricting) constructor
      */
-    public ValueMapUtil() {
+    private ValueMapUtil() {
     }
 
     /**

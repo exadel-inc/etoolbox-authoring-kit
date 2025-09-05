@@ -24,9 +24,17 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 @ObjectClassDefinition(name = "EToolbox Authoring Kit - Configurator")
 public @interface ConfigChangeListenerConfiguration {
 
+    /**
+     * Defines whether the listener is enabled
+     * @return True or false
+     */
     @AttributeDefinition(name = "Enabled", description = "Enable listening to configuration changes")
     boolean enabled() default false;
 
+    /**
+     * Defines a list of configuration PIDs to clean up on startup
+     * @return Array of strings
+     */
     @AttributeDefinition(name = "Clean up PIDs", description = "List of configuration PIDs to clean up on startup")
     String[] cleanUp() default {};
 }

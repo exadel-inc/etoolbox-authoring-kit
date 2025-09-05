@@ -310,6 +310,7 @@ class FieldUtil {
      * @param isMultiValue Whether this field should be a {@code Multifield}
      * @return The {@code Resource} instance representing the field
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     private static Resource newField(
         ResourceResolver resolver,
         String path,

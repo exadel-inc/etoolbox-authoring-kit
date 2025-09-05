@@ -44,9 +44,9 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.metatype.annotations.Designate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants.ROOT_PATH;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
 
 /**
  * Listens to changes in the repository under the specified root and updates OSGi configurations accordingly
@@ -81,6 +81,8 @@ public class ConfigChangeListener implements ResourceChangeListener {
 
     /**
      * Initializes the instance, reading existing configurations from the repository
+     * @param context Bundle context to use for registering the resource change listener
+     * @param config  Configuration instance
      */
     @Activate
     void activate(BundleContext context, ConfigChangeListenerConfiguration config) {
@@ -100,7 +102,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
         }
         LOG.info("Configuration change listening is enabled");
         Dictionary<String, Object> properties = new Hashtable<>();
-        properties.put(ResourceChangeListener.PATHS, new String[]{ROOT_PATH});
+        properties.put(ResourceChangeListener.PATHS, new String[]{ConfiguratorConstants.ROOT_PATH});
         properties.put(ResourceChangeListener.CHANGES, new String[]{"ADDED", "CHANGED", "REMOVED"});
         registration = context.registerService(ResourceChangeListener.class, this, properties);
     }
@@ -114,7 +116,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
      */
     private void activateWithCleanUp(ResourceResolver resolver, String[] pids) throws PersistenceException {
         for (String pid : pids) {
-            String configPath = ROOT_PATH + CoreConstants.SEPARATOR_SLASH + pid;
+            String configPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + pid;
             Resource configResource = resolver.getResource(configPath);
             if (configResource != null) {
                 resolver.delete(configResource);
@@ -122,7 +124,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
                 LOG.warn("Clean up of {} skipped: configuration not found", pid);
             }
 
-            String backupPath = ROOT_PATH + CoreConstants.SEPARATOR_SLASH + NN_INITIAL + CoreConstants.SEPARATOR_SLASH + pid;
+            String backupPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + NN_INITIAL + CoreConstants.SEPARATOR_SLASH + pid;
             Resource backupResource = resolver.getResource(backupPath);
             if (backupResource != null) {
                 resolver.delete(backupResource);
@@ -139,7 +141,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
      * @param resolver Resource resolver to use
      */
     private void activateWithUpdating(ResourceResolver resolver) {
-        Resource configRoot = resolver.getResource(ROOT_PATH);
+        Resource configRoot = resolver.getResource(ConfiguratorConstants.ROOT_PATH);
         if (configRoot == null) {
             LOG.error("Configuration root not found");
             return;
@@ -222,7 +224,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
      */
     private static boolean isAccountable(ResourceChange change) {
         if (change.getType() == ResourceChange.ChangeType.REMOVED) {
-            return !ROOT_PATH.equals(change.getPath())
+            return !ConfiguratorConstants.ROOT_PATH.equals(change.getPath())
                 && !StringUtils.endsWith(change.getPath(), CoreConstants.SEPARATOR_SLASH + NN_INITIAL)
                 && !StringUtils.contains(change.getPath(), CoreConstants.SEPARATOR_SLASH + NN_INITIAL + CoreConstants.SEPARATOR_SLASH);
         }
@@ -268,7 +270,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
      * @param pid      Configuration identifier
      */
     private void resetConfiguration(ResourceResolver resolver, String pid) {
-        String backupPath = ROOT_PATH
+        String backupPath = ConfiguratorConstants.ROOT_PATH
             + CoreConstants.SEPARATOR_SLASH + NN_INITIAL
             + CoreConstants.SEPARATOR_SLASH + pid;
         Resource backupResource = resolver.getResource(backupPath);
@@ -368,7 +370,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
      */
     private static boolean hasBackup(Resource resource) {
         String pid = extractPid(resource);
-        String backupPath = ROOT_PATH
+        String backupPath = ConfiguratorConstants.ROOT_PATH
             + CoreConstants.SEPARATOR_SLASH + NN_INITIAL
             + CoreConstants.SEPARATOR_SLASH + pid;
         return resource.getResourceResolver().getResource(backupPath) != null;
@@ -381,7 +383,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
      */
     private static void createBackup(Resource resource, Configuration config) {
         ResourceResolver resolver = resource.getResourceResolver();
-        Resource root = resolver.getResource(ROOT_PATH);
+        Resource root = resolver.getResource(ConfiguratorConstants.ROOT_PATH);
         if (root == null) {
             return;
         }

@@ -44,6 +44,7 @@ class ConfigDefinition {
      * @param isFactory         Whether the configuration is a factory configuration
      * @param isFactoryInstance Whether the configuration is an instance of a factory configuration
      */
+    @SuppressWarnings("checkstyle:ParameterNumber")
     ConfigDefinition(
         String id,
         ObjectClassDefinition ocd,
