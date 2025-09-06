@@ -93,7 +93,7 @@ public class ConfigDataSource extends SlingSafeMethodsServlet {
         if (!configChangeListener.isEnabled()) {
             Resource message = FieldUtil.newAlert(
                 request.getResourceResolver(),
-                "This tool is disabled in OSGi configuration",
+                "This tool is disabled by OSGi configuration",
                 "error");
             request.setAttribute(
                 DataSource.class.getName(),
