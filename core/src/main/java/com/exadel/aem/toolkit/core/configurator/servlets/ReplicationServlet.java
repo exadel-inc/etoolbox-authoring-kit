@@ -73,7 +73,7 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
                 LOG.error("Could not publish configuration {}", request.getResource().getName(), e);
                 response.sendError(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             }
-        } else {
+        } else if ("unpublish".equals(request.getRequestPathInfo().getSelectorString())) {
             try {
                 replicator.replicate(
                     Objects.requireNonNull(request.getResourceResolver().adaptTo(Session.class)),
@@ -83,6 +83,8 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
                 LOG.error("Could not unpublish configuration {}", request.getResource().getName(), e);
                 response.sendError(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             }
+        } else {
+            response.sendError(SlingHttpServletResponse.SC_BAD_REQUEST, "Invalid selector");
         }
     }
 }
