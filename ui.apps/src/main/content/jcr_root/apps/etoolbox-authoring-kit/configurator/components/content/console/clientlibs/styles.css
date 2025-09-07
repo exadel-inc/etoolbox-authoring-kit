@@ -12,11 +12,25 @@
  * limitations under the License.
  */
 
-.coral-FixedColumn-column {
+hr {
+    margin: 1rem -0.5rem;
+}
+
+#config {
     width: 50%;
 }
 
-.coral-Form-fieldwrapper .coral-Form-fieldlabel {
+#config label {
+    font-size: 0.95rem;
+}
+
+.centered {
+    left: 50%;
+    text-align: center;
+    transform: translateX(-50%);
+}
+
+.config-description {
     font-size: 0.95rem;
 }
 
@@ -25,14 +39,4 @@
     display: block;
     font-size: 0.85rem;
     font-style: italic;
-}
-
-hr {
-    margin: 1rem -0.5rem;
-}
-
-.centered {
-    left: 50%;
-    text-align: center;
-    transform: translateX(-50%);
 }

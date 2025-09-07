@@ -66,14 +66,15 @@
                          sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"
                          granite:class="u-coral-margin">
                     <items jcr:primaryType="nt:unstructured">
-                        <form jcr:primaryType="nt:unstructured"
-                              granite:id="config"
-                              sling:resourceType="granite/ui/components/coral/foundation/form"
-                              method="post"
-                              foundationForm="true"
-                              dataPath="/conf/etoolbox/authoring-kit/configurator"
-                              action="/conf/etoolbox/authoring-kit/configurator${requestPathInfo.suffix}"
-                              style="vertical">
+                        <form
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/form"
+                            granite:id="config"
+                            method="post"
+                            foundationForm="true"
+                            dataPath="/conf/etoolbox/authoring-kit/configurator"
+                            action="/conf/etoolbox/authoring-kit/configurator${requestPathInfo.suffix}"
+                            style="vertical">
                             <datasource
                                 jcr:primaryType="nt:unstructured"
                                 sling:resourceType="/bin/etoolbox/authoring-kit/configurator"/>
