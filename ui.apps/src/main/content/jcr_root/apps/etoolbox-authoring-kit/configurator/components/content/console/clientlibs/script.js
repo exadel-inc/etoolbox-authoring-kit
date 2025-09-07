@@ -22,7 +22,7 @@
 
     /**
      * Gets if the configuration has unsaved modifications according to the form metadata
-     * @param {jQuery} $form
+     * @param {JQuery} $form
      * @returns {boolean}
      */
     function isModified($form) {
@@ -31,7 +31,7 @@
 
     /**
      * Gets if the configuration is published according to the form metadata
-     * @param {jQuery} $form
+     * @param {JQuery} $form
      * @returns {boolean}
      */
     function isPublished($form) {
@@ -66,8 +66,7 @@
                 const message = (xhr.responseJSON && xhr.responseJSON.message) || e.message || e;
                 console.error(`Failed to ${command} configuration: ${message}`);
                 foundationUi.notify('Error', `Failed to ${command} configuration: ${message}`, 'error');
-            })
-            .promise();
+            });
     }
 
     /**
@@ -88,8 +87,7 @@
                 const message = (xhr.responseJSON && xhr.responseJSON.message) || e.message || e;
                 console.error('Failed to reset configuration: ' + message);
                 foundationUi.notify('Error', 'Failed to reset configuration: ' + message, 'error');
-            })
-            .promise();
+            });
     }
 
     /**
@@ -107,8 +105,7 @@
                 const message = (xhr.responseJSON && xhr.responseJSON.message) || e.message || e;
                 console.error('Failed to update configuration: ' + message);
                 foundationUi.notify('Error', 'Failed to update configuration: ' + message, 'error');
-            })
-            .promise();
+            });
     }
 
     /**
