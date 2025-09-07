@@ -3,7 +3,7 @@ layout: content
 title: Enhancing AEM Components with advanced Injectors
 navTitle: Injectors
 seoTitle: Injectors - Exadel Authoring Kit
-order: 4
+order: 5
 -->
 
 [Injectors](https://sling.apache.org/documentation/bundles/models.html#custom-injectors-1) are a powerful feature of

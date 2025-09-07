@@ -3,7 +3,7 @@ layout: content
 title: Feeding data to selection widgets with OptionProvider
 navTitle: Option Provider
 seoTitle: Option Provider - Exadel Authoring Kit
-order: 3
+order: 4
 -->
 
 Several Granite/Touch UI components, such as _RadioGroup_ or _Select_, facilitate selecting from a set of options. Traditionally, the options are either inlined (the ToolKit offers its `@RadioButton` and `@Option` annotations for that) or supplied via a datasource. Both ways have their limitations; the in-line options are not dynamic and potentially lead to a lot of copy-pasting across components, while the _datasource_ pattern requires creating a datasource servlet for every occasion.
