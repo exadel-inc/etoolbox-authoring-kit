@@ -8,7 +8,7 @@ order: 6
 
 Configurator is a tool that allows editing OSGi configurations is a user-friendly manner.
 
-<em>Note:</em> As of Exadel Authoring Kit 2.7.0, <em>Configurator</em> is is an experimental feature. You need to specially enable it thorugh your own AEM project bu adding to it a configuration file like the following:
+<em>Note:</em> As of Exadel Authoring Kit 2.7.0, <em>Configurator</em> is is an experimental feature. You need to specially enable it thorugh your own AEM project bu adding a configuration file like the following:
 
 Path: `ui.config/src/main/content/jcr_root/apps/your_app/osgiconfig/config/com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener.xml`
 ```xml
@@ -18,7 +18,6 @@ Path: `ui.config/src/main/content/jcr_root/apps/your_app/osgiconfig/config/com.e
     xmlns:jcr="http://www.jcp.org/jcr/1.0"
     jcr:primaryType="sling:OsgiConfig"
     enabled="{Boolean}true"
-    cleanUp="[com.hpe.www.webservices.servlet.SampleConfigServlet]"
 />
 
 ```
