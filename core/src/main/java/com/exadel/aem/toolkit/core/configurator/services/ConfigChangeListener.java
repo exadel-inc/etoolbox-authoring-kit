@@ -257,7 +257,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
      */
     private Configuration readConfiguration(String pid) {
         try {
-            return configurationAdmin.getConfiguration(pid);
+            return configurationAdmin.getConfiguration(pid, null);
         } catch (IOException | SecurityException e) {
             LOG.error("Could not retrieve configuration for {}", pid, e);
         }

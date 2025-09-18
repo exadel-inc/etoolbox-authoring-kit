@@ -91,7 +91,7 @@ class ConfigHelper {
      */
     private Configuration getConfigurationObject(String id) {
         try {
-            return configurationAdmin.getConfiguration(id);
+            return configurationAdmin.getConfiguration(id, null);
         } catch (Exception e) {
             LOG.error("Could not retrieve configuration for {}", id, e);
             return null;
