@@ -42,8 +42,8 @@
      * Triggers asynchronous publishing of the configuration
      * @returns {Promise}
      */
-    function publish() {
-        return replicate('publish');
+    async function publish() {
+        return await replicate('publish');
     }
 
     /**
@@ -51,74 +51,91 @@
      * @param {string} command
      * @returns {Promise}
      */
-    function replicate(command) {
-        const $form = $('#config');
-        const publishPath = $form.attr('action') + `.${command}.html`;
-        return $.ajax({
-            type: 'POST',
-            url: publishPath
-        })
-            .done(function () {
-                reload();
-                foundationUi.notify('Success', `Started ${command}ing configuration`, 'success');
-            })
-            .fail(function (xhr, status, e) {
-                const message = (xhr.responseJSON && xhr.responseJSON.message) || e.message || e;
-                console.error(`Failed to ${command} configuration: ${message}`);
-                foundationUi.notify('Error', `Failed to ${command} configuration: ${message}`, 'error');
-            });
+    async function replicate(command) {
+        foundationUi.wait();
+        const publishPath = $('#config').attr('action') + `.${command}.html`;
+        try {
+            await requestAsync('POST', publishPath);
+            await reloadAsync();
+            foundationUi.notify('Success', `Started ${command}ing configuration`, 'success');
+        } catch (e) {
+            console.error(`Failed to ${command} configuration:`, e);
+            foundationUi.notify('Error', `Failed to ${command} configuration: ${getErrorMessage(e)}`, 'error');
+        } finally {
+            foundationUi.clearWait();
+        }
     }
 
     /**
-     * Triggers resetting of the configuration to default values
+     * Resets the configuration to a previously stored initial value set
      * @returns {Promise}
      */
-    function reset() {
+    async function reset() {
+        foundationUi.wait();
         const configPath = $('#config').attr('action');
-        return $.ajax({
-            type: 'DELETE',
-            url: configPath
-        })
-            .done(function () {
-                reload();
+        try {
+            await requestAsync('DELETE', configPath);
+        } catch (e) {
+            console.error('Failed to reset configuration: ', e);
+            foundationUi.notify('Error', 'Failed to reset configuration: ' + getErrorMessage(e), 'error');
+            foundationUi.clearWait();
+            return;
+        }
+        try {
+            const hasChange = await reloadAsyncUntilChange();
+            if (hasChange) {
                 foundationUi.notify('Success', 'Configuration reset successfully', 'success');
-            })
-            .fail(function (xhr, status, e) {
-                const message = (xhr.responseJSON && xhr.responseJSON.message) || e.message || e;
-                console.error('Failed to reset configuration: ' + message);
-                foundationUi.notify('Error', 'Failed to reset configuration: ' + message, 'error');
-            });
+            } else {
+                foundationUi.notify('Error', 'No changes or configuration was not reset', 'error');
+            }
+        } catch (e) {
+            console.error('Failed to retrieve configuration update status:', e);
+            foundationUi.notify('Error', 'Failed to retrieve configuration update status: ' + getErrorMessage(e), 'error');
+        } finally {
+            foundationUi.clearWait();
+        }
     }
 
     /**
-     * Triggers asynchronous saving of the configuration
+     * Saves the configuration
      * @returns {Promise}
      */
-    function save() {
-        const foundationForm = $('#config').adaptTo('foundation-form');
-        return foundationForm.submitAsync()
-            .done(function () {
-                reload();
+    async function save() {
+        foundationUi.wait();
+        try {
+            await $('#config').adaptTo('foundation-form').submitAsync();
+        } catch (e) {
+            console.error('Failed to save configuration:', e);
+            foundationUi.notify('Error', 'Failed to save configuration: ' + (e.message || e.statusText || e), 'error');
+            foundationUi.clearWait();
+            return;
+        }
+        try {
+            const hasChange = await reloadAsyncUntilChange();
+            if (hasChange) {
                 foundationUi.notify('Success', 'Configuration saved successfully', 'success');
-            })
-            .fail(function (xhr, status, e) {
-                const message = (xhr.responseJSON && xhr.responseJSON.message) || e.message || e;
-                console.error('Failed to update configuration: ' + message);
-                foundationUi.notify('Error', 'Failed to update configuration: ' + message, 'error');
-            });
+            } else {
+                foundationUi.notify('Error', 'No changes or configuration was not saved', 'error');
+            }
+        } catch (e) {
+            console.error('Failed to retrieve configuration update status:', e);
+            foundationUi.notify('Error', 'Failed to retrieve configuration update status: ' + getErrorMessage(e), 'error');
+        } finally {
+            foundationUi.clearWait();
+        }
     }
 
     /**
      * Triggers asynchronous unpublishing of the configuration
      * @returns {Promise}
      */
-    function unpublish() {
-        return replicate('unpublish');
+    async function unpublish() {
+        return await replicate('unpublish');
     }
 
-    /* -----------------
-       Utility functions
-       ----------------- */
+    /* --------------------
+       UI utility functions
+       -------------------- */
 
     /**
      * Adjusts the states of action buttons according to the form metadata
@@ -128,6 +145,16 @@
         $('#button-save').attr('disabled', $form.find('[name]').length === 0);
         $('#button-reset,#button-publish').attr('disabled', !isModified($form));
         $('#button-unpublish').attr('disabled', !isPublished($form));
+    }
+
+    /**
+     * Extracts a meaningful error message from an error object
+     * @param e {any}
+     * @returns {string}
+     */
+    function getErrorMessage(e) {
+        const message = (e.responseJSON && e.responseJSON.message) || e.message || e.statusText || e;
+        return message === 'error' ? 'Network error' : message;
     }
 
     /**
@@ -151,17 +178,61 @@
         });
     }
 
+    /* -------------------------
+       Network utility functions
+       ------------------------- */
+
     /**
-     * Reloads the form content and resets the "dirty" state of the form
+     * Reloads the form content and returns a promise resolved with true if a change was detected, false otherwise
+     * @param {boolean} trackChanges If true, the function will check if the change count has changed and return false
+     * if it has not
+     * @returns {Promise<boolean>} Promise resolved with true if a change was detected, false otherwise
      */
-    function reload() {
+    async function reloadAsync(trackChanges = false) {
         const $form = $('#config');
+        const oldChangeCount = Number.parseInt($form.find('#changeCount').val(), 10);
+
         const ownPath = $form.find('#ownPath').val();
-        $.get(ownPath, function (data, textStatus, xhr) {
-            $form.get(0).innerHTML = $(data).get(0).innerHTML;
-            adjustButtonStates();
-            // This is needed to clear the "dirty" state of the form
-            $form.trigger('foundation-form-submit-callback', xhr);
+        const [data, xhr] = await requestAsync('GET', ownPath);
+        const $data = $(data);
+
+        const newChangeCount = Number.parseInt($data.find('#changeCount').val(), 10);
+        if (newChangeCount === oldChangeCount && trackChanges) {
+            return false;
+        }
+
+        $form.get(0).innerHTML = $data.get(0).innerHTML;
+        adjustButtonStates();
+        // This is needed to clear the "dirty" state of the form
+        $form.trigger('foundation-form-submit-callback', xhr);
+        return true;
+    }
+
+    /**
+     * Reloads the form content until a change is detected or a maximum number of attempts is reached
+     * @returns {Promise<boolean>} Promise resolved with true if a change was detected, false otherwise
+     */
+    async function reloadAsyncUntilChange() {
+        let changed = await reloadAsync();
+        let attempts = 1;
+        while (!changed && attempts++ < 5) {
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            changed = await reloadAsync(true);
+        }
+        return changed;
+    }
+
+    /**
+     * Performs an asynchronous JQuery request and returns a promise resolved with the response data and the JQuery
+     * XHR object
+     * @param type {string} The request type (e.g. "GET", "POST", etc.)
+     * @param url {string} The request URL
+     * @returns {Promise<[string, JQuery.jqXHR]>}
+     */
+    function requestAsync(type, url) {
+        return new Promise((resolve, reject) => {
+            return $.ajax({ type, url, success: (data, status, xhr) => resolve([data, xhr]) })
+                .fail((xhr, status, e) => reject(e || status));
         });
     }
 
@@ -221,8 +292,8 @@
      * Handles a click on the "Unpublish" button
      */
     async function onUnpublishClick() {
-        await unpublish();
         const action = await prompt('Unpublished configuration', 'Do you want to also reset this configuration on the current instance?');
+        await unpublish();
         if (action === 'yes') {
             await reset();
         }

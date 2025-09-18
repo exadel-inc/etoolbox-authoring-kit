@@ -27,43 +27,19 @@ import org.osgi.service.metatype.ObjectClassDefinition;
  */
 class ConfigDefinition {
 
-    private final String id;
-    private final ObjectClassDefinition ocd;
-    private final List<ConfigAttribute> attributes;
-    private final boolean factory;
-    private final boolean factoryInstance;
+    private String id;
+    private ObjectClassDefinition ocd;
+    private List<ConfigAttribute> attributes;
+    private long changeCount;
+    private boolean factory;
+    private boolean factoryInstance;
     private boolean modified;
     private boolean published;
 
     /**
-     * Instantiates a new object
-     * @param id                The configuration PID
-     * @param ocd               The {@link ObjectClassDefinition} instance that contains configuration attribute
-     *                          definitions
-     * @param values            A map of configuration attribute values, where the key is attribute ID
-     * @param isFactory         Whether the configuration is a factory configuration
-     * @param isFactoryInstance Whether the configuration is an instance of a factory configuration
+     * Default (instantiation-restricting) constructor
      */
-    @SuppressWarnings("checkstyle:ParameterNumber")
-    ConfigDefinition(
-        String id,
-        ObjectClassDefinition ocd,
-        Map<String, Object> values,
-        boolean isFactory,
-        boolean isFactoryInstance) {
-
-        this.id = id;
-        this.ocd = ocd;
-        this.attributes = new ArrayList<>();
-        for (AttributeDefinition definition : ocd.getAttributeDefinitions(ObjectClassDefinition.ALL)) {
-            attributes.add(
-                new ConfigAttribute(
-                    definition,
-                    values != null ? values.get(definition.getID()) : null)
-            );
-        }
-        this.factory = isFactory;
-        this.factoryInstance = isFactoryInstance;
+    private ConfigDefinition() {
     }
 
     /**
@@ -96,6 +72,14 @@ class ConfigDefinition {
      */
     public List<ConfigAttribute> getAttributes() {
         return attributes;
+    }
+
+    /**
+     * Gets the number of times the configuration has been changed
+     * @return The integer value
+     */
+    public long getChangeCount() {
+        return changeCount;
     }
 
     /**
@@ -144,5 +128,111 @@ class ConfigDefinition {
      */
     public void setPublished(boolean value) {
         this.published = value;
+    }
+
+    /* -------------
+       Factory logic
+       ------------- */
+
+    /**
+     * Prepares a new instance of the {@link Builder} class to create a {@code ConfigDefinition} object
+     * @return The {@code Builder} instance
+     */
+    static Builder builder() {
+        return new Builder();
+    }
+
+    /**
+     * Implements the builder pattern for {@link ConfigDefinition} instantiation
+     */
+    static class Builder {
+        private List<ConfigAttribute> attributes;
+        private long changeCount;
+        private boolean factory;
+        private boolean factoryInstance;
+        private String id;
+        private ObjectClassDefinition ocd;
+
+        /**
+         * Assigns the number of times the configuration has been changed
+         * @param value The integer value
+         * @return This instance
+         */
+        Builder changeCount(long value) {
+            this.changeCount = value;
+            return this;
+        }
+
+        /**
+         * Assigns the configuration PID
+         * @param value The string value
+         * @return This instance
+         */
+        Builder id(String value) {
+            this.id = value;
+            return this;
+        }
+
+        /**
+         * Assigns the value that determines whether the configuration is a factory configuration
+         * @param value True or false
+         * @return This instance
+         */
+        Builder isFactory(boolean value) {
+            this.factory = value;
+            return this;
+        }
+
+        /**
+         * Assigns the value that determines whether the configuration is an instance of a factory configuration
+         * @param value True or false
+         * @return This instance
+         */
+        Builder isFactoryInstance(boolean value) {
+            this.factoryInstance = value;
+            return this;
+        }
+
+        /**
+         * Assigns the {@link ObjectClassDefinition} instance that provides metadata for the configuration
+         * @param value The {@code ObjectClassDefinition} instance
+         * @return This instance
+         */
+        Builder ocd(ObjectClassDefinition value) {
+            this.ocd = value;
+            return this;
+        }
+
+        /**
+         * Assigns the map of configuration attribute IDs and their values
+         * @param value The map of values
+         * @return This instance
+         */
+        Builder values(Map<String, Object> value) {
+            this.attributes = new ArrayList<>();
+            for (AttributeDefinition definition : ocd.getAttributeDefinitions(ObjectClassDefinition.ALL)) {
+                attributes.add(
+                    new ConfigAttribute(
+                        definition,
+                        value != null ? value.get(definition.getID()) : null)
+                );
+            }
+            return this;
+        }
+
+        /**
+         * Creates a {@link ConfigDefinition} instance using the values previously assigned to this builder
+         * @return The {@code ConfigDefinition} instance
+         */
+        ConfigDefinition build() {
+            ConfigDefinition instance = new ConfigDefinition();
+            instance.attributes = this.attributes != null ? this.attributes : new ArrayList<>();
+            instance.changeCount = this.changeCount;
+            instance.factory = this.factory;
+            instance.factoryInstance = this.factoryInstance;
+            instance.id = this.id;
+            instance.ocd = this.ocd;
+            return instance;
+        }
     }
 }

@@ -96,6 +96,11 @@ class FieldUtil {
             "published",
             String.valueOf(config.isPublished())));
 
+        fieldCollection.add(newHidden(
+            request.getResourceResolver(),
+            "changeCount",
+            String.valueOf(config.getChangeCount())));
+
         // Node resource type setters
         fieldCollection.add(newHidden(
             request.getResourceResolver(),

@@ -79,7 +79,15 @@ class ConfigHelper {
                     .stream()
                     .collect(Collectors.toMap(k -> k, k -> configuration.getProperties().get(k)));
             }
-            return new ConfigDefinition(id, ocd, values, isFactoryConfig, isFactoryInstance);
+            return ConfigDefinition
+                .builder()
+                .changeCount(configuration.getChangeCount())
+                .id(id)
+                .isFactory(isFactoryConfig)
+                .isFactoryInstance(isFactoryInstance)
+                .ocd(ocd)
+                .values(values)
+                .build();
         }
         return null;
     }
