@@ -15,6 +15,7 @@
     'use strict';
 
     const foundationUi = $(window).adaptTo('foundation-ui');
+    let loadedFormValues;
 
     /* --------------
        Data functions
@@ -133,18 +134,41 @@
         return await replicate('unpublish');
     }
 
-    /* --------------------
-       UI utility functions
-       -------------------- */
+    /* --------
+       UI utils
+       -------- */
 
     /**
      * Adjusts the states of action buttons according to the form metadata
      */
     function adjustButtonStates() {
         const $form = $('#config');
-        $('#button-save').attr('disabled', $form.find('[name]').length === 0);
+        if ($form.find('[name]').length === 0) {
+            $('#button-save').attr('disabled', true);
+        } else {
+            const currentFormValues = getFormValues($form);
+            $('#button-save').attr('disabled', formValuesEqual(loadedFormValues, currentFormValues));
+        }
         $('#button-reset,#button-publish').attr('disabled', !isModified($form));
         $('#button-unpublish').attr('disabled', !isPublished($form));
+    }
+
+    /**
+     * Creates a debounced version of a function
+     * @param func {function(...[*]): void} The function to debounce
+     * @param wait {number} The debounce wait time in milliseconds
+     * @returns {(function(...[*]): void)|*}
+     */
+    function debounce(func, wait) {
+        let timeout;
+        return function(...args) {
+            const later = () => {
+                clearTimeout(timeout);
+                func.apply(this, args);
+            };
+            clearTimeout(timeout);
+            timeout = setTimeout(later, wait);
+        };
     }
 
     /**
@@ -178,9 +202,66 @@
         });
     }
 
-    /* -------------------------
-       Network utility functions
-       ------------------------- */
+    /* ----------
+       Form utils
+       ---------- */
+
+    /**
+     * Extracts the form values into a key-value object
+     * @param $form {JQuery} Form element
+     * @returns {object}
+     */
+    function getFormValues($form) {
+        const values = {};
+        $form.find('[name]:not([type="hidden"])').each((index, element) => {
+            const name = element.name;
+            let value = element.value;
+            if (element.type === 'checkbox' || element.type === 'radio') {
+                value = element.checked;
+            }
+            if (values[name] === undefined) {
+                values[name] = value;
+            } else if (Array.isArray(values[name])) {
+                values[name].push(value);
+            } else {
+                values[name] = [values[name], value];
+            }
+        });
+        return values;
+    }
+
+    /**
+     * Compares two form values dictionaries and returns true if they are equal, false otherwise
+     * @param values1 {object} The first dictionary
+     * @param values2 {object} The second dictionary
+     * @returns {boolean}
+     */
+    function formValuesEqual(values1, values2) {
+        const keys1 = Object.keys(values1);
+        const keys2 = Object.keys(values2);
+        if (keys1.length !== keys2.length) {
+            return false;
+        }
+        for (const key of keys1) {
+            if (Array.isArray(values1[key]) && Array.isArray(values2[key])) {
+                if (values1[key].length !== values2[key].length) {
+                    return false;
+                }
+                for (let i = 0; i < values1[key].length; i++) {
+                    if (values1[key][i] !== values2[key][i]) {
+                        return false;
+                    }
+                }
+            } else if (values1[key] !== values2[key]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /* -------------
+       Network utils
+       ------------- */
 
     /**
      * Reloads the form content and returns a promise resolved with true if a change was detected, false otherwise
@@ -202,9 +283,12 @@
         }
 
         $form.get(0).innerHTML = $data.get(0).innerHTML;
-        adjustButtonStates();
+
         // This is needed to clear the "dirty" state of the form
         $form.trigger('foundation-form-submit-callback', xhr);
+
+        loadedFormValues = getFormValues($form);
+        adjustButtonStates();
         return true;
     }
 
@@ -213,9 +297,9 @@
      * @returns {Promise<boolean>} Promise resolved with true if a change was detected, false otherwise
      */
     async function reloadAsyncUntilChange() {
-        let changed = await reloadAsync();
+        let changed = await reloadAsync(true);
         let attempts = 1;
-        while (!changed && attempts++ < 5) {
+        while (!changed && attempts++ < 3) {
             await new Promise((resolve) => setTimeout(resolve, 1000));
             changed = await reloadAsync(true);
         }
@@ -250,6 +334,7 @@
             document.title += ' - ' + heading;
             $('#page-title').get(0).innerHTML += ' &ndash; ' + heading;
         }
+        loadedFormValues = getFormValues($form);
         adjustButtonStates();
     }
 
@@ -302,6 +387,8 @@
     $(document)
         .off('.eak')
         .one('foundation-contentloaded.eak', onContentLoaded)
+        .on('foundation-field-change.eak', adjustButtonStates)
+        .on('keyup.eak', 'input,textarea', debounce(adjustButtonStates, 500))
         .on('click.eak', '#button-publish', onPublishClick)
         .on('click.eak', '#button-reset', onResetClick)
         .on('click.eak', '#button-save', onSaveClick)
