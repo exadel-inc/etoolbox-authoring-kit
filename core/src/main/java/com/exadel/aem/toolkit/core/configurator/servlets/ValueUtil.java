@@ -14,10 +14,10 @@
 package com.exadel.aem.toolkit.core.configurator.servlets;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -112,7 +112,8 @@ class ValueUtil {
             return ArrayUtils.isEmpty(result) ? null : result;
         }
         if (source.getClass().isArray()) {
-            Object[] result = Arrays.stream(((Object[]) source))
+            Object[] result = IntStream.range(0, Array.getLength(source))
+                .mapToObj(index -> Array.get(source, index))
                 .filter(item -> !isEmpty(item))
                 .toArray(Object[]::new);
             return ArrayUtils.isEmpty(result) ? null : result;
