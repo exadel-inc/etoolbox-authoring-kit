@@ -327,15 +327,22 @@ public class ConfigChangeListener implements ResourceChangeListener {
      */
     private void updateOsgi(Resource resource, Configuration configuration) throws Exception {
         boolean isForeignConfig = !extractPid(resource).startsWith(CoreConstants.ROOT_PACKAGE);
-        try {
-            String bundleLocation = configuration.getBundleLocation();
-            if (StringUtils.isNotEmpty(bundleLocation) && isForeignConfig && !bundleLocation.startsWith(UPDATABLE_CONFIG_TOKEN)) {
-                configuration.setBundleLocation(UPDATABLE_CONFIG_TOKEN + bundleLocation);
+        String originalBundleLocation = configuration.getBundleLocation();
+        if (StringUtils.isNotEmpty(originalBundleLocation) && isForeignConfig && !originalBundleLocation.startsWith(UPDATABLE_CONFIG_TOKEN)) {
+            try {
+                configuration.setBundleLocation(UPDATABLE_CONFIG_TOKEN + originalBundleLocation);
+            } catch (UnsupportedOperationException e) {
+                // Ignored for the sake of using with wcm.io mocks
             }
-        } catch (UnsupportedOperationException e) {
-            // Ignored for the sake of using with wcm.io mocks
         }
         configuration.update(MapUtil.toDictionary(resource.getValueMap()));
+        if (!StringUtils.equals(originalBundleLocation, configuration.getBundleLocation())) {
+            try {
+                configuration.setBundleLocation(originalBundleLocation);
+            } catch (UnsupportedOperationException e) {
+                // Ignored for the sake of using with wcm.io mocks
+            }
+        }
     }
 
     /**
