@@ -161,7 +161,7 @@
      */
     function debounce(func, wait) {
         let timeout;
-        return function(...args) {
+        return (...args) => {
             const later = () => {
                 clearTimeout(timeout);
                 func.apply(this, args);
