@@ -25,6 +25,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.junit.Test;
+import static junitx.framework.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -177,5 +178,82 @@ public class MapUtilTest {
         result = MapUtil.toMap(dictionary);
         assertNotNull(result);
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void shouldReturnTrueForEqualDictionaryAndMap() {
+        Dictionary<String, Object> dictionary = new Hashtable<>();
+        dictionary.put("string.property", "test value");
+        dictionary.put("int.property", 42);
+        dictionary.put("boolean.property", true);
+        dictionary.put("string.array", new String[]{"value1", "value2"});
+        dictionary.put("int.list", Arrays.asList(1, 2, 3));
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("string.property", "test value");
+        map.put("int.property", 42);
+        map.put("boolean.property", true);
+        map.put("string.array", new String[]{"value1", "value2"});
+        map.put("int.list", Arrays.asList(1, 2, 3));
+
+        assertTrue(MapUtil.equals(dictionary, map));
+        map.put("string.array", Arrays.asList("value1", "value2"));
+        assertTrue(MapUtil.equals(dictionary, map));
+    }
+
+    @Test
+    public void shouldReturnFalseForDifferingDictionaryAndMap() {
+        Dictionary<String, Object> dictionary = new Hashtable<>();
+        dictionary.put("string.property", "test value");
+        dictionary.put("int.property", 42);
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("string.property", "different value");
+        map.put("int.property", 42);
+
+        assertFalse(MapUtil.equals(dictionary, map));
+    }
+
+    @Test
+    public void shouldHandleNullValuesInEquals() {
+        assertTrue(MapUtil.equals(null, null));
+        assertFalse(MapUtil.equals(new Hashtable<>(), null));
+        assertFalse(MapUtil.equals(null, new HashMap<>()));
+
+        Dictionary<String, Object> dictionary = new Hashtable<>();
+        dictionary.put("string.property", "test value");
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("string.property", "test value");
+        map.put("null.property", null);
+
+        assertFalse(MapUtil.equals(dictionary, map));
+
+        map.remove("null.property");
+        assertTrue(MapUtil.equals(dictionary, map));
+    }
+
+    @Test
+    public void shouldIgnoreServicePropertiesInEquals() {
+        Dictionary<String, Object> dictionary = new Hashtable<>();
+        dictionary.put("service.pid", "com.example.service");
+        dictionary.put("service.factoryPid", "com.example.factory");
+        dictionary.put("string.property", "test value");
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("string.property", "test value");
+
+        assertTrue(MapUtil.equals(dictionary, map));
+    }
+
+    @Test
+    public void shouldCompareArraysAndLists() {
+        Dictionary<String, Object> dictionary = new Hashtable<>();
+        dictionary.put("array.property", new String[]{"value1", "value2"});
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("array.property", Arrays.asList("value1", "value2"));
+
+        assertTrue(MapUtil.equals(dictionary, map));
     }
 }

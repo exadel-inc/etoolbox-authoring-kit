@@ -35,13 +35,12 @@ import com.adobe.granite.ui.components.ds.ValueMapResource;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
 
 /**
  * Provides utility methods to create dialog fields for configuration attributes
  */
 class FieldUtil {
-
-    private static final String ATTR_NAME_HINT = "webconsole.configurationFactory.nameHint";
 
     private static final String NN_DATA_CHILD = "./data/";
     private static final String PN_CLASS = "granite:class";
@@ -119,7 +118,7 @@ class FieldUtil {
 
         // Attribute fields
         for (ConfigAttribute attribute : config.getAttributes()) {
-            if (ATTR_NAME_HINT.equals(attribute.getDefinition().getID())) {
+            if (ConfiguratorConstants.ATTR_NAME_HINT.equals(attribute.getDefinition().getID())) {
                 continue;
             }
             addFieldsForAttribute(fieldCollection, attribute, request.getResourceResolver());

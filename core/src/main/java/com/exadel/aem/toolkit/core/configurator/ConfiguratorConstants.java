@@ -20,6 +20,8 @@ package com.exadel.aem.toolkit.core.configurator;
  */
 public class ConfiguratorConstants {
 
+    public static final String ATTR_NAME_HINT = "webconsole.configurationFactory.nameHint";
+
     public static final String ROOT_PATH = "/conf/etoolbox/authoring-kit/configurator";
 
     /**

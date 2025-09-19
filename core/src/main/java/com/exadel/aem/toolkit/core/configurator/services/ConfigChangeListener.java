@@ -309,6 +309,9 @@ public class ConfigChangeListener implements ResourceChangeListener {
             LOG.warn("Could not retrieve configuration for resource {}", resource.getPath());
             return;
         }
+        if (MapUtil.equals(configuration.getProperties(), resource.getValueMap())) {
+            return;
+        }
         if (doBackup && !hasBackup(resource)) {
             createBackup(resource, configuration);
         }
@@ -327,22 +330,27 @@ public class ConfigChangeListener implements ResourceChangeListener {
      */
     private void updateOsgi(Resource resource, Configuration configuration) throws Exception {
         boolean isForeignConfig = !extractPid(resource).startsWith(CoreConstants.ROOT_PACKAGE);
-        String originalBundleLocation = configuration.getBundleLocation();
-        if (StringUtils.isNotEmpty(originalBundleLocation) && isForeignConfig && !originalBundleLocation.startsWith(UPDATABLE_CONFIG_TOKEN)) {
+        String originalBundleLocation = null;
             try {
-                configuration.setBundleLocation(UPDATABLE_CONFIG_TOKEN + originalBundleLocation);
+                originalBundleLocation = configuration.getBundleLocation();
+                if (
+                    StringUtils.isNotEmpty(originalBundleLocation)
+                    && isForeignConfig
+                    && !originalBundleLocation.startsWith(UPDATABLE_CONFIG_TOKEN)
+                ) {
+                    configuration.setBundleLocation(UPDATABLE_CONFIG_TOKEN + originalBundleLocation);
+                }
             } catch (UnsupportedOperationException e) {
                 // Ignored for the sake of using with wcm.io mocks
             }
-        }
         configuration.update(MapUtil.toDictionary(resource.getValueMap()));
-        if (!StringUtils.equals(originalBundleLocation, configuration.getBundleLocation())) {
             try {
-                configuration.setBundleLocation(originalBundleLocation);
+                if (!StringUtils.equals(originalBundleLocation, configuration.getBundleLocation())) {
+                    configuration.setBundleLocation(originalBundleLocation);
+                }
             } catch (UnsupportedOperationException e) {
                 // Ignored for the sake of using with wcm.io mocks
             }
-        }
     }
 
     /**
