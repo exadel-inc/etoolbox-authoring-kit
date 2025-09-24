@@ -66,6 +66,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
 
     private static final String NN_INITIAL = "initial";
     private static final String NN_DATA = "data";
+    private static final String SEPARATOR_COMMA_SPACE = ", ";
 
     @Reference
     private transient ConfigurationAdmin configurationAdmin;
@@ -86,6 +87,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
      */
     @Activate
     void activate(BundleContext context, ConfigChangeListenerConfiguration config) {
+        LOG.info("Configuration change listener is {}", config.enabled() ? "enabled" : "disabled");
         try (ResourceResolver resolver = newResolver()) {
             if (ArrayUtils.isNotEmpty(config.cleanUp())) {
                 activateWithCleanUp(resolver, config.cleanUp());
@@ -97,10 +99,8 @@ public class ConfigChangeListener implements ResourceChangeListener {
             LOG.error("Failed to initialize configurations", e);
         }
         if (!config.enabled()) {
-            LOG.info("Configuration change listening is disabled");
             return;
         }
-        LOG.info("Configuration change listening is enabled");
         Dictionary<String, Object> properties = new Hashtable<>();
         properties.put(ResourceChangeListener.PATHS, new String[]{ConfiguratorConstants.ROOT_PATH});
         properties.put(ResourceChangeListener.CHANGES, new String[]{"ADDED", "CHANGED", "REMOVED"});
@@ -116,23 +116,19 @@ public class ConfigChangeListener implements ResourceChangeListener {
      */
     private void activateWithCleanUp(ResourceResolver resolver, String[] pids) throws PersistenceException {
         for (String pid : pids) {
+            LOG.info("Cleaning up user-defined configuration {}", pid);
             String configPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + pid;
             Resource configResource = resolver.getResource(configPath);
             if (configResource != null) {
                 resolver.delete(configResource);
             } else {
-                LOG.warn("Clean up of {} skipped: configuration not found", pid);
-            }
-
-            String backupPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + NN_INITIAL + CoreConstants.SEPARATOR_SLASH + pid;
-            Resource backupResource = resolver.getResource(backupPath);
-            if (backupResource != null) {
-                resolver.delete(backupResource);
-            } else {
-                LOG.warn("Backup configuration for {} not found", pid);
+                LOG.warn("User-defined configuration {} not found", pid);
             }
         }
-        resolver.commit();
+        if (resolver.hasChanges()) {
+            LOG.debug("Committing cleanup changes");
+            resolver.commit();
+        }
     }
 
     /**
@@ -200,6 +196,10 @@ public class ConfigChangeListener implements ResourceChangeListener {
             return;
         }
         try (ResourceResolver resolver = newResolver()) {
+            if (!configsToUpdate.isEmpty()) {
+                LOG.debug("Going to update configurations following resource change(s): {}",
+                    StringUtils.join(configsToUpdate, SEPARATOR_COMMA_SPACE));
+            }
             for (String path : configsToUpdate) {
                 Resource resource = resolver.getResource(path);
                 if (resource == null) {
@@ -208,6 +208,10 @@ public class ConfigChangeListener implements ResourceChangeListener {
                 } else {
                     updateConfiguration(resource);
                 }
+            }
+            if (!configsToReset.isEmpty()) {
+                LOG.debug("Going to reset configurations following resource change(s): {}",
+                    StringUtils.join(configsToReset, SEPARATOR_COMMA_SPACE));
             }
             for (String path : configsToReset) {
                 resetConfiguration(resolver, extractPid(path));
@@ -270,6 +274,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
      * @param pid      Configuration identifier
      */
     private void resetConfiguration(ResourceResolver resolver, String pid) {
+        LOG.info("Resetting OSGi configuration {}", pid);
         String backupPath = ConfiguratorConstants.ROOT_PATH
             + CoreConstants.SEPARATOR_SLASH + NN_INITIAL
             + CoreConstants.SEPARATOR_SLASH + pid;
@@ -304,12 +309,14 @@ public class ConfigChangeListener implements ResourceChangeListener {
             return;
         }
         String pid = extractPid(resource);
+        LOG.info("Updating OSGi configuration {} to match user settings", pid);
         Configuration configuration = readConfiguration(pid);
         if (configuration == null) {
             LOG.warn("Could not retrieve configuration for resource {}", resource.getPath());
             return;
         }
         if (MapUtil.equals(configuration.getProperties(), resource.getValueMap())) {
+            LOG.debug("Configuration {} is up to date with user settings", pid);
             return;
         }
         if (doBackup && !hasBackup(resource)) {
@@ -331,26 +338,26 @@ public class ConfigChangeListener implements ResourceChangeListener {
     private void updateOsgi(Resource resource, Configuration configuration) throws Exception {
         boolean isForeignConfig = !extractPid(resource).startsWith(CoreConstants.ROOT_PACKAGE);
         String originalBundleLocation = null;
-            try {
-                originalBundleLocation = configuration.getBundleLocation();
-                if (
-                    StringUtils.isNotEmpty(originalBundleLocation)
+        try {
+            originalBundleLocation = configuration.getBundleLocation();
+            if (
+                StringUtils.isNotEmpty(originalBundleLocation)
                     && isForeignConfig
                     && !originalBundleLocation.startsWith(UPDATABLE_CONFIG_TOKEN)
-                ) {
-                    configuration.setBundleLocation(UPDATABLE_CONFIG_TOKEN + originalBundleLocation);
-                }
-            } catch (UnsupportedOperationException e) {
-                // Ignored for the sake of using with wcm.io mocks
+            ) {
+                configuration.setBundleLocation(UPDATABLE_CONFIG_TOKEN + originalBundleLocation);
             }
+        } catch (UnsupportedOperationException e) {
+            // Ignored for the sake of using with wcm.io mocks
+        }
         configuration.update(MapUtil.toDictionary(resource.getValueMap()));
-            try {
-                if (!StringUtils.equals(originalBundleLocation, configuration.getBundleLocation())) {
-                    configuration.setBundleLocation(originalBundleLocation);
-                }
-            } catch (UnsupportedOperationException e) {
-                // Ignored for the sake of using with wcm.io mocks
+        try {
+            if (!StringUtils.equals(originalBundleLocation, configuration.getBundleLocation())) {
+                configuration.setBundleLocation(originalBundleLocation);
             }
+        } catch (UnsupportedOperationException e) {
+            // Ignored for the sake of using with wcm.io mocks
+        }
     }
 
     /**
