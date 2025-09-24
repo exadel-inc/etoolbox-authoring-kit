@@ -102,13 +102,11 @@ class MapUtil {
             return false;
         }
         Map<String, Object> dictAsMap = toMap(dictionary);
+        map = ValueMapUtil.excludeSystemProperties(map);
         if (dictAsMap.size() != MapUtils.size(map)) {
             return false;
         }
         for (String key : dictAsMap.keySet()) {
-            if (EXCLUDED_KEYS.contains(key)) {
-                continue;
-            }
             Object dictValue = dictAsMap.get(key);
             Object mapValue = map.get(key);
             if (dictValue == null && mapValue == null) {
