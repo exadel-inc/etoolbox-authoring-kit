@@ -32,6 +32,8 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.resource.observation.ResourceChange;
 import org.apache.sling.api.resource.observation.ResourceChangeListener;
+import org.apache.sling.discovery.DiscoveryService;
+import org.apache.sling.discovery.InstanceDescription;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.Configuration;
@@ -43,6 +45,7 @@ import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.metatype.annotations.Designate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
@@ -69,6 +72,9 @@ public class ConfigChangeListener implements ResourceChangeListener {
     private transient ConfigurationAdmin configurationAdmin;
 
     @Reference
+    private transient DiscoveryService discoveryService;
+
+    @Reference
     private transient ResourceResolverFactory resourceResolverFactory;
 
     private ServiceRegistration<ResourceChangeListener> registration;
@@ -84,7 +90,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
      */
     @Activate
     void activate(BundleContext context, ConfigChangeListenerConfiguration config) {
-        LOG.info("Configuration change listener is {}", config.enabled() ? "enabled" : "disabled");
+        log(Level.INFO, "Configuration change listener is {}", config.enabled() ? "enabled" : "disabled");
         try (ResourceResolver resolver = newResolver()) {
             if (ArrayUtils.isNotEmpty(config.cleanUp())) {
                 activateWithCleanUp(resolver, config.cleanUp());
@@ -93,7 +99,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
                 activateWithUpdating(resolver);
             }
         } catch (LoginException | PersistenceException e) {
-            LOG.error("Failed to initialize configurations", e);
+            log(Level.ERROR, "Failed to initialize configurations", e);
         }
         if (!config.enabled()) {
             return;
@@ -113,17 +119,16 @@ public class ConfigChangeListener implements ResourceChangeListener {
      */
     private void activateWithCleanUp(ResourceResolver resolver, String[] pids) throws PersistenceException {
         for (String pid : pids) {
-            LOG.info("Cleaning up user-defined configuration {}", pid);
+            log(Level.INFO, "Cleaning up user-defined configuration {}", pid);
             String configPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + pid;
             Resource configResource = resolver.getResource(configPath);
             if (configResource != null) {
                 resolver.delete(configResource);
             } else {
-                LOG.warn("User-defined configuration {} not found", pid);
+                log(Level.WARN, "User-defined configuration {} not found", pid);
             }
         }
         if (resolver.hasChanges()) {
-            LOG.debug("Committing cleanup changes");
             resolver.commit();
         }
     }
@@ -136,13 +141,13 @@ public class ConfigChangeListener implements ResourceChangeListener {
     private void activateWithUpdating(ResourceResolver resolver) {
         Resource configRoot = resolver.getResource(ConfiguratorConstants.ROOT_PATH);
         if (configRoot == null) {
-            LOG.error("Configuration root not found");
+            log(Level.ERROR, "Configuration root not found");
             return;
         }
         for (Resource resource : configRoot.getChildren()) {
             Resource dataNode = resource.getChild(ConfiguratorConstants.NN_DATA);
             if (dataNode == null) {
-                LOG.debug("Configuration {} has no data node", resource.getPath());
+                log(Level.DEBUG, "Configuration {} has no data node", resource.getPath());
                 continue;
             }
             updateConfiguration(dataNode);
@@ -155,7 +160,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
     @Deactivate
     private void deactivate() {
         if (registration != null) {
-            LOG.info("Configuration change listener is shutting down");
+            log(Level.INFO, "Configuration change listener is shutting down");
             registration.unregister();
         }
         registration = null;
@@ -182,7 +187,14 @@ public class ConfigChangeListener implements ResourceChangeListener {
         Set<String> configsToReset = new HashSet<>();
         Set<String> configsToUpdate = new HashSet<>();
         for (ResourceChange change : list) {
-            if (!isRelevantChange(change)) {
+            boolean isRelevant = isRelevantChange(change);
+            log(
+                Level.DEBUG,
+                "Received change: {} at {}. Will {}",
+                change.getType(),
+                change.getPath(),
+                isRelevant ? "process" : "ignore");
+            if (!isRelevant) {
                 continue;
             }
             if (change.getType() == ResourceChange.ChangeType.REMOVED) {
@@ -196,7 +208,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
         }
         try (ResourceResolver resolver = newResolver()) {
             if (!configsToUpdate.isEmpty()) {
-                LOG.debug("Going to update configurations following resource change(s): {}",
+                log(Level.DEBUG, "Going to update configurations following resource change(s): {}",
                     StringUtils.join(configsToUpdate, SEPARATOR_COMMA_SPACE));
             }
             for (String path : configsToUpdate) {
@@ -209,7 +221,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
                 }
             }
             if (!configsToReset.isEmpty()) {
-                LOG.debug("Going to reset configurations following resource change(s): {}",
+                log(Level.DEBUG, "Going to reset configurations following resource change(s): {}",
                     StringUtils.join(configsToReset, SEPARATOR_COMMA_SPACE));
             }
             for (String path : configsToReset) {
@@ -217,7 +229,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
                 cleanUpConfiguration(resolver, path);
             }
         } catch (LoginException e) {
-            LOG.error("Failed to process configuration changes", e);
+            log(Level.ERROR, "Failed to process configuration changes", e);
         }
     }
 
@@ -263,20 +275,20 @@ public class ConfigChangeListener implements ResourceChangeListener {
         }
         Resource target = resolver.getResource(StringUtils.substringBeforeLast(path, CoreConstants.SEPARATOR_SLASH));
         if (target == null) {
-            LOG.warn("Configuration resource is not found at {}", path);
+            log(Level.WARN, "Configuration resource is not found at {}", path);
             return;
         }
         String replicationStatus = target.getValueMap().get(ConfiguratorConstants.PN_REPLICATION_ACTION, String.class);
         if ("Activated".equals(replicationStatus)) {
-            LOG.info("Configuration at {} is published; will leave the root node be", target.getPath());
+            log(Level.INFO, "Configuration at {} is published; will not remove the root node until unpublishing", target.getPath());
             return;
         }
-        LOG.info("Cleaning up configuration at {}", target.getPath());
+        log(Level.INFO, "Cleaning up configuration at {}", target.getPath());
         try {
             resolver.delete(target);
             resolver.commit();
         } catch (PersistenceException e) {
-            LOG.error("Could not delete configuration at {}", target.getPath(), e);
+            log(Level.ERROR, "Could not delete configuration at {}", target.getPath(), e);
         }
     }
 
@@ -289,7 +301,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
         try {
             return configurationAdmin.getConfiguration(pid, null);
         } catch (IOException | SecurityException e) {
-            LOG.error("Could not retrieve configuration for {}", pid, e);
+            log(Level.ERROR, "Could not retrieve configuration for {}", pid, e);
         }
         return null;
     }
@@ -299,20 +311,20 @@ public class ConfigChangeListener implements ResourceChangeListener {
      * @param pid Configuration identifier
      */
     private void resetConfiguration(String pid) {
-        LOG.info("Resetting configuration {}", pid);
+        log(Level.INFO, "Resetting configuration {}", pid);
         Configuration configuration = readConfiguration(pid);
         if (configuration == null) {
             return;
         }
         Dictionary<String, Object> backup = ConfigUtil.getBackup(configuration);
         if (backup.isEmpty()) {
-            LOG.info("No backup found for {}", pid);
+            log(Level.INFO, "No backup found for {}", pid);
             return;
         }
         try {
             configuration.update(backup);
         } catch (IOException e) {
-            LOG.error("Could not reset configuration {}", pid, e);
+            log(Level.ERROR,"Could not reset configuration {}", pid, e);
         }
     }
 
@@ -322,13 +334,13 @@ public class ConfigChangeListener implements ResourceChangeListener {
      */
     private void updateConfiguration(Resource resource) {
         String pid = extractPid(resource);
-        LOG.info("Updating configuration {} to match user settings", pid);
+        log(Level.INFO,"Updating configuration {} to match user settings", pid);
         Configuration configuration = readConfiguration(pid);
         if (configuration == null) {
             return;
         }
         if (ConfigUtil.equals(configuration.getProperties(), resource.getValueMap())) {
-            LOG.debug("Configuration {} is up to date with user settings", pid);
+            log(Level.DEBUG,"Configuration {} is up to date with user settings", pid);
             return;
         }
         Dictionary<String, ?> embeddedBackup = ConfigUtil.getBackup(configuration);
@@ -338,7 +350,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
         try {
             updateConfiguration(configuration, resource, embeddedBackup);
         } catch (Exception e) {
-            LOG.error("Could not update configuration {}", configuration.getPid(), e);
+            log(Level.ERROR,"Could not update configuration {}", configuration.getPid(), e);
         }
     }
 
@@ -390,6 +402,31 @@ public class ConfigChangeListener implements ResourceChangeListener {
     /* ---------------
        Utility methods
        --------------- */
+
+    /**
+     * Logs a message with the Sling instance identifier and leadership status prepended
+     * @param level   The logging level
+     * @param message The message to log
+     * @param args    Arguments to substitute into the message
+     */
+    private void log(Level level, String message, Object... args) {
+        InstanceDescription localInstance = discoveryService.getTopology().getLocalInstance();
+        String marker = localInstance.getSlingId()  + (localInstance.isLeader() ? " (leader)" : StringUtils.EMPTY);
+        message = marker + StringUtils.SPACE + message;
+        switch (level) {
+            case ERROR:
+                LOG.error(marker + message, args);
+                break;
+            case WARN:
+                LOG.warn(marker + message, args);
+                break;
+            case DEBUG:
+                LOG.debug(message, args);
+                break;
+            default:
+                LOG.info(message, args);
+        }
+    }
 
     /**
      * Extracts the configuration PID from the specified resource
