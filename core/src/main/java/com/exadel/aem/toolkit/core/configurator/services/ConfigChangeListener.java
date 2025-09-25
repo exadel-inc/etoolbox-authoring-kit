@@ -318,13 +318,13 @@ public class ConfigChangeListener implements ResourceChangeListener {
         }
         Dictionary<String, Object> backup = ConfigUtil.getBackup(configuration);
         if (backup.isEmpty()) {
-            log(Level.INFO, "No backup found for {}", pid);
+            log(Level.INFO,  "No backup found for {}", pid);
             return;
         }
         try {
             configuration.update(backup);
         } catch (IOException e) {
-            log(Level.ERROR,"Could not reset configuration {}", pid, e);
+            log(Level.ERROR, "Could not reset configuration {}", pid, e);
         }
     }
 
@@ -334,13 +334,13 @@ public class ConfigChangeListener implements ResourceChangeListener {
      */
     private void updateConfiguration(Resource resource) {
         String pid = extractPid(resource);
-        log(Level.INFO,"Updating configuration {} to match user settings", pid);
+        log(Level.INFO, "Updating configuration {} to match user settings", pid);
         Configuration configuration = readConfiguration(pid);
         if (configuration == null) {
             return;
         }
         if (ConfigUtil.equals(configuration.getProperties(), resource.getValueMap())) {
-            log(Level.DEBUG,"Configuration {} is up to date with user settings", pid);
+            log(Level.DEBUG, "Configuration {} is up to date with user settings", pid);
             return;
         }
         Dictionary<String, ?> embeddedBackup = ConfigUtil.getBackup(configuration);
@@ -350,7 +350,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
         try {
             updateConfiguration(configuration, resource, embeddedBackup);
         } catch (Exception e) {
-            log(Level.ERROR,"Could not update configuration {}", configuration.getPid(), e);
+            log(Level.ERROR, "Could not update configuration {}", configuration.getPid(), e);
         }
     }
 
@@ -410,15 +410,18 @@ public class ConfigChangeListener implements ResourceChangeListener {
      * @param args    Arguments to substitute into the message
      */
     private void log(Level level, String message, Object... args) {
-        InstanceDescription localInstance = discoveryService.getTopology().getLocalInstance();
-        String marker = localInstance.getSlingId()  + (localInstance.isLeader() ? " (leader)" : StringUtils.EMPTY);
-        message = marker + StringUtils.SPACE + message;
+        String marker = StringUtils.EMPTY;
+        if (discoveryService != null) {
+            InstanceDescription localInstance = discoveryService.getTopology().getLocalInstance();
+            marker = localInstance.getSlingId() + (localInstance.isLeader() ? " (leader)" : StringUtils.EMPTY);
+            message = marker + StringUtils.SPACE + message;
+        }
         switch (level) {
             case ERROR:
-                LOG.error(marker + message, args);
+                LOG.error(message, args);
                 break;
             case WARN:
-                LOG.warn(marker + message, args);
+                LOG.warn(message, args);
                 break;
             case DEBUG:
                 LOG.debug(message, args);
