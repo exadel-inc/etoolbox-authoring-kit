@@ -118,7 +118,12 @@ class FieldUtil {
 
         // Attribute fields
         for (ConfigAttribute attribute : config.getAttributes()) {
-            if (ConfiguratorConstants.ATTR_NAME_HINT.equals(attribute.getDefinition().getID())) {
+            boolean isSkipped = attribute.getDefinition().getID().endsWith(ConfiguratorConstants.SUFFIX_BACKUP)
+                || StringUtils.equalsAny(
+                attribute.getDefinition().getID(),
+                ConfiguratorConstants.ATTR_NAME_HINT,
+                ConfiguratorConstants.ATTR_LAYOUT);
+            if (isSkipped) {
                 continue;
             }
             addFieldsForAttribute(fieldCollection, attribute, request.getResourceResolver());
