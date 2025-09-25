@@ -63,7 +63,6 @@ public class ConfigChangeListener implements ResourceChangeListener {
 
     private static final String UPDATABLE_CONFIG_TOKEN = "?";
 
-    private static final String NN_DATA = "data";
     private static final String SEPARATOR_COMMA_SPACE = ", ";
 
     @Reference
@@ -142,6 +141,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
         }
         for (Resource resource : configRoot.getChildren()) {
             updateConfiguration(resource.getChild(NN_DATA));
+            Resource dataNode = resource.getChild(ConfiguratorConstants.NN_DATA);
         }
     }
 
@@ -225,7 +225,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
         if (change.getType() == ResourceChange.ChangeType.REMOVED) {
             return !ConfiguratorConstants.ROOT_PATH.equals(change.getPath());
         }
-        return StringUtils.endsWith(change.getPath(), CoreConstants.SEPARATOR_SLASH + NN_DATA);
+        return StringUtils.endsWith(change.getPath(), CoreConstants.SEPARATOR_SLASH + ConfiguratorConstants.NN_DATA);
     }
 
     /* --------------------
@@ -363,7 +363,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
      * @return String value
      */
     private static String extractPid(Resource resource) {
-        return NN_DATA.equals(resource.getName())
+        return ConfiguratorConstants.NN_DATA.equals(resource.getName())
             ? Objects.requireNonNull(resource.getParent()).getName()
             : resource.getName();
     }
@@ -374,7 +374,9 @@ public class ConfigChangeListener implements ResourceChangeListener {
      * @return String value
      */
     private static String extractPid(String path) {
-        String configRootPath = StringUtils.removeEnd(path, CoreConstants.SEPARATOR_SLASH + NN_DATA);
+        String configRootPath = StringUtils.removeEnd(
+            path,
+            CoreConstants.SEPARATOR_SLASH + ConfiguratorConstants.NN_DATA);
         return StringUtils.substringAfterLast(configRootPath, CoreConstants.SEPARATOR_SLASH);
     }
 }

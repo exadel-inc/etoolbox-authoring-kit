@@ -136,7 +136,7 @@ public class ConfigDataSource extends SlingSafeMethodsServlet {
         config.setModified(existingConfig != null);
 
         boolean isPublished = existingConfig != null
-            && existingConfig.getValueMap().get("cq:lastReplicationAction", StringUtils.EMPTY).equals("Activate");
+            && existingConfig.getValueMap().get(ConfiguratorConstants.PN_REPLICATION_ACTION, StringUtils.EMPTY).equals("Activate");
         config.setPublished(isPublished);
 
         FieldUtil.processRequest(request, config);
