@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.sling.api.resource.PersistenceException;
-import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.resource.observation.ResourceChange;
 import org.apache.sling.jcr.resource.internal.JcrResourceChange;
@@ -51,7 +50,6 @@ public class ConfigChangeListenerTest {
     private static final String FIELD_RESOURCE_RESOLVER_FACTORY = "resourceResolverFactory";
 
     private static final String NODE_DATA = "/data";
-    private static final String NODE_INITIAL = "/initial/";
 
     private static final Map<String, Object> CONFIG_ENABLED = Collections.singletonMap("enabled", true);
 
@@ -62,40 +60,34 @@ public class ConfigChangeListenerTest {
 
     @Test
     public void shouldProcessEnabledProperty() throws Exception {
-        ConfigChangeListener configChangeListener = context.registerInjectActivateService(
-            new ConfigChangeListener(),
-            CONFIG_ENABLED);
+        ConfigChangeListener configChangeListener = registerInjectActivateListener();
         assertNotNull(PrivateAccessor.getField(configChangeListener, "registration"));
 
-        configChangeListener = context.registerInjectActivateService(
-            new ConfigChangeListener(),
-            Collections.singletonMap("enabled", false));
+        ConfigChangeListenerConfiguration mockConfig = Mockito.mock(ConfigChangeListenerConfiguration.class);
+        Mockito.when(mockConfig.enabled()).thenReturn(false);
+        configChangeListener = registerInjectActivateListener(mockConfig);
         assertNull(PrivateAccessor.getField(configChangeListener, "registration"));
     }
 
     @Test
-    public void shouldCleanUpConfigurationsOnActivate() throws PersistenceException {
+    public void shouldCleanUpConfigurationsOnActivate() throws PersistenceException, NoSuchFieldException {
         String configPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID;
-        String backupPath = ConfiguratorConstants.ROOT_PATH + NODE_INITIAL + TEST_PID;
 
         context.create().resource(configPath);
-        context.create().resource(backupPath);
         context.resourceResolver().commit();
 
         assertNotNull(context.resourceResolver().getResource(configPath));
-        assertNotNull(context.resourceResolver().getResource(backupPath));
 
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put("enabled", true);
-        configProps.put("cleanUp", new String[] {TEST_PID, "com.example.test.AnotherConfig"});
-        context.registerInjectActivateService(new ConfigChangeListener(), configProps);
+        ConfigChangeListenerConfiguration mockConfig = Mockito.mock(ConfigChangeListenerConfiguration.class);
+        Mockito.when(mockConfig.enabled()).thenReturn(true);
+        Mockito.when(mockConfig.cleanUp()).thenReturn(new String[] {TEST_PID, "com.example.test.AnotherConfig"});
+        registerInjectActivateListener(mockConfig);
 
         assertNull(context.resourceResolver().getResource(ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID));
-        assertNull(context.resourceResolver().getResource(ConfiguratorConstants.ROOT_PATH + NODE_INITIAL + TEST_PID));
     }
 
     @Test
-    public void shouldUpdateConfigurationUponActivate() throws IOException, NoSuchFieldException {
+    public void shouldUpdateConfigurationsOnActivate() throws IOException, NoSuchFieldException {
         String configPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID;
         context.create().resource(configPath);
 
@@ -146,13 +138,14 @@ public class ConfigChangeListenerTest {
     @Test
     public void shouldHandleResourceRemovalEvents() throws IOException, NoSuchFieldException {
         String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + NODE_DATA;
-        String backupPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + NODE_INITIAL + TEST_PID;
-        Map<String, Object> backupProps = new HashMap<>();
-        backupProps.put("test.property", "original.value");
-        context.create().resource(backupPath, backupProps);
         context.resourceResolver().commit();
 
-        ConfigurationAdmin configurationAdmin = new ConfigurationAdminFacade(context.getService(ConfigurationAdmin.class));
+        Configuration mockConfig = Mockito.mock(Configuration.class);
+        Mockito.when(mockConfig.getProperties())
+            .thenReturn(new Hashtable<>(Collections.singletonMap("test.property$eakbackup", "original.value")));
+        ConfigurationAdmin mockConfigurationAdmin = Mockito.mock(ConfigurationAdmin.class);
+        Mockito.when(mockConfigurationAdmin.getConfiguration(TEST_PID, null))
+            .thenReturn(mockConfig);
 
         ResourceChange change = new JcrResourceChange(
             ResourceChange.ChangeType.REMOVED,
@@ -160,15 +153,10 @@ public class ConfigChangeListenerTest {
             false,
             null);
 
-        ConfigChangeListener configChangeListener = context.registerInjectActivateService(
-            new ConfigChangeListener(),
-            CONFIG_ENABLED);
-        PrivateAccessor.setField(configChangeListener, FIELD_CONFIG_ADMIN, configurationAdmin);
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
         configChangeListener.onChange(Collections.singletonList(change));
 
-        Configuration configuration = configurationAdmin.getConfiguration(TEST_PID, null);
-        assertNotNull(configuration);
-        assertEquals("original.value", configuration.getProperties().get("test.property"));
+        Mockito.verify(mockConfig).update(new Hashtable<>(Collections.singletonMap("test.property", "original.value")));
     }
 
     @Test
@@ -178,24 +166,16 @@ public class ConfigChangeListenerTest {
             ConfiguratorConstants.ROOT_PATH,
             false,
             null);
-        ResourceChange initialChange = new JcrResourceChange(
-            ResourceChange.ChangeType.CHANGED,
-            ConfiguratorConstants.ROOT_PATH + NODE_INITIAL + TEST_PID,
-            false,
-            null);
         ResourceChange nonDataChange = new JcrResourceChange(
             ResourceChange.ChangeType.ADDED,
             ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID,
             false,
             null);
-        List<ResourceChange> changes = Arrays.asList(rootChange, initialChange, nonDataChange);
+        List<ResourceChange> changes = Arrays.asList(rootChange, nonDataChange);
 
         ConfigurationAdmin mockConfigurationAdmin = Mockito.mock(ConfigurationAdmin.class);
 
-        ConfigChangeListener configChangeListener = context.registerInjectActivateService(
-            new ConfigChangeListener(),
-            CONFIG_ENABLED);
-        PrivateAccessor.setField(configChangeListener, FIELD_CONFIG_ADMIN, mockConfigurationAdmin);
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
         configChangeListener.onChange(changes);
 
         Mockito.verify(mockConfigurationAdmin, Mockito.never()).getConfiguration(Mockito.anyString(), Mockito.isNull());
@@ -252,108 +232,6 @@ public class ConfigChangeListenerTest {
         Mockito.verify(foreignConfig).update(Mockito.any(Dictionary.class));
     }
 
-    @Test
-    public void shouldCreateBackup() throws Exception {
-        Dictionary<String, Object> existingProps = new Hashtable<>();
-        existingProps.put("existing.property", "existing.value");
-        Configuration mockConfig = Mockito.mock(Configuration.class);
-        Mockito.when(mockConfig.getProperties()).thenReturn(existingProps);
-
-        ConfigurationAdmin mockConfigurationAdmin = Mockito.mock(ConfigurationAdmin.class);
-        Mockito.when(mockConfigurationAdmin.getConfiguration(TEST_PID, null)).thenReturn(mockConfig);
-
-        ConfigChangeListener configChangeListener = context.registerInjectActivateService(
-            new ConfigChangeListener(),
-            CONFIG_ENABLED);
-        PrivateAccessor.setField(configChangeListener, FIELD_CONFIG_ADMIN, mockConfigurationAdmin);
-
-        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + NODE_DATA;
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put("new.property", "new.value");
-
-        context.create().resource(dataPath, configProps);
-        context.resourceResolver().commit();
-
-        ResourceChange change = new JcrResourceChange(
-            ResourceChange.ChangeType.CHANGED,
-            dataPath,
-            false,
-            null);
-        configChangeListener.onChange(Collections.singletonList(change));
-
-        String backupPath = ConfiguratorConstants.ROOT_PATH + NODE_INITIAL + CoreConstants.SEPARATOR_SLASH + TEST_PID;
-        Resource backupResource = context.resourceResolver().getResource(backupPath);
-        assertNotNull(backupResource);
-        assertEquals("existing.value", backupResource.getValueMap().get("existing.property"));
-    }
-
-    @Test
-    public void shouldNotCreateBackupWhenAlreadyExists() throws Exception {
-        Dictionary<String, Object> existingProps = new Hashtable<>();
-        existingProps.put("existing.property", "existing.value");
-        Configuration mockConfig = Mockito.mock(Configuration.class);
-
-        ConfigurationAdmin mockConfigurationAdmin = Mockito.mock(ConfigurationAdmin.class);
-        Mockito.when(mockConfigurationAdmin.getConfiguration(TEST_PID, null)).thenReturn(mockConfig);
-
-        String backupPath = ConfiguratorConstants.ROOT_PATH + NODE_INITIAL + TEST_PID;
-        Map<String, Object> backupProperties = new HashMap<>();
-        backupProperties.put("original.property", "original.value");
-        context.create().resource(backupPath, backupProperties);
-        context.resourceResolver().commit();
-
-        Resource backupResource = context.resourceResolver().getResource(backupPath);
-        assertNotNull(backupResource);
-
-        ConfigChangeListener configChangeListener = context.registerInjectActivateService(
-            new ConfigChangeListener(),
-            CONFIG_ENABLED);
-        PrivateAccessor.setField(configChangeListener, FIELD_CONFIG_ADMIN, mockConfigurationAdmin);
-
-        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + NODE_DATA;
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put("new.property", "new.value");
-        context.create().resource(dataPath, configProps);
-        context.resourceResolver().commit();
-
-        ResourceChange change = new JcrResourceChange(
-            ResourceChange.ChangeType.CHANGED,
-            dataPath,
-            false,
-            null);
-        configChangeListener.onChange(Collections.singletonList(change));
-
-        backupResource = context.resourceResolver().getResource(backupPath);
-        assertNotNull(backupResource);
-        assertEquals("original.value", backupResource.getValueMap().get("original.property"));
-    }
-
-    @Test
-    public void shouldHandlePersistenceExceptionDuringBackupDeletion() throws Exception {
-        Configuration mockConfig = Mockito.mock(Configuration.class);
-        ConfigurationAdmin mockConfigurationAdmin = Mockito.mock(ConfigurationAdmin.class);
-        Mockito.when(mockConfigurationAdmin.getConfiguration(TEST_PID, null)).thenReturn(mockConfig);
-
-        String backupPath = ConfiguratorConstants.ROOT_PATH + NODE_INITIAL + TEST_PID;
-        context.create().resource(backupPath);
-        context.resourceResolver().commit();
-
-        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + NODE_DATA;
-        ResourceChange change = new JcrResourceChange(
-            ResourceChange.ChangeType.CHANGED,
-            dataPath,
-            false,
-            null);
-
-        ConfigChangeListener configChangeListener = context.registerInjectActivateService(
-            new ConfigChangeListener(),
-            CONFIG_ENABLED);
-        PrivateAccessor.setField(configChangeListener, FIELD_CONFIG_ADMIN, mockConfigurationAdmin);
-        configChangeListener.onChange(Collections.singletonList(change));
-
-        Mockito.verify(mockConfigurationAdmin).getConfiguration(TEST_PID, null);
-    }
-
     @SuppressWarnings("unchecked")
     @Test
     public void shouldNotUpdateConfigurationWhenPropertiesAreEqual() throws Exception {
@@ -367,10 +245,7 @@ public class ConfigChangeListenerTest {
         ConfigurationAdmin mockConfigurationAdmin = Mockito.mock(ConfigurationAdmin.class);
         Mockito.when(mockConfigurationAdmin.getConfiguration(TEST_PID, null)).thenReturn(mockConfig);
 
-        ConfigChangeListener configChangeListener = context.registerInjectActivateService(
-            new ConfigChangeListener(),
-            CONFIG_ENABLED);
-        PrivateAccessor.setField(configChangeListener, FIELD_CONFIG_ADMIN, mockConfigurationAdmin);
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
 
         String configPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID;
         String dataPath = configPath + NODE_DATA;
@@ -393,13 +268,31 @@ public class ConfigChangeListenerTest {
         Mockito.verify(mockConfigurationAdmin).getConfiguration(TEST_PID, null);
     }
 
-    private ConfigChangeListener registerInjectActivateListener(ConfigurationAdmin configAdmin) throws NoSuchFieldException {
+    private ConfigChangeListener registerInjectActivateListener() throws NoSuchFieldException {
+        ConfigChangeListenerConfiguration mockConfig = Mockito.mock(ConfigChangeListenerConfiguration.class);
+        Mockito.when(mockConfig.enabled()).thenReturn(true);
+        return registerInjectActivateListener(context.getService(ConfigurationAdmin.class), mockConfig);
+    }
+
+    @SuppressWarnings("UnusedReturnValue")
+    private ConfigChangeListener registerInjectActivateListener(ConfigChangeListenerConfiguration config) throws NoSuchFieldException {
+        return registerInjectActivateListener(context.getService(ConfigurationAdmin.class), config);
+    }
+
+    private ConfigChangeListener registerInjectActivateListener(ConfigurationAdmin configurationAdmin) throws NoSuchFieldException {
+        ConfigChangeListenerConfiguration mockConfig = Mockito.mock(ConfigChangeListenerConfiguration.class);
+        Mockito.when(mockConfig.enabled()).thenReturn(true);
+        return registerInjectActivateListener(configurationAdmin, mockConfig);
+    }
+
+    private ConfigChangeListener registerInjectActivateListener(
+        ConfigurationAdmin configAdmin,
+        ConfigChangeListenerConfiguration config) throws NoSuchFieldException {
+
         ConfigChangeListener configChangeListener = context.registerService(new ConfigChangeListener());
         PrivateAccessor.setField(configChangeListener, FIELD_CONFIG_ADMIN, configAdmin);
         PrivateAccessor.setField(configChangeListener, FIELD_RESOURCE_RESOLVER_FACTORY, context.getService(ResourceResolverFactory.class));
-        ConfigChangeListenerConfiguration mockConfig = Mockito.mock(ConfigChangeListenerConfiguration.class);
-        Mockito.when(mockConfig.enabled()).thenReturn(true);
-        configChangeListener.activate(context.bundleContext(), mockConfig);
+        configChangeListener.activate(context.bundleContext(), config);
         return configChangeListener;
     }
 }
