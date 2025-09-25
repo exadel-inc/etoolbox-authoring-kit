@@ -133,7 +133,10 @@ public class ConfigDataSource extends SlingSafeMethodsServlet {
         Resource existingConfig = request
             .getResourceResolver()
             .getResource(ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId);
-        config.setModified(existingConfig != null);
+        Resource existingConfigData = existingConfig != null
+            ? existingConfig.getChild(ConfiguratorConstants.NN_DATA)
+            : null;
+        config.setModified(existingConfigData != null);
 
         boolean isPublished = existingConfig != null
             && existingConfig.getValueMap().get(ConfiguratorConstants.PN_REPLICATION_ACTION, StringUtils.EMPTY).equals("Activate");

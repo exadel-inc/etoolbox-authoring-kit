@@ -140,8 +140,12 @@ public class ConfigChangeListener implements ResourceChangeListener {
             return;
         }
         for (Resource resource : configRoot.getChildren()) {
-            updateConfiguration(resource.getChild(NN_DATA));
             Resource dataNode = resource.getChild(ConfiguratorConstants.NN_DATA);
+            if (dataNode == null) {
+                LOG.debug("Configuration {} has no data node", resource.getPath());
+                continue;
+            }
+            updateConfiguration(dataNode);
         }
     }
 
@@ -178,7 +182,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
         Set<String> configsToReset = new HashSet<>();
         Set<String> configsToUpdate = new HashSet<>();
         for (ResourceChange change : list) {
-            if (!isAccountable(change)) {
+            if (!isRelevantChange(change)) {
                 continue;
             }
             if (change.getType() == ResourceChange.ChangeType.REMOVED) {
@@ -210,6 +214,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
             }
             for (String path : configsToReset) {
                 resetConfiguration(extractPid(path));
+                cleanUpConfiguration(resolver, path);
             }
         } catch (LoginException e) {
             LOG.error("Failed to process configuration changes", e);
@@ -221,7 +226,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
      * @param change The resource change to check
      * @return True or false
      */
-    private static boolean isAccountable(ResourceChange change) {
+    private static boolean isRelevantChange(ResourceChange change) {
         if (change.getType() == ResourceChange.ChangeType.REMOVED) {
             return !ConfiguratorConstants.ROOT_PATH.equals(change.getPath());
         }
@@ -248,6 +253,34 @@ public class ConfigChangeListener implements ResourceChangeListener {
        ------------------- */
 
     /**
+     * Cleans up the configuration resource at the specified path if it is not published
+     * @param resolver Resource resolver to use
+     * @param path     Path to the configuration resource
+     */
+    private void cleanUpConfiguration(ResourceResolver resolver, String path) {
+        if (!path.endsWith(CoreConstants.SEPARATOR_SLASH + ConfiguratorConstants.NN_DATA)) {
+            return;
+        }
+        Resource target = resolver.getResource(StringUtils.substringBeforeLast(path, CoreConstants.SEPARATOR_SLASH));
+        if (target == null) {
+            LOG.warn("Configuration resource is not found at {}", path);
+            return;
+        }
+        String replicationStatus = target.getValueMap().get(ConfiguratorConstants.PN_REPLICATION_ACTION, String.class);
+        if ("Activated".equals(replicationStatus)) {
+            LOG.info("Configuration at {} is published; will leave the root node be", target.getPath());
+            return;
+        }
+        LOG.info("Cleaning up configuration at {}", target.getPath());
+        try {
+            resolver.delete(target);
+            resolver.commit();
+        } catch (PersistenceException e) {
+            LOG.error("Could not delete configuration at {}", target.getPath(), e);
+        }
+    }
+
+    /**
      * Retrieves an OSGi configuration by its identifier
      * @param pid Configuration identifier
      * @return The configuration instance, or null if it cannot be retrieved
@@ -263,7 +296,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
 
     /**
      * Resets the configuration identified by the specified identifier to its last backed-up state, if any
-     * @param pid      Configuration identifier
+     * @param pid Configuration identifier
      */
     private void resetConfiguration(String pid) {
         LOG.info("Resetting configuration {}", pid);
@@ -288,9 +321,6 @@ public class ConfigChangeListener implements ResourceChangeListener {
      * @param resource The resource representing the configuration
      */
     private void updateConfiguration(Resource resource) {
-        if (resource == null) {
-            return;
-        }
         String pid = extractPid(resource);
         LOG.info("Updating configuration {} to match user settings", pid);
         Configuration configuration = readConfiguration(pid);
@@ -356,6 +386,10 @@ public class ConfigChangeListener implements ResourceChangeListener {
             // Ignored for the sake of using with wcm.io mocks
         }
     }
+
+    /* ---------------
+       Utility methods
+       --------------- */
 
     /**
      * Extracts the configuration PID from the specified resource

@@ -20,6 +20,9 @@ import javax.servlet.Servlet;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.resource.PersistenceException;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 import org.jetbrains.annotations.NotNull;
@@ -82,9 +85,28 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
             } catch (ReplicationException e) {
                 LOG.error("Could not unpublish configuration {}", request.getResource().getName(), e);
                 response.sendError(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                return;
             }
+            cleanUpEmptyUnpublishedNode(request.getResourceResolver(), request.getResource());
         } else {
             response.sendError(SlingHttpServletResponse.SC_BAD_REQUEST, "Invalid selector");
+        }
+    }
+
+    /**
+     * Removes the target resource if it has no children after unpublishing
+     * @param resolver The {@link ResourceResolver} instance
+     * @param resource The resource to remove if empty
+     */
+    private void cleanUpEmptyUnpublishedNode(ResourceResolver resolver, Resource resource) {
+        if (resource.hasChildren()) {
+            return;
+        }
+        try {
+            resolver.delete(resource);
+            resolver.commit();
+        } catch (PersistenceException e) {
+            throw new RuntimeException(e);
         }
     }
 }

@@ -73,7 +73,7 @@
      */
     async function reset() {
         foundationUi.wait();
-        const configPath = $('#config').attr('action');
+        const configPath = $('#config').attr('action') + '/data';
         try {
             await requestAsync('DELETE', configPath);
         } catch (e) {
@@ -377,7 +377,11 @@
      * Handles a click on the "Unpublish" button
      */
     async function onUnpublishClick() {
-        const action = await prompt('Unpublished configuration', 'Do you want to also reset this configuration on the current instance?');
+        let action;
+        const $form = $('#config');
+        if (isModified($form)) {
+            action = await prompt('Unpublished configuration', 'Do you want to also reset this configuration on the current instance?');
+        }
         await unpublish();
         if (action === 'yes') {
             await reset();
