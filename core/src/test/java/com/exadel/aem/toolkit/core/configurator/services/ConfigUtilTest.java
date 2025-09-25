@@ -25,13 +25,18 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.junit.Test;
+import org.osgi.service.cm.Configuration;
 import static junitx.framework.Assert.assertFalse;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
-public class MapUtilTest {
+import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
+
+public class ConfigUtilTest {
 
     @Test
     public void shouldConvertValueMapToDictionary() {
@@ -53,7 +58,7 @@ public class MapUtilTest {
 
         ValueMap valueMap = new ValueMapDecorator(sourceMap);
 
-        Dictionary<String, ?> result = MapUtil.toDictionary(valueMap);
+        Dictionary<String, ?> result = ConfigUtil.toDictionary(valueMap);
         assertNotNull(result);
 
         assertEquals("test value", result.get("string.property"));
@@ -81,7 +86,7 @@ public class MapUtilTest {
         sourceMap.put("normal.property", "test value");
         ValueMap valueMap = new ValueMapDecorator(sourceMap);
 
-        Dictionary<String, ?> result = MapUtil.toDictionary(valueMap);
+        Dictionary<String, ?> result = ConfigUtil.toDictionary(valueMap);
         assertNotNull(result);
 
         assertEquals("test value", result.get("normal.property"));
@@ -98,7 +103,7 @@ public class MapUtilTest {
         sourceMap.put("null.property", null);
         ValueMap valueMap = new ValueMapDecorator(sourceMap);
 
-        Dictionary<String, ?> result = MapUtil.toDictionary(valueMap);
+        Dictionary<String, ?> result = ConfigUtil.toDictionary(valueMap);
         assertNotNull(result);
 
         assertEquals("valid", result.get("string.property"));
@@ -122,7 +127,7 @@ public class MapUtilTest {
         dictionary.put("mixed.list", Arrays.asList("string", 42, true));
         dictionary.put("null.list", Arrays.asList("value", null, "another"));
 
-        Map<String, Object> result = MapUtil.toMap(dictionary);
+        Map<String, Object> result = ConfigUtil.toMap(dictionary);
         assertNotNull(result);
 
         assertEquals("test value", result.get("string.property"));
@@ -146,7 +151,7 @@ public class MapUtilTest {
         dictionary.put("service.factoryPid", "com.example.factory");
         dictionary.put("normal.property", "test value");
 
-        Map<String, Object> result = MapUtil.toMap(dictionary);
+        Map<String, Object> result = ConfigUtil.toMap(dictionary);
         assertNotNull(result);
         assertEquals("test value", result.get("normal.property"));
         assertNull(result.get("service.pid"));
@@ -159,7 +164,7 @@ public class MapUtilTest {
         dictionary.put("string.property", "valid");
         dictionary.put("object.property", new Object());
 
-        Map<String, Object> result = MapUtil.toMap(dictionary);
+        Map<String, Object> result = ConfigUtil.toMap(dictionary);
         assertNotNull(result);
         assertEquals("valid", result.get("string.property"));
         assertNull(result.get("object.property"));
@@ -169,36 +174,40 @@ public class MapUtilTest {
     public void shouldHandleEmptyDictionary() {
         Dictionary<String, Object> dictionary = new Hashtable<>();
 
-        Map<String, Object> result = MapUtil.toMap(dictionary);
+        Map<String, Object> result = ConfigUtil.toMap(dictionary);
         assertNotNull(result);
         assertTrue(result.isEmpty());
 
         dictionary = null;
 
-        result = MapUtil.toMap(dictionary);
+        result = ConfigUtil.toMap(dictionary);
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
+    @SuppressWarnings({"UnnecessaryBoxing"})
     @Test
     public void shouldReturnTrueForEqualDictionaryAndMap() {
         Dictionary<String, Object> dictionary = new Hashtable<>();
         dictionary.put("string.property", "test value");
         dictionary.put("int.property", 42);
+        dictionary.put("long.property", 42L);
         dictionary.put("boolean.property", true);
         dictionary.put("string.array", new String[]{"value1", "value2"});
         dictionary.put("int.list", Arrays.asList(1, 2, 3));
+        dictionary.put("dummy$eakbackup", "dummy"); // Should be ignored
 
         Map<String, Object> map = new HashMap<>();
         map.put("string.property", "test value");
         map.put("int.property", 42);
-        map.put("boolean.property", true);
+        map.put("long.property", Long.valueOf(42L));
+        map.put("boolean.property", Boolean.valueOf(true));
         map.put("string.array", new String[]{"value1", "value2"});
-        map.put("int.list", Arrays.asList(1, 2, 3));
+        map.put("int.list", Arrays.asList(1, 2, Integer.getInteger("3")));
 
-        assertTrue(MapUtil.equals(dictionary, map));
+        assertTrue(ConfigUtil.equals(dictionary, map));
         map.put("string.array", Arrays.asList("value1", "value2"));
-        assertTrue(MapUtil.equals(dictionary, map));
+        assertTrue(ConfigUtil.equals(dictionary, map));
     }
 
     @Test
@@ -211,14 +220,14 @@ public class MapUtilTest {
         map.put("string.property", "different value");
         map.put("int.property", 42);
 
-        assertFalse(MapUtil.equals(dictionary, map));
+        assertFalse(ConfigUtil.equals(dictionary, map));
     }
 
     @Test
     public void shouldHandleNullValuesInEquals() {
-        assertTrue(MapUtil.equals(null, null));
-        assertFalse(MapUtil.equals(new Hashtable<>(), null));
-        assertFalse(MapUtil.equals(null, new HashMap<>()));
+        assertTrue(ConfigUtil.equals(null, null));
+        assertFalse(ConfigUtil.equals(new Hashtable<>(), null));
+        assertFalse(ConfigUtil.equals(null, new HashMap<>()));
 
         Dictionary<String, Object> dictionary = new Hashtable<>();
         dictionary.put("string.property", "test value");
@@ -227,10 +236,7 @@ public class MapUtilTest {
         map.put("string.property", "test value");
         map.put("null.property", null);
 
-        assertFalse(MapUtil.equals(dictionary, map));
-
-        map.remove("null.property");
-        assertTrue(MapUtil.equals(dictionary, map));
+        assertTrue(ConfigUtil.equals(dictionary, map));
     }
 
     @Test
@@ -243,7 +249,7 @@ public class MapUtilTest {
         Map<String, Object> map = new HashMap<>();
         map.put("string.property", "test value");
 
-        assertTrue(MapUtil.equals(dictionary, map));
+        assertTrue(ConfigUtil.equals(dictionary, map));
     }
 
     @Test
@@ -254,6 +260,65 @@ public class MapUtilTest {
         Map<String, Object> map = new HashMap<>();
         map.put("array.property", Arrays.asList("value1", "value2"));
 
-        assertTrue(MapUtil.equals(dictionary, map));
+        assertTrue(ConfigUtil.equals(dictionary, map));
+    }
+
+    @Test
+    public void shouldExtractBackupValues() {
+        Configuration configuration = createMockConfiguration();
+
+        Dictionary<String, Object> result = ConfigUtil.getBackup(configuration);
+        assertNotNull(result);
+
+        assertEquals("backup value 1", result.get("property1"));
+        assertEquals("backup value 2", result.get("property2"));
+        assertEquals(42, result.get("number"));
+        assertNull(result.get("normal.property")); // Should not be included as it's not a backup
+        assertNull(result.get("service.pid")); // Should not be included as it's not a backup
+    }
+
+    @Test
+    public void shouldExtractValidData() {
+        Configuration configuration = createMockConfiguration();
+
+        Dictionary<String, Object> result = ConfigUtil.getData(configuration);
+        assertNotNull(result);
+
+        assertEquals("test value", result.get("normal.property"));
+        assertEquals(123, result.get("another.property"));
+        assertEquals(true, result.get("boolean.property"));
+        assertNull(result.get("service.pid")); // Should be excluded
+        assertNull(result.get("service.factoryPid")); // Should be excluded
+        assertNull(result.get("property1" + ConfiguratorConstants.SUFFIX_BACKUP)); // Should be excluded
+        assertNull(result.get(ConfiguratorConstants.ATTR_LAYOUT)); // Should be excluded
+        assertNull(result.get(ConfiguratorConstants.ATTR_NAME_HINT)); // Should be excluded
+    }
+
+    private Configuration createMockConfiguration() {
+        Configuration configuration = mock(Configuration.class);
+
+        Dictionary<String, Object> props = new Hashtable<>();
+
+        // Normal properties that should be included in getData
+        props.put("normal.property", "test value");
+        props.put("another.property", 123);
+        props.put("boolean.property", true);
+
+        // Backup properties that should be included in getBackup
+        props.put("property1" + ConfiguratorConstants.SUFFIX_BACKUP, "backup value 1");
+        props.put("property2" + ConfiguratorConstants.SUFFIX_BACKUP, "backup value 2");
+        props.put("number" + ConfiguratorConstants.SUFFIX_BACKUP, 42);
+
+        // Excluded properties
+        props.put("service.pid", "com.example.service");
+        props.put("service.factoryPid", "com.example.factory");
+        props.put(ConfiguratorConstants.ATTR_LAYOUT, "layout.value");
+        props.put(ConfiguratorConstants.ATTR_NAME_HINT, "name.hint");
+
+        when(configuration.getProperties()).thenReturn(props);
+        when(configuration.getPid()).thenReturn("test.pid");
+        when(configuration.getFactoryPid()).thenReturn("test.factory.pid");
+
+        return configuration;
     }
 }

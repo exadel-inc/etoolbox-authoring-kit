@@ -23,29 +23,86 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
+import org.osgi.service.cm.Configuration;
 
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
 import com.exadel.aem.toolkit.core.utils.ValueMapUtil;
 
 /**
- * Provides utility methods to work with {@link Map}, {@link ValueMap}, and {@link Dictionary} instances
+ * Provides utility methods to work with {@link Configuration} instances and their properties
  */
-class MapUtil {
+class ConfigUtil {
 
     private static final List<String> EXCLUDED_KEYS = Arrays.asList(
         "service.pid",
         "service.factoryPid",
+        ConfiguratorConstants.ATTR_LAYOUT,
         ConfiguratorConstants.ATTR_NAME_HINT);
 
     /**
      * Default (instantiation-restricting) constructor
      */
-    private MapUtil() {
+    private ConfigUtil() {
+    }
+
+    /**
+     * Extracts backup values from the specified {@link Configuration} instance
+     * @param value The source configuration
+     * @return The non-null dictionary of values
+     */
+    public static Dictionary<String, Object> getBackup(Configuration value) {
+        return getData(
+            value,
+            key -> key.endsWith(ConfiguratorConstants.SUFFIX_BACKUP),
+            key -> StringUtils.removeEnd(key, ConfiguratorConstants.SUFFIX_BACKUP));
+    }
+
+    /**
+     * Extracts the valid (non-backup and non-embargoed) values from the specified {@link Configuration} instance
+     * @param value The source configuration
+     * @return The non-null dictionary of values
+     */
+    public static Dictionary<String, Object> getData(Configuration value) {
+        return getData(
+            value,
+            key -> !EXCLUDED_KEYS.contains(key) && !key.endsWith(ConfiguratorConstants.SUFFIX_BACKUP),
+            UnaryOperator.identity());
+    }
+
+    /**
+     * Extracts values from the specified {@link Configuration} instance according to the provided filter and modifier
+     * @param value    The source configuration
+     * @param filter   A predicate to filter out unwanted keys
+     * @param modifier A function to modify the keys that pass the filter
+     * @return Dictionary of values
+     */
+    private static Dictionary<String, Object> getData(
+        Configuration value,
+        Predicate<String> filter,
+        UnaryOperator<String> modifier) {
+
+        Dictionary<String, Object> result = new Hashtable<>();
+        Dictionary<String, Object> properties = value != null ? value.getProperties() : null;
+        if (value == null || properties == null) {
+            return result;
+        }
+        Enumeration<String> keys = properties.keys();
+        while (keys.hasMoreElements()) {
+            String key = keys.nextElement();
+            if (!filter.test(key)) {
+                continue;
+            }
+            result.put(modifier.apply(key), properties.get(key));
+        }
+        return result;
     }
 
     /**
@@ -54,7 +111,7 @@ class MapUtil {
      * @param properties The source value map
      * @return The resulting dictionary
      */
-    public static Dictionary<String, ?> toDictionary(ValueMap properties) {
+    public static Dictionary<String, Object> toDictionary(ValueMap properties) {
         Dictionary<String, Object> dictionary = new Hashtable<>();
         ValueMapUtil.excludeSystemProperties(properties)
             .entrySet()
@@ -77,7 +134,7 @@ class MapUtil {
         }
         for (Enumeration<String> keys = dictionary.keys(); keys.hasMoreElements();) {
             String key = keys.nextElement();
-            if (EXCLUDED_KEYS.contains(key)) {
+            if (EXCLUDED_KEYS.contains(key) || key.endsWith(ConfiguratorConstants.SUFFIX_BACKUP)) {
                 continue;
             }
             Object value = dictionary.get(key);
@@ -121,6 +178,12 @@ class MapUtil {
                 }
             } else if (isCollection(dictValue) || isCollection(mapValue)) {
                 return false;
+            } else if (ClassUtils.isPrimitiveOrWrapper(dictValue.getClass())
+                && ClassUtils.isPrimitiveOrWrapper(mapValue.getClass())) {
+                return Objects.equals(
+                    ClassUtils.primitiveToWrapper(dictValue.getClass()).cast(dictValue),
+                    ClassUtils.primitiveToWrapper(mapValue.getClass()).cast(mapValue)
+                );
             } else if (!Objects.equals(dictValue, mapValue)) {
                 return false;
             }
@@ -129,7 +192,7 @@ class MapUtil {
     }
 
     /**
-     * Whether the specified objects that adhere to {@link MapUtil#isCollection(Object)}{@code == true} are equal
+     * Whether the specified objects that adhere to {@link ConfigUtil#isCollection(Object)}{@code == true} are equal
      * @param first  The first collection object
      * @param second The second collection object
      * @return True or false
@@ -141,7 +204,23 @@ class MapUtil {
             return false;
         }
         for (int i = 0; i < Array.getLength(firstArray); i++) {
-            if (!Objects.equals(Array.get(firstArray, i), Array.get(secondArray, i))) {
+            Object firstValue = Array.get(firstArray, i);
+            Object secondValue = Array.get(secondArray, i);
+            if (firstValue == null && secondValue == null) {
+                continue;
+            }
+            if (firstValue == null || secondValue == null) {
+                return false;
+            }
+            if (ClassUtils.isPrimitiveOrWrapper(firstValue.getClass())
+                && ClassUtils.isPrimitiveOrWrapper(secondValue.getClass())
+                && !Objects.equals(
+                    ClassUtils.primitiveToWrapper(firstValue.getClass()).cast(firstValue),
+                    ClassUtils.primitiveToWrapper(secondValue.getClass()).cast(secondValue)
+                )) {
+                return false;
+            }
+            if (!Objects.equals(firstValue, secondValue)) {
                 return false;
             }
         }

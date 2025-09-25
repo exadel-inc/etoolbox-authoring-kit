@@ -16,16 +16,15 @@ package com.exadel.aem.toolkit.core.configurator.services;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.jackrabbit.JcrConstants;
 import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
@@ -64,7 +63,6 @@ public class ConfigChangeListener implements ResourceChangeListener {
 
     private static final String UPDATABLE_CONFIG_TOKEN = "?";
 
-    private static final String NN_INITIAL = "initial";
     private static final String NN_DATA = "data";
     private static final String SEPARATOR_COMMA_SPACE = ", ";
 
@@ -143,9 +141,6 @@ public class ConfigChangeListener implements ResourceChangeListener {
             return;
         }
         for (Resource resource : configRoot.getChildren()) {
-            if (NN_INITIAL.equals(resource.getName())) {
-                continue;
-            }
             updateConfiguration(resource.getChild(NN_DATA));
         }
     }
@@ -214,7 +209,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
                     StringUtils.join(configsToReset, SEPARATOR_COMMA_SPACE));
             }
             for (String path : configsToReset) {
-                resetConfiguration(resolver, extractPid(path));
+                resetConfiguration(extractPid(path));
             }
         } catch (LoginException e) {
             LOG.error("Failed to process configuration changes", e);
@@ -228,9 +223,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
      */
     private static boolean isAccountable(ResourceChange change) {
         if (change.getType() == ResourceChange.ChangeType.REMOVED) {
-            return !ConfiguratorConstants.ROOT_PATH.equals(change.getPath())
-                && !StringUtils.endsWith(change.getPath(), CoreConstants.SEPARATOR_SLASH + NN_INITIAL)
-                && !StringUtils.contains(change.getPath(), CoreConstants.SEPARATOR_SLASH + NN_INITIAL + CoreConstants.SEPARATOR_SLASH);
+            return !ConfiguratorConstants.ROOT_PATH.equals(change.getPath());
         }
         return StringUtils.endsWith(change.getPath(), CoreConstants.SEPARATOR_SLASH + NN_DATA);
     }
@@ -270,24 +263,23 @@ public class ConfigChangeListener implements ResourceChangeListener {
 
     /**
      * Resets the configuration identified by the specified identifier to its last backed-up state, if any
-     * @param resolver Resource resolver instance to use
      * @param pid      Configuration identifier
      */
-    private void resetConfiguration(ResourceResolver resolver, String pid) {
-        LOG.info("Resetting OSGi configuration {}", pid);
-        String backupPath = ConfiguratorConstants.ROOT_PATH
-            + CoreConstants.SEPARATOR_SLASH + NN_INITIAL
-            + CoreConstants.SEPARATOR_SLASH + pid;
-        Resource backupResource = resolver.getResource(backupPath);
-        if (backupResource == null) {
+    private void resetConfiguration(String pid) {
+        LOG.info("Resetting configuration {}", pid);
+        Configuration configuration = readConfiguration(pid);
+        if (configuration == null) {
             return;
         }
-        updateConfiguration(backupResource, false);
+        Dictionary<String, Object> backup = ConfigUtil.getBackup(configuration);
+        if (backup.isEmpty()) {
+            LOG.info("No backup found for {}", pid);
+            return;
+        }
         try {
-            resolver.delete(backupResource);
-            resolver.commit();
-        } catch (PersistenceException e) {
-            LOG.error("Could not delete backup configuration for {}", pid, e);
+            configuration.update(backup);
+        } catch (IOException e) {
+            LOG.error("Could not reset configuration {}", pid, e);
         }
     }
 
@@ -296,47 +288,44 @@ public class ConfigChangeListener implements ResourceChangeListener {
      * @param resource The resource representing the configuration
      */
     private void updateConfiguration(Resource resource) {
-        updateConfiguration(resource, true);
-    }
-
-    /**
-     * Updates the configuration corresponding to the specified resource, optionally creating a backup copy beforehand
-     * @param resource The resource representing the configuration
-     * @param doBackup If true, a backup copy of the configuration will be created if it does not exist yet
-     */
-    private void updateConfiguration(Resource resource, boolean doBackup) {
         if (resource == null) {
             return;
         }
         String pid = extractPid(resource);
-        LOG.info("Updating OSGi configuration {} to match user settings", pid);
+        LOG.info("Updating configuration {} to match user settings", pid);
         Configuration configuration = readConfiguration(pid);
         if (configuration == null) {
-            LOG.warn("Could not retrieve configuration for resource {}", resource.getPath());
             return;
         }
-        if (MapUtil.equals(configuration.getProperties(), resource.getValueMap())) {
+        if (ConfigUtil.equals(configuration.getProperties(), resource.getValueMap())) {
             LOG.debug("Configuration {} is up to date with user settings", pid);
             return;
         }
-        if (doBackup && !hasBackup(resource)) {
-            createBackup(resource, configuration);
+        Dictionary<String, ?> embeddedBackup = ConfigUtil.getBackup(configuration);
+        if (embeddedBackup.isEmpty()) {
+            embeddedBackup = ConfigUtil.getData(configuration);
         }
         try {
-            updateOsgi(resource, configuration);
+            updateConfiguration(configuration, resource, embeddedBackup);
         } catch (Exception e) {
-            LOG.error("Could not update configuration for {}", configuration.getPid(), e);
+            LOG.error("Could not update configuration {}", configuration.getPid(), e);
         }
     }
 
     /**
-     * Updates the specified OSGi configuration using the properties of the specified resource
-     * @param resource      The resource representing the configuration
+     * Updates the configuration using the properties of the specified resource and embedding a backup of the current
+     * configuration state
      * @param configuration The configuration to update
+     * @param data          The resource containing data to use for the update
+     * @param backup        The backup copy of the configuration, if any
      * @throws Exception If the configuration cannot be updated
      */
-    private void updateOsgi(Resource resource, Configuration configuration) throws Exception {
-        boolean isForeignConfig = !extractPid(resource).startsWith(CoreConstants.ROOT_PACKAGE);
+    private void updateConfiguration(
+        Configuration configuration,
+        Resource data,
+        Dictionary<String, ?> backup) throws Exception {
+
+        boolean isForeignConfig = !extractPid(data).startsWith(CoreConstants.ROOT_PACKAGE);
         String originalBundleLocation = null;
         try {
             originalBundleLocation = configuration.getBundleLocation();
@@ -350,7 +339,15 @@ public class ConfigChangeListener implements ResourceChangeListener {
         } catch (UnsupportedOperationException e) {
             // Ignored for the sake of using with wcm.io mocks
         }
-        configuration.update(MapUtil.toDictionary(resource.getValueMap()));
+        Dictionary<String, Object> updateData = ConfigUtil.toDictionary(data.getValueMap());
+        if (!backup.isEmpty()) {
+            Enumeration<String> keys = backup.keys();
+            while (keys.hasMoreElements()) {
+                String key = keys.nextElement();
+                updateData.put(key + ConfiguratorConstants.SUFFIX_BACKUP, backup.get(key));
+            }
+        }
+        configuration.update(updateData);
         try {
             if (!StringUtils.equals(originalBundleLocation, configuration.getBundleLocation())) {
                 configuration.setBundleLocation(originalBundleLocation);
@@ -379,51 +376,5 @@ public class ConfigChangeListener implements ResourceChangeListener {
     private static String extractPid(String path) {
         String configRootPath = StringUtils.removeEnd(path, CoreConstants.SEPARATOR_SLASH + NN_DATA);
         return StringUtils.substringAfterLast(configRootPath, CoreConstants.SEPARATOR_SLASH);
-    }
-
-    /* --------------------------
-       Configuration backup logic
-       -------------------------- */
-
-    /**
-     * Checks if a backup copy of the specified configuration resource exists
-     * @param resource The resource representing the configuration
-     * @return True or false
-     */
-    private static boolean hasBackup(Resource resource) {
-        String pid = extractPid(resource);
-        String backupPath = ConfiguratorConstants.ROOT_PATH
-            + CoreConstants.SEPARATOR_SLASH + NN_INITIAL
-            + CoreConstants.SEPARATOR_SLASH + pid;
-        return resource.getResourceResolver().getResource(backupPath) != null;
-    }
-
-    /**
-     * Creates a backup copy of the specified configuration resource
-     * @param resource The resource representing the configuration
-     * @param config   The configuration to back up
-     */
-    private static void createBackup(Resource resource, Configuration config) {
-        ResourceResolver resolver = resource.getResourceResolver();
-        Resource root = resolver.getResource(ConfiguratorConstants.ROOT_PATH);
-        if (root == null) {
-            return;
-        }
-        try {
-            Resource backupRoot = root.getChild(NN_INITIAL);
-            if (backupRoot == null) {
-                backupRoot = resolver.create(root, NN_INITIAL, null);
-            }
-            Resource backupResource = backupRoot.getChild(extractPid(resource));
-            if (backupResource != null) {
-                resolver.delete(backupResource);
-            }
-            Map<String, Object> properties = MapUtil.toMap(config.getProperties());
-            properties.put(JcrConstants.JCR_PRIMARYTYPE, JcrConstants.NT_UNSTRUCTURED);
-            resolver.create(backupRoot, extractPid(resource), properties);
-            resolver.commit();
-        } catch (Exception e) {
-            LOG.error("Could not create backup config resource", e);
-        }
     }
 }
