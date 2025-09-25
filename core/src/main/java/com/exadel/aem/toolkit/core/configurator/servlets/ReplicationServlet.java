@@ -72,7 +72,7 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
                     Objects.requireNonNull(request.getResourceResolver().adaptTo(Session.class)),
                     ReplicationActionType.ACTIVATE,
                     request.getResource().getPath());
-            } catch (ReplicationException e) {
+            } catch (ReplicationException | NullPointerException e) {
                 LOG.error("Could not publish configuration {}", request.getResource().getName(), e);
                 response.sendError(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             }
@@ -82,7 +82,7 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
                     Objects.requireNonNull(request.getResourceResolver().adaptTo(Session.class)),
                     ReplicationActionType.DEACTIVATE,
                     request.getResource().getPath());
-            } catch (ReplicationException e) {
+            } catch (ReplicationException | NullPointerException e) {
                 LOG.error("Could not unpublish configuration {}", request.getResource().getName(), e);
                 response.sendError(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
                 return;
