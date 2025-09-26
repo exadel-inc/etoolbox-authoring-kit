@@ -186,15 +186,17 @@ public class ConfigChangeListener implements ResourceChangeListener {
     public void onChange(List<ResourceChange> list) {
         Set<String> configsToReset = new HashSet<>();
         Set<String> configsToUpdate = new HashSet<>();
+        log(
+            Level.DEBUG,
+            "Received {} resource change(s): {}",
+            list.size(),
+            list.stream()
+                .map(change -> change.getType() + " at " + change.getPath() + (isRelevantChange(change) ? " (processable)" : " (ignored)"))
+                .reduce((a, b) -> a + SEPARATOR_COMMA_SPACE + b)
+                .orElse("(none)")
+        );
         for (ResourceChange change : list) {
-            boolean isRelevant = isRelevantChange(change);
-            log(
-                Level.DEBUG,
-                "Received change: {} at {}. Will {}",
-                change.getType(),
-                change.getPath(),
-                isRelevant ? "process" : "ignore");
-            if (!isRelevant) {
+            if (!isRelevantChange(change)) {
                 continue;
             }
             if (change.getType() == ResourceChange.ChangeType.REMOVED) {
@@ -207,10 +209,6 @@ public class ConfigChangeListener implements ResourceChangeListener {
             return;
         }
         try (ResourceResolver resolver = newResolver()) {
-            if (!configsToUpdate.isEmpty()) {
-                log(Level.DEBUG, "Going to update configurations following resource change(s): {}",
-                    StringUtils.join(configsToUpdate, SEPARATOR_COMMA_SPACE));
-            }
             for (String path : configsToUpdate) {
                 Resource resource = resolver.getResource(path);
                 if (resource == null) {
@@ -219,10 +217,6 @@ public class ConfigChangeListener implements ResourceChangeListener {
                 } else {
                     updateConfiguration(resource);
                 }
-            }
-            if (!configsToReset.isEmpty()) {
-                log(Level.DEBUG, "Going to reset configurations following resource change(s): {}",
-                    StringUtils.join(configsToReset, SEPARATOR_COMMA_SPACE));
             }
             for (String path : configsToReset) {
                 resetConfiguration(extractPid(path));
