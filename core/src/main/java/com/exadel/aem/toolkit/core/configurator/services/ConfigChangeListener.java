@@ -22,6 +22,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -64,6 +66,8 @@ public class ConfigChangeListener implements ResourceChangeListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigChangeListener.class);
 
+    private static final int ASYNC_THREAD_COUNT = 5;
+
     private static final String UPDATABLE_CONFIG_TOKEN = "?";
 
     private static final String SEPARATOR_COMMA_SPACE = ", ";
@@ -76,6 +80,8 @@ public class ConfigChangeListener implements ResourceChangeListener {
 
     @Reference
     private transient ResourceResolverFactory resourceResolverFactory;
+
+    private ExecutorService asyncExecutor;
 
     private ServiceRegistration<ResourceChangeListener> registration;
 
@@ -104,6 +110,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
         if (!config.enabled()) {
             return;
         }
+        asyncExecutor = Executors.newFixedThreadPool(ASYNC_THREAD_COUNT);
         Dictionary<String, Object> properties = new Hashtable<>();
         properties.put(ResourceChangeListener.PATHS, new String[]{ConfiguratorConstants.ROOT_PATH});
         properties.put(ResourceChangeListener.CHANGES, new String[]{"ADDED", "CHANGED", "REMOVED"});
@@ -159,11 +166,15 @@ public class ConfigChangeListener implements ResourceChangeListener {
      */
     @Deactivate
     private void deactivate() {
-        if (registration != null) {
-            log(Level.INFO, "Configuration change listener is shutting down");
-            registration.unregister();
+        log(Level.INFO, "Configuration change listener is shutting down");
+        if (asyncExecutor != null) {
+            asyncExecutor.shutdown();
+            asyncExecutor = null;
         }
-        registration = null;
+        if (registration != null) {
+            registration.unregister();
+            registration = null;
+        }
     }
 
     /* -------------
@@ -208,23 +219,25 @@ public class ConfigChangeListener implements ResourceChangeListener {
         if (configsToReset.isEmpty() && configsToUpdate.isEmpty()) {
             return;
         }
-        try (ResourceResolver resolver = newResolver()) {
-            for (String path : configsToUpdate) {
-                Resource resource = resolver.getResource(path);
-                if (resource == null) {
-                    // Config removal may produce a {@code CHANGE} event, but then the resource cannot be found
-                    configsToReset.add(path);
-                } else {
-                    updateConfiguration(resource);
+        asyncExecutor.submit(() -> {
+            try (ResourceResolver resolver = newResolver()) {
+                for (String path : configsToUpdate) {
+                    Resource resource = resolver.getResource(path);
+                    if (resource == null) {
+                        // Config removal may produce a {@code CHANGE} event, but then the resource cannot be found
+                        configsToReset.add(path);
+                    } else {
+                        updateConfiguration(resource);
+                    }
                 }
+                for (String path : configsToReset) {
+                    resetConfiguration(extractPid(path));
+                    cleanUpConfiguration(resolver, path);
+                }
+            } catch (LoginException e) {
+                log(Level.ERROR, "Failed to process configuration changes", e);
             }
-            for (String path : configsToReset) {
-                resetConfiguration(extractPid(path));
-                cleanUpConfiguration(resolver, path);
-            }
-        } catch (LoginException e) {
-            log(Level.ERROR, "Failed to process configuration changes", e);
-        }
+        });
     }
 
     /**
