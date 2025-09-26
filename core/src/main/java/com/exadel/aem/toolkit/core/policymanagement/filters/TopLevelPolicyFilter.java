@@ -52,7 +52,7 @@ import com.exadel.aem.toolkit.core.policymanagement.models.PageInfo;
         Constants.SERVICE_RANKING + ":Integer=" + Integer.MIN_VALUE,
         EngineConstants.SLING_FILTER_SCOPE + CoreConstants.EQUALITY_SIGN + EngineConstants.FILTER_SCOPE_COMPONENT,
         "sling.filter.resourceTypes=cq/gui/components/siteadmin/admin/page/winmode",
-        EngineConstants.SLING_FILTER_PATTERN + "=/mnt/overlay/wcm/core/content/editor/jcr:content"
+        EngineConstants.SLING_FILTER_PATTERN + "=/mnt/overlay/wcm/core/content/editors?(/template)?/jcr:content"
     }
 )
 public class TopLevelPolicyFilter implements Filter {
