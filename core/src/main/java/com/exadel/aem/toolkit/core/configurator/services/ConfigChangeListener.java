@@ -232,7 +232,6 @@ public class ConfigChangeListener implements ResourceChangeListener {
                 }
                 for (String path : configsToReset) {
                     resetConfiguration(extractPid(path));
-                    cleanUpConfiguration(resolver, path);
                 }
             } catch (LoginException e) {
                 log(Level.ERROR, "Failed to process configuration changes", e);
@@ -270,34 +269,6 @@ public class ConfigChangeListener implements ResourceChangeListener {
     /* -------------------
        Configuration logic
        ------------------- */
-
-    /**
-     * Cleans up the configuration resource at the specified path if it is not published
-     * @param resolver Resource resolver to use
-     * @param path     Path to the configuration resource
-     */
-    private void cleanUpConfiguration(ResourceResolver resolver, String path) {
-        if (!path.endsWith(CoreConstants.SEPARATOR_SLASH + ConfiguratorConstants.NN_DATA)) {
-            return;
-        }
-        Resource target = resolver.getResource(StringUtils.substringBeforeLast(path, CoreConstants.SEPARATOR_SLASH));
-        if (target == null) {
-            log(Level.WARN, "Configuration resource is not found at {}", path);
-            return;
-        }
-        String replicationStatus = target.getValueMap().get(ConfiguratorConstants.PN_REPLICATION_ACTION, String.class);
-        if ("Activated".equals(replicationStatus)) {
-            log(Level.INFO, "Configuration at {} is published; will not remove the root node until unpublishing", target.getPath());
-            return;
-        }
-        log(Level.INFO, "Cleaning up configuration at {}", target.getPath());
-        try {
-            resolver.delete(target);
-            resolver.commit();
-        } catch (PersistenceException e) {
-            log(Level.ERROR, "Could not delete configuration at {}", target.getPath(), e);
-        }
-    }
 
     /**
      * Retrieves an OSGi configuration by its identifier

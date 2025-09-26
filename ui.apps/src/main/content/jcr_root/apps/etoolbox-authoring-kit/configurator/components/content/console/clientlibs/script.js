@@ -69,11 +69,12 @@
 
     /**
      * Resets the configuration to a previously stored initial value set
+     * @param {boolean} keepMainNode If true, the main configuration node will be kept (for the sake of unpublishing)
      * @returns {Promise}
      */
-    async function reset() {
+    async function reset(keepMainNode = false) {
         foundationUi.wait();
-        const configPath = $('#config').attr('action') + '/data';
+        const configPath = $('#config').attr('action') + (keepMainNode ? '/data' : '');
         try {
             await requestAsync('DELETE', configPath);
         } catch (e) {
@@ -357,13 +358,16 @@
      */
     async function onResetClick() {
         const $form = $('#config');
+        let keepMainNode = false;
         if (isPublished($form)) {
+            keepMainNode = true;
             const action = await prompt('Published configuration', 'This configuration is published. Do you want to unpublish it before resetting?');
             if (action === 'yes') {
+                keepMainNode = false;
                 await unpublish();
             }
         }
-        await reset();
+        await reset(keepMainNode);
     }
 
     /**
