@@ -296,8 +296,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
         }
         Dictionary<String, Object> backup = ConfigUtil.getBackup(configuration);
         if (backup.isEmpty()) {
-            log(Level.INFO,  "No backup found for {}", pid);
-            return;
+            log(Level.DEBUG, "No backup found for {}. Probably the configuration was default or empty before user update", pid);
         }
         try {
             configuration.update(backup);
