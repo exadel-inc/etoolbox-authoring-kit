@@ -23,7 +23,7 @@
     ns.PolicyResolver.cache = new Map();
 
     $(document).on('cq-editables-loaded', function (event) {
-        if (getCurrentLayerName() !== 'edit') {
+        if (!['edit', 'initial'].includes(getCurrentLayerName())) {
             return;
         }
         if (window.eakApplyTopLevelPolicy) {
