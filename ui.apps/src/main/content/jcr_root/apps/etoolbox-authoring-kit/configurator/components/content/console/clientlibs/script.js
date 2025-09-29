@@ -22,6 +22,15 @@
        -------------- */
 
     /**
+     * Gets if the configuration can be completely cleaned up (root node erased) according to the form metadata
+     * @param {JQuery} $form
+     * @returns {boolean}
+     */
+    function canCleanUp($form) {
+        return $form.find('#canCleanUp').val() === 'true';
+    }
+
+    /**
      * Gets if the configuration has unsaved modifications according to the form metadata
      * @param {JQuery} $form
      * @returns {boolean}
@@ -72,7 +81,7 @@
      * @param {boolean} keepMainNode If true, the main configuration node will be kept (for the sake of unpublishing)
      * @returns {Promise}
      */
-    async function reset(keepMainNode = false) {
+    async function reset(keepMainNode) {
         foundationUi.wait();
         const configPath = $('#config').attr('action') + (keepMainNode ? '/data' : '');
         try {
@@ -358,11 +367,12 @@
      */
     async function onResetClick() {
         const $form = $('#config');
-        let keepMainNode = false;
+        const cleanUp = canCleanUp($form);
+        let keepMainNode = !cleanUp;
         if (isPublished($form)) {
             keepMainNode = true;
             const action = await prompt('Published configuration', 'This configuration is published. Do you want to unpublish it before resetting?');
-            if (action === 'yes') {
+            if (action === 'yes' && cleanUp) {
                 keepMainNode = false;
                 await unpublish();
             }
@@ -388,7 +398,8 @@
         }
         await unpublish();
         if (action === 'yes') {
-            await reset();
+            const keepMainNode = !canCleanUp($form);
+            await reset(keepMainNode);
         }
     }
 

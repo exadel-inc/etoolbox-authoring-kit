@@ -82,6 +82,16 @@ class FieldUtil {
         // Metadata fields
         fieldCollection.add(newHidden(
             request.getResourceResolver(),
+            "canCleanUp",
+            Boolean.toString(!PermissionUtil.hasOverridingPermissions(request))));
+
+        fieldCollection.add(newHidden(
+            request.getResourceResolver(),
+            "changeCount",
+            String.valueOf(config.getChangeCount())));
+
+        fieldCollection.add(newHidden(
+            request.getResourceResolver(),
             "ownPath",
             request.getResource().getPath() + ".html/" + config.getId()));
 
@@ -94,11 +104,6 @@ class FieldUtil {
             request.getResourceResolver(),
             "published",
             String.valueOf(config.isPublished())));
-
-        fieldCollection.add(newHidden(
-            request.getResourceResolver(),
-            "changeCount",
-            String.valueOf(config.getChangeCount())));
 
         // Node resource type setters
         fieldCollection.add(newHidden(

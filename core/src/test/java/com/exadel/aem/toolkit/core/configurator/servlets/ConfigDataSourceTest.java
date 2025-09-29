@@ -60,7 +60,7 @@ public class ConfigDataSourceTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldHandleNoConfigurationSpecified() {
+    public void shouldHandleNoConfigurationSpecified() throws IOException {
         for (String suffix : new String[]{null, StringUtils.EMPTY, CoreConstants.SEPARATOR_SLASH, "/ "}) {
             context.requestPathInfo().setSuffix(suffix);
 
@@ -83,7 +83,7 @@ public class ConfigDataSourceTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void shouldHandleDisabledChangeListener() {
+    public void shouldHandleDisabledChangeListener() throws IOException {
         context.requestPathInfo().setSuffix("/test.config.pid");
 
         context.registerService(new ConfigChangeListener());

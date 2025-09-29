@@ -14,6 +14,7 @@
 
 package com.exadel.aem.toolkit.core.configurator.servlets;
 
+import java.io.IOException;
 import java.util.Collections;
 import javax.servlet.Servlet;
 
@@ -51,6 +52,9 @@ import com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener;
 )
 public class ConfigDataSource extends SlingSafeMethodsServlet {
 
+    private static final String VARIANT_ERROR = "error";
+    private static final String VARIANT_WARNING = "warning";
+
     @Reference
     private transient ConfigurationAdmin configurationAdmin;
 
@@ -77,27 +81,23 @@ public class ConfigDataSource extends SlingSafeMethodsServlet {
      * @param response The HTTP response
      */
     @Override
-    protected void doGet(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) {
+    protected void doGet(
+        @NotNull SlingHttpServletRequest request,
+        @NotNull SlingHttpServletResponse response) throws IOException {
+
+        if (!PermissionUtil.hasLocalPermission(request)) {
+            outputMessage(request, "You don't have access to this feature", VARIANT_ERROR);
+            return;
+        }
+
         String configId = StringUtils.strip(request.getRequestPathInfo().getSuffix(), CoreConstants.SEPARATOR_SLASH);
         if (StringUtils.isBlank(configId)) {
-            Resource message = FieldUtil.newAlert(
-                request.getResourceResolver(),
-                "No configuration specified",
-                "error");
-            request.setAttribute(
-                DataSource.class.getName(),
-                new SimpleDataSource(Collections.singletonList(message).iterator()));
+            outputMessage(request, "No configuration specified", VARIANT_ERROR);
             return;
         }
 
         if (!configChangeListener.isEnabled()) {
-            Resource message = FieldUtil.newAlert(
-                request.getResourceResolver(),
-                "This tool is disabled by OSGi configuration",
-                "error");
-            request.setAttribute(
-                DataSource.class.getName(),
-                new SimpleDataSource(Collections.singletonList(message).iterator()));
+            outputMessage(request, "This tool is disabled by OSGi configuration", VARIANT_ERROR);
             return;
         }
 
@@ -110,23 +110,11 @@ public class ConfigDataSource extends SlingSafeMethodsServlet {
             .getConfig(configId);
 
         if (config == null) {
-            Resource message = FieldUtil.newAlert(
-                request.getResourceResolver(),
-                "Configuration \"" + configId + "\" is missing or invalid",
-                "error");
-            request.setAttribute(
-                DataSource.class.getName(),
-                new SimpleDataSource(Collections.singletonList(message).iterator()));
+            outputMessage(request, "Configuration \"" + configId + "\" is missing or invalid", VARIANT_ERROR);
             return;
         }
         if (config.isFactory()) {
-            Resource message = FieldUtil.newAlert(
-                request.getResourceResolver(),
-                "Factory configs are currently not supported",
-                "warning");
-            request.setAttribute(
-                DataSource.class.getName(),
-                new SimpleDataSource(Collections.singletonList(message).iterator()));
+            outputMessage(request, "Factory configs are currently not supported", VARIANT_WARNING);
             return;
         }
 
@@ -144,5 +132,18 @@ public class ConfigDataSource extends SlingSafeMethodsServlet {
 
         FieldUtil.processRequest(request, config);
         ValueUtil.processRequest(request, config);
+    }
+
+    /**
+     * Prints out an alert message
+     * @param request The HTTP request
+     * @param message The message text. A non-blank string is expected
+     * @param variant The message variant
+     */
+    private static void outputMessage(SlingHttpServletRequest request, String message, String variant) {
+        Resource messageResource = FieldUtil.newAlert(request.getResourceResolver(), message, variant);
+        request.setAttribute(
+            DataSource.class.getName(),
+            new SimpleDataSource(Collections.singletonList(messageResource).iterator()));
     }
 }
