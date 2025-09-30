@@ -28,6 +28,23 @@ Now, even after the AEM instance is restarted or recreated (as it goes with AEMa
 
 However, if you press the _Reset_ button, the stored config will be erased and the backup config will be reinstalled.
 
-A common development pattern is to allow editing a config online for the sake of immediate changes, but then "transfer" it to the code base. In this case, it makes sense to tell the Configurator to clean up a config stored under `/conf/etoolbox/authoring-kit` immediately as it sees it and not apply, since the same config is now declared elsewhere in the code. You can do it by setting the property _cleanUp_ in the `com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener.xml` next to the _enabled_ property. The value of _cleanUp_ is an array of configuration PIDs that you want the Configurator to clean up on sight.
+## Publishing and unpublishing configs
 
 If you are satisfied with the change of an OSGi config in an author instance, you can populate it to the publishers by pressing the "Publish" button. It will replicate the config asynchronously. Press "Unpublish" to reset the config on the publishers. You will then be offered to reset it on the author as well.
+
+## Cleaning up configs no longer needed
+
+A common development pattern is to allow editing a config online for the sake of immediate changes, but then "transfer" it to the code base. In this case, it makes sense to tell the Configurator to clean up a config stored under `/conf/etoolbox/authoring-kit` immediately as it sees it and not apply, since the same config is now declared elsewhere in the code. You can do it by setting the property _cleanUp_ in the `com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener.xml` next to the _enabled_ property. The value of _cleanUp_ is an array of configuration PIDs that you want the Configurator to clean up on sight.
+
+## Access management
+
+By default, the Configurator is available to users who have the privilege to read and write data under `/conf/etoolbox/authoring-kit/configurator`. Usually those are the members of the administrators group. You can loosen this restriction manually. Else, you can grant access to a particular configuration (PID) by specifying it on the node level. A good idea is to provision a "permanent" PID-specific node under `/conf/etoolbox/authoring-kit/configurator` regardless of whether there is currently a custom config for this PID or not. This can be done, e.g., via an Apache Sling Repository Initializer script:
+```json
+{
+    "scripts": [
+        "create path (nt:unstructured) /conf/etoolbox(sling:Folder)/authoring-kit(sling:Folder)/configurator(sling:Folder)/com.acme.service.impl.MyServiceImpl",
+        "set ACL for noadmin\n allow jcr:read on /conf/etoolbox\n allow rep:write,crx:replicate on /conf/etoolbox/authoring-kit/configurator/com.acme.service.impl.MyServiceImpl\n end"
+    ]
+}
+```
+In this script, we first provision the node structure that would appear if/when someone saves a custom config for `com.acme.service.impl.MyServiceImpl`. Then we assign two necessary privileges for the user _noadmin_. First is the _jcr:read_ on `/conf/etoolbox` so that Configurator "sees" the settings repository in general. Second is the _rep:write_ on the PID-specific node that allows saving a custom config for this PID. Note that we do not assign _rep:write_ on `/conf/etoolbox/authoring-kit/configurator` as this would allow saving configs for any PID.
