@@ -124,10 +124,8 @@ class FieldUtil {
         // Attribute fields
         for (ConfigAttribute attribute : config.getAttributes()) {
             boolean isSkipped = attribute.getDefinition().getID().endsWith(ConfiguratorConstants.SUFFIX_BACKUP)
-                || StringUtils.equalsAny(
-                attribute.getDefinition().getID(),
-                ConfiguratorConstants.ATTR_NAME_HINT,
-                ConfiguratorConstants.ATTR_LAYOUT);
+                || StringUtils.equalsAny(attribute.getDefinition().getID(), ConfiguratorConstants.ATTR_NAME_HINT)
+                || attribute.getDefinition().getID().startsWith(ConfiguratorConstants.ATTR_CONFIGURATOR);
             if (isSkipped) {
                 continue;
             }

@@ -73,7 +73,9 @@ class ConfigUtil {
     public static Dictionary<String, Object> getData(Configuration value) {
         return getData(
             value,
-            key -> !EXCLUDED_KEYS.contains(key) && !key.endsWith(ConfiguratorConstants.SUFFIX_BACKUP),
+            key -> !EXCLUDED_KEYS.contains(key)
+                && !key.startsWith(ConfiguratorConstants.ATTR_CONFIGURATOR)
+                && !key.endsWith(ConfiguratorConstants.SUFFIX_BACKUP),
             UnaryOperator.identity());
     }
 

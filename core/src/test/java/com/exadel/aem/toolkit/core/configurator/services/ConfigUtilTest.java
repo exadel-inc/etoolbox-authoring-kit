@@ -290,7 +290,7 @@ public class ConfigUtilTest {
         assertNull(result.get("service.pid")); // Should be excluded
         assertNull(result.get("service.factoryPid")); // Should be excluded
         assertNull(result.get("property1" + ConfiguratorConstants.SUFFIX_BACKUP)); // Should be excluded
-        assertNull(result.get(ConfiguratorConstants.ATTR_LAYOUT)); // Should be excluded
+        assertNull(result.get(ConfiguratorConstants.ATTR_CONFIGURATOR)); // Should be excluded
         assertNull(result.get(ConfiguratorConstants.ATTR_NAME_HINT)); // Should be excluded
     }
 
@@ -312,7 +312,7 @@ public class ConfigUtilTest {
         // Excluded properties
         props.put("service.pid", "com.example.service");
         props.put("service.factoryPid", "com.example.factory");
-        props.put(ConfiguratorConstants.ATTR_LAYOUT, "layout.value");
+        props.put(ConfiguratorConstants.ATTR_CONFIGURATOR, "layout.value");
         props.put(ConfiguratorConstants.ATTR_NAME_HINT, "name.hint");
 
         when(configuration.getProperties()).thenReturn(props);

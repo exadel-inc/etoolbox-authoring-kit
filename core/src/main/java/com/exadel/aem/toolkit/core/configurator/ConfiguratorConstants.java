@@ -20,7 +20,7 @@ package com.exadel.aem.toolkit.core.configurator;
  */
 public class ConfiguratorConstants {
 
-    public static final String ATTR_LAYOUT = "eak.configurator.layout";
+    public static final String ATTR_CONFIGURATOR = "eak.configurator";
     public static final String ATTR_NAME_HINT = "webconsole.configurationFactory.nameHint";
 
     public static final String NN_DATA = "data";
@@ -28,7 +28,7 @@ public class ConfiguratorConstants {
 
     public static final String ROOT_PATH = "/conf/etoolbox/authoring-kit/configurator";
 
-    public static final String SUFFIX_BACKUP = "$eakbackup";
+    public static final String SUFFIX_BACKUP = "$backup$";
 
     /**
      * Default (instantiation-restricting) constructor

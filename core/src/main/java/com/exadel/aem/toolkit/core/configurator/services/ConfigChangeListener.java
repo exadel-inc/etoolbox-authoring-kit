@@ -387,7 +387,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
      * @param args    Arguments to substitute into the message
      */
     private void log(Level level, String message, Object... args) {
-        String marker = StringUtils.EMPTY;
+        String marker;
         if (discoveryService != null) {
             InstanceDescription localInstance = discoveryService.getTopology().getLocalInstance();
             marker = localInstance.getSlingId() + (localInstance.isLeader() ? " (leader)" : StringUtils.EMPTY);
