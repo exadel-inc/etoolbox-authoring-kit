@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javax.jcr.Session;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -295,8 +296,10 @@ public class ConfigChangeListener implements ResourceChangeListener {
             return;
         }
         Dictionary<String, Object> backup = ConfigUtil.getBackup(configuration);
-        if (backup.isEmpty()) {
-            log(Level.DEBUG, "No backup found for {}. Probably the configuration was default or empty before user update", pid);
+        boolean shouldErase = backup.size() == 1
+            && Session.ACTION_REMOVE.equals(backup.get(ConfiguratorConstants.SUFFIX_BACKUP));
+        if (shouldErase) {
+            backup = new Hashtable<>(Collections.emptyMap());
         }
         try {
             configuration.update(backup);
@@ -323,6 +326,15 @@ public class ConfigChangeListener implements ResourceChangeListener {
         Dictionary<String, ?> embeddedBackup = ConfigUtil.getBackup(configuration);
         if (embeddedBackup.isEmpty()) {
             embeddedBackup = ConfigUtil.getData(configuration);
+            if (embeddedBackup.isEmpty()) {
+                // There is not a "real" configuration other than default values. When doing a reset, we will need to
+                // erase the properties of a current configuration to bring back the defaults
+                embeddedBackup = new Hashtable<>(
+                    Collections.singletonMap(
+                        ConfiguratorConstants.SUFFIX_BACKUP,
+                        Session.ACTION_REMOVE)
+                );
+            }
         }
         try {
             updateConfiguration(configuration, resource, embeddedBackup);
@@ -363,7 +375,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
             Enumeration<String> keys = backup.keys();
             while (keys.hasMoreElements()) {
                 String key = keys.nextElement();
-                updateData.put(key + ConfiguratorConstants.SUFFIX_BACKUP, backup.get(key));
+                updateData.put(StringUtils.appendIfMissing(key, ConfiguratorConstants.SUFFIX_BACKUP), backup.get(key));
             }
         }
         configuration.update(updateData);

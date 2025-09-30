@@ -44,7 +44,6 @@ class ConfigUtil {
     private static final List<String> EXCLUDED_KEYS = Arrays.asList(
         "service.pid",
         "service.factoryPid",
-        ConfiguratorConstants.ATTR_LAYOUT,
         ConfiguratorConstants.ATTR_NAME_HINT);
 
     /**
@@ -62,7 +61,7 @@ class ConfigUtil {
         return getData(
             value,
             key -> key.endsWith(ConfiguratorConstants.SUFFIX_BACKUP),
-            key -> StringUtils.removeEnd(key, ConfiguratorConstants.SUFFIX_BACKUP));
+            key -> ConfiguratorConstants.SUFFIX_BACKUP.equals(key) ? key : StringUtils.removeEnd(key, ConfiguratorConstants.SUFFIX_BACKUP));
     }
 
     /**
