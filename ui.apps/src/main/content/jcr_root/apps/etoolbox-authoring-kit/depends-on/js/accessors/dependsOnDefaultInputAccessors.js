@@ -15,18 +15,18 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
  *
- * Batch accessor for Coral Fieldsets
+ * Default input accessors override
  * */
 (function ($, ns) {
-    const TARGETS_SELECTOR = '[data-dependson], input, select, button';
-    const FIELDSET_SELECTOR = 'section.coral-Form-fieldset';
-
     ns.ElementAccessors.registerAccessor({
-        selector: FIELDSET_SELECTOR,
-        disabled: function ($el, state, actor) {
-            $el.find(TARGETS_SELECTOR).each(function () {
-                ns.ElementAccessors.setDisabled($(this), state, actor);
-            });
+        selector: 'input[type=radio], input[type=checkbox]',
+        preferableType: 'boolean',
+        get: function ($el) {
+            return $el[0].checked;
+        },
+        set: function ($el, val, notify) {
+            $el.prop('checked', val);
+            notify && $el.trigger('change');
         }
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

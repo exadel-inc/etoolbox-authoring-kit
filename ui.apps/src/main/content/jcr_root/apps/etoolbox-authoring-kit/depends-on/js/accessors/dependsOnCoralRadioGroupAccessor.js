@@ -13,20 +13,23 @@
  */
 
 /**
- * @author Alexey Stsefanovich (ala'n)
+ * @author Alexey Stsefanovich (ala'n), Yana Bernatskaya (YanaBr)
  *
- * Batch accessor for Coral Fieldsets
+ * Coral Radio Group accessors
  * */
 (function ($, ns) {
-    const TARGETS_SELECTOR = '[data-dependson], input, select, button';
-    const FIELDSET_SELECTOR = 'section.coral-Form-fieldset';
-
+    // Coral Radio Group
     ns.ElementAccessors.registerAccessor({
-        selector: FIELDSET_SELECTOR,
-        disabled: function ($el, state, actor) {
-            $el.find(TARGETS_SELECTOR).each(function () {
-                ns.ElementAccessors.setDisabled($(this), state, actor);
+        selector: '.coral-RadioGroup',
+        preferableType: 'string',
+        get: function ($el) {
+            return $el.find('coral-radio[checked]').val() || '';
+        },
+        set: function ($el, val, notify) {
+            $el.find('coral-radio').each(function () {
+                this.checked = val === this.value;
             });
+            notify && $el.trigger('change');
         }
     });
 })(Granite.$, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

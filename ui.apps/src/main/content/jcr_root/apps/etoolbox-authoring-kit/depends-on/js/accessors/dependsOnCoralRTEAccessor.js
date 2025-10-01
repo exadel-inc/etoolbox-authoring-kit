@@ -15,7 +15,7 @@
 /**
  * @author Alexey Stsefanovich (ala'n), Bernatskaya Yana (YanaBr)
  *
- * Coral 3 RTE accessor
+ * Coral RTE accessor
  * */
 (function ($, ns) {
     const RTE_CONTAINER = '.cq-RichText';

@@ -18,15 +18,15 @@
  * CQ Coral3-based FileUpload accessor
  * */
 (function ($, ns) {
-    const SELECTOR = '.cq-FileUpload, .coral3-FileUpload';
-    const FILEUPLOAD_FILE_REFERENCE = '[data-cq-fileupload-parameter="filereference"]';
-    const FILEUPLOAD_INPUT_SELECTOR = '.coral3-FileUpload-input';
+    const SELECTOR = '.cq-FileUpload, coral-fileupload';
+    const FILEUPLOAD_FILE_REFERENCE = '[data-cq-fileupload-parameter="filereference"], input[type=file]';
+    const FILEUPLOAD_INPUT_SELECTOR = 'input[type=file]';
 
     ns.ElementAccessors.registerAccessor({
         selector: SELECTOR,
         preferableType: 'string',
         get: function ($el) {
-            return $el.find(FILEUPLOAD_FILE_REFERENCE).val();
+            return $el.find(FILEUPLOAD_FILE_REFERENCE).first().val();
         },
         visibility: function ($el, state) {
             $el.find(FILEUPLOAD_INPUT_SELECTOR).attr('readonly', state ? null : '');

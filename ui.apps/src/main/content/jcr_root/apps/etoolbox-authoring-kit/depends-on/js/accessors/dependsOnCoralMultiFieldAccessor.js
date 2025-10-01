@@ -15,7 +15,7 @@
 /**
  * @author Yana Bernatskaya (YanaBr)
  *
- * Coral 3 MultiField accessor
+ * Coral MultiField accessor
  * */
 (function ($, ns) {
     const MULTIFIELD_SELECTOR = 'coral-multifield';
