@@ -84,4 +84,10 @@
     $window.adaptTo('foundation-registry').register('foundation.validation.selector', {
         exclusion: '[data-dependson][hidden] *, [data-dependson-controllable][hidden] *'
     });
+    // Fix invalidate call for some of the complex coral fields
+    $(document)
+        .off('change.dependsOnFixes')
+        .on('change.dependsOnFixes', '.cq-RichText, coral-fileupload', function () {
+            ns.ElementAccessors.updateValidity($(this));
+        });
 })(Granite.$, Granite.EAKUtils, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));
