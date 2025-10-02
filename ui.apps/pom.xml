@@ -97,13 +97,6 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
-                <configuration>
-                    <skipNexusStagingDeployMojo>true</skipNexusStagingDeployMojo>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>${project.parent.artifactId}-plugin</artifactId>
                 <version>${project.version}</version>
