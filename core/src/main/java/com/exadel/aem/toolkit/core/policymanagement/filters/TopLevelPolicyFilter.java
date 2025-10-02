@@ -99,7 +99,7 @@ public class TopLevelPolicyFilter implements Filter {
 
         String scriptNodeText = StringUtils.isNotBlank(rules) ? getScriptTagText(rules) : StringUtils.EMPTY;
 
-        if (pageInfo != null) {
+        if (pageInfo != null && StringUtils.isNotEmpty(pageInfo.getTemplate())) {
             servletResponse.getWriter().println(String.format(META_TAG_FORMAT, pageInfo.getTemplate()));
         }
 
