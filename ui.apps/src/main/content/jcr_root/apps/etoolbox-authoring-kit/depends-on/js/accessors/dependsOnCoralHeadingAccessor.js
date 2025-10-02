@@ -15,7 +15,7 @@
 /**
  * @author Liubou Masiuk
  *
- * Coral 3 Heading accessor
+ * Coral Heading accessor
  * */
 (function ($, ns) {
     const HEADING_SELECTOR = '.coral-Heading';

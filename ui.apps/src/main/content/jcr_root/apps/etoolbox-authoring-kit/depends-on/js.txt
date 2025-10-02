@@ -15,12 +15,13 @@ js/dependsOnQueryObserver.js
 
 # Accessors
 js/accessors/dependsOnDefaultAccessors.js
+js/accessors/dependsOnDefaultInputAccessors.js
 js/accessors/dependsOnCoralNoWrapperFieldsAccessor.js
 js/accessors/dependsOnCoralSwitcherAccessors.js
+js/accessors/dependsOnCoralRadioGroupAccessor.js
 js/accessors/dependsOnCoralRTEAccessor.js
 js/accessors/dependsOnCQFileUploadAccessor.js
 js/accessors/dependsOnCoralMultiFieldAccessor.js
-js/accessors/dependsOnCoralCheckboxAccessor.js
 js/accessors/dependsOnCoralHeadingAccessor.js
 js/accessors/dependsOnCoralAlertAccessor.js
 js/accessors/dependsOnCoralPathFieldAccessor.js
