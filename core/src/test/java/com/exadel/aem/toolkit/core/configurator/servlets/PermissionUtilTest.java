@@ -48,18 +48,18 @@ public class PermissionUtilTest {
     public void shouldCheckGlobalPermission() throws Exception {
         try (ResourceResolver resolver = createResourceResolver(true, true)) {
             MockSlingHttpServletRequest request = createRequest(resolver);
-            assertTrue(PermissionUtil.hasGlobalPermission(request));
+            assertTrue(PermissionUtil.hasGlobalModifyPermission(request));
         }
 
         try (ResourceResolver resolver = createResourceResolver(false, false)) {
             MockSlingHttpServletRequest request = createRequest(resolver);
-            assertFalse(PermissionUtil.hasGlobalPermission(request));
+            assertFalse(PermissionUtil.hasGlobalModifyPermission(request));
         }
 
         try (ResourceResolver resolver = createResourceResolver(true, false)) {
             MockSlingHttpServletRequest request = new MockSlingHttpServletRequest(resolver, context.bundleContext());
             ((MockRequestPathInfo) request.getRequestPathInfo()).setSuffix(null);
-            assertTrue(PermissionUtil.hasGlobalPermission(request));
+            assertTrue(PermissionUtil.hasGlobalModifyPermission(request));
         }
 
         ResourceResolver mockResolver = Mockito.mock(ResourceResolver.class);
@@ -68,25 +68,25 @@ public class PermissionUtilTest {
         Mockito.when(mockSession.hasPermission(Mockito.eq(ConfiguratorConstants.ROOT_PATH), Mockito.eq(Session.ACTION_SET_PROPERTY)))
             .thenThrow(new RepositoryException("forced"));
         MockSlingHttpServletRequest request = new MockSlingHttpServletRequest(mockResolver, context.bundleContext());
-        assertFalse(PermissionUtil.hasGlobalPermission(request));
+        assertFalse(PermissionUtil.hasGlobalModifyPermission(request));
     }
 
     @Test
     public void shouldCheckLocalPermission() throws Exception {
         try (ResourceResolver resolver = createResourceResolver(true, true)) {
             MockSlingHttpServletRequest request = createRequest(resolver);
-            assertTrue(PermissionUtil.hasLocalPermission(request));
+            assertTrue(PermissionUtil.hasModifyPermission(request));
         }
 
         try (ResourceResolver resolver = createResourceResolver(true, false)) {
             MockSlingHttpServletRequest request = createRequest(resolver);
-            assertFalse(PermissionUtil.hasLocalPermission(request));
+            assertFalse(PermissionUtil.hasModifyPermission(request));
         }
 
         try (ResourceResolver resolver = createResourceResolver(false, true)) {
             MockSlingHttpServletRequest request = new MockSlingHttpServletRequest(resolver, context.bundleContext());
             ((MockRequestPathInfo) request.getRequestPathInfo()).setSuffix(null);
-            assertFalse(PermissionUtil.hasLocalPermission(request));
+            assertFalse(PermissionUtil.hasModifyPermission(request));
         }
 
         ResourceResolver mockResolver = Mockito.mock(ResourceResolver.class);
@@ -95,12 +95,12 @@ public class PermissionUtilTest {
         Mockito.when(mockSession.hasPermission(Mockito.eq(ConfiguratorConstants.ROOT_PATH), Mockito.eq(Session.ACTION_SET_PROPERTY)))
             .thenThrow(new RepositoryException("forced"));
         MockSlingHttpServletRequest request = new MockSlingHttpServletRequest(mockResolver, context.bundleContext());
-        assertFalse(PermissionUtil.hasLocalPermission(request));
+        assertFalse(PermissionUtil.hasModifyPermission(request));
     }
 
     @Test
     public void shouldCheckOverridingPermissions() throws Exception {
-        String configId = "my.config";
+        String configId = CONFIG;
         context.requestPathInfo().setSuffix(configId);
 
         Privilege read = Mockito.mock(Privilege.class);
@@ -134,6 +134,45 @@ public class PermissionUtilTest {
         }
     }
 
+    @Test
+    public void shouldCheckReplicatePermission() throws Exception {
+        context.requestPathInfo().setSuffix(CONFIG);
+
+        Privilege replicatePrivilege = Mockito.mock(Privilege.class);
+        Privilege jcrAllPrivilege = Mockito.mock(Privilege.class);
+        Mockito.when(jcrAllPrivilege.getName()).thenReturn(Privilege.JCR_ALL);
+
+        AccessControlManager acm = Mockito.mock(AccessControlManager.class);
+        Mockito.when(acm.privilegeFromName(Mockito.eq("crx:replicate"))).thenReturn(replicatePrivilege);
+
+        try (ResourceResolver resolver = createResourceResolver(false, true)) {
+            MockSlingHttpServletRequest request = createRequest(resolver);
+            Session session = resolver.adaptTo(Session.class);
+            assertNotNull(session);
+            Mockito.when(session.getAccessControlManager()).thenReturn(acm);
+
+            Privilege[] userPrivileges = new Privilege[]{replicatePrivilege};
+            Mockito.when(acm.getPrivileges(Mockito.eq(ConfiguratorConstants.ROOT_PATH))).thenReturn(userPrivileges);
+            assertTrue(PermissionUtil.hasReplicatePermission(request));
+
+            userPrivileges = new Privilege[]{jcrAllPrivilege};
+            Mockito.when(acm.getPrivileges(Mockito.eq(ConfiguratorConstants.ROOT_PATH))).thenReturn(userPrivileges);
+            assertTrue(PermissionUtil.hasReplicatePermission(request));
+
+            Privilege readPrivilege = Mockito.mock(Privilege.class);
+            Mockito.when(readPrivilege.getName()).thenReturn(Privilege.JCR_READ);
+            userPrivileges = new Privilege[]{readPrivilege};
+            Mockito.when(acm.getPrivileges(Mockito.eq(ConfiguratorConstants.ROOT_PATH))).thenReturn(userPrivileges);
+            assertFalse(PermissionUtil.hasReplicatePermission(request));
+
+            Mockito.when(acm.privilegeFromName(Mockito.anyString())).thenThrow(new RepositoryException("forced"));
+            assertFalse(PermissionUtil.hasReplicatePermission(request));
+
+            ((MockRequestPathInfo) request.getRequestPathInfo()).setSuffix(null);
+            assertFalse(PermissionUtil.hasReplicatePermission(request));
+        }
+    }
+
     private MockSlingHttpServletRequest createRequest(ResourceResolver resolver) {
         MockSlingHttpServletRequest request = new MockSlingHttpServletRequest(resolver, context.bundleContext());
         ((MockRequestPathInfo) request.getRequestPathInfo()).setSuffix(CONFIG);
@@ -158,4 +197,3 @@ public class PermissionUtilTest {
         return resolver;
     }
 }
-

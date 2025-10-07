@@ -47,7 +47,7 @@ class PermissionUtil {
      * @param request The current request
      * @return True or false
      */
-    public static boolean hasGlobalPermission(SlingHttpServletRequest request) {
+    public static boolean hasGlobalModifyPermission(SlingHttpServletRequest request) {
         Session session = request.getResourceResolver().adaptTo(Session.class);
         try {
             return Objects.requireNonNull(session).hasPermission(ConfiguratorConstants.ROOT_PATH, Session.ACTION_SET_PROPERTY);
@@ -63,10 +63,10 @@ class PermissionUtil {
      * @param request The current request
      * @return True or false
      */
-    public static boolean hasLocalPermission(SlingHttpServletRequest request) {
+    public static boolean hasModifyPermission(SlingHttpServletRequest request) {
         String configId = StringUtils.strip(request.getRequestPathInfo().getSuffix(), CoreConstants.SEPARATOR_SLASH);
         if (StringUtils.isBlank(configId)) {
-            return hasGlobalPermission(request);
+            return hasGlobalModifyPermission(request);
         }
         Session session = request.getResourceResolver().adaptTo(Session.class);
         try {
@@ -98,6 +98,32 @@ class PermissionUtil {
             Privilege[] rootPrivileges = acm.getPrivileges(ConfiguratorConstants.ROOT_PATH);
             Privilege[] configPrivileges = acm.getPrivileges(ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId);
             return !Objects.deepEquals(rootPrivileges, configPrivileges);
+        } catch (RepositoryException | NullPointerException e) {
+            LOG.error(ERROR_PERMISSIONS_FAILURE, e);
+        }
+        return false;
+    }
+
+    /**
+     * Checks whether the current user has permissions to replicate configurations
+     * @param request The current request
+     * @return True or false
+     */
+    public static boolean hasReplicatePermission(SlingHttpServletRequest request) {
+        Session session = request.getResourceResolver().adaptTo(Session.class);
+        String configId = StringUtils.strip(request.getRequestPathInfo().getSuffix(), CoreConstants.SEPARATOR_SLASH);
+        if (StringUtils.isBlank(configId)) {
+            return false;
+        }
+        try {
+            AccessControlManager acm = Objects.requireNonNull(session).getAccessControlManager();
+            Privilege replicatePrivilege = acm.privilegeFromName("crx:replicate");
+            Privilege[] userPrivileges = acm.getPrivileges(ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId);
+            for (Privilege privilege : userPrivileges) {
+                if (privilege.equals(replicatePrivilege) || privilege.getName().equals(Privilege.JCR_ALL)) {
+                    return true;
+                }
+            }
         } catch (RepositoryException | NullPointerException e) {
             LOG.error(ERROR_PERMISSIONS_FAILURE, e);
         }

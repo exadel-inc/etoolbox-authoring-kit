@@ -85,7 +85,7 @@ public class ConfigDataSource extends SlingSafeMethodsServlet {
         @NotNull SlingHttpServletRequest request,
         @NotNull SlingHttpServletResponse response) throws IOException {
 
-        if (!PermissionUtil.hasLocalPermission(request)) {
+        if (!PermissionUtil.hasModifyPermission(request)) {
             outputMessage(request, "You don't have access to this feature", VARIANT_ERROR);
             return;
         }

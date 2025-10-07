@@ -18,7 +18,7 @@
     let loadedFormValues;
 
     /* --------------
-       Data functions
+       State functions
        -------------- */
 
     /**
@@ -28,6 +28,15 @@
      */
     function canCleanUp($form) {
         return $form.find('#canCleanUp').val() === 'true';
+    }
+
+    /**
+     * Gets if the configuration can be replicated according to the form metadata
+     * @param {JQuery} $form
+     * @returns {boolean}
+     */
+    function canReplicate($form) {
+        return $form.find('#canReplicate').val() === 'true';
     }
 
     /**
@@ -47,6 +56,10 @@
     function isPublished($form) {
         return $form.find('#published').val() === 'true';
     }
+
+    /* --------------
+       Data functions
+       -------------- */
 
     /**
      * Triggers asynchronous publishing of the configuration
@@ -159,8 +172,11 @@
             const currentFormValues = getFormValues($form);
             $('#button-save').attr('disabled', formValuesEqual(loadedFormValues, currentFormValues));
         }
-        $('#button-reset,#button-publish').attr('disabled', !isModified($form));
-        $('#button-unpublish').attr('disabled', !isPublished($form));
+        const canRep = canReplicate($form);
+        const isMod = isModified($form);
+        $('#button-reset').attr('disabled', !isMod);
+        $('#button-publish').attr('disabled', !isMod || !canRep);
+        $('#button-unpublish').attr('disabled', !(isPublished($form) && canRep));
     }
 
     /**
@@ -369,7 +385,7 @@
         const $form = $('#config');
         const cleanUp = canCleanUp($form);
         let keepMainNode = !cleanUp;
-        if (isPublished($form)) {
+        if (isPublished($form) && canReplicate($form)) {
             keepMainNode = true;
             const action = await prompt('Published configuration', 'This configuration is published. Do you want to unpublish it before resetting?');
             if (action === 'yes' && cleanUp) {
