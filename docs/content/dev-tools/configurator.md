@@ -43,8 +43,8 @@ By default, the Configurator is available to users who have the privilege to rea
 {
     "scripts": [
         "create path (nt:unstructured) /conf/etoolbox(sling:Folder)/authoring-kit(sling:Folder)/configurator(sling:Folder)/com.acme.service.impl.MyServiceImpl",
-        "set ACL for noadmin\n allow jcr:read on /conf/etoolbox\n allow rep:write,crx:replicate on /conf/etoolbox/authoring-kit/configurator/com.acme.service.impl.MyServiceImpl\n end"
+        "set ACL for noadmin\n allow jcr:read,rep:write,crx:replicate on /conf/etoolbox/authoring-kit/configurator/com.acme.service.impl.MyServiceImpl\n end"
     ]
 }
 ```
-In this script, we first provision the node structure that would appear if/when someone saves a custom config for `com.acme.service.impl.MyServiceImpl`. Then we assign two necessary privileges for the user _noadmin_. First is the _jcr:read_ on `/conf/etoolbox` so that Configurator "sees" the settings repository in general. Second is the _rep:write_ on the PID-specific node that allows saving a custom config for this PID. Note that we do not assign _rep:write_ on `/conf/etoolbox/authoring-kit/configurator` as this would allow saving configs for any PID.
+In this script, we first provision the node structure that would appear if/when someone saves a custom config for `com.acme.service.impl.MyServiceImpl`. Then we assign privileges for the user _noadmin_. The _jcr:read_ and _rep:write_ privileges on the PID-specific node allow reading and saving a custom config for this PID. They are necessary to make config editing work for the user. The _crx:replicate_ privilege is optional. It allows publishing and unpublishing the config.
