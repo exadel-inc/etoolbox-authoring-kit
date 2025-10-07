@@ -117,10 +117,9 @@ class PermissionUtil {
         }
         try {
             AccessControlManager acm = Objects.requireNonNull(session).getAccessControlManager();
-            Privilege replicatePrivilege = acm.privilegeFromName("crx:replicate");
             Privilege[] userPrivileges = acm.getPrivileges(ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId);
             for (Privilege privilege : userPrivileges) {
-                if (privilege.equals(replicatePrivilege) || privilege.getName().equals(Privilege.JCR_ALL)) {
+                if (StringUtils.equalsAny(privilege.getName(), "crx:replicate", "jcr:all", Privilege.JCR_ALL)) {
                     return true;
                 }
             }
