@@ -3,7 +3,7 @@ layout: content
 title: Managing allowed components with AllowedChildren
 navTitle: Allowed Components
 seoTitle: Managing allowed components with AllowedChildren - Exadel Authoring Kit
-order: 5
+order: 3
 -->
 
 Defining allowed components has always been a tiring task for developers. The XML configurations are hard to scale and manage. If you store the designs/policies in the codebase, you can use the capabilities of Exadel Toolbox Authoring Kit to define the allowed components in a uniform and flexible way.

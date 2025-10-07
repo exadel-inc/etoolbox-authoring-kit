@@ -1,0 +1,50 @@
+<!--
+layout: content
+title: User-friendly OSGi configs with Exadel Authoring Kit Configurator
+navTitle: Configurator
+seoTitle: Configurator - Exadel Authoring Kit
+order: 6
+-->
+
+Configurator is a tool that allows editing OSGi configurations in a user-friendly manner.
+
+<em>Note:</em> As of Exadel Authoring Kit 2.7.0, <em>Configurator</em> is an experimental feature. You need to specially enable it through your own AEM project by adding a configuration file like the following:
+
+Path: `ui.config/src/main/content/jcr_root/apps/your_app/osgiconfig/config/com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener.xml`
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<jcr:root
+    xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
+    xmlns:jcr="http://www.jcp.org/jcr/1.0"
+    jcr:primaryType="sling:OsgiConfig"
+    enabled="{Boolean}true"
+/>
+
+```
+
+To edit a configuration, navigate to _http://<your AEM address>:4502/etoolbox/config.html/<your configuration PID>_, e.g. `http://localhost:4502/etoolbox/config.html/com.adobe.cq.wcm.core.components.internal.form.FormHandlerImpl`. View and edit the configuration as necessary, then press _Save_. The new config will be applied immediately (the corresponding OSGi component restarts if necessary). Additionally, the config will be stored under `/conf/etoolbox/authoring-kit/configurator` while the config that existed before saving will be preserved for backup.
+
+Now, even after the AEM instance is restarted or recreated (as it goes with AEMaaCS instances), the Toolkit will re-read the stored config from the resource under `/conf/etoolbox/authoring-kit` and re-apply it.
+
+However, if you press the _Reset_ button, the stored config will be erased and the backup config will be reinstalled.
+
+## Publishing and unpublishing configs
+
+If you are satisfied with the change of an OSGi config in an author instance, you can populate it to the publishers by pressing the "Publish" button. It will replicate the config asynchronously. Press "Unpublish" to reset the config on the publishers. You will then be offered to reset it on the author as well.
+
+## Cleaning up configs no longer needed
+
+A common development pattern is to allow editing a config online for the sake of immediate changes, but then "transfer" it to the code base. In this case, it makes sense to tell the Configurator to clean up a config stored under `/conf/etoolbox/authoring-kit` immediately as it sees it and not apply, since the same config is now declared elsewhere in the code. You can do it by setting the property _cleanUp_ in the `com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener.xml` next to the _enabled_ property. The value of _cleanUp_ is an array of configuration PIDs that you want the Configurator to clean up on sight.
+
+## Access management
+
+By default, the Configurator is available to users who have the privilege to read and write data under `/conf/etoolbox/authoring-kit/configurator`. Usually those are the members of the administrators group. You can loosen this restriction manually. Else, you can grant access to a particular configuration (PID) by specifying it on the node level. A good idea is to provision a "permanent" PID-specific node under `/conf/etoolbox/authoring-kit/configurator` regardless of whether there is currently a custom config for this PID or not. This can be done, e.g., via an Apache Sling Repository Initializer script:
+```json
+{
+    "scripts": [
+        "create path (nt:unstructured) /conf/etoolbox(sling:Folder)/authoring-kit(sling:Folder)/configurator(sling:Folder)/com.acme.service.impl.MyServiceImpl",
+        "set ACL for noadmin\n allow jcr:read,rep:write,crx:replicate on /conf/etoolbox/authoring-kit/configurator/com.acme.service.impl.MyServiceImpl\n end"
+    ]
+}
+```
+In this script, we first provision the node structure that would appear if/when someone saves a custom config for `com.acme.service.impl.MyServiceImpl`. Then we assign privileges for the user _noadmin_. The _jcr:read_ and _rep:write_ privileges on the PID-specific node allow reading and saving a custom config for this PID. They are necessary to make config editing work for the user. The _crx:replicate_ privilege is optional. It allows publishing and unpublishing the config.
