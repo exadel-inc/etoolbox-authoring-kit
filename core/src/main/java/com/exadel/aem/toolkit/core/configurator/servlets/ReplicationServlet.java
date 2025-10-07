@@ -74,7 +74,7 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
                     request.getResource().getPath());
             } catch (ReplicationException | NullPointerException e) {
                 LOG.error("Could not publish configuration {}", request.getResource().getName(), e);
-                response.sendError(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                sendError(response, SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
             }
         } else if ("unpublish".equals(request.getRequestPathInfo().getSelectorString())) {
             try {
@@ -84,12 +84,12 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
                     request.getResource().getPath());
             } catch (ReplicationException | NullPointerException e) {
                 LOG.error("Could not unpublish configuration {}", request.getResource().getName(), e);
-                response.sendError(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+                sendError(response, SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
                 return;
             }
             cleanUpEmptyUnpublishedNode(request.getResourceResolver(), request.getResource());
         } else {
-            response.sendError(SlingHttpServletResponse.SC_BAD_REQUEST, "Invalid selector");
+            sendError(response, SlingHttpServletResponse.SC_BAD_REQUEST, "Invalid selector");
         }
     }
 
@@ -98,7 +98,7 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
      * @param resolver The {@link ResourceResolver} instance
      * @param resource The resource to remove if empty
      */
-    private void cleanUpEmptyUnpublishedNode(ResourceResolver resolver, Resource resource) {
+    private static void cleanUpEmptyUnpublishedNode(ResourceResolver resolver, Resource resource) {
         if (resource.hasChildren()) {
             return;
         }
@@ -108,5 +108,18 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
         } catch (PersistenceException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Sends an error response with a specific status and message
+     * @param response The HTTP response
+     * @param status   The HTTP status code
+     * @param message  The message to include in the response body
+     * @throws IOException If an I/O error occurs
+     */
+    private static void sendError(SlingHttpServletResponse response, int status, String message) throws IOException {
+        response.setStatus(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.getWriter().println(message);
+        response.getWriter().flush();
     }
 }
