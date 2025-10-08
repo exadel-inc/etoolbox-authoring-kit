@@ -14,6 +14,7 @@
 package com.exadel.aem.toolkit.core.configurator.servlets;
 
 import java.util.Objects;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.security.AccessControlManager;
@@ -35,6 +36,7 @@ class PermissionUtil {
     private static final Logger LOG = LoggerFactory.getLogger(PermissionUtil.class);
 
     private static final String ERROR_PERMISSIONS_FAILURE = "Could not read permissions for the current user";
+    private static final String ERROR_CONFIG_NOT_FOUND = "Configuration not found at {}";
 
     /**
      * Default (instantiation-restricting) constructor
@@ -68,13 +70,16 @@ class PermissionUtil {
         if (StringUtils.isBlank(configId)) {
             return hasGlobalModifyPermission(request);
         }
+
         Session session = request.getResourceResolver().adaptTo(Session.class);
+        String resourcePath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId;
         try {
             return Objects.
-                requireNonNull(session)
-                .hasPermission(
-                    ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId,
-                    Session.ACTION_SET_PROPERTY);
+                    requireNonNull(session)
+                    .hasPermission(resourcePath, Session.ACTION_SET_PROPERTY);
+        } catch (PathNotFoundException e) {
+            LOG.warn(ERROR_CONFIG_NOT_FOUND, resourcePath);
+            return hasGlobalModifyPermission(request);
         } catch (RepositoryException e) {
             LOG.error(ERROR_PERMISSIONS_FAILURE, e);
         }
@@ -93,11 +98,14 @@ class PermissionUtil {
             return false;
         }
         Session session = request.getResourceResolver().adaptTo(Session.class);
+        String resourcePath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId;
         try {
             AccessControlManager acm = Objects.requireNonNull(session).getAccessControlManager();
             Privilege[] rootPrivileges = acm.getPrivileges(ConfiguratorConstants.ROOT_PATH);
-            Privilege[] configPrivileges = acm.getPrivileges(ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId);
+            Privilege[] configPrivileges = acm.getPrivileges(resourcePath);
             return !Objects.deepEquals(rootPrivileges, configPrivileges);
+        } catch (PathNotFoundException e) {
+            LOG.warn(ERROR_CONFIG_NOT_FOUND, resourcePath);
         } catch (RepositoryException | NullPointerException e) {
             LOG.error(ERROR_PERMISSIONS_FAILURE, e);
         }
@@ -115,14 +123,17 @@ class PermissionUtil {
         if (StringUtils.isBlank(configId)) {
             return false;
         }
+        String resourcePath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId;
         try {
             AccessControlManager acm = Objects.requireNonNull(session).getAccessControlManager();
-            Privilege[] userPrivileges = acm.getPrivileges(ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId);
+            Privilege[] userPrivileges = acm.getPrivileges(resourcePath);
             for (Privilege privilege : userPrivileges) {
                 if (StringUtils.equalsAny(privilege.getName(), "crx:replicate", "jcr:all", Privilege.JCR_ALL)) {
                     return true;
                 }
             }
+        } catch (PathNotFoundException e) {
+            LOG.warn(ERROR_CONFIG_NOT_FOUND, resourcePath);
         } catch (RepositoryException | NullPointerException e) {
             LOG.error(ERROR_PERMISSIONS_FAILURE, e);
         }
