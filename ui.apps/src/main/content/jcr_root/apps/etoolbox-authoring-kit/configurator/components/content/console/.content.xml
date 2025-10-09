@@ -8,7 +8,7 @@
     <jcr:content jcr:primaryType="nt:unstructured"
                  jcr:title="Exadel Toolbox Configurator"
                  sling:resourceType="granite/ui/components/shell/page"
-                 sling:vanityPath="/etoolbox/config">
+                 sling:vanityPath="[/etoolbox/config,/etoolbox/settings,/etoolbox/localsettings]">
         <head jcr:primaryType="nt:unstructured">
             <clientlibs
                     jcr:primaryType="nt:unstructured"
