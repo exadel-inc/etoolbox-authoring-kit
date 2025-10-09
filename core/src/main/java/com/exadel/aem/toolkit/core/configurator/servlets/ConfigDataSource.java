@@ -36,6 +36,7 @@ import com.adobe.granite.ui.components.ds.SimpleDataSource;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
+import com.exadel.aem.toolkit.core.configurator.models.ConfigDefinition;
 import com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener;
 
 /**

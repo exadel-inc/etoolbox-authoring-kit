@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.configurator.servlets;
+package com.exadel.aem.toolkit.core.configurator.models;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +25,7 @@ import org.osgi.service.metatype.ObjectClassDefinition;
  * with metadata usefult to build the {@code EToolbox Configurator} user experience
  * @see ConfigAttribute
  */
-class ConfigDefinition {
+public class ConfigDefinition {
 
     private String id;
     private ObjectClassDefinition ocd;

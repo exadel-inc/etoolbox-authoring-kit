@@ -27,6 +27,9 @@ import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import com.adobe.granite.ui.components.FormData;
 
+import com.exadel.aem.toolkit.core.configurator.models.ConfigAttribute;
+import com.exadel.aem.toolkit.core.configurator.models.ConfigDefinition;
+
 /**
  * Provides utility methods to work with configuration attribute values
  */

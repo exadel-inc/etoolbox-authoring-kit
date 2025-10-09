@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.configurator.servlets;
+package com.exadel.aem.toolkit.core.configurator.models;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.osgi.service.metatype.AttributeDefinition;
@@ -22,7 +22,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
  * Represents a configuration attribute, i.e., a pair of {@link AttributeDefinition} and its value
  * @see ConfigDefinition
  */
-class ConfigAttribute {
+public class ConfigAttribute {
     private final AttributeDefinition definition;
     private final Object value;
 

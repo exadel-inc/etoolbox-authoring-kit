@@ -42,6 +42,8 @@ import static org.junit.Assert.assertTrue;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.configurator.models.ConfigAttribute;
+import com.exadel.aem.toolkit.core.configurator.models.ConfigDefinition;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FieldUtilTest {

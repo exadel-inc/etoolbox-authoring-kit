@@ -30,6 +30,8 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.exadel.aem.toolkit.core.configurator.models.ConfigDefinition;
+
 /**
  * Provides utility methods to work with OSGi configurations
  */
