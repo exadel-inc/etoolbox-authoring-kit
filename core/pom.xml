@@ -38,7 +38,7 @@
                             com.exadel.aem.toolkit.api.*,
                             com.exadel.aem.toolkit.core.authoring.models,
                             com.exadel.aem.toolkit.core.injectors.*,
-                            com.exadel.aem.toolkit.core.lists.models,
+                            com.exadel.aem.toolkit.core.lists.models.*,
                             com.exadel.aem.toolkit.core.lists.utils,
                         </Export-Package>
                     </instructions>
