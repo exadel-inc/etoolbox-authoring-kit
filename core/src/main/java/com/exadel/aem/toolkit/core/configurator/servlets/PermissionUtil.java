@@ -19,9 +19,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.security.AccessControlManager;
 import javax.jcr.security.Privilege;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.SlingHttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +32,7 @@ import com.exadel.aem.toolkit.core.configurator.utils.RequestUtil;
 /**
  * Contains utility methods related to permission checking in the context of the {@code EToolbox Configurator}
  */
-class PermissionUtil {
+public class PermissionUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(PermissionUtil.class);
 
@@ -50,8 +50,7 @@ class PermissionUtil {
      * @param request The current request
      * @return True or false
      */
-    public static boolean hasGlobalModifyPermission(SlingHttpServletRequest request) {
-        Session session = request.getResourceResolver().adaptTo(Session.class);
+    public static boolean hasGlobalModifyPermission(HttpServletRequest request) {
         Session session = RequestUtil.getSession(request);
         try {
             return Objects.requireNonNull(session).hasPermission(ConfiguratorConstants.ROOT_PATH, Session.ACTION_SET_PROPERTY);
@@ -67,8 +66,7 @@ class PermissionUtil {
      * @param request The current request
      * @return True or false
      */
-    public static boolean hasModifyPermission(SlingHttpServletRequest request) {
-        String configId = StringUtils.strip(request.getRequestPathInfo().getSuffix(), CoreConstants.SEPARATOR_SLASH);
+    public static boolean hasModifyPermission(HttpServletRequest request) {
         String configId = RequestUtil.getConfigId(request);
         if (StringUtils.isBlank(configId)) {
             return hasGlobalModifyPermission(request);
@@ -95,8 +93,7 @@ class PermissionUtil {
      * @param request The current request
      * @return True or false
      */
-    public static boolean hasOverridingPermissions(SlingHttpServletRequest request) {
-        String configId = StringUtils.strip(request.getRequestPathInfo().getSuffix(), CoreConstants.SEPARATOR_SLASH);
+    public static boolean hasOverridingPermissions(HttpServletRequest request) {
         String configId = RequestUtil.getConfigId(request);
         if (StringUtils.isBlank(configId)) {
             return false;
@@ -121,9 +118,7 @@ class PermissionUtil {
      * @param request The current request
      * @return True or false
      */
-    public static boolean hasReplicatePermission(SlingHttpServletRequest request) {
-        Session session = request.getResourceResolver().adaptTo(Session.class);
-        String configId = StringUtils.strip(request.getRequestPathInfo().getSuffix(), CoreConstants.SEPARATOR_SLASH);
+    public static boolean hasReplicatePermission(HttpServletRequest request) {
         Session session = RequestUtil.getSession(request);
         String configId = RequestUtil.getConfigId(request);
         if (StringUtils.isBlank(configId)) {
