@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
+import com.exadel.aem.toolkit.core.configurator.utils.RequestUtil;
 
 /**
  * Contains utility methods related to permission checking in the context of the {@code EToolbox Configurator}
@@ -51,6 +52,7 @@ class PermissionUtil {
      */
     public static boolean hasGlobalModifyPermission(SlingHttpServletRequest request) {
         Session session = request.getResourceResolver().adaptTo(Session.class);
+        Session session = RequestUtil.getSession(request);
         try {
             return Objects.requireNonNull(session).hasPermission(ConfiguratorConstants.ROOT_PATH, Session.ACTION_SET_PROPERTY);
         } catch (RepositoryException | NullPointerException e) {
@@ -67,18 +69,19 @@ class PermissionUtil {
      */
     public static boolean hasModifyPermission(SlingHttpServletRequest request) {
         String configId = StringUtils.strip(request.getRequestPathInfo().getSuffix(), CoreConstants.SEPARATOR_SLASH);
+        String configId = RequestUtil.getConfigId(request);
         if (StringUtils.isBlank(configId)) {
             return hasGlobalModifyPermission(request);
         }
 
-        Session session = request.getResourceResolver().adaptTo(Session.class);
+        Session session = RequestUtil.getSession(request);
         String resourcePath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId;
         try {
             return Objects.
                     requireNonNull(session)
                     .hasPermission(resourcePath, Session.ACTION_SET_PROPERTY);
         } catch (PathNotFoundException e) {
-            LOG.warn(ERROR_CONFIG_NOT_FOUND, resourcePath);
+            LOG.debug(ERROR_CONFIG_NOT_FOUND, resourcePath);
             return hasGlobalModifyPermission(request);
         } catch (RepositoryException e) {
             LOG.error(ERROR_PERMISSIONS_FAILURE, e);
@@ -94,10 +97,11 @@ class PermissionUtil {
      */
     public static boolean hasOverridingPermissions(SlingHttpServletRequest request) {
         String configId = StringUtils.strip(request.getRequestPathInfo().getSuffix(), CoreConstants.SEPARATOR_SLASH);
+        String configId = RequestUtil.getConfigId(request);
         if (StringUtils.isBlank(configId)) {
             return false;
         }
-        Session session = request.getResourceResolver().adaptTo(Session.class);
+        Session session = RequestUtil.getSession(request);
         String resourcePath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId;
         try {
             AccessControlManager acm = Objects.requireNonNull(session).getAccessControlManager();
@@ -105,7 +109,7 @@ class PermissionUtil {
             Privilege[] configPrivileges = acm.getPrivileges(resourcePath);
             return !Objects.deepEquals(rootPrivileges, configPrivileges);
         } catch (PathNotFoundException e) {
-            LOG.warn(ERROR_CONFIG_NOT_FOUND, resourcePath);
+            LOG.debug(ERROR_CONFIG_NOT_FOUND, resourcePath);
         } catch (RepositoryException | NullPointerException e) {
             LOG.error(ERROR_PERMISSIONS_FAILURE, e);
         }
@@ -120,6 +124,8 @@ class PermissionUtil {
     public static boolean hasReplicatePermission(SlingHttpServletRequest request) {
         Session session = request.getResourceResolver().adaptTo(Session.class);
         String configId = StringUtils.strip(request.getRequestPathInfo().getSuffix(), CoreConstants.SEPARATOR_SLASH);
+        Session session = RequestUtil.getSession(request);
+        String configId = RequestUtil.getConfigId(request);
         if (StringUtils.isBlank(configId)) {
             return false;
         }
@@ -133,7 +139,7 @@ class PermissionUtil {
                 }
             }
         } catch (PathNotFoundException e) {
-            LOG.warn(ERROR_CONFIG_NOT_FOUND, resourcePath);
+            LOG.debug(ERROR_CONFIG_NOT_FOUND, resourcePath);
         } catch (RepositoryException | NullPointerException e) {
             LOG.error(ERROR_PERMISSIONS_FAILURE, e);
         }
