@@ -14,11 +14,30 @@
 package com.exadel.aem.toolkit.core.configurator.models;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.cm.Configuration;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.metatype.AttributeDefinition;
+import org.osgi.service.metatype.MetaTypeInformation;
+import org.osgi.service.metatype.MetaTypeService;
 import org.osgi.service.metatype.ObjectClassDefinition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.exadel.aem.toolkit.core.CoreConstants;
+
 
 /**
  * Represents a configuration definition, i.e., a set of configuration attributes united by the same PID together
@@ -26,6 +45,10 @@ import org.osgi.service.metatype.ObjectClassDefinition;
  * @see ConfigAttribute
  */
 public class ConfigDefinition {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigDefinition.class);
+
+    private static final ConfigDefinition EMPTY = new ConfigDefinition();
 
     private String id;
     private ObjectClassDefinition ocd;
@@ -130,109 +153,121 @@ public class ConfigDefinition {
         this.published = value;
     }
 
+    /**
+     * Gets whether this instance is not data-empty
+     * @return True or false
+     */
+    public boolean isValid() {
+        return StringUtils.isNotBlank(id);
+    }
+
     /* -------------
        Factory logic
        ------------- */
 
     /**
-     * Prepares a new instance of the {@link Builder} class to create a {@code ConfigDefinition} object
-     * @return The {@code Builder} instance
+     * Creates a {@code ConfigDefinition} instance based on the current request
+     * @param request The current request
+     * @return The {@code ConfigDefinition} instance; or an empty instance if the configuration with the specified ID
+     * does not exist or the request is null
      */
-    static Builder builder() {
-        return new Builder();
+    public static ConfigDefinition from(HttpServletRequest request) {
+        if (request == null) {
+            return EMPTY;
+        }
+        ConfigDefinition result = (ConfigDefinition) request.getAttribute(ConfigDefinition.class.getName());
+        if (result != null) {
+            return result;
+        }
+        String configId = request instanceof SlingHttpServletRequest
+            ? StringUtils.strip(((SlingHttpServletRequest) request).getRequestPathInfo().getSuffix(), CoreConstants.SEPARATOR_SLASH)
+            : StringUtils.substringAfterLast(request.getRequestURI(), ".html/");
+        if (StringUtils.isEmpty(configId)) {
+            LOG.debug("No config ID specified in the request");
+            return EMPTY;
+        }
+        return from(configId);
     }
 
     /**
-     * Implements the builder pattern for {@link ConfigDefinition} instantiation
+     * Creates a {@code ConfigDefinition} instance based on the configuration ID (PID)
+     * @param value The configuration ID (PID). A non-blank value is expected
+     * @return The {@code ConfigDefinition} instance; or an empty instance if the configuration with the specified ID
+     * does not exist
      */
-    static class Builder {
-        private List<ConfigAttribute> attributes;
-        private long changeCount;
-        private boolean factory;
-        private boolean factoryInstance;
-        private String id;
-        private ObjectClassDefinition ocd;
-
-        /**
-         * Assigns the number of times the configuration has been changed
-         * @param value The integer value
-         * @return This instance
-         */
-        Builder changeCount(long value) {
-            this.changeCount = value;
-            return this;
+    private static ConfigDefinition from(String value) {
+        BundleContext context;
+        ConfigurationAdmin configurationAdmin;
+        MetaTypeService metaTypeService;
+        try {
+            context = Objects.requireNonNull(FrameworkUtil.getBundle(ConfigDefinition.class).getBundleContext());
+            configurationAdmin = Objects.requireNonNull(context.getService(context.getServiceReference(ConfigurationAdmin.class)));
+            metaTypeService = Objects.requireNonNull(context.getService(context.getServiceReference(MetaTypeService.class)));
+        } catch (RuntimeException e) {
+            LOG.error("Could not acquire OSGi entity", e);
+            return EMPTY;
         }
 
-        /**
-         * Assigns the configuration PID
-         * @param value The string value
-         * @return This instance
-         */
-        Builder id(String value) {
-            this.id = value;
-            return this;
+        Configuration configuration = getConfigurationObject(configurationAdmin, value);
+        if (configuration == null) {
+            return EMPTY;
         }
 
-        /**
-         * Assigns the value that determines whether the configuration is a factory configuration
-         * @param value True or false
-         * @return This instance
-         */
-        Builder isFactory(boolean value) {
-            this.factory = value;
-            return this;
-        }
+        boolean isFactoryInstance = StringUtils.isNotEmpty(configuration.getFactoryPid())
+            && !StringUtils.equals(configuration.getPid(), configuration.getFactoryPid());
+        String pid = isFactoryInstance ? configuration.getFactoryPid() : configuration.getPid();
+        for (Bundle bundle : context.getBundles()) {
+            MetaTypeInformation metaTypeInformation = metaTypeService.getMetaTypeInformation(bundle);
+            if (metaTypeInformation == null) {
+                continue;
+            }
+            ObjectClassDefinition ocd;
+            boolean isFactoryConfig = ArrayUtils.contains(metaTypeInformation.getFactoryPids(), value);
+            try {
+                ocd = Objects.requireNonNull(metaTypeInformation.getObjectClassDefinition(pid, null));
+            } catch (IllegalArgumentException | NullPointerException e) {
+                // Not an error: this actually happens if the configuration is not present in the current bundle
+                continue;
+            }
 
-        /**
-         * Assigns the value that determines whether the configuration is an instance of a factory configuration
-         * @param value True or false
-         * @return This instance
-         */
-        Builder isFactoryInstance(boolean value) {
-            this.factoryInstance = value;
-            return this;
-        }
+            Map<String, Object> configProperties = Collections.emptyMap();
+            if (configuration.getProperties() != null) {
+                configProperties = Collections.list(configuration.getProperties().keys())
+                    .stream()
+                    .collect(Collectors.toMap(k -> k, k -> configuration.getProperties().get(k)));
+            }
 
-        /**
-         * Assigns the {@link ObjectClassDefinition} instance that provides metadata for the configuration
-         * @param value The {@code ObjectClassDefinition} instance
-         * @return This instance
-         */
-        Builder ocd(ObjectClassDefinition value) {
-            this.ocd = value;
-            return this;
-        }
-
-        /**
-         * Assigns the map of configuration attribute IDs and their values
-         * @param value The map of values
-         * @return This instance
-         */
-        Builder values(Map<String, Object> value) {
-            this.attributes = new ArrayList<>();
+            ConfigDefinition result = new ConfigDefinition();
+            result.attributes = new ArrayList<>();
             for (AttributeDefinition definition : ocd.getAttributeDefinitions(ObjectClassDefinition.ALL)) {
-                attributes.add(
+                result.attributes.add(
                     new ConfigAttribute(
                         definition,
-                        value != null ? value.get(definition.getID()) : null)
+                        configProperties.get(definition.getID()))
                 );
             }
-            return this;
+            result.changeCount = configuration.getChangeCount();
+            result.id = value;
+            result.factory = isFactoryConfig;
+            result.factoryInstance = isFactoryInstance;
+            result.ocd = ocd;
+            return result;
         }
+        return EMPTY;
+    }
 
-        /**
-         * Creates a {@link ConfigDefinition} instance using the values previously assigned to this builder
-         * @return The {@code ConfigDefinition} instance
-         */
-        ConfigDefinition build() {
-            ConfigDefinition instance = new ConfigDefinition();
-            instance.attributes = this.attributes != null ? this.attributes : new ArrayList<>();
-            instance.changeCount = this.changeCount;
-            instance.factory = this.factory;
-            instance.factoryInstance = this.factoryInstance;
-            instance.id = this.id;
-            instance.ocd = this.ocd;
-            return instance;
+    /**
+     * Retrieves the OSGi native {@link Configuration} object by its identifier
+     * @param configAdmin The {@code ConfigurationAdmin} service instance. A non-null value is expected
+     * @param id          The configuration PID. A non-blank value is expected
+     * @return The {@code Configuration} instance; or null if the configuration with the specified ID does not exist
+     */
+    private static Configuration getConfigurationObject(ConfigurationAdmin configAdmin, String id) {
+        try {
+            return configAdmin.getConfiguration(id, null);
+        } catch (Exception e) {
+            LOG.error("Could not retrieve configuration for {}", id, e);
+            return null;
         }
     }
 }
