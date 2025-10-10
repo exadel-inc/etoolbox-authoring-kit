@@ -89,11 +89,6 @@ class FieldUtil {
 
         fieldCollection.add(newHidden(
             request.getResourceResolver(),
-            "canReplicate",
-            Boolean.toString(PermissionUtil.hasReplicatePermission(request))));
-
-        fieldCollection.add(newHidden(
-            request.getResourceResolver(),
             "changeCount",
             String.valueOf(config.getChangeCount())));
 

@@ -25,12 +25,8 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.jetbrains.annotations.NotNull;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.cm.ConfigurationAdmin;
-import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
-import org.osgi.service.metatype.MetaTypeService;
 import com.adobe.granite.ui.components.ds.DataSource;
 import com.adobe.granite.ui.components.ds.SimpleDataSource;
 
@@ -57,24 +53,7 @@ public class ConfigDataSource extends SlingSafeMethodsServlet {
     private static final String VARIANT_WARNING = "warning";
 
     @Reference
-    private transient ConfigurationAdmin configurationAdmin;
-
-    @Reference
-    private transient MetaTypeService metaTypeService;
-
-    @Reference
     private transient ConfigChangeListener configChangeListener;
-
-    private BundleContext bundleContext;
-
-    /**
-     * Activates this OSGi component and saves the {@link BundleContext} object for further use
-     * @param context The {@code BundleContext} instance provided by the OSGi framework
-     */
-    @Activate
-    private void activate(BundleContext context) {
-        this.bundleContext = context;
-    }
 
     /**
      * Processes GET requests to populate the data source for the {@code EToolbox Configurator} interface
@@ -86,42 +65,10 @@ public class ConfigDataSource extends SlingSafeMethodsServlet {
         @NotNull SlingHttpServletRequest request,
         @NotNull SlingHttpServletResponse response) throws IOException {
 
-        if (!PermissionUtil.hasModifyPermission(request)) {
-            outputMessage(request, "You don't have access to this feature", VARIANT_ERROR);
-            return;
-        }
-
-        String configId = StringUtils.strip(request.getRequestPathInfo().getSuffix(), CoreConstants.SEPARATOR_SLASH);
-        if (StringUtils.isBlank(configId)) {
-            outputMessage(request, "No configuration specified", VARIANT_ERROR);
-            return;
-        }
-
-        if (!configChangeListener.isEnabled()) {
-            outputMessage(request, "This tool is disabled by OSGi configuration", VARIANT_ERROR);
-            return;
-        }
-
-        ConfigDefinition config = ConfigHelper
-            .builder()
-            .bundleContext(bundleContext)
-            .configurationAdmin(configurationAdmin)
-            .metaTypeService(metaTypeService)
-            .build()
-            .getConfig(configId);
-
-        if (config == null) {
-            outputMessage(request, "Configuration \"" + configId + "\" is missing or invalid", VARIANT_ERROR);
-            return;
-        }
-        if (config.isFactory()) {
-            outputMessage(request, "Factory configs are currently not supported", VARIANT_WARNING);
-            return;
-        }
-
+        ConfigDefinition config = ConfigDefinition.from(request);
         Resource existingConfig = request
             .getResourceResolver()
-            .getResource(ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId);
+            .getResource(ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + config.getId());
         Resource existingConfigData = existingConfig != null
             ? existingConfig.getChild(ConfiguratorConstants.NN_DATA)
             : null;
