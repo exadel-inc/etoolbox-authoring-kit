@@ -61,7 +61,7 @@ class FieldUtil {
 
     /**
      * Processes the request to build a data source out of configuration attributes
-     * @param request The {@code SlingHttpServletRequest} instance
+     * @param request The {@link SlingHttpServletRequest} instance
      * @param config  The {@link ConfigDefinition} instance that contains configuration attributes to be processed
      */
     public static void processRequest(SlingHttpServletRequest request, ConfigDefinition config) {
@@ -141,7 +141,7 @@ class FieldUtil {
 
     /**
      * Adds dialog fields for the specified configuration attribute to the specified collection
-     * @param request The {@code SlingHttpServletRequest} that serves as the context for field creation
+     * @param request The {@link SlingHttpServletRequest} that serves as the context for field creation
      * @param collection A list of {@code Resource} instances representing dialog fields
      * @param attribute  The {@link ConfigAttribute} instance to be processed
      */
@@ -224,7 +224,7 @@ class FieldUtil {
 
     /**
      * Creates an alert field
-     * @param request The {@code SlingHttpServletRequest} that serves as the context for field creation
+     * @param request The {@link SlingHttpServletRequest} that serves as the context for field creation
      * @param text    The alert text
      * @param variant The alert variant, e.g. {@code info}, {@code warning}, {@code error}
      * @return The {@code Resource} instance representing the field
@@ -240,7 +240,7 @@ class FieldUtil {
 
     /**
      * Creates a heading field
-     * @param request The {@code SlingHttpServletRequest} that serves as the context for field creation
+     * @param request The {@link SlingHttpServletRequest} that serves as the context for field creation
      * @param text    The heading text
      * @return The {@code Resource} instance representing the field
      */
@@ -254,7 +254,7 @@ class FieldUtil {
 
     /**
      * Creates a hidden field
-     * @param request The {@code SlingHttpServletRequest} that serves as the context for field creation
+     * @param request The {@link SlingHttpServletRequest} that serves as the context for field creation
      * @param nameOrId The field name (if starts with {@code ./}) or the {@code id} attribute (otherwise)
      * @param value    The field value
      * @return The {@code Resource} instance representing the field
@@ -273,7 +273,7 @@ class FieldUtil {
 
     /**
      * Creates a text field
-     * @param request The {@code SlingHttpServletRequest} that serves as the context for field creation
+     * @param request The {@link SlingHttpServletRequest} that serves as the context for field creation
      * @param text      The text content
      * @param className The CSS class name to be assigned to the field
      * @return The {@code Resource} instance representing the field
@@ -288,6 +288,9 @@ class FieldUtil {
         return builder.build();
     }
 
+    /**
+     * Implements the builder pattern to create dialog field resources
+     */
     private static class Builder {
         private final Map<String, Object> properties = new HashMap<>();
         private final String path;
@@ -297,35 +300,68 @@ class FieldUtil {
         private boolean isMultiValue;
         private String resourceType;
 
+        /**
+         * Initializes the instance of {@code Builder} with the context of the specified request
+         * @param request The {@link SlingHttpServletRequest} that serves as the context for field creation
+         */
         Builder(SlingHttpServletRequest request) {
             this.resolver = request.getResourceResolver();
             this.path = request.getResource().getPath() + "/field" + getAndIncrementFieldCount(request);
         }
 
+        /**
+         * Retrieves the path associated with the field being built
+         * @return String value
+         */
         String getPath() {
             return path;
         }
 
+        /**
+         * Assigns the child resource to the field being built
+         * @param value The {@code Resource} object
+         * @return This instance
+         */
         Builder child(Resource value) {
             this.child = value;
             return this;
         }
 
+        /**
+         * Sets whether the field being built is multi-valued
+         * @param value True or false
+         * @return This instance
+         */
         Builder multi(boolean value) {
             this.isMultiValue = value;
             return this;
         }
 
-        Builder property(String key, Object value) {
-            this.properties.put(key, value);
+        /**
+         * Adds a property to the field being built
+         * @param name  The property name
+         * @param value The property value
+         * @return This instance
+         */
+        Builder property(String name, Object value) {
+            this.properties.put(name, value);
             return this;
         }
 
+        /**
+         * Sets the resource type of the field being built
+         * @param value The resource type
+         * @return This instance
+         */
         Builder resourceType(String value) {
             this.resourceType = value;
             return this;
         }
 
+        /**
+         * Builds the field resource
+         * @return The {@code Resource} instance representing the field
+         */
         Resource build() {
             String effectiveResourceType = StringUtils.defaultIfEmpty(resourceType, JcrConstants.NT_UNSTRUCTURED);
             ValueMap valueMap = new ValueMapDecorator(escapeTextProperties(properties));
