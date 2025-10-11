@@ -145,7 +145,7 @@ public class FieldUtilTest {
     @Test
     public void shouldCreateAlertField() {
         Resource alertField = FieldUtil.newAlert(
-            context.resourceResolver(),
+            context.request(),
             "Test alert message with ${el}",
             "warning");
 

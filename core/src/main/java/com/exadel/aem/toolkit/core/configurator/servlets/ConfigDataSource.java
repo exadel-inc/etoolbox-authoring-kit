@@ -141,7 +141,7 @@ public class ConfigDataSource extends SlingSafeMethodsServlet {
      * @param variant The message variant
      */
     private static void outputMessage(SlingHttpServletRequest request, String message, String variant) {
-        Resource messageResource = FieldUtil.newAlert(request.getResourceResolver(), message, variant);
+        Resource messageResource = FieldUtil.newAlert(request, message, variant);
         request.setAttribute(
             DataSource.class.getName(),
             new SimpleDataSource(Collections.singletonList(messageResource).iterator()));
