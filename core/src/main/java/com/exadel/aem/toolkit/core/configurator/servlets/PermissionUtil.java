@@ -78,7 +78,7 @@ class PermissionUtil {
                     requireNonNull(session)
                     .hasPermission(resourcePath, Session.ACTION_SET_PROPERTY);
         } catch (PathNotFoundException e) {
-            LOG.warn(ERROR_CONFIG_NOT_FOUND, resourcePath);
+            LOG.debug(ERROR_CONFIG_NOT_FOUND, resourcePath);
             return hasGlobalModifyPermission(request);
         } catch (RepositoryException e) {
             LOG.error(ERROR_PERMISSIONS_FAILURE, e);
@@ -105,7 +105,7 @@ class PermissionUtil {
             Privilege[] configPrivileges = acm.getPrivileges(resourcePath);
             return !Objects.deepEquals(rootPrivileges, configPrivileges);
         } catch (PathNotFoundException e) {
-            LOG.warn(ERROR_CONFIG_NOT_FOUND, resourcePath);
+            LOG.debug(ERROR_CONFIG_NOT_FOUND, resourcePath);
         } catch (RepositoryException | NullPointerException e) {
             LOG.error(ERROR_PERMISSIONS_FAILURE, e);
         }
@@ -133,7 +133,7 @@ class PermissionUtil {
                 }
             }
         } catch (PathNotFoundException e) {
-            LOG.warn(ERROR_CONFIG_NOT_FOUND, resourcePath);
+            LOG.debug(ERROR_CONFIG_NOT_FOUND, resourcePath);
         } catch (RepositoryException | NullPointerException e) {
             LOG.error(ERROR_PERMISSIONS_FAILURE, e);
         }
