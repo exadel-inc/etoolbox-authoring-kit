@@ -98,7 +98,7 @@
         foundationUi.wait();
         const configPath = $('#config').attr('action') + (keepMainNode ? '/data' : '');
         try {
-            await requestAsync('DELETE', configPath);
+            await requestAsync('POST', configPath, { ':operation': 'delete' });
         } catch (e) {
             console.error('Failed to reset configuration: ', e);
             foundationUi.notify('Error', 'Failed to reset configuration: ' + getErrorMessage(e), 'error');
@@ -337,11 +337,12 @@
      * XHR object
      * @param type {string} The request type (e.g. "GET", "POST", etc.)
      * @param url {string} The request URL
+     * @param data {any} Optional data to send with the request
      * @returns {Promise<[string, JQuery.jqXHR]>}
      */
-    function requestAsync(type, url) {
+    function requestAsync(type, url, data) {
         return new Promise((resolve, reject) => {
-            return $.ajax({ type, url, success: (data, status, xhr) => resolve([data, xhr]) })
+            return $.ajax({ type, url, data, success: (data, status, xhr) => resolve([data, xhr]) })
                 .fail((xhr, status, e) => reject(e || status));
         });
     }

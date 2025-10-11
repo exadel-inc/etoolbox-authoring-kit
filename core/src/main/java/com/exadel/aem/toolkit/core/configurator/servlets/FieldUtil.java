@@ -46,9 +46,10 @@ class FieldUtil {
 
     private static final String NN_DATA_CHILD = "./data/";
     private static final String PN_CLASS = "granite:class";
-    private static final String PN_FIELD = "field";
 
     private static final String RESTYPE_SEPARATOR = "etoolbox-authoring-kit/configurator/components/content/separator";
+
+    private static final String KEY_FIELD_COUNT = FieldUtil.class.getName() + ".count";
 
     /**
      * Default (instantiation-restricting) constructor
@@ -62,7 +63,7 @@ class FieldUtil {
 
     /**
      * Processes the request to build a data source out of configuration attributes
-     * @param request The {@code SlingHttpServletRequest} instance
+     * @param request The {@link SlingHttpServletRequest} instance
      * @param config  The {@link ConfigDefinition} instance that contains configuration attributes to be processed
      */
     public static void processRequest(SlingHttpServletRequest request, ConfigDefinition config) {
@@ -73,53 +74,50 @@ class FieldUtil {
         if (config.isFactoryInstance()) {
             heading = "Instance of " + heading;
         }
-        fieldCollection.add(newHeading(request.getResourceResolver(), heading));
+        fieldCollection.add(newHeading(request, heading));
         if (StringUtils.isNotBlank(config.getDescription())) {
-            fieldCollection.add(newText(
-                request.getResourceResolver(),
-                config.getDescription(),
-                "config-description"));
+            fieldCollection.add(newText(request, config.getDescription(), "config-description"));
         }
 
         // Metadata fields
         fieldCollection.add(newHidden(
-            request.getResourceResolver(),
+            request,
             "canCleanUp",
             Boolean.toString(!PermissionUtil.hasOverridingPermissions(request))));
 
         fieldCollection.add(newHidden(
-            request.getResourceResolver(),
+            request,
             "changeCount",
             String.valueOf(config.getChangeCount())));
 
         fieldCollection.add(newHidden(
-            request.getResourceResolver(),
+            request,
             "ownPath",
             request.getResource().getPath() + ".html/" + config.getId()));
 
         fieldCollection.add(newHidden(
-            request.getResourceResolver(),
+            request,
             "modified",
             String.valueOf(config.isModified())));
 
         fieldCollection.add(newHidden(
-            request.getResourceResolver(),
+            request,
             "published",
             String.valueOf(config.isPublished())));
 
         // Node resource type setters
         fieldCollection.add(newHidden(
-            request.getResourceResolver(),
+            request,
             CoreConstants.RELATIVE_PATH_PREFIX + JcrConstants.JCR_PRIMARYTYPE,
             JcrConstants.NT_UNSTRUCTURED));
 
         fieldCollection.add(newHidden(
-            request.getResourceResolver(),
+            request,
             NN_DATA_CHILD + JcrConstants.JCR_PRIMARYTYPE,
             JcrConstants.NT_UNSTRUCTURED));
 
         fieldCollection.add(newHidden(
-            request.getResourceResolver(),
+            request,
             CoreConstants.RELATIVE_PATH_PREFIX + JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY,
             "/bin/etoolbox/authoring-kit/config"));
 
@@ -131,7 +129,7 @@ class FieldUtil {
             if (isSkipped) {
                 continue;
             }
-            addFieldsForAttribute(fieldCollection, attribute, request.getResourceResolver());
+            addFieldsForAttribute(request, fieldCollection, attribute);
         }
 
         DataSource dataSource = new SimpleDataSource(fieldCollection.iterator());
@@ -140,93 +138,79 @@ class FieldUtil {
 
     /**
      * Adds dialog fields for the specified configuration attribute to the specified collection
+     * @param request The {@link SlingHttpServletRequest} that serves as the context for field creation
      * @param collection A list of {@code Resource} instances representing dialog fields
      * @param attribute  The {@link ConfigAttribute} instance to be processed
-     * @param resolver   The {@code ResourceResolver} instance used to create {@code Resource} instances
      */
     private static void addFieldsForAttribute(
+        SlingHttpServletRequest request,
         List<Resource> collection,
-        ConfigAttribute attribute,
-        ResourceResolver resolver) {
+        ConfigAttribute attribute) {
 
         if (!collection.isEmpty()) {
-            collection.add(newField(
-                resolver,
-                StringUtils.EMPTY,
-                Collections.singletonMap(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, RESTYPE_SEPARATOR)));
+            collection.add(new Builder(request).resourceType(RESTYPE_SEPARATOR).build());
         }
 
+        Builder builder = new Builder(request);
         String resourceType = attribute.getResourceType();
         Resource childResource = null;
-        Map<String, Object> fieldProperties = new HashMap<>();
 
         // Generic properties
-        fieldProperties.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, resourceType);
-        fieldProperties.put(
-            CoreConstants.PN_NAME,
-            NN_DATA_CHILD + attribute.getDefinition().getID());
+        builder
+            .resourceType(resourceType)
+            .property(CoreConstants.PN_NAME, NN_DATA_CHILD + attribute.getDefinition().getID());
 
         // Labels
         if (ResourceTypes.CHECKBOX.equals(resourceType)) {
-            fieldProperties.put(CoreConstants.PN_TEXT, attribute.getDefinition().getName());
+            builder.property(CoreConstants.PN_TEXT, attribute.getDefinition().getName());
         } else {
-            fieldProperties.put(CoreConstants.PN_FIELD_LABEL, attribute.getDefinition().getName());
+            builder.property(CoreConstants.PN_FIELD_LABEL, attribute.getDefinition().getName());
         }
 
         // Value members
         if (ResourceTypes.CHECKBOX.equals(resourceType)) {
-            fieldProperties.put(CoreConstants.PN_VALUE, Boolean.TRUE.toString());
-            fieldProperties.put("uncheckedValue", Boolean.FALSE.toString());
-        } else if (ResourceTypes.SELECT.equals(resourceType)) {
-            if (ArrayUtils.isNotEmpty(attribute.getDefinition().getOptionValues())) {
-                List<Resource> options = new ArrayList<>();
-                for (int i = 0; i < attribute.getDefinition().getOptionValues().length; i++) {
-                    String value = attribute.getDefinition().getOptionValues()[i];
-                    String text = ArrayUtils.getLength(attribute.getDefinition().getOptionLabels()) > i
-                        ? attribute.getDefinition().getOptionLabels()[i]
-                        : value;
-                    Map<String, Object> optionProperties = new HashMap<>();
-                    optionProperties.put(CoreConstants.PN_TEXT, text);
-                    optionProperties.put(CoreConstants.PN_VALUE, value);
-                    Resource option = new ValueMapResource(
-                        resolver,
-                        PN_FIELD + collection.size() + "/items/" + value.toLowerCase(),
-                        JcrConstants.NT_UNSTRUCTURED,
-                        new ValueMapDecorator(optionProperties));
-                    options.add(option);
-                }
-                childResource = new ValueMapResource(
-                    resolver,
-                    PN_FIELD + collection.size() + "/items",
+            builder.property(CoreConstants.PN_VALUE, Boolean.TRUE.toString());
+            builder.property("uncheckedValue", Boolean.FALSE.toString());
+        } else if (ResourceTypes.SELECT.equals(resourceType) && ArrayUtils.isNotEmpty(attribute.getDefinition().getOptionValues())) {
+            List<Resource> options = new ArrayList<>();
+            for (int i = 0; i < attribute.getDefinition().getOptionValues().length; i++) {
+                String value = attribute.getDefinition().getOptionValues()[i];
+                String text = ArrayUtils.getLength(attribute.getDefinition().getOptionLabels()) > i
+                    ? attribute.getDefinition().getOptionLabels()[i]
+                    : value;
+                Map<String, Object> optionProperties = new HashMap<>();
+                optionProperties.put(CoreConstants.PN_TEXT, text);
+                optionProperties.put(CoreConstants.PN_VALUE, value);
+                Resource option = new ValueMapResource(
+                    request.getResourceResolver(),
+                    builder.getPath() + "/items/" + value.toLowerCase(),
                     JcrConstants.NT_UNSTRUCTURED,
-                    null,
-                    options);
+                    new ValueMapDecorator(optionProperties));
+                options.add(option);
             }
+            childResource = new ValueMapResource(
+                request.getResourceResolver(),
+                builder.getPath() + "/items",
+                JcrConstants.NT_UNSTRUCTURED,
+                null,
+                options);
         }
 
         // Input field
-        Resource inputField = newField(
-            resolver,
-            PN_FIELD + collection.size(),
-            fieldProperties,
-            childResource,
-            attribute.isMultiValue());
-        collection.add(inputField);
+        Resource newInput = builder.child(childResource).multi(attribute.isMultiValue()).build();
+        collection.add(newInput);
 
         // Type hint
         if (attribute.isMultiValue()) {
             collection.add(newHidden(
-                resolver,
+                request,
                 CoreConstants.RELATIVE_PATH_PREFIX + attribute.getDefinition().getID() + "@TypeHint",
                 attribute.getJcrType()));
         }
 
         // Description
         if (StringUtils.isNotBlank(attribute.getDefinition().getDescription())) {
-            Resource description = newText(
-                resolver,
-                attribute.getDefinition().getDescription(),
-                "field-description");
+            Resource description = newText(request, attribute.getDefinition().getDescription(), "field-description");
             collection.add(description);
         }
     }
@@ -237,144 +221,200 @@ class FieldUtil {
 
     /**
      * Creates an alert field
-     * @param resolver The {@code ResourceResolver} instance used to create the field
-     * @param text     The alert text
-     * @param variant  The alert variant, e.g. {@code info}, {@code warning}, {@code error}
+     * @param request The {@link SlingHttpServletRequest} that serves as the context for field creation
+     * @param text    The alert text
+     * @param variant The alert variant, e.g. {@code info}, {@code warning}, {@code error}
      * @return The {@code Resource} instance representing the field
      */
-    static Resource newAlert(ResourceResolver resolver, String text, String variant) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.ALERT);
-        properties.put(CoreConstants.PN_TEXT, text);
-        properties.put("variant", variant);
-        properties.put(PN_CLASS, "centered");
-        return newField(resolver, "alert", properties);
+    static Resource newAlert(SlingHttpServletRequest request, String text, String variant) {
+        return new Builder(request)
+            .resourceType(ResourceTypes.ALERT)
+            .property(CoreConstants.PN_TEXT, text)
+            .property("variant", variant)
+            .property(PN_CLASS, "centered")
+            .build();
     }
 
     /**
      * Creates a heading field
-     * @param resolver The {@code ResourceResolver} instance used to create the field
-     * @param text     The heading text
+     * @param request The {@link SlingHttpServletRequest} that serves as the context for field creation
+     * @param text    The heading text
      * @return The {@code Resource} instance representing the field
      */
-    private static Resource newHeading(ResourceResolver resolver, String text) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.HEADING);
-        properties.put(CoreConstants.PN_TEXT, text);
-        properties.put("level", 2);
-        return newField(resolver, "heading", properties);
+    private static Resource newHeading(SlingHttpServletRequest request, String text) {
+        return new Builder(request)
+            .resourceType(ResourceTypes.HEADING)
+            .property(CoreConstants.PN_TEXT, text)
+            .property("level", 2)
+            .build();
     }
 
     /**
      * Creates a hidden field
-     * @param resolver The {@code ResourceResolver} instance used to create the field
-     * @param nameOrId The field name (if starts with {@code ./}) or granite:id (otherwise)
+     * @param request The {@link SlingHttpServletRequest} that serves as the context for field creation
+     * @param nameOrId The field name (if starts with {@code ./}) or the {@code id} attribute (otherwise)
      * @param value    The field value
      * @return The {@code Resource} instance representing the field
      */
-    private static Resource newHidden(ResourceResolver resolver, String nameOrId, String value) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.HIDDEN);
+    private static Resource newHidden(SlingHttpServletRequest request, String nameOrId, String value) {
+        Builder builder = new Builder(request)
+            .resourceType(ResourceTypes.HIDDEN)
+            .property(CoreConstants.PN_VALUE, value);
         if (StringUtils.startsWith(nameOrId, CoreConstants.RELATIVE_PATH_PREFIX)) {
-            properties.put(CoreConstants.PN_NAME, nameOrId);
+            builder.property(CoreConstants.PN_NAME, nameOrId);
         } else {
-            properties.put("granite:id", nameOrId);
+            builder.property("granite:id", nameOrId);
         }
-        properties.put(CoreConstants.PN_VALUE, value);
-        return newField(resolver, StringUtils.EMPTY, properties);
+        return builder.build();
     }
 
     /**
      * Creates a text field
-     * @param resolver  The {@code ResourceResolver} instance used to create the field
+     * @param request The {@link SlingHttpServletRequest} that serves as the context for field creation
      * @param text      The text content
      * @param className The CSS class name to be assigned to the field
      * @return The {@code Resource} instance representing the field
      */
-    private static Resource newText(ResourceResolver resolver, String text, String className) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.TEXT);
-        properties.put(CoreConstants.PN_TEXT, text);
+    private static Resource newText(SlingHttpServletRequest request, String text, String className) {
+        Builder builder = new Builder(request)
+            .resourceType(ResourceTypes.TEXT)
+            .property(CoreConstants.PN_TEXT, text);
         if (StringUtils.isNotBlank(className)) {
-            properties.put(PN_CLASS, className);
+            builder.property(PN_CLASS, className);
         }
-        return newField(resolver, "span", properties);
+        return builder.build();
     }
 
     /**
-     * Creates a generic field resource
-     * @param resolver   The {@code ResourceResolver} instance used to create the field
-     * @param path       The path to the field in a virtual resource tree
-     * @param properties The field properties
-     * @return The {@code Resource} instance representing the field
+     * Implements the builder pattern to create dialog field resources
      */
-    private static Resource newField(
-        ResourceResolver resolver,
-        String path,
-        Map<String, Object> properties) {
-        return newField(resolver, path, properties, null, false);
-    }
+    private static class Builder {
+        private final Map<String, Object> properties = new HashMap<>();
+        private final String path;
+        private final ResourceResolver resolver;
 
-    /**
-     * Creates a generic field resource
-     * @param resolver     The {@code ResourceResolver} instance used to create the field
-     * @param path         The path to the field in a virtual resource tree
-     * @param properties   The field properties
-     * @param child        An optional child resource, e.g., for select options
-     * @param isMultiValue Whether this field should be a {@code Multifield}
-     * @return The {@code Resource} instance representing the field
-     */
-    @SuppressWarnings("checkstyle:ParameterNumber")
-    private static Resource newField(
-        ResourceResolver resolver,
-        String path,
-        Map<String, Object> properties,
-        Resource child,
-        boolean isMultiValue) {
+        private Resource child;
+        private boolean isMultiValue;
+        private String resourceType;
 
-        String resourceType = StringUtils.defaultIfEmpty(
-            properties.getOrDefault(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, StringUtils.EMPTY).toString(),
-            JcrConstants.NT_UNSTRUCTURED);
-        ValueMap valueMap = new ValueMapDecorator(escapeTextProperties(properties));
-        if (isMultiValue) {
-            ValueMap wrapperValueMap = new ValueMapDecorator(new HashMap<>());
-            wrapperValueMap.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.MULTIFIELD);
-            wrapperValueMap.put(CoreConstants.PN_FIELD_LABEL, valueMap.get(CoreConstants.PN_FIELD_LABEL, StringUtils.EMPTY));
-            valueMap.remove(CoreConstants.PN_FIELD_LABEL);
-            Resource nestedField = new ValueMapResource(
-                resolver,
-                path + "/field",
-                resourceType,
-                valueMap,
-                child != null ? Collections.singletonList(child) : null);
+        /**
+         * Initializes the instance of {@code Builder} with the context of the specified request
+         * @param request The {@link SlingHttpServletRequest} that serves as the context for field creation
+         */
+        Builder(SlingHttpServletRequest request) {
+            this.resolver = request.getResourceResolver();
+            this.path = request.getResource().getPath() + "/field" + getAndIncrementFieldCount(request);
+        }
+
+        /**
+         * Retrieves the path associated with the field being built
+         * @return String value
+         */
+        String getPath() {
+            return path;
+        }
+
+        /**
+         * Assigns the child resource to the field being built
+         * @param value The {@code Resource} object
+         * @return This instance
+         */
+        Builder child(Resource value) {
+            this.child = value;
+            return this;
+        }
+
+        /**
+         * Sets whether the field being built is multi-valued
+         * @param value True or false
+         * @return This instance
+         */
+        Builder multi(boolean value) {
+            this.isMultiValue = value;
+            return this;
+        }
+
+        /**
+         * Adds a property to the field being built
+         * @param name  The property name
+         * @param value The property value
+         * @return This instance
+         */
+        Builder property(String name, Object value) {
+            this.properties.put(name, value);
+            return this;
+        }
+
+        /**
+         * Sets the resource type of the field being built
+         * @param value The resource type
+         * @return This instance
+         */
+        Builder resourceType(String value) {
+            this.resourceType = value;
+            return this;
+        }
+
+        /**
+         * Builds the field resource
+         * @return The {@code Resource} instance representing the field
+         */
+        Resource build() {
+            String effectiveResourceType = StringUtils.defaultIfEmpty(resourceType, JcrConstants.NT_UNSTRUCTURED);
+            ValueMap valueMap = new ValueMapDecorator(escapeTextProperties(properties));
+            if (isMultiValue) {
+                ValueMap wrapperValueMap = new ValueMapDecorator(new HashMap<>());
+                wrapperValueMap.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.MULTIFIELD);
+                wrapperValueMap.put(CoreConstants.PN_FIELD_LABEL, valueMap.get(CoreConstants.PN_FIELD_LABEL, StringUtils.EMPTY));
+                valueMap.remove(CoreConstants.PN_FIELD_LABEL);
+                Resource nestedField = new ValueMapResource(
+                    resolver,
+                    path + "/field",
+                    effectiveResourceType,
+                    valueMap,
+                    child != null ? Collections.singletonList(child) : null);
+                return new ValueMapResource(
+                    resolver,
+                    path,
+                    ResourceTypes.MULTIFIELD,
+                    wrapperValueMap,
+                    Collections.singletonList(nestedField));
+            }
             return new ValueMapResource(
                 resolver,
                 path,
-                ResourceTypes.MULTIFIELD,
-                wrapperValueMap,
-                Collections.singletonList(nestedField));
+                effectiveResourceType,
+                valueMap,
+                child != null ? Collections.singletonList(child) : null);
         }
-        return new ValueMapResource(
-            resolver,
-            path,
-            resourceType,
-            valueMap,
-            child != null ? Collections.singletonList(child) : null);
-    }
 
-    /**
-     * Escapes text properties to prevent them from being interpreted as Sling expressions
-     * @param properties The map of properties to be processed
-     * @return The processed map
-     */
-    private static Map<String, Object> escapeTextProperties(Map<String, Object> properties) {
-        return properties
-            .entrySet()
-            .stream()
-            .collect(Collectors.toMap(
-                Map.Entry::getKey,
-                e -> e.getValue() instanceof String && StringUtils.isNotEmpty((String) e.getValue())
-                    ? e.getValue().toString().replace("${", "\\${")
-                    : e.getValue()));
+        /**
+         * Escapes text properties to prevent them from being interpreted as Sling expressions
+         * @param properties The map of properties to be processed
+         * @return The processed map
+         */
+        private static Map<String, Object> escapeTextProperties(Map<String, Object> properties) {
+            return properties
+                .entrySet()
+                .stream()
+                .collect(Collectors.toMap(
+                    Map.Entry::getKey,
+                    e -> e.getValue() instanceof String && StringUtils.isNotEmpty((String) e.getValue())
+                        ? e.getValue().toString().replace("${", "\\${")
+                        : e.getValue()));
+        }
+
+        /**
+         * Retrieves and increments the field count stored in the request attribute
+         * @param request The {@code SlingHttpServletRequest} that serves as the context for field creation
+         * @return Int value
+         */
+        private static int getAndIncrementFieldCount(SlingHttpServletRequest request) {
+            int fieldCount = request.getAttribute(KEY_FIELD_COUNT) != null
+                ? (int) request.getAttribute(KEY_FIELD_COUNT)
+                : 0;
+            request.setAttribute(KEY_FIELD_COUNT, fieldCount + 1);
+            return fieldCount;
+        }
     }
 }
