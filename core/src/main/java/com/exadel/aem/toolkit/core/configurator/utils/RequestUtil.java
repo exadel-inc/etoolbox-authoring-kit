@@ -31,21 +31,26 @@ public class RequestUtil {
 
     private RequestUtil() {}
 
-    public static Session getSession(HttpServletRequest request) {
+    public static ResourceResolver getResourceResolver(HttpServletRequest request) {
         if (request instanceof SlingHttpServletRequest) {
-            return ((SlingHttpServletRequest) request).getResourceResolver().adaptTo(Session.class);
+            return ((SlingHttpServletRequest) request).getResourceResolver();
         }
         SlingBindings slingBindings = (SlingBindings) request.getAttribute(SlingBindings.class.getName());
         if (slingBindings == null) {
             LOG.warn("Invalid request: no Sling bindings found");
             return null;
         }
-        ResourceResolver resourceResolver = slingBindings.getResourceResolver();
-        if (resourceResolver == null) {
+        ResourceResolver result = slingBindings.getResourceResolver();
+        if (result == null) {
             LOG.warn("Invalid request: no ResourceResolver found in Sling bindings");
             return null;
         }
-        return resourceResolver.adaptTo(Session.class);
+        return result;
+    }
+
+    public static Session getSession(HttpServletRequest request) {
+        ResourceResolver resolver = getResourceResolver(request);
+        return resolver != null ? resolver.adaptTo(Session.class) : null;
     }
 
     public static String getConfigId(HttpServletRequest request) {
