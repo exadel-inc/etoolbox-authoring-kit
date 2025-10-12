@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -122,7 +123,7 @@ class FieldUtil {
             "/bin/etoolbox/authoring-kit/config"));
 
         // Attribute fields
-        for (ConfigAttribute attribute : config.getAttributes()) {
+        for (ConfigAttribute attribute : CollectionUtils.emptyIfNull(config.getAttributes())) {
             boolean isSkipped = attribute.getDefinition().getID().endsWith(ConfiguratorConstants.SUFFIX_BACKUP)
                 || StringUtils.equalsAny(attribute.getDefinition().getID(), ConfiguratorConstants.ATTR_NAME_HINT)
                 || attribute.getDefinition().getID().startsWith(ConfiguratorConstants.ATTR_CONFIGURATOR);
@@ -397,9 +398,10 @@ class FieldUtil {
             return properties
                 .entrySet()
                 .stream()
+                .filter(e -> e.getValue() != null)
                 .collect(Collectors.toMap(
                     Map.Entry::getKey,
-                    e -> e.getValue() instanceof String && StringUtils.isNotEmpty((String) e.getValue())
+                    e -> e.getValue() instanceof String
                         ? e.getValue().toString().replace("${", "\\${")
                         : e.getValue()));
         }

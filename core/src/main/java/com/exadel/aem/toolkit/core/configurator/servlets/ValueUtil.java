@@ -53,7 +53,7 @@ class ValueUtil {
             form.putAll(existing.getValueMap());
         }
 
-        for (ConfigAttribute attribute : config.getAttributes()) {
+        for (ConfigAttribute attribute : CollectionUtils.emptyIfNull(config.getAttributes())) {
             if (attribute.isMultiValue()) {
                 Object[] values = toArray(attribute.getValue());
                 if (values == null) {
