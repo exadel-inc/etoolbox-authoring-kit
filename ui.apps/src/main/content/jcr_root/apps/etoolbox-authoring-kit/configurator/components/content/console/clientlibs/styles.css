@@ -16,10 +16,6 @@ hr {
     margin: 1rem -0.5rem;
 }
 
-#config {
-    width: 50%;
-}
-
 #config label {
     font-size: 0.95rem;
 }
@@ -39,4 +35,8 @@ hr {
     display: block;
     font-size: 0.85rem;
     font-style: italic;
+}
+
+.refresh-container {
+    width: 50%;
 }

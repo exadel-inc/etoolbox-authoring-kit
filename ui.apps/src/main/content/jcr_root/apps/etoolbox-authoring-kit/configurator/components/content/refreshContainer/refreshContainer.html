@@ -1,0 +1,6 @@
+<div class="${properties.granite:class}"
+     data-target="${request.requestPathInfo.resourcePath}.html${request.requestPathInfo.suffix}">
+    <sly data-sly-list.child="${resource.children}">
+        <sly data-sly-resource="${@ path=child.path}"/>
+    </sly>
+</div>
