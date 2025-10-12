@@ -21,6 +21,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.adobe.granite.ui.components.ExpressionCustomizer;
 
 import com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener;
 import com.exadel.aem.toolkit.core.configurator.servlets.PermissionUtil;
@@ -42,6 +43,8 @@ public enum ConfigAccess {
     OSGI_FAILURE("Could not acquire OSGi entity");
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigAccess.class);
+
+    private static final String KEY = "configAccess";
 
     private final String error;
 
@@ -76,12 +79,17 @@ public enum ConfigAccess {
      * @return The access result
      */
     public static ConfigAccess from(HttpServletRequest request) {
-        ConfigAccess result = (ConfigAccess) request.getAttribute(ConfigAccess.class.getName());
+        if (request == null) {
+            return OSGI_FAILURE;
+        }
+
+        ExpressionCustomizer customizer = ExpressionCustomizer.from(request);
+        ConfigAccess result = (ConfigAccess) customizer.getVariable(KEY);
         if (result != null) {
             return result;
         }
         result = pick(request);
-        request.setAttribute(ConfigAccess.class.getName(), result);
+        customizer.setVariable(KEY, result);
         return result;
     }
 
