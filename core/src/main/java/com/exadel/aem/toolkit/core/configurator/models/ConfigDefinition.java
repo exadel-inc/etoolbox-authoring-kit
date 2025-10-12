@@ -18,12 +18,14 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.Resource;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -37,6 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
+import com.exadel.aem.toolkit.core.configurator.utils.RequestUtil;
 
 
 /**
@@ -78,7 +82,7 @@ public class ConfigDefinition {
      * @return The string value
      */
     public String getName() {
-        return ocd.getName();
+        return ocd != null ? ocd.getName() : null;
     }
 
     /**
@@ -86,7 +90,7 @@ public class ConfigDefinition {
      * @return The string value
      */
     public String getDescription() {
-        return ocd.getDescription();
+        return ocd != null ? ocd.getDescription() : null;
     }
 
     /**
@@ -130,27 +134,11 @@ public class ConfigDefinition {
     }
 
     /**
-     * Marks the configuration as user-modified or not
-     * @param value True or false
-     */
-    public void setModified(boolean value) {
-        this.modified = value;
-    }
-
-    /**
      * Determines whether the configuration has been replicated to publisher instance(-s)
      * @return True or false
      */
     public boolean isPublished() {
         return published;
-    }
-
-    /**
-     * Marks the configuration as published or not
-     * @param value True or false
-     */
-    public void setPublished(boolean value) {
-        this.published = value;
     }
 
     /**
@@ -186,11 +174,24 @@ public class ConfigDefinition {
             LOG.debug("No config ID specified in the request");
             return EMPTY;
         }
-        return from(configId);
+        result = from(configId);
+
+        String existingConfigPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId;
+        Resource existingConfig = Optional.ofNullable(RequestUtil.getResourceResolver(request))
+            .map(resolver -> resolver.getResource(existingConfigPath))
+            .orElse(null);
+
+        result.modified = existingConfig != null
+            && existingConfig.getChild(ConfiguratorConstants.NN_DATA) != null;
+        result.published = existingConfig != null
+            && existingConfig.getValueMap().get(ConfiguratorConstants.PN_REPLICATION_ACTION, StringUtils.EMPTY).equals("Activate");
+
+        return result;
     }
 
     /**
-     * Creates a {@code ConfigDefinition} instance based on the configuration ID (PID)
+     * Called from {@link ConfigDefinition#from(HttpServletRequest)} to create a {@code ConfigDefinition} instance based
+     * on the configuration ID (PID)
      * @param value The configuration ID (PID). A non-blank value is expected
      * @return The {@code ConfigDefinition} instance; or an empty instance if the configuration with the specified ID
      * does not exist
@@ -216,44 +217,55 @@ public class ConfigDefinition {
         boolean isFactoryInstance = StringUtils.isNotEmpty(configuration.getFactoryPid())
             && !StringUtils.equals(configuration.getPid(), configuration.getFactoryPid());
         String pid = isFactoryInstance ? configuration.getFactoryPid() : configuration.getPid();
+
         for (Bundle bundle : context.getBundles()) {
             MetaTypeInformation metaTypeInformation = metaTypeService.getMetaTypeInformation(bundle);
             if (metaTypeInformation == null) {
                 continue;
             }
             ObjectClassDefinition ocd;
-            boolean isFactoryConfig = ArrayUtils.contains(metaTypeInformation.getFactoryPids(), value);
             try {
                 ocd = Objects.requireNonNull(metaTypeInformation.getObjectClassDefinition(pid, null));
             } catch (IllegalArgumentException | NullPointerException e) {
                 // Not an error: this actually happens if the configuration is not present in the current bundle
                 continue;
             }
-
-            Map<String, Object> configProperties = Collections.emptyMap();
-            if (configuration.getProperties() != null) {
-                configProperties = Collections.list(configuration.getProperties().keys())
-                    .stream()
-                    .collect(Collectors.toMap(k -> k, k -> configuration.getProperties().get(k)));
-            }
-
-            ConfigDefinition result = new ConfigDefinition();
-            result.attributes = new ArrayList<>();
-            for (AttributeDefinition definition : ocd.getAttributeDefinitions(ObjectClassDefinition.ALL)) {
-                result.attributes.add(
-                    new ConfigAttribute(
-                        definition,
-                        configProperties.get(definition.getID()))
-                );
-            }
-            result.changeCount = configuration.getChangeCount();
-            result.id = value;
-            result.factory = isFactoryConfig;
+            ConfigDefinition result = from(configuration, ocd);
+            result.factory = ArrayUtils.contains(metaTypeInformation.getFactoryPids(), value);
             result.factoryInstance = isFactoryInstance;
-            result.ocd = ocd;
+            result.id = value;
             return result;
         }
         return EMPTY;
+    }
+
+    /**
+     * Called from {@link ConfigDefinition#from(String)} to create a {@code ConfigDefinition} instance based on the
+     * {@link Configuration} and {@link ObjectClassDefinition} objects
+     * @param configuration The {@code Configuration} instance. A non-null value is expected
+     * @param ocd           The {@code ObjectClassDefinition} instance
+     * @return The {@code ConfigDefinition} instance
+     */
+    private static ConfigDefinition from(Configuration configuration, ObjectClassDefinition ocd) {
+        Map<String, Object> configProperties = Collections.emptyMap();
+        if (configuration.getProperties() != null) {
+            configProperties = Collections.list(configuration.getProperties().keys())
+                .stream()
+                .collect(Collectors.toMap(k -> k, k -> configuration.getProperties().get(k)));
+        }
+
+        ConfigDefinition result = new ConfigDefinition();
+        result.attributes = new ArrayList<>();
+        for (AttributeDefinition definition : ocd.getAttributeDefinitions(ObjectClassDefinition.ALL)) {
+            result.attributes.add(
+                new ConfigAttribute(
+                    definition,
+                    configProperties.get(definition.getID()))
+            );
+        }
+        result.changeCount = configuration.getChangeCount();
+        result.ocd = ocd;
+        return result;
     }
 
     /**

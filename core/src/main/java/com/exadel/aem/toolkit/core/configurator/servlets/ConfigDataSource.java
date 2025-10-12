@@ -14,26 +14,16 @@
 
 package com.exadel.aem.toolkit.core.configurator.servlets;
 
-import java.io.IOException;
-import java.util.Collections;
 import javax.servlet.Servlet;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
-import com.adobe.granite.ui.components.ds.DataSource;
-import com.adobe.granite.ui.components.ds.SimpleDataSource;
 
-import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
 import com.exadel.aem.toolkit.core.configurator.models.ConfigDefinition;
-import com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener;
 
 /**
  * Implements a servlet that provides data source for the {@code EToolbox Configurator} interface
@@ -49,49 +39,15 @@ import com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener;
 )
 public class ConfigDataSource extends SlingSafeMethodsServlet {
 
-    private static final String VARIANT_ERROR = "error";
-    private static final String VARIANT_WARNING = "warning";
-
-    @Reference
-    private transient ConfigChangeListener configChangeListener;
-
     /**
      * Processes GET requests to populate the data source for the {@code EToolbox Configurator} interface
      * @param request The HTTP request
      * @param response The HTTP response
      */
     @Override
-    protected void doGet(
-        @NotNull SlingHttpServletRequest request,
-        @NotNull SlingHttpServletResponse response) throws IOException {
-
+    protected void doGet(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) {
         ConfigDefinition config = ConfigDefinition.from(request);
-        Resource existingConfig = request
-            .getResourceResolver()
-            .getResource(ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + config.getId());
-        Resource existingConfigData = existingConfig != null
-            ? existingConfig.getChild(ConfiguratorConstants.NN_DATA)
-            : null;
-        config.setModified(existingConfigData != null);
-
-        boolean isPublished = existingConfig != null
-            && existingConfig.getValueMap().get(ConfiguratorConstants.PN_REPLICATION_ACTION, StringUtils.EMPTY).equals("Activate");
-        config.setPublished(isPublished);
-
         FieldUtil.processRequest(request, config);
         ValueUtil.processRequest(request, config);
-    }
-
-    /**
-     * Prints out an alert message
-     * @param request The HTTP request
-     * @param message The message text. A non-blank string is expected
-     * @param variant The message variant
-     */
-    private static void outputMessage(SlingHttpServletRequest request, String message, String variant) {
-        Resource messageResource = FieldUtil.newAlert(request, message, variant);
-        request.setAttribute(
-            DataSource.class.getName(),
-            new SimpleDataSource(Collections.singletonList(messageResource).iterator()));
     }
 }
