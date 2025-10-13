@@ -118,7 +118,7 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
      * @throws IOException If an I/O error occurs
      */
     private static void sendError(SlingHttpServletResponse response, int status, String message) throws IOException {
-        response.setStatus(SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.setStatus(status);
         response.getWriter().println(message);
         response.getWriter().flush();
     }
