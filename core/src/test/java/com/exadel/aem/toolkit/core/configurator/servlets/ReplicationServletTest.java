@@ -103,7 +103,7 @@ public class ReplicationServletTest {
     }
 
     @Test
-    public void shouldReportErrorIfInvalidSelector() throws IOException, ReplicationException {
+    public void shouldReportErrorIfInvalidSelector() throws IOException {
         for (String selector : new String[] {StringUtils.EMPTY, "other", null}) {
             context.requestPathInfo().setSelectorString(selector);
 

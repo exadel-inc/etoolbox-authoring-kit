@@ -31,7 +31,7 @@ public class ConfigAttribute {
      * @param definition The attribute definition
      * @param value      The attribute value
      */
-    ConfigAttribute(AttributeDefinition definition, Object value) {
+    public ConfigAttribute(AttributeDefinition definition, Object value) {
         this.definition = definition;
         this.value = value;
     }
