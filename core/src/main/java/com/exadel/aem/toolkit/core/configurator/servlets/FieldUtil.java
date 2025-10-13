@@ -80,32 +80,6 @@ class FieldUtil {
             fieldCollection.add(newText(request, config.getDescription(), "config-description"));
         }
 
-        // Metadata fields
-        fieldCollection.add(newHidden(
-            request,
-            "canCleanUp",
-            Boolean.toString(!PermissionUtil.hasOverridingPermissions(request))));
-
-        fieldCollection.add(newHidden(
-            request,
-            "changeCount",
-            String.valueOf(config.getChangeCount())));
-
-        fieldCollection.add(newHidden(
-            request,
-            "ownPath",
-            request.getResource().getPath() + ".html/" + config.getId()));
-
-        fieldCollection.add(newHidden(
-            request,
-            "modified",
-            String.valueOf(config.isModified())));
-
-        fieldCollection.add(newHidden(
-            request,
-            "published",
-            String.valueOf(config.isPublished())));
-
         // Node resource type setters
         fieldCollection.add(newHidden(
             request,

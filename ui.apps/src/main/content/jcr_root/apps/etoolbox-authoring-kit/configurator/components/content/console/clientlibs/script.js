@@ -22,21 +22,11 @@
        -------------- */
 
     /**
-     * Gets if the configuration can be completely cleaned up (root node erased) according to the form metadata
-     * @param {JQuery} $form
-     * @returns {boolean}
-     */
-    function canCleanUp($form) {
-        return $form.find('#canCleanUp').val() === 'true';
-    }
-
-    /**
      * Gets if the configuration can be replicated according to the form metadata
-     * @param {JQuery} $form
      * @returns {boolean}
      */
-    function canReplicate($form) {
-        return $form.find('#canReplicate').val() === 'true';
+    function canReplicate() {
+        return $('#button-publish').length > 0;
     }
 
     /**
@@ -45,7 +35,7 @@
      * @returns {boolean}
      */
     function isModified($form) {
-        return $form.find('#modified').val() === 'true';
+        return $form.attr('data-modified') === 'true';
     }
 
     /**
@@ -54,7 +44,7 @@
      * @returns {boolean}
      */
     function isPublished($form) {
-        return $form.find('#published').val() === 'true';
+        return $form.attr('data-published') === 'true';
     }
 
     /* --------------
@@ -91,12 +81,11 @@
 
     /**
      * Resets the configuration to a previously stored initial value set
-     * @param {boolean} keepMainNode If true, the main configuration node will be kept (for the sake of unpublishing)
      * @returns {Promise}
      */
-    async function reset(keepMainNode) {
+    async function reset() {
         foundationUi.wait();
-        const configPath = $('#config').attr('action') + (keepMainNode ? '/data' : '');
+        const configPath = $('#config').attr('data-cleanup-action');
         try {
             await requestAsync('POST', configPath, { ':operation': 'delete' });
         } catch (e) {
@@ -172,11 +161,10 @@
             const currentFormValues = getFormValues($form);
             $('#button-save').attr('disabled', formValuesEqual(loadedFormValues, currentFormValues));
         }
-        const canRep = canReplicate($form);
         const isMod = isModified($form);
         $('#button-reset').attr('disabled', !isMod);
-        $('#button-publish').attr('disabled', !isMod || !canRep);
-        $('#button-unpublish').attr('disabled', !(isPublished($form) && canRep));
+        $('#button-publish').attr('disabled', !isMod);
+        $('#button-unpublish').attr('disabled', !isPublished($form));
     }
 
     /**
@@ -290,28 +278,37 @@
        ------------- */
 
     /**
-     * Reloads the form content and returns a promise resolved with true if a change was detected, false otherwise
+     * Reloads the dynamic content and returns a promise resolved with true if a data change was detected, false
+     * otherwise
      * @param {boolean} trackChanges If true, the function will check if the change count has changed and return false
      * if it has not
-     * @returns {Promise<boolean>} Promise resolved with true if a change was detected, false otherwise
+     * @returns {Promise<boolean>} Promise resolved with true if a data change was detected or the {@code trackChanges}
+     *     flag is unset, false otherwise
      */
     async function reloadAsync(trackChanges = false) {
-        const $form = $('#config');
-        const oldChangeCount = Number.parseInt($form.find('#changeCount').val(), 10);
+        const $reloadContainer = $('[data-reload-target]')
+        let $form = $reloadContainer.find('#config');
+        const oldChangeCount = $form.length ? Number.parseInt($form.attr('data-change-count'), 10) : 0;
 
-        const ownPath = $form.find('#ownPath').val();
-        const [data, xhr] = await requestAsync('GET', ownPath);
-        const $data = $(data);
+        const reloadTarget = $reloadContainer.attr('data-reload-target');
+        let data;
+        try {
+            data = await requestAsync('GET', reloadTarget);
+        } catch (e) {
+            console.error('Failed to reload dynamic content: ', e);
+            foundationUi.notify('Error', 'Failed to reload dynamic content: ' + getErrorMessage(e), 'error');
+            return false;
+        }
 
-        const newChangeCount = Number.parseInt($data.find('#changeCount').val(), 10);
+        $reloadContainer.get(0).innerHTML = data;
+        $form = $reloadContainer.find('#config');
+        const newChangeCount = $form.length ? Number.parseInt($form.attr('data-change-count'), 10) : 0;
         if (newChangeCount === oldChangeCount && trackChanges) {
             return false;
         }
 
-        $form.get(0).innerHTML = $data.get(0).innerHTML;
-
         // This is needed to clear the "dirty" state of the form
-        $form.trigger('foundation-form-submit-callback', xhr);
+        // $form.trigger('foundation-form-submit-callback', xhr);
 
         loadedFormValues = getFormValues($form);
         adjustButtonStates();
@@ -333,12 +330,11 @@
     }
 
     /**
-     * Performs an asynchronous JQuery request and returns a promise resolved with the response data and the JQuery
-     * XHR object
+     * Performs an asynchronous JQuery request and returns a promise resolved with the response data
      * @param type {string} The request type (e.g. "GET", "POST", etc.)
      * @param url {string} The request URL
      * @param data {any} Optional data to send with the request
-     * @returns {Promise<[string, JQuery.jqXHR]>}
+     * @returns {Promise<string>}
      */
     function requestAsync(type, url, data) {
         return new Promise((resolve, reject) => {
@@ -384,17 +380,13 @@
      */
     async function onResetClick() {
         const $form = $('#config');
-        const cleanUp = canCleanUp($form);
-        let keepMainNode = !cleanUp;
-        if (isPublished($form) && canReplicate($form)) {
-            keepMainNode = true;
+        if (isPublished($form) && canReplicate()) {
             const action = await prompt('Published configuration', 'This configuration is published. Do you want to unpublish it before resetting?');
-            if (action === 'yes' && cleanUp) {
-                keepMainNode = false;
+            if (action === 'yes') {
                 await unpublish();
             }
         }
-        await reset(keepMainNode);
+        await reset();
     }
 
     /**
@@ -415,8 +407,7 @@
         }
         await unpublish();
         if (action === 'yes') {
-            const keepMainNode = !canCleanUp($form);
-            await reset(keepMainNode);
+            await reset();
         }
     }
 
