@@ -101,34 +101,37 @@
                          sling:resourceType="granite/ui/components/coral/foundation/fixedcolumns"
                          granite:class="u-coral-margin">
                     <items jcr:primaryType="nt:unstructured">
-                        <refreshContainer
+                        <alert
                             jcr:primaryType="nt:unstructured"
-                            sling:resourceType="etoolbox-authoring-kit/configurator/components/content/refreshContainer"
-                            granite:class="refresh-container">
-                            <alert
+                            sling:resourceType="etoolbox-authoring-kit/configurator/components/content/alert"
+                            text="${configAccess.error}">
+                        </alert>
+                        <form
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="granite/ui/components/coral/foundation/form"
+                            granite:id="config"
+                            method="post"
+                            foundationForm="true"
+                            action="/conf/etoolbox/authoring-kit/configurator${requestPathInfo.suffix}"
+                            style="vertical">
+                            <datasource
                                 jcr:primaryType="nt:unstructured"
-                                sling:resourceType="etoolbox-authoring-kit/configurator/components/content/alert"
-                                text="${configAccess.error}">
-                            </alert>
-                            <form
+                                sling:resourceType="/bin/etoolbox/authoring-kit/configurator"/>
+                            <granite:data
                                 jcr:primaryType="nt:unstructured"
-                                sling:resourceType="granite/ui/components/coral/foundation/form"
-                                granite:id="config"
-                                method="post"
-                                foundationForm="true"
-                                dataPath="/conf/etoolbox/authoring-kit/configurator"
-                                action="/conf/etoolbox/authoring-kit/configurator${requestPathInfo.suffix}"
-                                style="vertical">
-                                <datasource
-                                    jcr:primaryType="nt:unstructured"
-                                    sling:resourceType="/bin/etoolbox/authoring-kit/configurator"/>
-                                <granite:rendercondition
-                                    jcr:primaryType="nt:unstructured"
-                                    sling:resourceType="granite/ui/components/coral/foundation/renderconditions/feature"
-                                    feature="eak.configurator.showForm"/>
-                            </form>
-                        </refreshContainer>
+                                cleanup-action="${config.cleanupAction}"
+                                change-count="${config.changeCount}"
+                                modified="${config.modified}"
+                                published="${config.published}"/>
+                            <granite:rendercondition
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/renderconditions/feature"
+                                feature="eak.configurator.showForm"/>
+                        </form>
                     </items>
+                    <granite:data
+                        jcr:primaryType="nt:unstructured"
+                        reload-target="${requestPathInfo.resourcePath}.html${requestPathInfo.suffix}"/>
                 </columns>
             </items>
         </content>
