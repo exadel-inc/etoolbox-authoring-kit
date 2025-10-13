@@ -37,9 +37,11 @@ import org.osgi.service.metatype.MetaTypeService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.adobe.granite.ui.components.ExpressionCustomizer;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
+import com.exadel.aem.toolkit.core.configurator.servlets.PermissionUtil;
 import com.exadel.aem.toolkit.core.configurator.utils.RequestUtil;
 
 
@@ -54,9 +56,12 @@ public class ConfigDefinition {
 
     private static final ConfigDefinition EMPTY = new ConfigDefinition();
 
+    private static final String KEY = "config";
+
     private String id;
     private ObjectClassDefinition ocd;
     private List<ConfigAttribute> attributes;
+    private boolean canCleanup;
     private long changeCount;
     private boolean factory;
     private boolean factoryInstance;
@@ -67,6 +72,17 @@ public class ConfigDefinition {
      * Default (instantiation-restricting) constructor
      */
     private ConfigDefinition() {
+    }
+
+    public String getAction() {
+        if (!isValid()) {
+            return null;
+        }
+        return ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + id;
+    }
+
+    public String getCleanupAction() {
+        return canCleanup ? getAction() : getAction() + "/data";
     }
 
     /**
@@ -163,10 +179,13 @@ public class ConfigDefinition {
         if (request == null) {
             return EMPTY;
         }
-        ConfigDefinition result = (ConfigDefinition) request.getAttribute(ConfigDefinition.class.getName());
+
+        ExpressionCustomizer customizer = ExpressionCustomizer.from(request);
+        ConfigDefinition result = (ConfigDefinition) customizer.getVariable(KEY);
         if (result != null) {
             return result;
         }
+
         String configId = request instanceof SlingHttpServletRequest
             ? StringUtils.strip(((SlingHttpServletRequest) request).getRequestPathInfo().getSuffix(), CoreConstants.SEPARATOR_SLASH)
             : StringUtils.substringAfterLast(request.getRequestURI(), ".html/");
@@ -181,11 +200,13 @@ public class ConfigDefinition {
             .map(resolver -> resolver.getResource(existingConfigPath))
             .orElse(null);
 
+        result.canCleanup = !PermissionUtil.hasOverridingPermissions(request);
         result.modified = existingConfig != null
             && existingConfig.getChild(ConfiguratorConstants.NN_DATA) != null;
         result.published = existingConfig != null
             && existingConfig.getValueMap().get(ConfiguratorConstants.PN_REPLICATION_ACTION, StringUtils.EMPTY).equals("Activate");
 
+        customizer.setVariable(KEY, result);
         return result;
     }
 
