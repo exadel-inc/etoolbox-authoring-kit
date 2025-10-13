@@ -1,3 +1,6 @@
-<coral-alert class="centered" variant="error">
-    <coral-alert-content></coral-alert-content>
+<coral-alert
+    data-sly-use.expr="${'com.exadel.aem.toolkit.core.authoring.models.ExpressionSupport' @ property='text'}"
+    data-sly-test="${expr.value}"
+    class="centered" variant="error">
+    <coral-alert-content>${expr.value @ i18n}</coral-alert-content>
 </coral-alert>

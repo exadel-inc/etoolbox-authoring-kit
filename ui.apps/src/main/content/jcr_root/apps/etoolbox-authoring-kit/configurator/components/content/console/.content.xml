@@ -109,14 +109,6 @@
                                 jcr:primaryType="nt:unstructured"
                                 sling:resourceType="etoolbox-authoring-kit/configurator/components/content/alert"
                                 text="${configAccess.error}">
-                                <granite:rendercondition
-                                    jcr:primaryType="nt:unstructured"
-                                    sling:resourceType="granite/ui/components/coral/foundation/renderconditions/not">
-                                    <granite:rendercondition
-                                        jcr:primaryType="nt:unstructured"
-                                        sling:resourceType="granite/ui/components/coral/foundation/renderconditions/feature"
-                                        feature="eak.configurator.showForm"/>
-                                </granite:rendercondition>
                             </alert>
                             <form
                                 jcr:primaryType="nt:unstructured"
