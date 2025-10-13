@@ -22,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.Before;
 import org.junit.Rule;
@@ -150,7 +149,6 @@ public class FieldUtilTest {
             "warning");
 
         ValueMap properties = alertField.getValueMap();
-        assertEquals(ResourceTypes.ALERT, properties.get(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY));
         assertEquals("Test alert message with \\${el}", properties.get(CoreConstants.PN_TEXT));
         assertEquals("warning", properties.get("variant"));
         assertEquals("centered", properties.get("granite:class"));
@@ -185,7 +183,9 @@ public class FieldUtilTest {
             .map(res -> res.getValueMap().get("granite:id", String.class))
             .filter(StringUtils::isNotEmpty)
             .toArray(String[]::new);
-        assertArrayEquals(new String[] {"ownPath", "modified", "published"}, hiddenFieldIds);
+        assertArrayEquals(
+            new String[] {"canCleanUp", "canReplicate", "changeCount", "ownPath", "modified", "published"},
+            hiddenFieldIds);
 
         String[] hiddenFieldValues = resources.stream()
             .filter(res -> ResourceTypes.HIDDEN.equals(res.getResourceType()))

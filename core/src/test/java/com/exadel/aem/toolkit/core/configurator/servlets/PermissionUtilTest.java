@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.configurator.servlets;
 
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.security.AccessControlManager;
@@ -126,7 +127,7 @@ public class PermissionUtilTest {
             Mockito.when(acm.getPrivileges(Mockito.eq(ConfiguratorConstants.ROOT_PATH))).thenReturn(rootPrivileges);
             assertFalse(PermissionUtil.hasOverridingPermissions(request));
 
-            Mockito.when(acm.getPrivileges(Mockito.anyString())).thenThrow(new RepositoryException("forced"));
+            Mockito.when(acm.getPrivileges(Mockito.anyString())).thenThrow(new PathNotFoundException("forced"));
             assertFalse(PermissionUtil.hasOverridingPermissions(request));
 
             ((MockRequestPathInfo) request.getRequestPathInfo()).setSuffix(null);
@@ -139,11 +140,11 @@ public class PermissionUtilTest {
         context.requestPathInfo().setSuffix(CONFIG);
 
         Privilege replicatePrivilege = Mockito.mock(Privilege.class);
+        Mockito.when(replicatePrivilege.getName()).thenReturn("crx:replicate");
         Privilege jcrAllPrivilege = Mockito.mock(Privilege.class);
         Mockito.when(jcrAllPrivilege.getName()).thenReturn(Privilege.JCR_ALL);
 
         AccessControlManager acm = Mockito.mock(AccessControlManager.class);
-        Mockito.when(acm.privilegeFromName(Mockito.eq("crx:replicate"))).thenReturn(replicatePrivilege);
 
         try (ResourceResolver resolver = createResourceResolver(false, true)) {
             MockSlingHttpServletRequest request = createRequest(resolver);
@@ -152,20 +153,20 @@ public class PermissionUtilTest {
             Mockito.when(session.getAccessControlManager()).thenReturn(acm);
 
             Privilege[] userPrivileges = new Privilege[]{replicatePrivilege};
-            Mockito.when(acm.getPrivileges(Mockito.eq(ConfiguratorConstants.ROOT_PATH))).thenReturn(userPrivileges);
+            Mockito.when(acm.getPrivileges(Mockito.startsWith(ConfiguratorConstants.ROOT_PATH))).thenReturn(userPrivileges);
             assertTrue(PermissionUtil.hasReplicatePermission(request));
 
             userPrivileges = new Privilege[]{jcrAllPrivilege};
-            Mockito.when(acm.getPrivileges(Mockito.eq(ConfiguratorConstants.ROOT_PATH))).thenReturn(userPrivileges);
+            Mockito.when(acm.getPrivileges(Mockito.startsWith(ConfiguratorConstants.ROOT_PATH))).thenReturn(userPrivileges);
             assertTrue(PermissionUtil.hasReplicatePermission(request));
 
             Privilege readPrivilege = Mockito.mock(Privilege.class);
             Mockito.when(readPrivilege.getName()).thenReturn(Privilege.JCR_READ);
             userPrivileges = new Privilege[]{readPrivilege};
-            Mockito.when(acm.getPrivileges(Mockito.eq(ConfiguratorConstants.ROOT_PATH))).thenReturn(userPrivileges);
+            Mockito.when(acm.getPrivileges(Mockito.startsWith(ConfiguratorConstants.ROOT_PATH))).thenReturn(userPrivileges);
             assertFalse(PermissionUtil.hasReplicatePermission(request));
 
-            Mockito.when(acm.privilegeFromName(Mockito.anyString())).thenThrow(new RepositoryException("forced"));
+            Mockito.when(acm.getPrivileges(Mockito.anyString())).thenThrow(new RepositoryException("forced"));
             assertFalse(PermissionUtil.hasReplicatePermission(request));
 
             ((MockRequestPathInfo) request.getRequestPathInfo()).setSuffix(null);
@@ -188,7 +189,7 @@ public class PermissionUtilTest {
             .thenReturn(canWriteToRoot);
         Mockito
             .when(session.hasPermission(Mockito.eq(
-                ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + CONFIG),
+                    ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + CONFIG),
                 Mockito.eq(Session.ACTION_SET_PROPERTY)))
             .thenReturn(canWriteToConfig);
 

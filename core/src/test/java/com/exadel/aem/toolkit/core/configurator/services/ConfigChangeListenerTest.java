@@ -136,13 +136,13 @@ public class ConfigChangeListenerTest {
     }
 
     @Test
-    public void shouldHandleResourceRemovalEvents() throws IOException, NoSuchFieldException {
+    public void shouldHandleResourceRemovalEvents() throws IOException, NoSuchFieldException, InterruptedException {
         String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + NODE_DATA;
         context.resourceResolver().commit();
 
         Configuration mockConfig = Mockito.mock(Configuration.class);
         Mockito.when(mockConfig.getProperties())
-            .thenReturn(new Hashtable<>(Collections.singletonMap("test.property$eakbackup", "original.value")));
+            .thenReturn(new Hashtable<>(Collections.singletonMap("test.property$backup$", "original.value")));
         ConfigurationAdmin mockConfigurationAdmin = Mockito.mock(ConfigurationAdmin.class);
         Mockito.when(mockConfigurationAdmin.getConfiguration(TEST_PID, null))
             .thenReturn(mockConfig);
@@ -156,6 +156,7 @@ public class ConfigChangeListenerTest {
         ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
         configChangeListener.onChange(Collections.singletonList(change));
 
+        Thread.sleep(500); // Allow some time for async processing
         Mockito.verify(mockConfig).update(new Hashtable<>(Collections.singletonMap("test.property", "original.value")));
     }
 

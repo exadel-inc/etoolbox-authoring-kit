@@ -109,7 +109,6 @@ public class ConfigDataSourceTest {
         context.requestPathInfo().setSuffix(CoreConstants.SEPARATOR_SLASH + configId);
 
         ConfigurationAdmin mockConfigAdmin = Mockito.mock(ConfigurationAdmin.class);
-        Mockito.when(mockConfigAdmin.getConfiguration(Mockito.anyString())).thenReturn(null);
 
         context.registerInjectActivateService(
             new ConfigChangeListener(),

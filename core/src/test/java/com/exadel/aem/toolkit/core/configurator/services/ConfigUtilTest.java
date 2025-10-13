@@ -195,7 +195,7 @@ public class ConfigUtilTest {
         dictionary.put("boolean.property", true);
         dictionary.put("string.array", new String[]{"value1", "value2"});
         dictionary.put("int.list", Arrays.asList(1, 2, 3));
-        dictionary.put("dummy$eakbackup", "dummy"); // Should be ignored
+        dictionary.put("dummy$backup$", "dummy"); // Should be ignored
 
         Map<String, Object> map = new HashMap<>();
         map.put("string.property", "test value");
