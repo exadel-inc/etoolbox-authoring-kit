@@ -221,22 +221,6 @@ class FieldUtil {
        --------------- */
 
     /**
-     * Creates an alert field
-     * @param request The {@link SlingHttpServletRequest} that serves as the context for field creation
-     * @param text    The alert text
-     * @param variant The alert variant, e.g. {@code info}, {@code warning}, {@code error}
-     * @return The {@code Resource} instance representing the field
-     */
-    static Resource newAlert(SlingHttpServletRequest request, String text, String variant) {
-        return new Builder(request)
-            .resourceType(ResourceTypes.ALERT)
-            .property(CoreConstants.PN_TEXT, text)
-            .property("variant", variant)
-            .property(PN_CLASS, "centered")
-            .build();
-    }
-
-    /**
      * Creates a heading field
      * @param request The {@link SlingHttpServletRequest} that serves as the context for field creation
      * @param text    The heading text
