@@ -26,7 +26,7 @@
     const $document = $(document);
 
     // Version to track actual DependsOn version from code/browser console
-    ns.version = '2.9.0';
+    ns.version = '2.10.0';
 
     /**
      * DependsOn entry point
@@ -84,4 +84,10 @@
     $window.adaptTo('foundation-registry').register('foundation.validation.selector', {
         exclusion: '[data-dependson][hidden] *, [data-dependson-controllable][hidden] *'
     });
+    // Fix invalidate call for some of the complex coral fields
+    $(document)
+        .off('change.dependsOnFixes')
+        .on('change.dependsOnFixes', '.cq-RichText, coral-fileupload', function () {
+            ns.ElementAccessors.updateValidity($(this));
+        });
 })(Granite.$, Granite.EAKUtils, Granite.DependsOnPlugin = (Granite.DependsOnPlugin || {}));

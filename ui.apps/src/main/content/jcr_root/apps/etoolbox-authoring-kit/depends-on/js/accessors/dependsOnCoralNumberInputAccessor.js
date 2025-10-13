@@ -15,16 +15,16 @@
 /**
  * @author Yana Bernatskaya (YanaBr)
  *
- * Coral 3 NumberInput accessor
+ * Coral NumberInput accessor
  * */
 (function ($, ns) {
-    const NUMBERINPUT_SELECTOR = '.coral3-NumberInput';
-    const NUMBERINPUT_INPUT_SELECTOR = '.coral3-NumberInput-input';
+    const NUMBERINPUT_SELECTOR = 'coral-numberinput';
+    const NUMBERINPUT_INPUT_SELECTOR = 'input[type=number]';
 
     ns.ElementAccessors.registerAccessor({
         selector: `${NUMBERINPUT_SELECTOR}`,
         visibility: function ($el, state) {
-            $el.find(NUMBERINPUT_INPUT_SELECTOR).attr('readonly', state ? null : '');
+            $el.children(NUMBERINPUT_INPUT_SELECTOR).attr('readonly', state ? null : '');
             ns.ElementAccessors.DEFAULT_ACCESSOR.visibility($el, state);
         }
     });

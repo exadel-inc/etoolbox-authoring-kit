@@ -15,11 +15,11 @@
 /**
  * @author Yana Bernatskaya (YanaBr)
  *
- * Coral 3 DatePicker accessor
+ * Coral DatePicker accessor
  * */
 (function ($, ns) {
     const DATEPICKER_SELECTOR = 'coral-datepicker';
-    const DATEPICKER_INPUT_SELECTOR = '.coral-InputGroup-input';
+    const DATEPICKER_INPUT_SELECTOR = 'input:not([type=hidden])';
 
     ns.ElementAccessors.registerAccessor({
         selector: `${DATEPICKER_SELECTOR}`,

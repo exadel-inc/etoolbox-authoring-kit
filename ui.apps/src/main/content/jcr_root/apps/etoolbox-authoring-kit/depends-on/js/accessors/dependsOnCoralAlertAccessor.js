@@ -15,10 +15,10 @@
 /**
  * @author Liubou Masiuk
  *
- * Coral 3 Alert accessor
+ * Coral Alert accessor
  * */
 (function ($, ns) {
-    const ALERT_SELECTOR = '.coral3-Alert';
+    const ALERT_SELECTOR = 'coral-alert';
 
     ns.ElementAccessors.registerAccessor({
         selector: `${ALERT_SELECTOR}`,

@@ -15,7 +15,7 @@
 /**
  * @author Bernatskaya Yana (YanaBr)
  *
- * Coral 3 PathField accessor
+ * Coral PathField accessor
  * */
 (function ($, ns) {
     const PATHFIELD_SELECTOR = 'foundation-autocomplete';

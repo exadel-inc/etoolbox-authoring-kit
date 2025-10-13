@@ -14,6 +14,7 @@
 package com.exadel.aem.toolkit.core.lists.utils;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,11 +30,14 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.day.cq.wcm.api.Page;
 import com.day.cq.wcm.api.PageManager;
@@ -46,6 +50,12 @@ import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
  * Contains methods for manipulating EToolbox Lists
  */
 public class ListHelper {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ListHelper.class);
+
+    private static final String MESSAGE_CANNOT_CREATE_LIST = "Cannot create a list";
+    private static final String MESSAGE_CANNOT_RETRIEVE_MAP = "Cannot retrieve a map";
+    private static final String MESSAGE_NO_ITEMS = "The list at {} is empty. No items available";
 
     /**
      * Default (instantiation-restricting) constructor
@@ -93,6 +103,9 @@ public class ListHelper {
      */
     @Nonnull
     public static <T> List<T> getList(ResourceResolver resourceResolver, String path, Class<T> itemType) {
+        if (resourceResolver == null || StringUtils.isBlank(path) || itemType == null) {
+            return reportInvalidArguments("Cannot retrieve a list", Collections.emptyList());
+        }
         return getItemsStream(resourceResolver, path)
             .map(getMapperFunction(itemType))
             .filter(Objects::nonNull)
@@ -140,6 +153,9 @@ public class ListHelper {
      */
     @Nonnull
     public static Map<String, String> getMap(ResourceResolver resourceResolver, String path) {
+        if (resourceResolver == null || StringUtils.isBlank(path)) {
+            reportInvalidArguments(MESSAGE_CANNOT_RETRIEVE_MAP, Collections.emptyMap());
+        }
         return getMapInternal(
             resourceResolver,
             path,
@@ -162,6 +178,9 @@ public class ListHelper {
      */
     @Nonnull
     public static <T> Map<String, T> getMap(ResourceResolver resourceResolver, String path, String keyName, Class<T> itemType) {
+        if (resourceResolver == null || StringUtils.isAnyBlank(path, keyName) || itemType == null) {
+            return reportInvalidArguments(MESSAGE_CANNOT_RETRIEVE_MAP, Collections.emptyMap());
+        }
         return getMapInternal(resourceResolver, path, keyName, getMapperFunction(itemType));
     }
 
@@ -186,13 +205,14 @@ public class ListHelper {
         List<T> values) throws WCMException {
 
         if (resourceResolver == null || StringUtils.isBlank(path)) {
-            return null;
+            return reportInvalidArguments(MESSAGE_CANNOT_CREATE_LIST, null);
+        }
+        if (CollectionUtils.isEmpty(values)) {
+            reportNoItems(path);
         }
 
-        Class<?> modelType = CollectionUtils.isNotEmpty(values) ? values.get(0).getClass() : null;
-
+        Class<?> modelType = CollectionUtils.isNotEmpty(values) && values.get(0) != null ? values.get(0).getClass() : null;
         Function<Object, Map<String, Object>> mapping = ListResourceUtil.getMappingFunction(modelType);
-
         List<Resource> resources = values.stream()
             .map(mapping)
             .filter(Objects::nonNull)
@@ -217,6 +237,14 @@ public class ListHelper {
         String path,
         Map<String, Object> values) throws WCMException {
 
+        if (resourceResolver == null || StringUtils.isBlank(path)) {
+            return reportInvalidArguments(MESSAGE_CANNOT_CREATE_LIST, null);
+        }
+
+        if (MapUtils.isEmpty(values)) {
+            reportNoItems(path);
+        }
+
         List<Resource> resources = ListResourceUtil.mapToValueMapResources(resourceResolver, values);
         return createResourceList(resourceResolver, path, resources);
     }
@@ -236,18 +264,28 @@ public class ListHelper {
         Collection<Resource> resources) throws WCMException {
 
         if (resourceResolver == null || StringUtils.isBlank(path)) {
-            return null;
+            return reportInvalidArguments(MESSAGE_CANNOT_CREATE_LIST, null);
+        }
+
+        if (CollectionUtils.isEmpty(resources)) {
+            reportNoItems(path);
         }
 
         Page listPage;
         try {
             Resource pageResource = resourceResolver.getResource(path);
             if (pageResource != null) {
+                LOG.debug("Will delete an existing list page at {}", path);
                 resourceResolver.delete(pageResource);
             }
 
             listPage = ListPageUtil.createPage(resourceResolver, path);
-            Resource list = Objects.requireNonNull(listPage.getContentResource()).getChild(CoreConstants.NN_LIST);
+            Resource contentResource = listPage.getContentResource();
+            Resource list = contentResource != null ? contentResource.getChild(CoreConstants.NN_LIST) : null;
+            if (list == null) {
+                LOG.error("List resource is not available at {}", path);
+                return null;
+            }
             for (Resource resource : resources) {
                 ListResourceUtil.createListItem(resourceResolver, list, resource.getValueMap());
             }
@@ -302,9 +340,13 @@ public class ListHelper {
             return Stream.empty();
         }
         Resource listResource = getListResource(resourceResolver, path);
-        return listResource != null
-            ? StreamSupport.stream(Spliterators.spliteratorUnknownSize(listResource.listChildren(), Spliterator.ORDERED), false)
-            : Stream.empty();
+        if (listResource == null) {
+            LOG.error("Cannot retrieve a list at {}. Resource not found", path);
+            return Stream.empty();
+        }
+        return StreamSupport.stream(
+            Spliterators.spliteratorUnknownSize(listResource.listChildren(), Spliterator.ORDERED),
+            false);
     }
 
     /**
@@ -336,5 +378,25 @@ public class ListHelper {
             return itemType::cast;
         }
         return resource -> resource.adaptTo(itemType);
+    }
+
+    /**
+     * Reports an error message when one or more arguments are invalid
+     * @param message Message to be reported
+     * @param fallback The fallback value to be returned
+     * @return A nullable value
+     * @param <T> Type of the fallback value
+     */
+    private static <T> T reportInvalidArguments(String message, T fallback) {
+        LOG.error("{}. One or more provided arguments are null or blank", message);
+        return fallback;
+    }
+
+    /**
+     * Reports a warning message when no items are available at the given path
+     * @param path Path to the items list
+     */
+    private static void reportNoItems(String path) {
+        LOG.warn(MESSAGE_NO_ITEMS, path);
     }
 }

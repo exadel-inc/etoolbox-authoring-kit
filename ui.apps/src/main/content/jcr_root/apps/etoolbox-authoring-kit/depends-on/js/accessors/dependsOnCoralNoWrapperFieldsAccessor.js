@@ -19,7 +19,7 @@
  * */
 (function ($, ns) {
     const NO_WRAPPER_FIELDS_SELECTOR =
-        '.coral-Form-fieldset, input[type=hidden], .coral-Heading, .coral3-Alert, .coral3-Button, a.coral-Link, span:not(.coral-Form-field)';
+        '.coral-Form-fieldset, input[type=hidden], .coral-Heading, coral-alert, button[is=coral-button], a.coral-Link, span:not(.coral-Form-field)';
 
     ns.ElementAccessors.registerAccessor({
         selector: NO_WRAPPER_FIELDS_SELECTOR,

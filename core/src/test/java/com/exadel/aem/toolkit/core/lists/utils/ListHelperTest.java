@@ -226,7 +226,7 @@ public class ListHelperTest {
         Resource listItem = listPage.getContentResource(LIST_ITEM_PATH);
         assertNotNull(listItem);
 
-        assertEquals(3, listItem.getValueMap().size());
+        assertEquals(4, listItem.getValueMap().size());
         assertEquals("etoolbox-authoring-kit/lists/components/content/listItem", listItem.getResourceType());
         assertEquals(itemModel.textValue, listItem.getValueMap().get("textValue", StringUtils.EMPTY));
         assertEquals(itemModel.booleanValue, listItem.getValueMap().get("booleanValue", false));

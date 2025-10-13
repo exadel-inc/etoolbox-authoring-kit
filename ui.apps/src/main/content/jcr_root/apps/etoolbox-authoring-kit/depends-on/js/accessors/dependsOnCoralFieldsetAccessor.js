@@ -15,7 +15,7 @@
 /**
  * @author Alexey Stsefanovich (ala'n)
  *
- * Batch accessor for Coral 3 Fieldsets
+ * Batch accessor for Coral Fieldsets
  * */
 (function ($, ns) {
     const TARGETS_SELECTOR = '[data-dependson], input, select, button';

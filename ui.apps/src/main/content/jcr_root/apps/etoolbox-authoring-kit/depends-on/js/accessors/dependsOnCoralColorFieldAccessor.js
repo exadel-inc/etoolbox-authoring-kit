@@ -15,16 +15,16 @@
 /**
  * @author Yana Bernatskaya (YanaBr)
  *
- * Coral 3 ColorField accessor
+ * Coral ColorField accessor
  * */
 (function ($, ns) {
-    const COLORFIELD_SELECTOR = '.coral3-ColorInput';
-    const COLORFIELD_INPUT_SELECTOR = '.coral3-ColorInput-input';
+    const COLORFIELD_SELECTOR = 'coral-colorinput';
+    const COLORFIELD_INPUT_SELECTOR = 'input:not([type=hidden])';
 
     ns.ElementAccessors.registerAccessor({
         selector: `${COLORFIELD_SELECTOR}`,
         visibility: function ($el, state) {
-            $el.find(COLORFIELD_INPUT_SELECTOR).attr('readonly', state ? null : '');
+            $el.children(COLORFIELD_INPUT_SELECTOR).attr('readonly', state ? null : '');
             ns.ElementAccessors.DEFAULT_ACCESSOR.visibility($el, state);
         }
     });

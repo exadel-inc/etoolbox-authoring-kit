@@ -3,7 +3,7 @@ layout: content
 title: Managing allowed components with AllowedChildren
 navTitle: Allowed Components
 seoTitle: Managing allowed components with AllowedChildren - Exadel Authoring Kit
-order: 5
+order: 3
 -->
 
 Defining allowed components has always been a tiring task for developers. The XML configurations are hard to scale and manage. If you store the designs/policies in the codebase, you can use the capabilities of Exadel Toolbox Authoring Kit to define the allowed components in a uniform and flexible way.
@@ -23,7 +23,7 @@ A detailed description of all properties of `@AllowedChildren` annotation can be
 - _parents_ are used to specify applicable parent component resource types or groups. You can also specify several "generations" of parents separating them with a space (see _Example 4_ below);
 - _resourceNames_ can be used to specify applicable resource subnode names.
 
-For _templates_, _pageResourceTypes_, _parents_, _pagePaths_ and the _value_ itself, you can use wildcard symbol (`*`) to omit the beginning or the end of the path to a component or template: `/apps/acme/components/content/new_design/*`, `*/new_design/*`, `*/text`. However, such policies are hard to support and may lead to unwanted components being allowed, therefore they should be used with caution.
+For _templates_, _pageResourceTypes_, _parents_, _pagePaths_ and the _value_ itself, you can use wildcard symbol (`*`) to omit the beginning or the end of the path to a component or template: `/apps/acme/components/content/new_design/*`, `*/new_design/*`, `*/text`. However, such policies are hard to support and may lead to unwanted components being allowed, therefore, they should be used with caution.
 
 The final setting that can be applied to a rule is the _mode_. Mode defines whether the current rule replaces (or "overrides") the rules defined through the conventional policies for editable templates / designs, or just merges with them.
 
@@ -33,14 +33,16 @@ Use the _merge_ mode with caution. It allows using the policies of editable temp
 
 ## Allowed children for a top-level container
 
-In almost every AEM page, there are containers that a developer hasn't created with one's own hands. Such are built-in `parsys`-es, `responsivegrid`-s, etc. Usually, they are situated above the user-defined components' nodes in the page's node tree. Therefore we name them "top-level containers".
+In almost every AEM page, there are containers that a developer hasn't created with one's own hands. Such are built-in `parsys`-es, `responsivegrid`-s, etc. Usually, they are situated above the user-defined components' nodes in the page's node tree. Therefore, we name them "top-level containers".
 
 There would unlikely be a dedicated component for a top-level container in the code base (unless you, e.g., introduce a descendant for `parsys` of your own). However, there is a way to define policies for top-level containers as well.
 
 You can create (or reuse) an  `@AemComponent`-annotated class that manifests a page. This technique is described in the section on [Page properties](component-management/component-structure.md#page-properties-dialogs). Please mind that you don't necessarily need a `@Dialog`, etc. for such a class if you're not going to modify the page properties UI.
 Just `@AemComponent` and then `@AllowedChildren` would be enough.
 
-In `@AllowedChildren` you specify the node name of the appropriate top-level container. To restrict the rule to s specific page or set of pages, you can use _templates_ and _pagePaths_. Note that either _parents_ or _pageResourceTypes_ are not welcome in this case.
+In `@AllowedChildren` you specify the node name of the appropriate top-level container. To restrict the rule to a specific page or set of pages, you can use _templates_ and _pagePaths_. Note that either _parents_ or _pageResourceTypes_ are not welcome in this case.
+
+Note: If you want to define allowed children for a top-level container of a page, you need to ensure that this page has a "policies" file under template definition. Also, for each top-level container, you need to define a policy. This policy can be empty, but it must exist. Otherwise, the editing page initial content may not work.
 
 
 ## Examples

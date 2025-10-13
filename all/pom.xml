@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.exadel.etoolbox</groupId>
         <artifactId>etoolbox-authoring-kit</artifactId>
-        <version>2.6.1</version>
+        <version>2.7.0</version>
     </parent>
 
     <artifactId>etoolbox-authoring-kit-all</artifactId>
@@ -100,6 +100,12 @@
                                     </includes>
                                 </resource>
                                 <resource>
+                                    <directory>${project.parent.basedir}/ui.config/target</directory>
+                                    <includes>
+                                        <include>${project.parent.artifactId}-ui.config-${project.version}.zip</include>
+                                    </includes>
+                                </resource>
+                                <resource>
                                     <directory>${project.parent.basedir}/ui.content/target</directory>
                                     <includes>
                                         <include>${project.parent.artifactId}-ui.content-${project.version}.zip</include>
@@ -109,10 +115,6 @@
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.sonatype.plugins</groupId>
-                <artifactId>nexus-staging-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
@@ -125,17 +127,6 @@
                     <plugin>
                         <groupId>com.day.jcr.vault</groupId>
                         <artifactId>content-package-maven-plugin</artifactId>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-        <profile>
-            <id>deploy</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
                     </plugin>
                 </plugins>
             </build>
