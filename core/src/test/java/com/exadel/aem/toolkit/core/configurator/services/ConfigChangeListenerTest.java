@@ -154,13 +154,12 @@ public class ConfigChangeListenerTest {
         ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
         configChangeListener.onChange(Collections.singletonList(change));
 
-        // Wait for async executor to complete
-        Thread.sleep(500);
+        Thread.sleep(500); // Allow some time for async processing
         Mockito.verify(mockConfig).update(new Hashtable<>(Collections.singletonMap("test.property", "original.value")));
     }
 
     @Test
-    public void shouldIgnoreNonAccountableChanges() throws IOException, NoSuchFieldException {
+    public void shouldIgnoreNonAccountableChanges() throws IOException, NoSuchFieldException, InterruptedException {
         ResourceChange rootChange = new JcrResourceChange(
             ResourceChange.ChangeType.REMOVED,
             ConfiguratorConstants.ROOT_PATH,
@@ -178,11 +177,12 @@ public class ConfigChangeListenerTest {
         ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
         configChangeListener.onChange(changes);
 
+        Thread.sleep(500); // Allow some time for async processing
         Mockito.verify(mockConfigurationAdmin, Mockito.never()).getConfiguration(Mockito.anyString(), Mockito.isNull());
     }
 
     @Test
-    public void shouldHandleConfigurationAdminException() throws IOException, NoSuchFieldException {
+    public void shouldHandleConfigurationAdminException() throws IOException, NoSuchFieldException, InterruptedException {
         String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + NODE_DATA;
         context.create().resource(dataPath);
         context.resourceResolver().commit();
@@ -200,6 +200,7 @@ public class ConfigChangeListenerTest {
         ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
         configChangeListener.onChange(Collections.singletonList(change));
 
+        Thread.sleep(500); // Allow some time for async processing
         Mockito.verify(mockConfigurationAdmin, Mockito.atLeastOnce()).getConfiguration(TEST_PID, null);
     }
 
@@ -219,12 +220,6 @@ public class ConfigChangeListenerTest {
 
         context.create().resource(dataPath, configProps);
         context.resourceResolver().commit();
-
-        ResourceChange change = new JcrResourceChange(
-            ResourceChange.ChangeType.CHANGED,
-            dataPath,
-            false,
-            null);
 
         registerInjectActivateListener(mockConfigurationAdmin);
 
@@ -262,9 +257,8 @@ public class ConfigChangeListenerTest {
             null);
         configChangeListener.onChange(Collections.singletonList(change));
 
-        // Verify that configuration.update() was never called since properties are equal
+        Thread.sleep(500); // Allow some time for async processing
         Mockito.verify(mockConfig, Mockito.never()).update(Mockito.any(Dictionary.class));
-        // Verify that getConfiguration was called to retrieve the config for comparison
         Mockito.verify(mockConfigurationAdmin).getConfiguration(TEST_PID, null);
     }
 

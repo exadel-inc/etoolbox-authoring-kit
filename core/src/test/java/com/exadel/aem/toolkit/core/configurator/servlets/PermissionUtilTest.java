@@ -189,7 +189,7 @@ public class PermissionUtilTest {
             .thenReturn(canWriteToRoot);
         Mockito
             .when(session.hasPermission(Mockito.eq(
-                ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + CONFIG),
+                    ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + CONFIG),
                 Mockito.eq(Session.ACTION_SET_PROPERTY)))
             .thenReturn(canWriteToConfig);
 
