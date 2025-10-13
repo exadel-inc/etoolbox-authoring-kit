@@ -47,6 +47,9 @@ public class ConfigDataSource extends SlingSafeMethodsServlet {
     @Override
     protected void doGet(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) {
         ConfigDefinition config = ConfigDefinition.from(request);
+        if (config == null || !config.isValid()) {
+            return;
+        }
         FieldUtil.processRequest(request, config);
         ValueUtil.processRequest(request, config);
     }
