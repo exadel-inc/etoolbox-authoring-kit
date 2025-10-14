@@ -112,7 +112,7 @@
                             granite:id="config"
                             method="post"
                             foundationForm="true"
-                            action="/conf/etoolbox/authoring-kit/configurator${requestPathInfo.suffix}"
+                            action="${config.action}"
                             style="vertical">
                             <datasource
                                 jcr:primaryType="nt:unstructured"
@@ -129,6 +129,14 @@
                                 sling:resourceType="granite/ui/components/coral/foundation/renderconditions/feature"
                                 feature="eak.configurator.showForm"/>
                         </form>
+                        <list
+                            jcr:primaryType="nt:unstructured"
+                            sling:resourceType="etoolbox-authoring-kit/configurator/components/content/configlist">
+                            <granite:rendercondition
+                                jcr:primaryType="nt:unstructured"
+                                sling:resourceType="granite/ui/components/coral/foundation/renderconditions/feature"
+                                feature="eak.configurator.showList"/>
+                        </list>
                     </items>
                     <granite:data
                         jcr:primaryType="nt:unstructured"
