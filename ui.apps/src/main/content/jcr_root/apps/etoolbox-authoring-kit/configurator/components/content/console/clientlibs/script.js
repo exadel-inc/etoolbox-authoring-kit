@@ -300,7 +300,7 @@
             return false;
         }
 
-        $reloadContainer.get(0).innerHTML = data;
+        $reloadContainer.get(0).innerHTML = $(data).get(0).innerHTML;
         $form = $reloadContainer.find('#config');
         const newChangeCount = $form.length ? Number.parseInt($form.attr('data-change-count'), 10) : 0;
         if (newChangeCount === oldChangeCount && trackChanges) {
@@ -338,7 +338,7 @@
      */
     function requestAsync(type, url, data) {
         return new Promise((resolve, reject) => {
-            return $.ajax({ type, url, data, success: (data, status, xhr) => resolve([data, xhr]) })
+            return $.ajax({ type, url, data, success: (data) => resolve(data) })
                 .fail((xhr, status, e) => reject(e || status));
         });
     }
