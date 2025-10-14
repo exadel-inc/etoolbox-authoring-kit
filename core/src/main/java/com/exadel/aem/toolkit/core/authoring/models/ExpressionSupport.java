@@ -25,7 +25,7 @@ import com.adobe.granite.ui.components.ExpressionResolver;
 import com.exadel.aem.toolkit.api.annotations.injectors.RequestAttribute;
 
 /**
- * Provides Granite EL expression resolve for using in HTL scripts
+ * Provides Granite EL expression resolver for using in HTL scripts
  */
 @Model(adaptables = SlingHttpServletRequest.class)
 public class ExpressionSupport {
