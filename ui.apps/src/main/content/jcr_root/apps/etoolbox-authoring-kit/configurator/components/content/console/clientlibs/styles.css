@@ -25,9 +25,7 @@ hr {
 }
 
 .centered {
-    left: 50%;
     text-align: center;
-    transform: translateX(-50%);
 }
 
 .config-description {
