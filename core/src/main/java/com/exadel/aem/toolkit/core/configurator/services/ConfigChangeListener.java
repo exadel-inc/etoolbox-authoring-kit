@@ -288,7 +288,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
         if (configuration == null) {
             return;
         }
-        Dictionary<String, Object> backup = ConfigUtil.getBackup(configuration);
+        Dictionary<String, Object> backup = ConfigDataUtil.getBackup(configuration);
         boolean shouldErase = backup.size() == 1
             && Session.ACTION_REMOVE.equals(backup.get(ConfiguratorConstants.SUFFIX_BACKUP));
         if (shouldErase) {
@@ -312,13 +312,13 @@ public class ConfigChangeListener implements ResourceChangeListener {
         if (configuration == null) {
             return;
         }
-        if (ConfigUtil.equals(configuration.getProperties(), resource.getValueMap())) {
+        if (ConfigDataUtil.equals(configuration.getProperties(), resource.getValueMap())) {
             LOG.debug("Configuration {} is up to date with user settings", pid);
             return;
         }
-        Dictionary<String, ?> embeddedBackup = ConfigUtil.getBackup(configuration);
+        Dictionary<String, ?> embeddedBackup = ConfigDataUtil.getBackup(configuration);
         if (embeddedBackup.isEmpty()) {
-            embeddedBackup = ConfigUtil.getData(configuration);
+            embeddedBackup = ConfigDataUtil.getData(configuration);
             if (embeddedBackup.isEmpty()) {
                 // There is not a "real" configuration other than default values. When doing a reset, we will need to
                 // erase the properties of a current configuration to bring back the defaults
@@ -363,7 +363,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
         } catch (UnsupportedOperationException e) {
             // Ignored for the sake of using with wcm.io mocks
         }
-        Dictionary<String, Object> updateData = ConfigUtil.toDictionary(data.getValueMap());
+        Dictionary<String, Object> updateData = ConfigDataUtil.toDictionary(data.getValueMap());
         if (!backup.isEmpty()) {
             Enumeration<String> keys = backup.keys();
             while (keys.hasMoreElements()) {

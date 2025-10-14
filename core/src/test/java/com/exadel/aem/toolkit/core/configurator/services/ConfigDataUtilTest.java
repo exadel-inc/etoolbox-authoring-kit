@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
 
-public class ConfigUtilTest {
+public class ConfigDataUtilTest {
 
     @Test
     public void shouldConvertValueMapToDictionary() {
@@ -58,7 +58,7 @@ public class ConfigUtilTest {
 
         ValueMap valueMap = new ValueMapDecorator(sourceMap);
 
-        Dictionary<String, ?> result = ConfigUtil.toDictionary(valueMap);
+        Dictionary<String, ?> result = ConfigDataUtil.toDictionary(valueMap);
         assertNotNull(result);
 
         assertEquals("test value", result.get("string.property"));
@@ -86,7 +86,7 @@ public class ConfigUtilTest {
         sourceMap.put("normal.property", "test value");
         ValueMap valueMap = new ValueMapDecorator(sourceMap);
 
-        Dictionary<String, ?> result = ConfigUtil.toDictionary(valueMap);
+        Dictionary<String, ?> result = ConfigDataUtil.toDictionary(valueMap);
         assertNotNull(result);
 
         assertEquals("test value", result.get("normal.property"));
@@ -103,7 +103,7 @@ public class ConfigUtilTest {
         sourceMap.put("null.property", null);
         ValueMap valueMap = new ValueMapDecorator(sourceMap);
 
-        Dictionary<String, ?> result = ConfigUtil.toDictionary(valueMap);
+        Dictionary<String, ?> result = ConfigDataUtil.toDictionary(valueMap);
         assertNotNull(result);
 
         assertEquals("valid", result.get("string.property"));
@@ -127,7 +127,7 @@ public class ConfigUtilTest {
         dictionary.put("mixed.list", Arrays.asList("string", 42, true));
         dictionary.put("null.list", Arrays.asList("value", null, "another"));
 
-        Map<String, Object> result = ConfigUtil.toMap(dictionary);
+        Map<String, Object> result = ConfigDataUtil.toMap(dictionary);
         assertNotNull(result);
 
         assertEquals("test value", result.get("string.property"));
@@ -151,7 +151,7 @@ public class ConfigUtilTest {
         dictionary.put("service.factoryPid", "com.example.factory");
         dictionary.put("normal.property", "test value");
 
-        Map<String, Object> result = ConfigUtil.toMap(dictionary);
+        Map<String, Object> result = ConfigDataUtil.toMap(dictionary);
         assertNotNull(result);
         assertEquals("test value", result.get("normal.property"));
         assertNull(result.get("service.pid"));
@@ -164,7 +164,7 @@ public class ConfigUtilTest {
         dictionary.put("string.property", "valid");
         dictionary.put("object.property", new Object());
 
-        Map<String, Object> result = ConfigUtil.toMap(dictionary);
+        Map<String, Object> result = ConfigDataUtil.toMap(dictionary);
         assertNotNull(result);
         assertEquals("valid", result.get("string.property"));
         assertNull(result.get("object.property"));
@@ -174,13 +174,13 @@ public class ConfigUtilTest {
     public void shouldHandleEmptyDictionary() {
         Dictionary<String, Object> dictionary = new Hashtable<>();
 
-        Map<String, Object> result = ConfigUtil.toMap(dictionary);
+        Map<String, Object> result = ConfigDataUtil.toMap(dictionary);
         assertNotNull(result);
         assertTrue(result.isEmpty());
 
         dictionary = null;
 
-        result = ConfigUtil.toMap(dictionary);
+        result = ConfigDataUtil.toMap(dictionary);
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -205,9 +205,9 @@ public class ConfigUtilTest {
         map.put("string.array", new String[]{"value1", "value2"});
         map.put("int.list", Arrays.asList(1, 2, Integer.getInteger("3")));
 
-        assertTrue(ConfigUtil.equals(dictionary, map));
+        assertTrue(ConfigDataUtil.equals(dictionary, map));
         map.put("string.array", Arrays.asList("value1", "value2"));
-        assertTrue(ConfigUtil.equals(dictionary, map));
+        assertTrue(ConfigDataUtil.equals(dictionary, map));
     }
 
     @Test
@@ -220,14 +220,14 @@ public class ConfigUtilTest {
         map.put("string.property", "different value");
         map.put("int.property", 42);
 
-        assertFalse(ConfigUtil.equals(dictionary, map));
+        assertFalse(ConfigDataUtil.equals(dictionary, map));
     }
 
     @Test
     public void shouldHandleNullValuesInEquals() {
-        assertTrue(ConfigUtil.equals(null, null));
-        assertFalse(ConfigUtil.equals(new Hashtable<>(), null));
-        assertFalse(ConfigUtil.equals(null, new HashMap<>()));
+        assertTrue(ConfigDataUtil.equals(null, null));
+        assertFalse(ConfigDataUtil.equals(new Hashtable<>(), null));
+        assertFalse(ConfigDataUtil.equals(null, new HashMap<>()));
 
         Dictionary<String, Object> dictionary = new Hashtable<>();
         dictionary.put("string.property", "test value");
@@ -236,7 +236,7 @@ public class ConfigUtilTest {
         map.put("string.property", "test value");
         map.put("null.property", null);
 
-        assertTrue(ConfigUtil.equals(dictionary, map));
+        assertTrue(ConfigDataUtil.equals(dictionary, map));
     }
 
     @Test
@@ -249,7 +249,7 @@ public class ConfigUtilTest {
         Map<String, Object> map = new HashMap<>();
         map.put("string.property", "test value");
 
-        assertTrue(ConfigUtil.equals(dictionary, map));
+        assertTrue(ConfigDataUtil.equals(dictionary, map));
     }
 
     @Test
@@ -260,14 +260,14 @@ public class ConfigUtilTest {
         Map<String, Object> map = new HashMap<>();
         map.put("array.property", Arrays.asList("value1", "value2"));
 
-        assertTrue(ConfigUtil.equals(dictionary, map));
+        assertTrue(ConfigDataUtil.equals(dictionary, map));
     }
 
     @Test
     public void shouldExtractBackupValues() {
         Configuration configuration = createMockConfiguration();
 
-        Dictionary<String, Object> result = ConfigUtil.getBackup(configuration);
+        Dictionary<String, Object> result = ConfigDataUtil.getBackup(configuration);
         assertNotNull(result);
 
         assertEquals("backup value 1", result.get("property1"));
@@ -281,7 +281,7 @@ public class ConfigUtilTest {
     public void shouldExtractValidData() {
         Configuration configuration = createMockConfiguration();
 
-        Dictionary<String, Object> result = ConfigUtil.getData(configuration);
+        Dictionary<String, Object> result = ConfigDataUtil.getData(configuration);
         assertNotNull(result);
 
         assertEquals("test value", result.get("normal.property"));

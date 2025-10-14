@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.configurator.services;
+package com.exadel.aem.toolkit.core.configurator.servlets;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,15 +28,15 @@ import org.osgi.service.component.annotations.Deactivate;
 
 import com.exadel.aem.toolkit.core.configurator.models.ConfigAccess;
 import com.exadel.aem.toolkit.core.configurator.models.ConfigDefinition;
-import com.exadel.aem.toolkit.core.configurator.servlets.PermissionUtil;
+import com.exadel.aem.toolkit.core.configurator.utils.PermissionUtil;
 import com.exadel.aem.toolkit.core.configurator.utils.RequestUtil;
 
 /**
  * Provides feature flag services that determine whether certain UI elements of the {@code EToolbox Configurator}
  * are to be rendered in the current request context
  */
-@Component(service = RenderFeatureProvider.class, immediate = true)
-public class RenderFeatureProvider {
+@Component(service = RenderFeatures.class, immediate = true)
+public class RenderFeatures {
 
     private final List<ServiceRegistration<Feature>> registrations = new ArrayList<>();
     private BundleContext context;

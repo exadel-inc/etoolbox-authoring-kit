@@ -19,12 +19,12 @@ import org.junit.runners.Suite.SuiteClasses;
 
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformationTest;
 import com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListenerTest;
-import com.exadel.aem.toolkit.core.configurator.services.ConfigUtilTest;
+import com.exadel.aem.toolkit.core.configurator.services.ConfigDataUtilTest;
 import com.exadel.aem.toolkit.core.configurator.servlets.ConfigDataSourceTest;
 import com.exadel.aem.toolkit.core.configurator.servlets.FieldUtilTest;
-import com.exadel.aem.toolkit.core.configurator.servlets.PermissionUtilTest;
 import com.exadel.aem.toolkit.core.configurator.servlets.ReplicationServletTest;
 import com.exadel.aem.toolkit.core.configurator.servlets.ValueUtilTest;
+import com.exadel.aem.toolkit.core.configurator.utils.PermissionUtilTest;
 import com.exadel.aem.toolkit.core.injectors.ChildInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.ChildrenInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.EToolboxListInjectorTest;
@@ -82,7 +82,7 @@ import com.exadel.aem.toolkit.core.policymanagement.filters.TopLevelPolicyFilter
 
     ConfigChangeListenerTest.class,
     ConfigDataSourceTest.class,
-    ConfigUtilTest.class,
+    ConfigDataUtilTest.class,
     FieldUtilTest.class,
     PermissionUtilTest.class,
     ReplicationServletTest.class,

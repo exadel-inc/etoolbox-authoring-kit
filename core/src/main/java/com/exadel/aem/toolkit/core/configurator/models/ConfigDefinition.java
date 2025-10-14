@@ -41,7 +41,7 @@ import com.adobe.granite.ui.components.ExpressionCustomizer;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
-import com.exadel.aem.toolkit.core.configurator.servlets.PermissionUtil;
+import com.exadel.aem.toolkit.core.configurator.utils.PermissionUtil;
 import com.exadel.aem.toolkit.core.configurator.utils.RequestUtil;
 
 

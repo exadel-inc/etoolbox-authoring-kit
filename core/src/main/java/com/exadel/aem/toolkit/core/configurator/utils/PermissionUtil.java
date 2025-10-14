@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.configurator.servlets;
+package com.exadel.aem.toolkit.core.configurator.utils;
 
 import java.util.Objects;
 import javax.jcr.PathNotFoundException;
@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
-import com.exadel.aem.toolkit.core.configurator.utils.RequestUtil;
 
 /**
  * Contains utility methods related to permission checking in the context of the {@code EToolbox Configurator}

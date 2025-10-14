@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 import com.adobe.granite.ui.components.ExpressionCustomizer;
 
 import com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener;
-import com.exadel.aem.toolkit.core.configurator.servlets.PermissionUtil;
+import com.exadel.aem.toolkit.core.configurator.utils.PermissionUtil;
 import com.exadel.aem.toolkit.core.configurator.utils.RequestUtil;
 
 /**
