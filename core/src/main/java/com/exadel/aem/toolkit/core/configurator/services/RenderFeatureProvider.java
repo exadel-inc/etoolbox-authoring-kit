@@ -39,6 +39,7 @@ import com.exadel.aem.toolkit.core.configurator.utils.RequestUtil;
 public class RenderFeatureProvider {
 
     private final List<ServiceRegistration<Feature>> registrations = new ArrayList<>();
+    private BundleContext context;
 
     /**
      * Processes OSGi component activation by registering feature flag services
@@ -46,40 +47,36 @@ public class RenderFeatureProvider {
      */
     @Activate
     private void activate(BundleContext context) {
-        registrations.add(newFeatureRegistration(
-            context,
+        this.context = context;
+        addFeature(
             "eak.configurator.canBrowse",
             ec -> ec.getRequest() != null
                 && ec.getRequest().getRequestURI().contains("/etoolbox/config.html")
                 && ConfigAccess.from(ec.getRequest()).isGranted()
                 && ConfigDefinition.from(ec.getRequest()).isValid()
-        ));
-        registrations.add(newFeatureRegistration(
-            context,
+        );
+        addFeature(
             "eak.configurator.canModify",
             ec -> ec.getRequest() != null
                 && ConfigAccess.from(ec.getRequest()).isGranted()
                 && ConfigDefinition.from(ec.getRequest()).isValid()
-        ));
-        registrations.add(newFeatureRegistration(
-            context,
+        );
+        addFeature(
             "eak.configurator.canReplicate",
             ec -> ec.getRequest() != null
                 && !ec.getRequest().getRequestURI().contains("/etoolbox/localsettings.html")
                 && ec.getFeatures().isEnabled("eak.configurator.canModify")
                 && PermissionUtil.hasReplicatePermission(ec.getRequest())
-        ));
-        registrations.add(newFeatureRegistration(
-            context,
+        );
+        addFeature(
             "eak.configurator.showForm",
             ec -> ConfigAccess.from(ec.getRequest()).isGranted()
-        ));
-        registrations.add(newFeatureRegistration(
-            context,
+        );
+        addFeature(
             "eak.configurator.showList",
             ec -> ConfigAccess.from(ec.getRequest()).isGranted()
                 && StringUtils.isEmpty(RequestUtil.getConfigId(ec.getRequest()))
-        ));
+        );
     }
 
     /**
@@ -93,16 +90,13 @@ public class RenderFeatureProvider {
 
     /**
      * Creates and registers a feature flag service with the specified name and enabling predicate
-     * @param context   The current bundle context
      * @param name      The name of the feature flag
      * @param predicate The routine that determines whether the feature is enabled in the current execution context
-     * @return The {@link ServiceRegistration} instance that represents the registered service
      */
-    private static ServiceRegistration<Feature> newFeatureRegistration(
-        BundleContext context,
+    private void addFeature(
         String name,
         Predicate<ExecutionContext> predicate) {
-        return context.registerService(Feature.class, newFeature(name, predicate), null);
+        registrations.add(context.registerService(Feature.class, newFeature(name, predicate), null));
     }
 
     /**
