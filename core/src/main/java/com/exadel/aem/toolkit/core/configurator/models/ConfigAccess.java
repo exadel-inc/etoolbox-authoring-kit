@@ -104,8 +104,8 @@ public enum ConfigAccess {
         }
 
         String configId = RequestUtil.getConfigId(request);
-        if (StringUtils.isEmpty(configId) && !PermissionUtil.hasGlobalModifyPermission(request)) {
-            return NO_CONFIG;
+        if (StringUtils.isEmpty(configId)) {
+            return  PermissionUtil.hasGlobalModifyPermission(request) ? GRANTED : NO_CONFIG;
         }
 
         try {

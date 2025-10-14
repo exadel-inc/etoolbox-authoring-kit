@@ -71,6 +71,7 @@ public class RenderFeatures {
         addFeature(
             "eak.configurator.showForm",
             ec -> ConfigAccess.from(ec.getRequest()).isGranted()
+                && !StringUtils.isEmpty(RequestUtil.getConfigId(ec.getRequest()))
         );
         addFeature(
             "eak.configurator.showList",

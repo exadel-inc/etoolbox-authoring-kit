@@ -209,8 +209,10 @@ public class ConfigDefinition {
             : StringUtils.substringAfterLast(request.getRequestURI(), ".html/");
         if (StringUtils.isEmpty(configId)) {
             LOG.debug("No config ID specified in the request");
+            customizer.setVariable(KEY, EMPTY);
             return EMPTY;
         }
+
         result = from(configId);
 
         String existingConfigPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId;
