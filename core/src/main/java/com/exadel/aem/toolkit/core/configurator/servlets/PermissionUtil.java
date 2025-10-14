@@ -22,6 +22,7 @@ import javax.jcr.security.Privilege;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -119,23 +120,29 @@ public class PermissionUtil {
      * @return True or false
      */
     public static boolean hasReplicatePermission(HttpServletRequest request) {
-        Session session = RequestUtil.getSession(request);
+        ResourceResolver resolver = RequestUtil.getResourceResolver(request);
+        Session session = resolver != null ? resolver.adaptTo(Session.class) : null;
+        if (session == null) {
+            LOG.error(ERROR_PERMISSIONS_FAILURE);
+            return false;
+        }
         String configId = RequestUtil.getConfigId(request);
         if (StringUtils.isBlank(configId)) {
             return false;
         }
         String resourcePath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId;
+        if (resolver.getResource(resourcePath) == null) {
+            resourcePath = ConfiguratorConstants.ROOT_PATH;
+        }
         try {
-            AccessControlManager acm = Objects.requireNonNull(session).getAccessControlManager();
+            AccessControlManager acm = session.getAccessControlManager();
             Privilege[] userPrivileges = acm.getPrivileges(resourcePath);
             for (Privilege privilege : userPrivileges) {
                 if (StringUtils.equalsAny(privilege.getName(), "crx:replicate", "jcr:all", Privilege.JCR_ALL)) {
                     return true;
                 }
             }
-        } catch (PathNotFoundException e) {
-            LOG.debug(ERROR_CONFIG_NOT_FOUND, resourcePath);
-        } catch (RepositoryException | NullPointerException e) {
+        } catch (RepositoryException e) {
             LOG.error(ERROR_PERMISSIONS_FAILURE, e);
         }
         return false;

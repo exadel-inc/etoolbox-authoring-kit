@@ -50,6 +50,7 @@ import com.exadel.aem.toolkit.core.configurator.utils.RequestUtil;
  * with metadata usefult to build the {@code EToolbox Configurator} user experience
  * @see ConfigAttribute
  */
+@SuppressWarnings("unused")
 public class ConfigDefinition {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigDefinition.class);
@@ -67,6 +68,7 @@ public class ConfigDefinition {
     private boolean factoryInstance;
     private boolean modified;
     private boolean published;
+    private boolean replicable;
 
     /**
      * Default (instantiation-restricting) constructor
@@ -74,6 +76,10 @@ public class ConfigDefinition {
     private ConfigDefinition() {
     }
 
+    /**
+     * Gets the action URL for the configuration to be used in a web form
+     * @return The string value; or null if this instance is empty
+     */
     public String getAction() {
         if (!isValid()) {
             return null;
@@ -81,6 +87,10 @@ public class ConfigDefinition {
         return ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + id;
     }
 
+    /**
+     * Gets the cleanup action URL for the configuration to be used in a web form
+     * @return The string value; or null if this instance is empty
+     */
     public String getCleanupAction() {
         return canCleanup ? getAction() : getAction() + "/data";
     }
@@ -158,6 +168,14 @@ public class ConfigDefinition {
     }
 
     /**
+     * Gets whether the current user has permissions to replicate the configuration data
+     * @return True or false
+     */
+    public boolean isReplicable() {
+        return replicable;
+    }
+
+    /**
      * Gets whether this instance is not data-empty
      * @return True or false
      */
@@ -201,6 +219,7 @@ public class ConfigDefinition {
             .orElse(null);
 
         result.canCleanup = !PermissionUtil.hasOverridingPermissions(request);
+        result.replicable = PermissionUtil.hasReplicatePermission(request);
         result.modified = existingConfig != null
             && existingConfig.getChild(ConfiguratorConstants.NN_DATA) != null;
         result.published = existingConfig != null

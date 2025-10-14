@@ -18,36 +18,6 @@
     let loadedFormValues;
 
     /* --------------
-       State functions
-       -------------- */
-
-    /**
-     * Gets if the configuration can be replicated according to the form metadata
-     * @returns {boolean}
-     */
-    function canReplicate() {
-        return $('#button-publish').length > 0;
-    }
-
-    /**
-     * Gets if the configuration has unsaved modifications according to the form metadata
-     * @param {JQuery} $form
-     * @returns {boolean}
-     */
-    function isModified($form) {
-        return $form.attr('data-modified') === 'true';
-    }
-
-    /**
-     * Gets if the configuration is published according to the form metadata
-     * @param {JQuery} $form
-     * @returns {boolean}
-     */
-    function isPublished($form) {
-        return $form.attr('data-published') === 'true';
-    }
-
-    /* --------------
        Data functions
        -------------- */
 
@@ -81,11 +51,15 @@
 
     /**
      * Resets the configuration to a previously stored initial value set
+     * @param {boolean} keepNode
      * @returns {Promise}
      */
-    async function reset() {
+    async function reset(keepNode = false) {
         foundationUi.wait();
-        const configPath = $('#config').attr('data-cleanup-action');
+        let configPath = $('#config').attr('data-cleanup-action');
+        if (!configPath.endsWith('/data') && keepNode) {
+            configPath += '/data';
+        }
         try {
             await requestAsync('POST', configPath, { ':operation': 'delete' });
         } catch (e) {
@@ -146,60 +120,8 @@
         return await replicate('unpublish');
     }
 
-    /* --------
-       UI utils
-       -------- */
-
-    /**
-     * Adjusts the states of action buttons according to the form metadata
-     */
-    function adjustButtonStates() {
-        const $form = $('#config');
-        if ($form.find('[name]').length === 0) {
-            $('#button-save').attr('disabled', true);
-        } else {
-            const currentFormValues = getFormValues($form);
-            $('#button-save').attr('disabled', formValuesEqual(loadedFormValues, currentFormValues));
-        }
-        const isMod = isModified($form);
-        $('#button-reset').attr('disabled', !isMod);
-        $('#button-publish').attr('disabled', !isMod);
-        $('#button-unpublish').attr('disabled', !isPublished($form));
-    }
-
-    /**
-     * Extracts a meaningful error message from an error object
-     * @param e {any}
-     * @returns {string}
-     */
-    function getErrorMessage(e) {
-        const message = (e.responseJSON && e.responseJSON.message) || e.message || e.statusText || e;
-        return message === 'error' ? 'Network error' : message;
-    }
-
-    /**
-     * Shows a prompt dialog and returns a promise resolved with the action taken by the user
-     * @param {string} title
-     * @param {string} message
-     * @returns {Promise}
-     */
-    function prompt(title, message) {
-        return new Promise((resolve) => {
-            foundationUi.prompt(
-                title,
-                message,
-                'default',
-                [
-                    { id: 'yes', text: 'Yes', primary: true },
-                    { id: 'no', text: 'No' }
-                ],
-                (action) => resolve(action)
-            );
-        });
-    }
-
     /* ----------
-       Form utils
+       Data utils
        ---------- */
 
     /**
@@ -289,9 +211,6 @@
             return false;
         }
 
-        // This is needed to clear the "dirty" state of the form
-        // $form.trigger('foundation-form-submit-callback', xhr);
-
         loadedFormValues = getFormValues($form);
         adjustButtonStates();
         return true;
@@ -322,6 +241,58 @@
         return new Promise((resolve, reject) => {
             return $.ajax({ type, url, data, success: (data) => resolve(data) })
                 .fail((xhr, status, e) => reject(e || status));
+        });
+    }
+
+    /* --------
+       UI utils
+       -------- */
+
+    /**
+     * Adjusts the states of action buttons according to the form metadata
+     */
+    function adjustButtonStates() {
+        const $form = $('#config');
+        if ($form.find('[name]').length === 0) {
+            $('#button-save').attr('disabled', true);
+        } else {
+            const currentFormValues = getFormValues($form);
+            $('#button-save').attr('disabled', formValuesEqual(loadedFormValues, currentFormValues));
+        }
+        const isNotModified = $form.attr('data-modified') !== 'true';
+        $('#button-reset').attr('disabled', isNotModified);
+        $('#button-publish').attr('disabled', isNotModified);
+        $('#button-unpublish').attr('disabled', $form.attr('data-published') !== 'true');
+    }
+
+    /**
+     * Extracts a meaningful error message from an error object
+     * @param e {any}
+     * @returns {string}
+     */
+    function getErrorMessage(e) {
+        const message = (e.responseJSON && e.responseJSON.message) || e.message || e.statusText || e;
+        return message === 'error' ? 'Network error' : message;
+    }
+
+    /**
+     * Shows a prompt dialog and returns a promise resolved with the action taken by the user
+     * @param {string} title
+     * @param {string} message
+     * @returns {Promise}
+     */
+    function prompt(title, message) {
+        return new Promise((resolve) => {
+            foundationUi.prompt(
+                title,
+                message,
+                'default',
+                [
+                    { id: 'yes', text: 'Yes', primary: true },
+                    { id: 'no', text: 'No' }
+                ],
+                (action) => resolve(action)
+            );
         });
     }
 
@@ -362,13 +333,16 @@
      */
     async function onResetClick() {
         const $form = $('#config');
-        if (isPublished($form) && canReplicate()) {
+        let keepNode = false;
+        if ($form.attr('data-published') === 'true' && $form.attr('data-replicable') === 'true') {
             const action = await prompt('Published configuration', 'This configuration is published. Do you want to unpublish it before resetting?');
             if (action === 'yes') {
                 await unpublish();
+            } else {
+                keepNode = true;
             }
         }
-        await reset();
+        await reset(keepNode);
     }
 
     /**
@@ -384,7 +358,7 @@
     async function onUnpublishClick() {
         let action;
         const $form = $('#config');
-        if (isModified($form)) {
+        if ($form.attr('data-modified') === 'true') {
             action = await prompt('Unpublished configuration', 'Do you want to also reset this configuration on the current instance?');
         }
         await unpublish();
