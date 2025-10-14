@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function (window, document, $) {
+(function (window, document, $, ns) {
     'use strict';
 
     const foundationUi = $(window).adaptTo('foundation-ui');
@@ -165,24 +165,6 @@
         $('#button-reset').attr('disabled', !isMod);
         $('#button-publish').attr('disabled', !isMod);
         $('#button-unpublish').attr('disabled', !isPublished($form));
-    }
-
-    /**
-     * Creates a debounced version of a function
-     * @param func {function(...[*]): void} The function to debounce
-     * @param wait {number} The debounce wait time in milliseconds
-     * @returns {(function(...[*]): void)|*}
-     */
-    function debounce(func, wait) {
-        let timeout;
-        return (...args) => {
-            const later = () => {
-                clearTimeout(timeout);
-                func.apply(this, args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
     }
 
     /**
@@ -415,9 +397,9 @@
         .off('.eak')
         .one('foundation-contentloaded.eak', onContentLoaded)
         .on('foundation-field-change.eak', adjustButtonStates)
-        .on('keyup.eak', 'input,textarea', debounce(adjustButtonStates, 500))
+        .on('keyup.eak', 'input,textarea', ns.debounce(adjustButtonStates, 500))
         .on('click.eak', '#button-publish', onPublishClick)
         .on('click.eak', '#button-reset', onResetClick)
         .on('click.eak', '#button-save', onSaveClick)
         .on('click.eak', '#button-unpublish', onUnpublishClick);
-})(window, document, Granite.$);
+})(window, document, Granite.$, Granite.EAKUtils);
