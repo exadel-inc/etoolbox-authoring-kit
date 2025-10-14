@@ -82,8 +82,6 @@ public class ConfigDataSourceTest {
         String configId = "test.config.pid";
         context.requestPathInfo().setSuffix(CoreConstants.SEPARATOR_SLASH + configId);
 
-        ConfigurationAdmin mockConfigAdmin = Mockito.mock(ConfigurationAdmin.class);
-
         context.registerInjectActivateService(
             new ConfigChangeListener(),
             Collections.singletonMap("enabled", true));
