@@ -26,6 +26,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.metatype.MetaTypeService;
 import com.adobe.granite.ui.components.ds.DataSource;
 import io.wcm.testing.mock.aem.junit.AemContext;
@@ -38,6 +41,7 @@ import com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener;
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigDataSourceTest {
 
+    private static final String PID_SUFFIX = "/test.config.pid";
     @Rule
     public AemContext context = AemContextFactory.newInstance(ResourceResolverType.JCR_OAK);
 
@@ -52,7 +56,7 @@ public class ConfigDataSourceTest {
     }
 
     @Test
-    public void shouldHandleNoConfigurationSpecified() throws IOException {
+    public void shouldHandleNoConfigurationSpecified() {
         for (String suffix : new String[]{null, StringUtils.EMPTY, CoreConstants.SEPARATOR_SLASH, "/ "}) {
             context.requestPathInfo().setSuffix(suffix);
 
@@ -67,10 +71,12 @@ public class ConfigDataSourceTest {
 
     @Test
     public void shouldHandleDisabledChangeListener() throws IOException {
-        context.requestPathInfo().setSuffix("/test.config.pid");
+        setUpBundleContext(StringUtils.stripStart(PID_SUFFIX, CoreConstants.SEPARATOR_SLASH));
+        context.requestPathInfo().setSuffix(PID_SUFFIX);
 
         context.registerService(new ConfigChangeListener());
         ConfigDataSource configDataSource = context.registerInjectActivateService(new ConfigDataSource());
+
         configDataSource.doGet(context.request(), context.response());
 
         DataSource dataSource = (DataSource) context.request().getAttribute(DataSource.class.getName());
@@ -78,17 +84,38 @@ public class ConfigDataSourceTest {
     }
 
     @Test
-    public void shouldHandleMissingConfig() throws IOException, NoSuchFieldException {
-        String configId = "test.config.pid";
-        context.requestPathInfo().setSuffix(CoreConstants.SEPARATOR_SLASH + configId);
+    public void shouldHandleMissingConfig() throws IOException {
+        setUpBundleContext(StringUtils.stripStart(PID_SUFFIX, CoreConstants.SEPARATOR_SLASH));
+        context.requestPathInfo().setSuffix(PID_SUFFIX);
 
         context.registerInjectActivateService(
             new ConfigChangeListener(),
             Collections.singletonMap("enabled", true));
         ConfigDataSource configDataSource = context.registerInjectActivateService(new ConfigDataSource());
+
         configDataSource.doGet(context.request(), context.response());
 
         DataSource dataSource = (DataSource) context.request().getAttribute(DataSource.class.getName());
         assertNull(dataSource);
+    }
+
+    private void setUpBundleContext(String configId) throws IOException {
+        ConfigurationAdmin mockConfigAdmin = Mockito.mock(ConfigurationAdmin.class);
+        Mockito.when(mockConfigAdmin.getConfiguration(Mockito.eq(configId), Mockito.isNull())).thenReturn(null);
+
+        MetaTypeService mockMetaTypeService = Mockito.mock(MetaTypeService.class);
+
+        BundleContext mockBundleContext = Mockito.mock(BundleContext.class);
+        @SuppressWarnings("unchecked")
+        ServiceReference<ConfigurationAdmin> mockConfigAdminRef = Mockito.mock(ServiceReference.class);
+        Mockito.when(mockBundleContext.getServiceReference(Mockito.eq(ConfigurationAdmin.class))).thenReturn(mockConfigAdminRef);
+        Mockito.when(mockBundleContext.getService(Mockito.eq(mockConfigAdminRef))).thenReturn(mockConfigAdmin);
+
+        @SuppressWarnings("unchecked")
+        ServiceReference<MetaTypeService> mockMetaTypeServiceRef = Mockito.mock(ServiceReference.class);
+        Mockito.when(mockBundleContext.getServiceReference(Mockito.eq(MetaTypeService.class))).thenReturn(mockMetaTypeServiceRef);
+        Mockito.when(mockBundleContext.getService(Mockito.eq(mockMetaTypeServiceRef))).thenReturn(mockMetaTypeService);
+
+        context.request().setAttribute(BundleContext.class.getName(), mockBundleContext);
     }
 }
