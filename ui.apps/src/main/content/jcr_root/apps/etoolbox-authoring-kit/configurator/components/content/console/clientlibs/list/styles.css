@@ -1,0 +1,80 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 0.5rem 0;
+}
+
+hr:first-child {
+    display: none;
+}
+
+#config-list {
+    background-color: white;
+    padding: 0.75rem 0.5rem;
+    width: 50%;
+}
+
+.config {
+    padding-right: 4rem;
+    position: relative;
+}
+
+.config.child {
+    padding-left: 2.5rem;
+}
+
+.config.child coral-icon {
+    color: #999;
+    height: 1rem;
+    width: 1rem;
+}
+
+.caption, .pid {
+    margin-left: 0.25rem;
+}
+
+.caption {
+    font-size: 0.95rem;
+}
+
+.caption + .pid {
+    margin-top: 0.25rem;
+}
+
+.pid {
+    font-style: italic;
+}
+
+.title {
+    color: #444;
+    font-weight: bold;
+    margin-right: 0.125rem;
+}
+
+.description {
+    color: #666;
+    font-size: 0.85rem;
+}
+
+.factory-label {
+    color: #999;
+    font-size: 0.75rem;
+    font-style: italic;
+    position: absolute;
+    right: 0.5rem;
+    top: 0.5rem;
+}

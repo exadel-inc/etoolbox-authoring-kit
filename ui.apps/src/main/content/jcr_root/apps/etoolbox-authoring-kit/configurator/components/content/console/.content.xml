@@ -10,15 +10,24 @@
                  sling:resourceType="granite/ui/components/shell/page"
                  sling:vanityPath="[/etoolbox/config,/etoolbox/settings,/etoolbox/localsettings]">
         <head jcr:primaryType="nt:unstructured">
-            <clientlibs
+            <clientlibs-form
                     jcr:primaryType="nt:unstructured"
                     sling:resourceType="granite/ui/components/coral/foundation/includeclientlibs"
-                    categories="[eak.config.console]">
+                    categories="[eak.config.form]">
                 <granite:rendercondition
                         jcr:primaryType="nt:unstructured"
                         sling:resourceType="granite/ui/components/coral/foundation/renderconditions/feature"
                         feature="eak.configurator.showForm"/>
-            </clientlibs>
+            </clientlibs-form>
+            <clientlibs-list
+                jcr:primaryType="nt:unstructured"
+                sling:resourceType="granite/ui/components/coral/foundation/includeclientlibs"
+                categories="[eak.config.list]">
+                <granite:rendercondition
+                    jcr:primaryType="nt:unstructured"
+                    sling:resourceType="granite/ui/components/coral/foundation/renderconditions/feature"
+                    feature="eak.configurator.showList"/>
+            </clientlibs-list>
         </head>
         <title jcr:primaryType="nt:unstructured"
                sling:resourceType="granite/ui/components/coral/foundation/text"
@@ -137,7 +146,8 @@
                         </form>
                         <list
                             jcr:primaryType="nt:unstructured"
-                            sling:resourceType="etoolbox-authoring-kit/configurator/components/content/configlist">
+                            sling:resourceType="etoolbox-authoring-kit/configurator/components/content/configlist"
+                            granite:id="config-list">
                             <granite:rendercondition
                                 jcr:primaryType="nt:unstructured"
                                 sling:resourceType="granite/ui/components/coral/foundation/renderconditions/feature"
