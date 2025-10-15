@@ -26,14 +26,15 @@ import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 
-import com.exadel.aem.toolkit.core.configurator.models.ConfigAccess;
-import com.exadel.aem.toolkit.core.configurator.models.ConfigDefinition;
+import com.exadel.aem.toolkit.core.configurator.models.internal.ConfigAccess;
+import com.exadel.aem.toolkit.core.configurator.models.internal.ConfigDefinition;
 import com.exadel.aem.toolkit.core.configurator.utils.PermissionUtil;
 import com.exadel.aem.toolkit.core.configurator.utils.RequestUtil;
 
 /**
  * Provides feature flag services that determine whether certain UI elements of the {@code EToolbox Configurator}
  * are to be rendered in the current request context
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
  */
 @Component(service = RenderFeatures.class, immediate = true)
 public class RenderFeatures {
@@ -43,11 +44,11 @@ public class RenderFeatures {
 
     /**
      * Processes OSGi component activation by registering feature flag services
-     * @param context The current bundle context
+     * @param bundleContext The current {@link BundleContext}
      */
     @Activate
-    private void activate(BundleContext context) {
-        this.context = context;
+    private void activate(BundleContext bundleContext) {
+        context = bundleContext;
         addFeature(
             "eak.configurator.canBrowse",
             ec -> ec.getRequest() != null

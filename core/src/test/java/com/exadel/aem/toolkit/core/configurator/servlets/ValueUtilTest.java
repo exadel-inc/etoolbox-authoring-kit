@@ -36,8 +36,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import com.exadel.aem.toolkit.core.AemContextFactory;
-import com.exadel.aem.toolkit.core.configurator.models.ConfigAttribute;
-import com.exadel.aem.toolkit.core.configurator.models.ConfigDefinition;
+import com.exadel.aem.toolkit.core.configurator.models.internal.ConfigAttribute;
+import com.exadel.aem.toolkit.core.configurator.models.internal.ConfigDefinition;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ValueUtilTest {

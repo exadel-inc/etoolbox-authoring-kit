@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.configurator.models;
+package com.exadel.aem.toolkit.core.configurator.models.internal;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,6 +38,10 @@ import org.osgi.service.metatype.ObjectClassDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Represents a list of OSGi configurations known to the system
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own code
+ */
 @Model(adaptables = SlingHttpServletRequest.class)
 public class ConfigList {
 
@@ -52,6 +55,10 @@ public class ConfigList {
 
     private List<ConfigDefinition> configurations;
 
+    /**
+     * Gets the list of configurations known to the system
+     * @return List of {@link ConfigDefinition} instances
+     */
     public List<ConfigDefinition> getConfigurations() {
         if (configurations != null) {
             return configurations;
@@ -73,7 +80,11 @@ public class ConfigList {
         return configurations;
     }
 
-    @Nonnull
+    /**
+     * Creates configuration definitions by scanning OSGi MetaType information of all bundles in the system
+     * @param context The current {@link BundleContext}
+     * @return Map of configuration definitions, keyed by PID
+     */
     private Map<String, ConfigDefinition> createConfigDefinitions(BundleContext context) {
         Map<String, ConfigDefinition> configDefsMap = new HashMap<>();
         for (Bundle bundle : context.getBundles()) {
@@ -95,6 +106,10 @@ public class ConfigList {
         return configDefsMap;
     }
 
+    /**
+     * Assigns existing configurations to the definitions created by {@link #createConfigDefinitions(BundleContext)}
+     * @param configDefsMap Map of configuration definitions, keyed by PID
+     */
     private void assignExistingConfigs(Map<String, ConfigDefinition> configDefsMap) {
         Configuration[] listedConfigs = null;
         try {

@@ -23,7 +23,7 @@ import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
 import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Component;
 
-import com.exadel.aem.toolkit.core.configurator.models.ConfigDefinition;
+import com.exadel.aem.toolkit.core.configurator.models.internal.ConfigDefinition;
 
 /**
  * Implements a servlet that provides data source for the {@code EToolbox Configurator} interface

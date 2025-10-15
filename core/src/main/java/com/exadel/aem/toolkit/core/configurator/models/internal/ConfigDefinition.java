@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.configurator.models;
+package com.exadel.aem.toolkit.core.configurator.models.internal;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +46,7 @@ import com.exadel.aem.toolkit.core.configurator.utils.RequestUtil;
 /**
  * Represents a configuration definition, i.e., a set of configuration attributes united by the same PID together
  * with metadata usefult to build the {@code EToolbox Configurator} user experience
+ * <p><b>Note</b>: This class is not a part of the public API and is subject to change. Do not use it in your own code
  * @see ConfigAttribute
  */
 public class ConfigDefinition {

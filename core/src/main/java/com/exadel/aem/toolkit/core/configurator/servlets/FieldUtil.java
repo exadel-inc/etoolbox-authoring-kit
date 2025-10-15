@@ -37,8 +37,8 @@ import com.adobe.granite.ui.components.ds.ValueMapResource;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
-import com.exadel.aem.toolkit.core.configurator.models.ConfigAttribute;
-import com.exadel.aem.toolkit.core.configurator.models.ConfigDefinition;
+import com.exadel.aem.toolkit.core.configurator.models.internal.ConfigAttribute;
+import com.exadel.aem.toolkit.core.configurator.models.internal.ConfigDefinition;
 
 /**
  * Provides utility methods to create dialog fields for configuration attributes
