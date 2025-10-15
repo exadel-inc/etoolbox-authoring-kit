@@ -18,6 +18,7 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 import com.exadel.aem.toolkit.api.annotations.meta.StringTransformationTest;
+import com.exadel.aem.toolkit.core.configurator.models.internal.ConfigDefinitionTest;
 import com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListenerTest;
 import com.exadel.aem.toolkit.core.configurator.services.ConfigDataUtilTest;
 import com.exadel.aem.toolkit.core.configurator.servlets.ConfigDataSourceTest;
@@ -83,6 +84,7 @@ import com.exadel.aem.toolkit.core.policymanagement.filters.TopLevelPolicyFilter
     ConfigChangeListenerTest.class,
     ConfigDataSourceTest.class,
     ConfigDataUtilTest.class,
+    ConfigDefinitionTest.class,
     FieldUtilTest.class,
     PermissionUtilTest.class,
     ReplicationServletTest.class,

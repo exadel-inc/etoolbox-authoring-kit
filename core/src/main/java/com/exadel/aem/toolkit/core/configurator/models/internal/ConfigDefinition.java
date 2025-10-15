@@ -262,7 +262,11 @@ public class ConfigDefinition {
             return EMPTY;
         }
 
-        result = from(pid);
+        BundleContext context = (BundleContext) request.getAttribute(BundleContext.class.getName());
+        if (context == null) {
+            context = FrameworkUtil.getBundle(ConfigDefinition.class).getBundleContext();
+        }
+        result = from(pid, context);
 
         String existingConfigPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + pid;
         Resource existingConfig = Optional.ofNullable(RequestUtil.getResourceResolver(request))
@@ -284,15 +288,14 @@ public class ConfigDefinition {
      * Called from {@link ConfigDefinition#from(HttpServletRequest)} to create a {@code ConfigDefinition} instance based
      * on the configuration PID
      * @param pid The configuration PID. A non-blank value is expected
+     * @param context The {@link BundleContext} instance
      * @return The {@code ConfigDefinition} instance; or an empty instance if the configuration with the specified PID
      * does not exist
      */
-    private static ConfigDefinition from(String pid) {
-        BundleContext context;
+    private static ConfigDefinition from(String pid, BundleContext context) {
         ConfigurationAdmin configurationAdmin;
         MetaTypeService metaTypeService;
         try {
-            context = Objects.requireNonNull(FrameworkUtil.getBundle(ConfigDefinition.class).getBundleContext());
             configurationAdmin = Objects.requireNonNull(context.getService(context.getServiceReference(ConfigurationAdmin.class)));
             metaTypeService = Objects.requireNonNull(context.getService(context.getServiceReference(MetaTypeService.class)));
         } catch (RuntimeException e) {
@@ -331,8 +334,8 @@ public class ConfigDefinition {
     }
 
     /**
-     * Called from {@link ConfigDefinition#from(String)} to create a {@code ConfigDefinition} instance based on the
-     * {@link Configuration} and {@link ObjectClassDefinition} objects
+     * Called from {@link ConfigDefinition#from(String, BundleContext)} to create a {@code ConfigDefinition} instance
+     * based on the {@link Configuration} and {@link ObjectClassDefinition} objects
      * @param configuration The {@code Configuration} instance. A non-null value is expected
      * @param ocd           The {@code ObjectClassDefinition} instance
      * @return The {@code ConfigDefinition} instance
