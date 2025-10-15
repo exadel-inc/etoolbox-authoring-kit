@@ -13,6 +13,9 @@
  */
 package com.exadel.aem.toolkit.core.configurator.utils;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,12 +28,24 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 
+/**
+ * Contains utility methods related to request processing in the context of the {@code EToolbox Configurator}
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own code
+ */
 public class RequestUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(RequestUtil.class);
 
+    /**
+     * Default (instantiation-restricting) constructor
+     */
     private RequestUtil() {}
 
+    /**
+     * Retrieves the {@link ResourceResolver} associated with the current request
+     * @param request The current request
+     * @return The {@code ResourceResolver} instance, or null if it cannot be obtained
+     */
     public static ResourceResolver getResourceResolver(HttpServletRequest request) {
         if (request instanceof SlingHttpServletRequest) {
             return ((SlingHttpServletRequest) request).getResourceResolver();
@@ -48,15 +63,33 @@ public class RequestUtil {
         return result;
     }
 
+    /**
+     * Retrieves the {@link Session} associated with the current request
+     * @param request The current request
+     * @return The {@code Session} instance, or null if it cannot be obtained
+     */
     public static Session getSession(HttpServletRequest request) {
         ResourceResolver resolver = getResourceResolver(request);
         return resolver != null ? resolver.adaptTo(Session.class) : null;
     }
 
-    public static String getConfigId(HttpServletRequest request) {
-        return request instanceof SlingHttpServletRequest
+    /**
+     * Extracts the configuration ID from the request
+     * @param request The current request
+     * @return String value; may be null or empty
+     */
+    public static String getConfigPid(HttpServletRequest request) {
+        String result = request instanceof SlingHttpServletRequest
             ? StringUtils.strip(((SlingHttpServletRequest) request).getRequestPathInfo().getSuffix(), CoreConstants.SEPARATOR_SLASH)
             : StringUtils.substringAfterLast(request.getRequestURI(), ".html/");
+        if (!StringUtils.contains(result, '%')) {
+            return result;
+        }
+        try {
+            return URLDecoder.decode(StringUtils.defaultString(result), StandardCharsets.UTF_8.name());
+        } catch (UnsupportedEncodingException e) {
+            LOG.warn("Failed to decode config ID: {}", result, e);
+        }
+        return result;
     }
-
 }
