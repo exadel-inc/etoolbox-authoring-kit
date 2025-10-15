@@ -105,7 +105,8 @@ public enum ConfigAccess {
 
         String configId = RequestUtil.getConfigPid(request);
         if (StringUtils.isEmpty(configId)) {
-            return  PermissionUtil.hasGlobalModifyPermission(request) ? GRANTED : NO_CONFIG;
+            return request.getRequestURI().contains("/etoolbox/config.html")
+                && PermissionUtil.hasGlobalModifyPermission(request) ? GRANTED : NO_CONFIG;
         }
 
         try {
