@@ -142,6 +142,8 @@ public class PermissionUtil {
                     return true;
                 }
             }
+        } catch (PathNotFoundException e) {
+            LOG.debug(ERROR_CONFIG_NOT_FOUND, resourcePath);
         } catch (RepositoryException e) {
             LOG.error(ERROR_PERMISSIONS_FAILURE, e);
         }
