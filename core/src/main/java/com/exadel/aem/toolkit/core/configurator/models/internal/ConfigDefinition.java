@@ -307,7 +307,7 @@ public class ConfigDefinition {
 
         boolean isFactoryInstance = StringUtils.isNotEmpty(configuration.getFactoryPid())
             && !StringUtils.equals(configuration.getPid(), configuration.getFactoryPid());
-        pid = isFactoryInstance ? configuration.getFactoryPid() : configuration.getPid();
+        String metatypePid = isFactoryInstance ? configuration.getFactoryPid() : configuration.getPid();
 
         for (Bundle bundle : context.getBundles()) {
             MetaTypeInformation metaTypeInformation = metaTypeService.getMetaTypeInformation(bundle);
@@ -316,7 +316,7 @@ public class ConfigDefinition {
             }
             ObjectClassDefinition ocd;
             try {
-                ocd = Objects.requireNonNull(metaTypeInformation.getObjectClassDefinition(pid, null));
+                ocd = Objects.requireNonNull(metaTypeInformation.getObjectClassDefinition(metatypePid, null));
             } catch (IllegalArgumentException | NullPointerException e) {
                 // Not an error: this actually happens if the configuration is not present in the current bundle
                 continue;
