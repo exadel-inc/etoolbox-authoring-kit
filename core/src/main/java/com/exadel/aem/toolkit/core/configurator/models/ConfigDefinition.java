@@ -58,10 +58,12 @@ public class ConfigDefinition {
 
     private String pid;
     private String factoryPid;
+
     private List<ConfigAttribute> attributes;
     private boolean canCleanup;
     private long changeCount;
-    private boolean factory;
+    private List<ConfigDefinition> children;
+    private boolean isFactory;
     private boolean modified;
     private ObjectClassDefinition ocd;
     private boolean published;
@@ -72,6 +74,10 @@ public class ConfigDefinition {
      */
     private ConfigDefinition() {
     }
+
+    /* --------------
+       Main accessors
+       -------------- */
 
     /**
      * Gets the action URL for the configuration to be used in a web form
@@ -99,6 +105,14 @@ public class ConfigDefinition {
     @SuppressWarnings("unused") // Used in Granite page
     public long getChangeCount() {
         return changeCount;
+    }
+
+    /**
+     * Gets the list of child configuration definitions (factory configuration instances)
+     * @return The nullable list of {@link ConfigDefinition} instances
+     */
+    public List<ConfigDefinition> getChildren() {
+        return children;
     }
 
     /**
@@ -147,7 +161,7 @@ public class ConfigDefinition {
      * @return True or false
      */
     public boolean isFactory() {
-        return factory;
+        return isFactory;
     }
 
     /**
@@ -189,6 +203,34 @@ public class ConfigDefinition {
      */
     public boolean isValid() {
         return StringUtils.isNotBlank(pid);
+    }
+
+    /* ---------
+       Mutations
+       --------- */
+
+    /**
+     * Assigns a child configuration definition to this instance
+     * @param value The {@code ConfigDefinition} instance to be assigned as a child (usually, a factory configuration
+     *              instance)
+     */
+    void addChild(ConfigDefinition value) {
+        isFactory = true;
+        if (children == null) {
+            children = new ArrayList<>();
+        }
+        children.add(value);
+        if (children.size() > 1) {
+            children.sort((a, b) -> StringUtils.compare(a.getPid(), b.getPid()));
+        }
+    }
+
+    /**
+     * Sets the factory PID
+     * @param value The string value; may be null
+     */
+    void setFactoryPid(String value) {
+        this.factoryPid = value;
     }
 
     /* -------------
@@ -279,7 +321,7 @@ public class ConfigDefinition {
                 continue;
             }
             ConfigDefinition result = from(configuration, ocd);
-            result.factory = ArrayUtils.contains(metaTypeInformation.getFactoryPids(), pid);
+            result.isFactory = ArrayUtils.contains(metaTypeInformation.getFactoryPids(), pid);
             result.pid = pid;
             result.factoryPid = configuration.getFactoryPid();
             return result;
@@ -317,25 +359,18 @@ public class ConfigDefinition {
     }
 
     /**
-     * Creates a {@code ConfigDefinition} instance based on the specified parameters
+     * Creates a shallow {@link ConfigDefinition} instance based on the specified parameters
      * @param pid        The configuration PID. A non-blank value is expected
      * @param factoryPid The factory PID if this configuration is an instance of a factory configuration; may be null
      * @param ocd        The {@link ObjectClassDefinition} instance. Can be null
      * @param isFactory  True if the configuration is a factory configuration; false otherwise
      * @return The {@code ConfigDefinition} instance; or an empty instance if the specified PID is blank
      */
-    public static ConfigDefinition from(
-        String pid,
-        String factoryPid,
-        ObjectClassDefinition ocd,
-        boolean isFactory) {
-        if (StringUtils.isBlank(pid)) {
-            return EMPTY;
-        }
+    static ConfigDefinition from(String pid, String factoryPid, ObjectClassDefinition ocd, boolean isFactory) {
         ConfigDefinition result = new ConfigDefinition();
         result.pid = pid;
         result.factoryPid = factoryPid;
-        result.factory = isFactory;
+        result.isFactory = isFactory;
         result.ocd = ocd;
         if (ocd == null)  {
             return result;
