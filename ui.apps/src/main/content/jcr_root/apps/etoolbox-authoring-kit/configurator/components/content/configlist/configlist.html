@@ -1,4 +1,34 @@
-<sly data-sly-use.renderCondition="com.exadel.aem.toolkit.core.authoring.models.RenderConditionSupport"
-     data-sly-test="${renderCondition.check}">
-    Here comes the list
-</sly>
+<coral-anchorlist
+    data-sly-use.renderCondition="com.exadel.aem.toolkit.core.authoring.models.RenderConditionSupport"
+    data-sly-test="${renderCondition.check}"
+    data-sly-use.configList="com.exadel.aem.toolkit.core.configurator.models.ConfigList"
+    data-sly-list.config="${configList.configurations}"
+    id="${properties.granite:id}"
+    class="${properties.granite:class}">
+
+    <hr>
+    <a data-sly-set.href="${[request.pathInfo, '.html/', config.pid] @ join=''}"
+       is="coral-anchorlist-item"
+       class="config ${config.factory ? 'factory' : ''}"
+       icon="${config.factory ? 'gearsAdd' : 'gears'}"
+       href="${!config.factory ? href : ''}">
+
+        <div class="caption">
+            <span class="title">${config.title}</span>
+            <span class="description">${config.description}</span>
+        </div>
+        <div class="pid">${config.factory ? config.title : config.pid}</div>
+        <div data-sly-test="${config.factory} "class="factory-label">Factory</div>
+    </a>
+
+    <sly data-sly-test="${config.factory}"
+         data-sly-list.childConfig="${config.children}">
+        <a is="coral-anchorlist-item"
+           class="config child"
+           icon="gear"
+           href="${request.pathInfo}.html/${childConfig.pid}">
+
+            <div class="pid">${childConfig.pid}</div>
+        </a>
+    </sly>
+</coral-anchorlist>
