@@ -44,13 +44,16 @@ public class ExpressionSupport {
      * @return The resolved string value
      */
     public String getValue() {
-        if (StringUtils.isEmpty(property) || expressionResolver == null) {
+        String expression = StringUtils.isNotEmpty(property)
+            ? request.getResource().getValueMap().get(property, String.class)
+            : null;
+        if (StringUtils.isEmpty(expression) || expressionResolver == null) {
             return StringUtils.EMPTY;
         }
-        return expressionResolver.resolve(
-            request.getResource().getValueMap().get(property, String.class),
-            Locale.getDefault(),
-            String.class,
-            request);
+        try {
+            return expressionResolver.resolve(expression, Locale.getDefault(), String.class, request);
+        } catch (Exception e) {
+            return StringUtils.EMPTY;
+        }
     }
 }
