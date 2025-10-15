@@ -52,7 +52,7 @@ public class RenderFeatures {
         addFeature(
             "eak.configurator.canBrowse",
             ec -> ec.getRequest() != null
-                && ec.getRequest().getRequestURI().contains("/etoolbox/config.html")
+                && ec.getRequest().getRequestURI().contains("/etoolbox/config")
                 && ConfigAccess.from(ec.getRequest()).isGranted()
                 && ConfigDefinition.from(ec.getRequest()).isValid()
         );
@@ -65,7 +65,7 @@ public class RenderFeatures {
         addFeature(
             "eak.configurator.canReplicate",
             ec -> ec.getRequest() != null
-                && !ec.getRequest().getRequestURI().contains("/etoolbox/localsettings.html")
+                && !ec.getRequest().getRequestURI().contains("/etoolbox/localsettings")
                 && ec.getFeatures().isEnabled("eak.configurator.canModify")
                 && PermissionUtil.hasReplicatePermission(ec.getRequest())
         );
