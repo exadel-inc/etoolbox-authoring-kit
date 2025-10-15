@@ -103,7 +103,7 @@ public enum ConfigAccess {
             return NO_ACCESS;
         }
 
-        String configId = RequestUtil.getConfigId(request);
+        String configId = RequestUtil.getConfigPid(request);
         if (StringUtils.isEmpty(configId)) {
             return  PermissionUtil.hasGlobalModifyPermission(request) ? GRANTED : NO_CONFIG;
         }
@@ -111,7 +111,7 @@ public enum ConfigAccess {
         try {
             BundleContext context = Objects.requireNonNull(FrameworkUtil.getBundle(ConfigAccess.class).getBundleContext());
             ConfigChangeListener listener = Objects.requireNonNull(context.getService(context.getServiceReference(ConfigChangeListener.class)));
-            if (!listener.isEnabled()) {;
+            if (!listener.isEnabled()) {
                 return DISABLED;
             }
         } catch (RuntimeException e) {

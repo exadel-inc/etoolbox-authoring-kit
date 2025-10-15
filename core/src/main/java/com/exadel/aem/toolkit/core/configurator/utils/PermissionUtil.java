@@ -30,7 +30,8 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
 
 /**
- * Contains utility methods related to permission checking in the context of the {@code EToolbox Configurator}
+ * Contains utility methods related to permission checking in the context of the {@code EToolbox Configurator}.
+ * <u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own code
  */
 public class PermissionUtil {
 
@@ -67,7 +68,7 @@ public class PermissionUtil {
      * @return True or false
      */
     public static boolean hasModifyPermission(HttpServletRequest request) {
-        String configId = RequestUtil.getConfigId(request);
+        String configId = RequestUtil.getConfigPid(request);
         if (StringUtils.isBlank(configId)) {
             return hasGlobalModifyPermission(request);
         }
@@ -94,7 +95,7 @@ public class PermissionUtil {
      * @return True or false
      */
     public static boolean hasOverridingPermissions(HttpServletRequest request) {
-        String configId = RequestUtil.getConfigId(request);
+        String configId = RequestUtil.getConfigPid(request);
         if (StringUtils.isBlank(configId)) {
             return false;
         }
@@ -125,7 +126,7 @@ public class PermissionUtil {
             LOG.error(ERROR_PERMISSIONS_FAILURE);
             return false;
         }
-        String configId = RequestUtil.getConfigId(request);
+        String configId = RequestUtil.getConfigPid(request);
         if (StringUtils.isBlank(configId)) {
             return false;
         }

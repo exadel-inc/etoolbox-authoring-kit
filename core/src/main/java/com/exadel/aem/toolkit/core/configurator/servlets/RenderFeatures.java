@@ -71,12 +71,12 @@ public class RenderFeatures {
         addFeature(
             "eak.configurator.showForm",
             ec -> ConfigAccess.from(ec.getRequest()).isGranted()
-                && !StringUtils.isEmpty(RequestUtil.getConfigId(ec.getRequest()))
+                && !StringUtils.isEmpty(RequestUtil.getConfigPid(ec.getRequest()))
         );
         addFeature(
             "eak.configurator.showList",
             ec -> ConfigAccess.from(ec.getRequest()).isGranted()
-                && StringUtils.isEmpty(RequestUtil.getConfigId(ec.getRequest()))
+                && StringUtils.isEmpty(RequestUtil.getConfigPid(ec.getRequest()))
         );
     }
 

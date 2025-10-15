@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -44,13 +43,11 @@ import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
 import com.exadel.aem.toolkit.core.configurator.utils.PermissionUtil;
 import com.exadel.aem.toolkit.core.configurator.utils.RequestUtil;
 
-
 /**
  * Represents a configuration definition, i.e., a set of configuration attributes united by the same PID together
  * with metadata usefult to build the {@code EToolbox Configurator} user experience
  * @see ConfigAttribute
  */
-@SuppressWarnings("unused")
 public class ConfigDefinition {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigDefinition.class);
@@ -59,14 +56,14 @@ public class ConfigDefinition {
 
     private static final String KEY = "config";
 
-    private String id;
-    private ObjectClassDefinition ocd;
+    private String pid;
+    private String factoryPid;
     private List<ConfigAttribute> attributes;
     private boolean canCleanup;
     private long changeCount;
     private boolean factory;
-    private boolean factoryInstance;
     private boolean modified;
+    private ObjectClassDefinition ocd;
     private boolean published;
     private boolean replicable;
 
@@ -84,39 +81,7 @@ public class ConfigDefinition {
         if (!isValid()) {
             return null;
         }
-        return ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + id;
-    }
-
-    /**
-     * Gets the cleanup action URL for the configuration to be used in a web form
-     * @return The string value; or null if this instance is empty
-     */
-    public String getCleanupAction() {
-        return canCleanup ? getAction() : getAction() + "/data";
-    }
-
-    /**
-     * Gets the configuration PID
-     * @return The string value
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Gets the displayable configuration name
-     * @return The string value
-     */
-    public String getName() {
-        return ocd != null ? ocd.getName() : null;
-    }
-
-    /**
-     * Gets the configuration description
-     * @return The string value
-     */
-    public String getDescription() {
-        return ocd != null ? ocd.getDescription() : null;
+        return ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + pid;
     }
 
     /**
@@ -131,8 +96,50 @@ public class ConfigDefinition {
      * Gets the number of times the configuration has been changed
      * @return The integer value
      */
+    @SuppressWarnings("unused") // Used in Granite page
     public long getChangeCount() {
         return changeCount;
+    }
+
+    /**
+     * Gets the cleanup action URL for the configuration to be used in a web form
+     * @return The string value; or null if this instance is empty
+     */
+    @SuppressWarnings("unused") // Used in Granite page
+    public String getCleanupAction() {
+        return canCleanup ? getAction() : getAction() + "/data";
+    }
+
+    /**
+     * Gets the configuration description
+     * @return The string value
+     */
+    public String getDescription() {
+        return ocd != null ? ocd.getDescription() : null;
+    }
+
+    /**
+     * Gets the configuration PID
+     * @return The string value
+     */
+    public String getPid() {
+        return pid;
+    }
+
+    /**
+     * Gets the displayable configuration name
+     * @return The string value
+     */
+    public String getName() {
+        return ocd != null ? ocd.getName() : null;
+    }
+
+    /**
+     * Gets the displayable configuration title, which is the name if available or the PID otherwise
+     * @return The string value
+     */
+    public String getTitle() {
+        return StringUtils.defaultIfEmpty(getName(), getPid());
     }
 
     /**
@@ -148,7 +155,7 @@ public class ConfigDefinition {
      * @return True or false
      */
     public boolean isFactoryInstance() {
-        return factoryInstance;
+        return StringUtils.isNotEmpty(factoryPid) && !StringUtils.equals(factoryPid, pid);
     }
 
     /**
@@ -171,6 +178,7 @@ public class ConfigDefinition {
      * Gets whether the current user has permissions to replicate the configuration data
      * @return True or false
      */
+    @SuppressWarnings("unused") // Used in Granite page
     public boolean isReplicable() {
         return replicable;
     }
@@ -180,7 +188,7 @@ public class ConfigDefinition {
      * @return True or false
      */
     public boolean isValid() {
-        return StringUtils.isNotBlank(id);
+        return StringUtils.isNotBlank(pid);
     }
 
     /* -------------
@@ -190,7 +198,7 @@ public class ConfigDefinition {
     /**
      * Creates a {@code ConfigDefinition} instance based on the current request
      * @param request The current request
-     * @return The {@code ConfigDefinition} instance; or an empty instance if the configuration with the specified ID
+     * @return The {@code ConfigDefinition} instance; or an empty instance if the configuration with the specified PID
      * does not exist or the request is null
      */
     public static ConfigDefinition from(HttpServletRequest request) {
@@ -204,18 +212,16 @@ public class ConfigDefinition {
             return result;
         }
 
-        String configId = request instanceof SlingHttpServletRequest
-            ? StringUtils.strip(((SlingHttpServletRequest) request).getRequestPathInfo().getSuffix(), CoreConstants.SEPARATOR_SLASH)
-            : StringUtils.substringAfterLast(request.getRequestURI(), ".html/");
-        if (StringUtils.isEmpty(configId)) {
-            LOG.debug("No config ID specified in the request");
+        String pid = RequestUtil.getConfigPid(request);
+        if (StringUtils.isEmpty(pid)) {
+            LOG.debug("No config PID specified in the request");
             customizer.setVariable(KEY, EMPTY);
             return EMPTY;
         }
 
-        result = from(configId);
+        result = from(pid);
 
-        String existingConfigPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId;
+        String existingConfigPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + pid;
         Resource existingConfig = Optional.ofNullable(RequestUtil.getResourceResolver(request))
             .map(resolver -> resolver.getResource(existingConfigPath))
             .orElse(null);
@@ -233,12 +239,12 @@ public class ConfigDefinition {
 
     /**
      * Called from {@link ConfigDefinition#from(HttpServletRequest)} to create a {@code ConfigDefinition} instance based
-     * on the configuration ID (PID)
-     * @param value The configuration ID (PID). A non-blank value is expected
-     * @return The {@code ConfigDefinition} instance; or an empty instance if the configuration with the specified ID
+     * on the configuration PID
+     * @param pid The configuration PID. A non-blank value is expected
+     * @return The {@code ConfigDefinition} instance; or an empty instance if the configuration with the specified PID
      * does not exist
      */
-    private static ConfigDefinition from(String value) {
+    private static ConfigDefinition from(String pid) {
         BundleContext context;
         ConfigurationAdmin configurationAdmin;
         MetaTypeService metaTypeService;
@@ -251,14 +257,14 @@ public class ConfigDefinition {
             return EMPTY;
         }
 
-        Configuration configuration = getConfigurationObject(configurationAdmin, value);
+        Configuration configuration = getConfigurationObject(configurationAdmin, pid);
         if (configuration == null) {
             return EMPTY;
         }
 
         boolean isFactoryInstance = StringUtils.isNotEmpty(configuration.getFactoryPid())
             && !StringUtils.equals(configuration.getPid(), configuration.getFactoryPid());
-        String pid = isFactoryInstance ? configuration.getFactoryPid() : configuration.getPid();
+        pid = isFactoryInstance ? configuration.getFactoryPid() : configuration.getPid();
 
         for (Bundle bundle : context.getBundles()) {
             MetaTypeInformation metaTypeInformation = metaTypeService.getMetaTypeInformation(bundle);
@@ -273,9 +279,9 @@ public class ConfigDefinition {
                 continue;
             }
             ConfigDefinition result = from(configuration, ocd);
-            result.factory = ArrayUtils.contains(metaTypeInformation.getFactoryPids(), value);
-            result.factoryInstance = isFactoryInstance;
-            result.id = value;
+            result.factory = ArrayUtils.contains(metaTypeInformation.getFactoryPids(), pid);
+            result.pid = pid;
+            result.factoryPid = configuration.getFactoryPid();
             return result;
         }
         return EMPTY;
@@ -311,16 +317,47 @@ public class ConfigDefinition {
     }
 
     /**
+     * Creates a {@code ConfigDefinition} instance based on the specified parameters
+     * @param pid        The configuration PID. A non-blank value is expected
+     * @param factoryPid The factory PID if this configuration is an instance of a factory configuration; may be null
+     * @param ocd        The {@link ObjectClassDefinition} instance. Can be null
+     * @param isFactory  True if the configuration is a factory configuration; false otherwise
+     * @return The {@code ConfigDefinition} instance; or an empty instance if the specified PID is blank
+     */
+    public static ConfigDefinition from(
+        String pid,
+        String factoryPid,
+        ObjectClassDefinition ocd,
+        boolean isFactory) {
+        if (StringUtils.isBlank(pid)) {
+            return EMPTY;
+        }
+        ConfigDefinition result = new ConfigDefinition();
+        result.pid = pid;
+        result.factoryPid = factoryPid;
+        result.factory = isFactory;
+        result.ocd = ocd;
+        if (ocd == null)  {
+            return result;
+        }
+        result.attributes = new ArrayList<>();
+        for (AttributeDefinition definition : ocd.getAttributeDefinitions(ObjectClassDefinition.ALL)) {
+            result.attributes.add(new ConfigAttribute(definition, null));
+        }
+        return result;
+    }
+
+    /**
      * Retrieves the OSGi native {@link Configuration} object by its identifier
      * @param configAdmin The {@code ConfigurationAdmin} service instance. A non-null value is expected
-     * @param id          The configuration PID. A non-blank value is expected
-     * @return The {@code Configuration} instance; or null if the configuration with the specified ID does not exist
+     * @param pid          The configuration PID. A non-blank value is expected
+     * @return The {@code Configuration} instance; or null if the configuration with the specified PID does not exist
      */
-    private static Configuration getConfigurationObject(ConfigurationAdmin configAdmin, String id) {
+    private static Configuration getConfigurationObject(ConfigurationAdmin configAdmin, String pid) {
         try {
-            return configAdmin.getConfiguration(id, null);
+            return configAdmin.getConfiguration(pid, null);
         } catch (Exception e) {
-            LOG.error("Could not retrieve configuration for {}", id, e);
+            LOG.error("Could not retrieve configuration for {}", pid, e);
             return null;
         }
     }
