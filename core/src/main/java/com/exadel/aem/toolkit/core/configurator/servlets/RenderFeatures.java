@@ -51,10 +51,16 @@ public class RenderFeatures {
         context = bundleContext;
         addFeature(
             "eak.configurator.canBrowse",
-            ec -> ec.getRequest() != null
-                && ec.getRequest().getRequestURI().contains("/etoolbox/config")
-                && ConfigAccess.from(ec.getRequest()).isGranted()
-                && ConfigDefinition.from(ec.getRequest()).isValid()
+            ec -> {
+                if (ec.getRequest() == null) {
+                    return false;
+                }
+                ConfigAccess configAccess = ConfigAccess.from(ec.getRequest());
+                boolean configIsAvailable = configAccess.isGranted()
+                    && ConfigDefinition.from(ec.getRequest()).isValid();
+                return ec.getRequest().getRequestURI().contains("/etoolbox/config")
+                    && (configIsAvailable || configAccess == ConfigAccess.INVALID_CONFIG);
+            }
         );
         addFeature(
             "eak.configurator.canModify",
