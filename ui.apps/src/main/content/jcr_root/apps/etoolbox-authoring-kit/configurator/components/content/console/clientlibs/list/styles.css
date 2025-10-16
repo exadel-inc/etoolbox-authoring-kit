@@ -38,9 +38,12 @@ hr:first-child {
 }
 
 .config.child coral-icon {
-    color: #999;
     height: 1rem;
     width: 1rem;
+}
+
+.config.factory {
+    cursor: auto;
 }
 
 .caption, .pid {
@@ -60,18 +63,11 @@ hr:first-child {
 }
 
 .title {
-    color: #444;
     font-weight: bold;
     margin-right: 0.125rem;
 }
 
-.description {
-    color: #666;
-    font-size: 0.85rem;
-}
-
 .factory-label {
-    color: #999;
     font-size: 0.75rem;
     font-style: italic;
     position: absolute;
