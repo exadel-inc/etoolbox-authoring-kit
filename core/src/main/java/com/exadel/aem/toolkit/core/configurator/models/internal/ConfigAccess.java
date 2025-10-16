@@ -35,7 +35,7 @@ public enum ConfigAccess {
 
     GRANTED(null),
 
-    DISABLED("This tool is disabled by OSGi configuration"),
+    DISABLED("This tool is disabled in OSGi configuration"),
     FACTORY_CONFIG("Factory configs are currently not supported"),
     INVALID_CONFIG("Configuration is missing or invalid"),
     NO_ACCESS("You don't have access to this feature"),
