@@ -12,30 +12,14 @@
  * limitations under the License.
  */
 
-hr {
-    margin: 1rem -0.5rem;
-}
-
-#config {
-    width: 50%;
-}
-
-#config h2 {
-    font-size:  1.75rem;
-    margin: 1.5rem 0 0.5rem;
-}
-
-#config label {
+[data-reload-target] {
     font-size: 0.95rem;
 }
 
-.config-description {
-    font-size: 0.95rem;
+.centered {
+    text-align: center;
 }
 
-.field-description {
-    color: #666;
-    display: block;
-    font-size: 0.85rem;
-    font-style: italic;
+.granite-title {
+    font-size: 0.95rem;
 }
