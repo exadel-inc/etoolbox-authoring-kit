@@ -5,7 +5,16 @@
     data-sly-list.config="${configList.configurations}"
     id="${properties.granite:id}"
     class="${properties.granite:class}">
+    <sly data-sly-test="${configList.index < 20} "data-sly-call="${configItem @ config=config}"/>
+</coral-anchorlist>
 
+<template id="${properties.granite:id}-extras">
+    <div data-sly-list.config="${configList.configurations}">
+        <sly data-sly-test="${configList.index >= 20} "data-sly-call="${configItem @ config=config}"/>
+    </div>
+</template>
+
+<sly data-sly-template.configItem="${@ config}">
     <hr>
     <a data-sly-set.href="${[request.pathInfo, '.html/', config.pid] @ join=''}"
        is="coral-anchorlist-item"
@@ -31,4 +40,4 @@
             <div class="pid">${childConfig.pid}</div>
         </a>
     </sly>
-</coral-anchorlist>
+</sly>
