@@ -132,10 +132,11 @@
     function getFormValues($form) {
         const values = {};
         $form.find('[name]:not([type="hidden"])').each((index, element) => {
-            const name = element.name;
+            const name = element.getAttribute('name');
             let value = element.value;
-            if (element.type === 'checkbox' || element.type === 'radio') {
-                value = element.checked;
+            if (element.type === 'checkbox' || element.tagName.toLowerCase() === 'coral-checkbox' ||
+                element.type === 'radio' || element.tagName.toLowerCase() === 'coral-radio') {
+                value = element.checked || element.hasAttribute('checked');
             }
             if (values[name] === undefined) {
                 values[name] = value;
