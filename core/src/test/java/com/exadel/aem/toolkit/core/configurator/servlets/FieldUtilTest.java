@@ -18,10 +18,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.collections.IteratorUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.Before;
 import org.junit.Rule;
@@ -33,14 +31,16 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.osgi.service.metatype.AttributeDefinition;
 import com.adobe.granite.ui.components.ds.DataSource;
 import io.wcm.testing.mock.aem.junit.AemContext;
+import static junitx.framework.Assert.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.configurator.models.internal.ConfigAttribute;
+import com.exadel.aem.toolkit.core.configurator.models.internal.ConfigDefinition;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FieldUtilTest {
@@ -103,12 +103,9 @@ public class FieldUtilTest {
         Mockito.when(multiValueAttributeDefinition.getOptionValues()).thenReturn(null);
         multiValueAttribute = new ConfigAttribute(multiValueAttributeDefinition, new String[]{"value1", "value2"});
 
-        Mockito.when(configDefinition.getId()).thenReturn("test.config.pid");
         Mockito.when(configDefinition.getName()).thenReturn("Test Configuration");
         Mockito.when(configDefinition.getDescription()).thenReturn("Test configuration description");
         Mockito.when(configDefinition.isFactoryInstance()).thenReturn(false);
-        Mockito.when(configDefinition.isModified()).thenReturn(true);
-        Mockito.when(configDefinition.isPublished()).thenReturn(false);
     }
 
     @Test
@@ -142,19 +139,6 @@ public class FieldUtilTest {
     }
 
     @Test
-    public void shouldCreateAlertField() {
-        Resource alertField = FieldUtil.newAlert(
-            context.request(),
-            "Test alert message with ${el}",
-            "warning");
-
-        ValueMap properties = alertField.getValueMap();
-        assertEquals("Test alert message with \\${el}", properties.get(CoreConstants.PN_TEXT));
-        assertEquals("warning", properties.get("variant"));
-        assertEquals("centered", properties.get("granite:class"));
-    }
-
-    @Test
     public void shouldSkipNameHintAttribute() {
         AttributeDefinition nameHintDefinition = Mockito.mock(AttributeDefinition.class);
         Mockito.when(nameHintDefinition.getID()).thenReturn("webconsole.configurationFactory.nameHint");
@@ -177,15 +161,6 @@ public class FieldUtilTest {
 
         assertEquals(ResourceTypes.HEADING, resources.get(0).getResourceType());
         assertEquals(ResourceTypes.TEXT, resources.get(1).getResourceType());
-
-        String[] hiddenFieldIds = resources.stream()
-            .filter(res -> ResourceTypes.HIDDEN.equals(res.getResourceType()))
-            .map(res -> res.getValueMap().get("granite:id", String.class))
-            .filter(StringUtils::isNotEmpty)
-            .toArray(String[]::new);
-        assertArrayEquals(
-            new String[] {"canCleanUp", "canReplicate", "changeCount", "ownPath", "modified", "published"},
-            hiddenFieldIds);
 
         String[] hiddenFieldValues = resources.stream()
             .filter(res -> ResourceTypes.HIDDEN.equals(res.getResourceType()))

@@ -11,51 +11,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-(function (window, document, $) {
+(function (window, document, $, ns) {
     'use strict';
 
     const foundationUi = $(window).adaptTo('foundation-ui');
     let loadedFormValues;
-
-    /* --------------
-       State functions
-       -------------- */
-
-    /**
-     * Gets if the configuration can be completely cleaned up (root node erased) according to the form metadata
-     * @param {JQuery} $form
-     * @returns {boolean}
-     */
-    function canCleanUp($form) {
-        return $form.find('#canCleanUp').val() === 'true';
-    }
-
-    /**
-     * Gets if the configuration can be replicated according to the form metadata
-     * @param {JQuery} $form
-     * @returns {boolean}
-     */
-    function canReplicate($form) {
-        return $form.find('#canReplicate').val() === 'true';
-    }
-
-    /**
-     * Gets if the configuration has unsaved modifications according to the form metadata
-     * @param {JQuery} $form
-     * @returns {boolean}
-     */
-    function isModified($form) {
-        return $form.find('#modified').val() === 'true';
-    }
-
-    /**
-     * Gets if the configuration is published according to the form metadata
-     * @param {JQuery} $form
-     * @returns {boolean}
-     */
-    function isPublished($form) {
-        return $form.find('#published').val() === 'true';
-    }
 
     /* --------------
        Data functions
@@ -91,12 +51,15 @@
 
     /**
      * Resets the configuration to a previously stored initial value set
-     * @param {boolean} keepMainNode If true, the main configuration node will be kept (for the sake of unpublishing)
+     * @param {boolean} keepNode
      * @returns {Promise}
      */
-    async function reset(keepMainNode) {
+    async function reset(keepNode = false) {
         foundationUi.wait();
-        const configPath = $('#config').attr('action') + (keepMainNode ? '/data' : '');
+        let configPath = $('#config').attr('data-cleanup-action');
+        if (!configPath.endsWith('/data') && keepNode) {
+            configPath += '/data';
+        }
         try {
             await requestAsync('POST', configPath, { ':operation': 'delete' });
         } catch (e) {
@@ -157,79 +120,8 @@
         return await replicate('unpublish');
     }
 
-    /* --------
-       UI utils
-       -------- */
-
-    /**
-     * Adjusts the states of action buttons according to the form metadata
-     */
-    function adjustButtonStates() {
-        const $form = $('#config');
-        if ($form.find('[name]').length === 0) {
-            $('#button-save').attr('disabled', true);
-        } else {
-            const currentFormValues = getFormValues($form);
-            $('#button-save').attr('disabled', formValuesEqual(loadedFormValues, currentFormValues));
-        }
-        const canRep = canReplicate($form);
-        const isMod = isModified($form);
-        $('#button-reset').attr('disabled', !isMod);
-        $('#button-publish').attr('disabled', !isMod || !canRep);
-        $('#button-unpublish').attr('disabled', !(isPublished($form) && canRep));
-    }
-
-    /**
-     * Creates a debounced version of a function
-     * @param func {function(...[*]): void} The function to debounce
-     * @param wait {number} The debounce wait time in milliseconds
-     * @returns {(function(...[*]): void)|*}
-     */
-    function debounce(func, wait) {
-        let timeout;
-        return (...args) => {
-            const later = () => {
-                clearTimeout(timeout);
-                func.apply(this, args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-
-    /**
-     * Extracts a meaningful error message from an error object
-     * @param e {any}
-     * @returns {string}
-     */
-    function getErrorMessage(e) {
-        const message = (e.responseJSON && e.responseJSON.message) || e.message || e.statusText || e;
-        return message === 'error' ? 'Network error' : message;
-    }
-
-    /**
-     * Shows a prompt dialog and returns a promise resolved with the action taken by the user
-     * @param {string} title
-     * @param {string} message
-     * @returns {Promise}
-     */
-    function prompt(title, message) {
-        return new Promise((resolve) => {
-            foundationUi.prompt(
-                title,
-                message,
-                'default',
-                [
-                    { id: 'yes', text: 'Yes', primary: true },
-                    { id: 'no', text: 'No' }
-                ],
-                (action) => resolve(action)
-            );
-        });
-    }
-
     /* ----------
-       Form utils
+       Data utils
        ---------- */
 
     /**
@@ -240,10 +132,11 @@
     function getFormValues($form) {
         const values = {};
         $form.find('[name]:not([type="hidden"])').each((index, element) => {
-            const name = element.name;
+            const name = element.getAttribute('name');
             let value = element.value;
-            if (element.type === 'checkbox' || element.type === 'radio') {
-                value = element.checked;
+            if (element.type === 'checkbox' || element.tagName.toLowerCase() === 'coral-checkbox' ||
+                element.type === 'radio' || element.tagName.toLowerCase() === 'coral-radio') {
+                value = element.checked || element.hasAttribute('checked');
             }
             if (values[name] === undefined) {
                 values[name] = value;
@@ -290,28 +183,34 @@
        ------------- */
 
     /**
-     * Reloads the form content and returns a promise resolved with true if a change was detected, false otherwise
+     * Reloads the dynamic content and returns a promise resolved with true if a data change was detected, false
+     * otherwise
      * @param {boolean} trackChanges If true, the function will check if the change count has changed and return false
      * if it has not
-     * @returns {Promise<boolean>} Promise resolved with true if a change was detected, false otherwise
+     * @returns {Promise<boolean>} Promise resolved with true if a data change was detected or the {@code trackChanges}
+     *     flag is unset, false otherwise
      */
     async function reloadAsync(trackChanges = false) {
-        const $form = $('#config');
-        const oldChangeCount = Number.parseInt($form.find('#changeCount').val(), 10);
+        const $reloadContainer = $('[data-reload-target]')
+        let $form = $reloadContainer.find('#config');
+        const oldChangeCount = $form.length ? Number.parseInt($form.attr('data-change-count'), 10) : 0;
 
-        const ownPath = $form.find('#ownPath').val();
-        const [data, xhr] = await requestAsync('GET', ownPath);
-        const $data = $(data);
-
-        const newChangeCount = Number.parseInt($data.find('#changeCount').val(), 10);
-        if (newChangeCount === oldChangeCount && trackChanges) {
+        const reloadTarget = $reloadContainer.attr('data-reload-target');
+        let data;
+        try {
+            data = await requestAsync('GET', reloadTarget);
+        } catch (e) {
+            console.error('Failed to reload dynamic content: ', e);
+            foundationUi.notify('Error', 'Failed to reload dynamic content: ' + getErrorMessage(e), 'error');
             return false;
         }
 
-        $form.get(0).innerHTML = $data.get(0).innerHTML;
-
-        // This is needed to clear the "dirty" state of the form
-        $form.trigger('foundation-form-submit-callback', xhr);
+        $reloadContainer.get(0).innerHTML = $(data).get(0).innerHTML;
+        $form = $reloadContainer.find('#config');
+        const newChangeCount = $form.length ? Number.parseInt($form.attr('data-change-count'), 10) : 0;
+        if (newChangeCount === oldChangeCount && trackChanges) {
+            return false;
+        }
 
         loadedFormValues = getFormValues($form);
         adjustButtonStates();
@@ -333,17 +232,68 @@
     }
 
     /**
-     * Performs an asynchronous JQuery request and returns a promise resolved with the response data and the JQuery
-     * XHR object
+     * Performs an asynchronous JQuery request and returns a promise resolved with the response data
      * @param type {string} The request type (e.g. "GET", "POST", etc.)
      * @param url {string} The request URL
      * @param data {any} Optional data to send with the request
-     * @returns {Promise<[string, JQuery.jqXHR]>}
+     * @returns {Promise<string>}
      */
     function requestAsync(type, url, data) {
         return new Promise((resolve, reject) => {
-            return $.ajax({ type, url, data, success: (data, status, xhr) => resolve([data, xhr]) })
+            return $.ajax({ type, url, data, success: (data) => resolve(data) })
                 .fail((xhr, status, e) => reject(e || status));
+        });
+    }
+
+    /* --------
+       UI utils
+       -------- */
+
+    /**
+     * Adjusts the states of action buttons according to the form metadata
+     */
+    function adjustButtonStates() {
+        const $form = $('#config');
+        if ($form.find('[name]').length === 0) {
+            $('#button-save').attr('disabled', true);
+        } else {
+            const currentFormValues = getFormValues($form);
+            $('#button-save').attr('disabled', formValuesEqual(loadedFormValues, currentFormValues));
+        }
+        const isNotModified = $form.attr('data-modified') !== 'true';
+        $('#button-reset').attr('disabled', isNotModified);
+        $('#button-publish').attr('disabled', isNotModified);
+        $('#button-unpublish').attr('disabled', $form.attr('data-published') !== 'true');
+    }
+
+    /**
+     * Extracts a meaningful error message from an error object
+     * @param e {any}
+     * @returns {string}
+     */
+    function getErrorMessage(e) {
+        const message = (e.responseJSON && e.responseJSON.message) || e.message || e.statusText || e;
+        return message === 'error' ? 'Network error' : message;
+    }
+
+    /**
+     * Shows a prompt dialog and returns a promise resolved with the action taken by the user
+     * @param {string} title
+     * @param {string} message
+     * @returns {Promise}
+     */
+    function prompt(title, message) {
+        return new Promise((resolve) => {
+            foundationUi.prompt(
+                title,
+                message,
+                'default',
+                [
+                    { id: 'yes', text: 'Yes', primary: true },
+                    { id: 'no', text: 'No' }
+                ],
+                (action) => resolve(action)
+            );
         });
     }
 
@@ -384,17 +334,16 @@
      */
     async function onResetClick() {
         const $form = $('#config');
-        const cleanUp = canCleanUp($form);
-        let keepMainNode = !cleanUp;
-        if (isPublished($form) && canReplicate($form)) {
-            keepMainNode = true;
+        let keepNode = false;
+        if ($form.attr('data-published') === 'true' && $form.attr('data-replicable') === 'true') {
             const action = await prompt('Published configuration', 'This configuration is published. Do you want to unpublish it before resetting?');
-            if (action === 'yes' && cleanUp) {
-                keepMainNode = false;
+            if (action === 'yes') {
                 await unpublish();
+            } else {
+                keepNode = true;
             }
         }
-        await reset(keepMainNode);
+        await reset(keepNode);
     }
 
     /**
@@ -410,13 +359,12 @@
     async function onUnpublishClick() {
         let action;
         const $form = $('#config');
-        if (isModified($form)) {
+        if ($form.attr('data-modified') === 'true') {
             action = await prompt('Unpublished configuration', 'Do you want to also reset this configuration on the current instance?');
         }
         await unpublish();
         if (action === 'yes') {
-            const keepMainNode = !canCleanUp($form);
-            await reset(keepMainNode);
+            await reset();
         }
     }
 
@@ -424,9 +372,9 @@
         .off('.eak')
         .one('foundation-contentloaded.eak', onContentLoaded)
         .on('foundation-field-change.eak', adjustButtonStates)
-        .on('keyup.eak', 'input,textarea', debounce(adjustButtonStates, 500))
+        .on('keyup.eak', 'input,textarea', ns.debounce(adjustButtonStates, 500))
         .on('click.eak', '#button-publish', onPublishClick)
         .on('click.eak', '#button-reset', onResetClick)
         .on('click.eak', '#button-save', onSaveClick)
         .on('click.eak', '#button-unpublish', onUnpublishClick);
-})(window, document, Granite.$);
+})(window, document, Granite.$, Granite.EAKUtils);

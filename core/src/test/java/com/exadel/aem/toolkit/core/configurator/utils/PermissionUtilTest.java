@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.configurator.servlets;
+package com.exadel.aem.toolkit.core.configurator.utils;
 
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
@@ -42,6 +42,10 @@ public class PermissionUtilTest {
 
     private static final String CONFIG = "my.config";
 
+    private static final String MESSAGE = "NOT AN EXCEPTION: testing PermissionUtil logic";
+    private static final RepositoryException REPOSITORY_EXCEPTION = new RepositoryException(MESSAGE);
+    private static final PathNotFoundException PATH_NOT_FOUND_EXCEPTION = new PathNotFoundException(MESSAGE);
+
     @Rule
     public AemContext context = AemContextFactory.newInstance(ResourceResolverType.JCR_OAK);
 
@@ -67,7 +71,7 @@ public class PermissionUtilTest {
         Session mockSession = Mockito.mock(Session.class);
         Mockito.when(mockResolver.adaptTo(Mockito.eq(Session.class))).thenReturn(mockSession);
         Mockito.when(mockSession.hasPermission(Mockito.eq(ConfiguratorConstants.ROOT_PATH), Mockito.eq(Session.ACTION_SET_PROPERTY)))
-            .thenThrow(new RepositoryException("forced"));
+            .thenThrow(REPOSITORY_EXCEPTION);
         MockSlingHttpServletRequest request = new MockSlingHttpServletRequest(mockResolver, context.bundleContext());
         assertFalse(PermissionUtil.hasGlobalModifyPermission(request));
     }
@@ -94,7 +98,7 @@ public class PermissionUtilTest {
         Session mockSession = Mockito.mock(Session.class);
         Mockito.when(mockResolver.adaptTo(Mockito.eq(Session.class))).thenReturn(mockSession);
         Mockito.when(mockSession.hasPermission(Mockito.eq(ConfiguratorConstants.ROOT_PATH), Mockito.eq(Session.ACTION_SET_PROPERTY)))
-            .thenThrow(new RepositoryException("forced"));
+            .thenThrow(REPOSITORY_EXCEPTION);
         MockSlingHttpServletRequest request = new MockSlingHttpServletRequest(mockResolver, context.bundleContext());
         assertFalse(PermissionUtil.hasModifyPermission(request));
     }
@@ -127,7 +131,7 @@ public class PermissionUtilTest {
             Mockito.when(acm.getPrivileges(Mockito.eq(ConfiguratorConstants.ROOT_PATH))).thenReturn(rootPrivileges);
             assertFalse(PermissionUtil.hasOverridingPermissions(request));
 
-            Mockito.when(acm.getPrivileges(Mockito.anyString())).thenThrow(new PathNotFoundException("forced"));
+            Mockito.when(acm.getPrivileges(Mockito.anyString())).thenThrow(PATH_NOT_FOUND_EXCEPTION);
             assertFalse(PermissionUtil.hasOverridingPermissions(request));
 
             ((MockRequestPathInfo) request.getRequestPathInfo()).setSuffix(null);
@@ -166,7 +170,7 @@ public class PermissionUtilTest {
             Mockito.when(acm.getPrivileges(Mockito.startsWith(ConfiguratorConstants.ROOT_PATH))).thenReturn(userPrivileges);
             assertFalse(PermissionUtil.hasReplicatePermission(request));
 
-            Mockito.when(acm.getPrivileges(Mockito.anyString())).thenThrow(new RepositoryException("forced"));
+            Mockito.when(acm.getPrivileges(Mockito.anyString())).thenThrow(REPOSITORY_EXCEPTION);
             assertFalse(PermissionUtil.hasReplicatePermission(request));
 
             ((MockRequestPathInfo) request.getRequestPathInfo()).setSuffix(null);

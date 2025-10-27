@@ -39,7 +39,7 @@ import com.exadel.aem.toolkit.core.utils.ValueMapUtil;
 /**
  * Provides utility methods to work with {@link Configuration} instances and their properties
  */
-class ConfigUtil {
+class ConfigDataUtil {
 
     private static final List<String> EXCLUDED_KEYS = Arrays.asList(
         "service.pid",
@@ -49,7 +49,7 @@ class ConfigUtil {
     /**
      * Default (instantiation-restricting) constructor
      */
-    private ConfigUtil() {
+    private ConfigDataUtil() {
     }
 
     /**
@@ -193,7 +193,7 @@ class ConfigUtil {
     }
 
     /**
-     * Whether the specified objects that adhere to {@link ConfigUtil#isCollection(Object)}{@code == true} are equal
+     * Whether the specified objects that adhere to {@link ConfigDataUtil#isCollection(Object)}{@code == true} are equal
      * @param first  The first collection object
      * @param second The second collection object
      * @return True or false

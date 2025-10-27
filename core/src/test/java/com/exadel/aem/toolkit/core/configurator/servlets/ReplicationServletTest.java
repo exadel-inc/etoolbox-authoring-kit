@@ -89,7 +89,7 @@ public class ReplicationServletTest {
     @Test
     public void shouldHandleReplicationException() throws IOException, ReplicationException {
         context.requestPathInfo().setSelectorString("publish");
-        ReplicationException testException = new ReplicationException("Test replication error");
+        ReplicationException testException = new ReplicationException("NOT AN EXCEPTION: testing ReplicationServlet logic");
 
         Mockito.doThrow(testException).when(replicator).replicate(
             any(Session.class),
@@ -103,7 +103,7 @@ public class ReplicationServletTest {
     }
 
     @Test
-    public void shouldReportErrorIfInvalidSelector() throws IOException, ReplicationException {
+    public void shouldReportErrorIfInvalidSelector() throws IOException {
         for (String selector : new String[] {StringUtils.EMPTY, "other", null}) {
             context.requestPathInfo().setSelectorString(selector);
 

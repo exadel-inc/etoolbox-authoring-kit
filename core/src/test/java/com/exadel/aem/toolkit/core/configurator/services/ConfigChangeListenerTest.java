@@ -189,7 +189,7 @@ public class ConfigChangeListenerTest {
 
         ConfigurationAdmin mockConfigurationAdmin = Mockito.mock(ConfigurationAdmin.class);
         Mockito.when(mockConfigurationAdmin.getConfiguration(TEST_PID, null))
-            .thenThrow(new IOException("Test configuration exception"));
+            .thenThrow(new IOException("NOT AN EXCEPTION: testing ConfigChangeListener logic"));
 
         ResourceChange change = new JcrResourceChange(
             ResourceChange.ChangeType.CHANGED,

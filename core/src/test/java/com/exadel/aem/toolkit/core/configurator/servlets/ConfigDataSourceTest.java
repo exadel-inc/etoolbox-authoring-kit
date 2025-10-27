@@ -15,13 +15,10 @@ package com.exadel.aem.toolkit.core.configurator.servlets;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 
-import org.apache.commons.collections.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.testing.mock.sling.ResourceResolverType;
 import org.junit.Before;
 import org.junit.Rule;
@@ -29,14 +26,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.osgi.service.metatype.MetaTypeService;
 import com.adobe.granite.ui.components.ds.DataSource;
 import io.wcm.testing.mock.aem.junit.AemContext;
-import junitx.util.PrivateAccessor;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNull;
 
 import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.CoreConstants;
@@ -45,6 +41,7 @@ import com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener;
 @RunWith(MockitoJUnitRunner.class)
 public class ConfigDataSourceTest {
 
+    private static final String PID_SUFFIX = "/test.config.pid";
     @Rule
     public AemContext context = AemContextFactory.newInstance(ResourceResolverType.JCR_OAK);
 
@@ -59,8 +56,7 @@ public class ConfigDataSourceTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void shouldHandleNoConfigurationSpecified() throws IOException {
+    public void shouldHandleNoConfigurationSpecified() {
         for (String suffix : new String[]{null, StringUtils.EMPTY, CoreConstants.SEPARATOR_SLASH, "/ "}) {
             context.requestPathInfo().setSuffix(suffix);
 
@@ -69,63 +65,57 @@ public class ConfigDataSourceTest {
             configDataSource.doGet(context.request(), context.response());
 
             DataSource dataSource = (DataSource) context.request().getAttribute(DataSource.class.getName());
-            assertNotNull(dataSource);
-
-            List<Resource> resources = (List<Resource>) IteratorUtils.toList(dataSource.iterator());
-            assertEquals(1, resources.size());
-
-            Resource alertResource = resources.get(0);
-            ValueMap properties = alertResource.getValueMap();
-            assertTrue(properties.get("text", StringUtils.EMPTY).contains("No configuration specified"));
-            assertEquals("error", properties.get("variant", String.class));
+            assertNull(dataSource);
         }
     }
 
     @Test
-    @SuppressWarnings("unchecked")
     public void shouldHandleDisabledChangeListener() throws IOException {
-        context.requestPathInfo().setSuffix("/test.config.pid");
+        setUpBundleContext(StringUtils.stripStart(PID_SUFFIX, CoreConstants.SEPARATOR_SLASH));
+        context.requestPathInfo().setSuffix(PID_SUFFIX);
 
         context.registerService(new ConfigChangeListener());
         ConfigDataSource configDataSource = context.registerInjectActivateService(new ConfigDataSource());
+
         configDataSource.doGet(context.request(), context.response());
 
         DataSource dataSource = (DataSource) context.request().getAttribute(DataSource.class.getName());
-        assertNotNull(dataSource);
-
-        List<Resource> resources = (List<Resource>) IteratorUtils.toList(dataSource.iterator());
-        assertEquals(1, resources.size());
-
-        Resource alertResource = resources.get(0);
-        ValueMap properties = alertResource.getValueMap();
-        assertTrue(properties.get("text", StringUtils.EMPTY).contains("This tool is disabled by OSGi configuration"));
-        assertEquals("error", properties.get("variant", String.class));
+        assertNull(dataSource);
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public void shouldHandleMissingConfig() throws IOException, NoSuchFieldException {
-        String configId = "test.config.pid";
-        context.requestPathInfo().setSuffix(CoreConstants.SEPARATOR_SLASH + configId);
-
-        ConfigurationAdmin mockConfigAdmin = Mockito.mock(ConfigurationAdmin.class);
+    public void shouldHandleMissingConfig() throws IOException {
+        setUpBundleContext(StringUtils.stripStart(PID_SUFFIX, CoreConstants.SEPARATOR_SLASH));
+        context.requestPathInfo().setSuffix(PID_SUFFIX);
 
         context.registerInjectActivateService(
             new ConfigChangeListener(),
             Collections.singletonMap("enabled", true));
         ConfigDataSource configDataSource = context.registerInjectActivateService(new ConfigDataSource());
-        PrivateAccessor.setField(configDataSource, "configurationAdmin", mockConfigAdmin);
+
         configDataSource.doGet(context.request(), context.response());
 
         DataSource dataSource = (DataSource) context.request().getAttribute(DataSource.class.getName());
-        assertNotNull(dataSource);
+        assertNull(dataSource);
+    }
 
-        List<Resource> resources = (List<Resource>) IteratorUtils.toList(dataSource.iterator());
-        assertEquals(1, resources.size());
+    private void setUpBundleContext(String configId) throws IOException {
+        ConfigurationAdmin mockConfigAdmin = Mockito.mock(ConfigurationAdmin.class);
+        Mockito.when(mockConfigAdmin.getConfiguration(Mockito.eq(configId), Mockito.isNull())).thenReturn(null);
 
-        Resource alertResource = resources.get(0);
-        ValueMap properties = alertResource.getValueMap();
-        assertTrue(properties.get("text", StringUtils.EMPTY).contains("Configuration \"" + configId + "\" is missing or invalid"));
-        assertEquals("error", properties.get("variant", String.class));
+        MetaTypeService mockMetaTypeService = Mockito.mock(MetaTypeService.class);
+
+        BundleContext mockBundleContext = Mockito.mock(BundleContext.class);
+        @SuppressWarnings("unchecked")
+        ServiceReference<ConfigurationAdmin> mockConfigAdminRef = Mockito.mock(ServiceReference.class);
+        Mockito.when(mockBundleContext.getServiceReference(Mockito.eq(ConfigurationAdmin.class))).thenReturn(mockConfigAdminRef);
+        Mockito.when(mockBundleContext.getService(Mockito.eq(mockConfigAdminRef))).thenReturn(mockConfigAdmin);
+
+        @SuppressWarnings("unchecked")
+        ServiceReference<MetaTypeService> mockMetaTypeServiceRef = Mockito.mock(ServiceReference.class);
+        Mockito.when(mockBundleContext.getServiceReference(Mockito.eq(MetaTypeService.class))).thenReturn(mockMetaTypeServiceRef);
+        Mockito.when(mockBundleContext.getService(Mockito.eq(mockMetaTypeServiceRef))).thenReturn(mockMetaTypeService);
+
+        context.request().setAttribute(BundleContext.class.getName(), mockBundleContext);
     }
 }

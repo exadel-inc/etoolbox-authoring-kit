@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -36,6 +37,8 @@ import com.adobe.granite.ui.components.ds.ValueMapResource;
 import com.exadel.aem.toolkit.api.annotations.meta.ResourceTypes;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
+import com.exadel.aem.toolkit.core.configurator.models.internal.ConfigAttribute;
+import com.exadel.aem.toolkit.core.configurator.models.internal.ConfigDefinition;
 
 /**
  * Provides utility methods to create dialog fields for configuration attributes
@@ -77,37 +80,6 @@ class FieldUtil {
             fieldCollection.add(newText(request, config.getDescription(), "config-description"));
         }
 
-        // Metadata fields
-        fieldCollection.add(newHidden(
-            request,
-            "canCleanUp",
-            Boolean.toString(!PermissionUtil.hasOverridingPermissions(request))));
-
-        fieldCollection.add(newHidden(
-            request,
-            "canReplicate",
-            Boolean.toString(PermissionUtil.hasReplicatePermission(request))));
-
-        fieldCollection.add(newHidden(
-            request,
-            "changeCount",
-            String.valueOf(config.getChangeCount())));
-
-        fieldCollection.add(newHidden(
-            request,
-            "ownPath",
-            request.getResource().getPath() + ".html/" + config.getId()));
-
-        fieldCollection.add(newHidden(
-            request,
-            "modified",
-            String.valueOf(config.isModified())));
-
-        fieldCollection.add(newHidden(
-            request,
-            "published",
-            String.valueOf(config.isPublished())));
-
         // Node resource type setters
         fieldCollection.add(newHidden(
             request,
@@ -125,7 +97,7 @@ class FieldUtil {
             "/bin/etoolbox/authoring-kit/config"));
 
         // Attribute fields
-        for (ConfigAttribute attribute : config.getAttributes()) {
+        for (ConfigAttribute attribute : CollectionUtils.emptyIfNull(config.getAttributes())) {
             boolean isSkipped = attribute.getDefinition().getID().endsWith(ConfiguratorConstants.SUFFIX_BACKUP)
                 || StringUtils.equalsAny(attribute.getDefinition().getID(), ConfiguratorConstants.ATTR_NAME_HINT)
                 || attribute.getDefinition().getID().startsWith(ConfiguratorConstants.ATTR_CONFIGURATOR);
@@ -221,22 +193,6 @@ class FieldUtil {
     /* ---------------
        Factory methods
        --------------- */
-
-    /**
-     * Creates an alert field
-     * @param request The {@link SlingHttpServletRequest} that serves as the context for field creation
-     * @param text    The alert text
-     * @param variant The alert variant, e.g. {@code info}, {@code warning}, {@code error}
-     * @return The {@code Resource} instance representing the field
-     */
-    static Resource newAlert(SlingHttpServletRequest request, String text, String variant) {
-        return new Builder(request)
-            .resourceType(ResourceTypes.ALERT)
-            .property(CoreConstants.PN_TEXT, text)
-            .property("variant", variant)
-            .property(PN_CLASS, "centered")
-            .build();
-    }
 
     /**
      * Creates a heading field
@@ -400,9 +356,10 @@ class FieldUtil {
             return properties
                 .entrySet()
                 .stream()
+                .filter(e -> e.getValue() != null)
                 .collect(Collectors.toMap(
                     Map.Entry::getKey,
-                    e -> e.getValue() instanceof String && StringUtils.isNotEmpty((String) e.getValue())
+                    e -> e.getValue() instanceof String
                         ? e.getValue().toString().replace("${", "\\${")
                         : e.getValue()));
         }

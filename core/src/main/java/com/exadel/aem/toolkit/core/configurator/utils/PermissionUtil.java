@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.configurator.servlets;
+package com.exadel.aem.toolkit.core.configurator.utils;
 
 import java.util.Objects;
 import javax.jcr.PathNotFoundException;
@@ -19,9 +19,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.security.AccessControlManager;
 import javax.jcr.security.Privilege;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +31,9 @@ import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
 
 /**
  * Contains utility methods related to permission checking in the context of the {@code EToolbox Configurator}
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own code
  */
-class PermissionUtil {
+public class PermissionUtil {
 
     private static final Logger LOG = LoggerFactory.getLogger(PermissionUtil.class);
 
@@ -49,8 +51,8 @@ class PermissionUtil {
      * @param request The current request
      * @return True or false
      */
-    public static boolean hasGlobalModifyPermission(SlingHttpServletRequest request) {
-        Session session = request.getResourceResolver().adaptTo(Session.class);
+    public static boolean hasGlobalModifyPermission(HttpServletRequest request) {
+        Session session = RequestUtil.getSession(request);
         try {
             return Objects.requireNonNull(session).hasPermission(ConfiguratorConstants.ROOT_PATH, Session.ACTION_SET_PROPERTY);
         } catch (RepositoryException | NullPointerException e) {
@@ -65,13 +67,13 @@ class PermissionUtil {
      * @param request The current request
      * @return True or false
      */
-    public static boolean hasModifyPermission(SlingHttpServletRequest request) {
-        String configId = StringUtils.strip(request.getRequestPathInfo().getSuffix(), CoreConstants.SEPARATOR_SLASH);
+    public static boolean hasModifyPermission(HttpServletRequest request) {
+        String configId = RequestUtil.getConfigPid(request);
         if (StringUtils.isBlank(configId)) {
             return hasGlobalModifyPermission(request);
         }
 
-        Session session = request.getResourceResolver().adaptTo(Session.class);
+        Session session = RequestUtil.getSession(request);
         String resourcePath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId;
         try {
             return Objects.
@@ -92,12 +94,12 @@ class PermissionUtil {
      * @param request The current request
      * @return True or false
      */
-    public static boolean hasOverridingPermissions(SlingHttpServletRequest request) {
-        String configId = StringUtils.strip(request.getRequestPathInfo().getSuffix(), CoreConstants.SEPARATOR_SLASH);
+    public static boolean hasOverridingPermissions(HttpServletRequest request) {
+        String configId = RequestUtil.getConfigPid(request);
         if (StringUtils.isBlank(configId)) {
             return false;
         }
-        Session session = request.getResourceResolver().adaptTo(Session.class);
+        Session session = RequestUtil.getSession(request);
         String resourcePath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId;
         try {
             AccessControlManager acm = Objects.requireNonNull(session).getAccessControlManager();
@@ -117,15 +119,23 @@ class PermissionUtil {
      * @param request The current request
      * @return True or false
      */
-    public static boolean hasReplicatePermission(SlingHttpServletRequest request) {
-        Session session = request.getResourceResolver().adaptTo(Session.class);
-        String configId = StringUtils.strip(request.getRequestPathInfo().getSuffix(), CoreConstants.SEPARATOR_SLASH);
+    public static boolean hasReplicatePermission(HttpServletRequest request) {
+        ResourceResolver resolver = RequestUtil.getResourceResolver(request);
+        Session session = resolver != null ? resolver.adaptTo(Session.class) : null;
+        if (session == null) {
+            LOG.error(ERROR_PERMISSIONS_FAILURE);
+            return false;
+        }
+        String configId = RequestUtil.getConfigPid(request);
         if (StringUtils.isBlank(configId)) {
             return false;
         }
         String resourcePath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + configId;
+        if (resolver.getResource(resourcePath) == null) {
+            resourcePath = ConfiguratorConstants.ROOT_PATH;
+        }
         try {
-            AccessControlManager acm = Objects.requireNonNull(session).getAccessControlManager();
+            AccessControlManager acm = session.getAccessControlManager();
             Privilege[] userPrivileges = acm.getPrivileges(resourcePath);
             for (Privilege privilege : userPrivileges) {
                 if (StringUtils.equalsAny(privilege.getName(), "crx:replicate", "jcr:all", Privilege.JCR_ALL)) {
@@ -134,7 +144,7 @@ class PermissionUtil {
             }
         } catch (PathNotFoundException e) {
             LOG.debug(ERROR_CONFIG_NOT_FOUND, resourcePath);
-        } catch (RepositoryException | NullPointerException e) {
+        } catch (RepositoryException e) {
             LOG.error(ERROR_PERMISSIONS_FAILURE, e);
         }
         return false;

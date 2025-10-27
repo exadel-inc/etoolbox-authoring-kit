@@ -20,14 +20,13 @@ hr {
     width: 50%;
 }
 
-#config label {
-    font-size: 0.95rem;
+#config h2 {
+    font-size:  1.75rem;
+    margin: 1.5rem 0 0.5rem;
 }
 
-.centered {
-    left: 50%;
-    text-align: center;
-    transform: translateX(-50%);
+#config label {
+    font-size: 0.95rem;
 }
 
 .config-description {
