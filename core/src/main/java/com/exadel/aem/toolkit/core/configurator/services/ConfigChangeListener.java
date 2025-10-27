@@ -33,6 +33,7 @@ import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.api.resource.observation.ExternalResourceChangeListener;
 import org.apache.sling.api.resource.observation.ResourceChange;
 import org.apache.sling.api.resource.observation.ResourceChangeListener;
 import org.osgi.framework.BundleContext;
@@ -60,7 +61,7 @@ import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
     immediate = true
 )
 @Designate(ocd = ConfigChangeListenerConfiguration.class)
-public class ConfigChangeListener implements ResourceChangeListener {
+public class ConfigChangeListener implements ResourceChangeListener, ExternalResourceChangeListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigChangeListener.class);
 
