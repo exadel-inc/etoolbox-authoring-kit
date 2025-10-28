@@ -187,6 +187,14 @@ class FieldUtil {
                 Boolean.TRUE.toString()));
         }
 
+        // Empty field hint for text inputs
+        if (!attribute.isMultiValue() && ResourceTypes.TEXTFIELD.equals(resourceType)) {
+            collection.add(newHidden(
+                request,
+                NN_DATA_CHILD + attribute.getDefinition().getID() + "@DefaultValue",
+                ConfiguratorConstants.VALUE_EMPTY));
+        }
+
         // Description
         if (StringUtils.isNotBlank(attribute.getDefinition().getDescription())) {
             Resource description = newText(request, attribute.getDefinition().getDescription(), "field-description");

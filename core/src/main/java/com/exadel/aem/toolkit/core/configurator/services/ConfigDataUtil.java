@@ -118,7 +118,9 @@ class ConfigDataUtil {
             .entrySet()
             .stream()
             .filter(entry -> isValid(entry.getValue()))
-            .forEach(entry -> dictionary.put(entry.getKey(), entry.getValue()));
+            .forEach(entry -> dictionary.put(
+                entry.getKey(),
+                !ConfiguratorConstants.VALUE_EMPTY.equals(entry.getValue()) ? entry.getValue() : StringUtils.EMPTY));
         return dictionary;
     }
 

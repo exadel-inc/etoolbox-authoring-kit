@@ -30,6 +30,8 @@ public class ConfiguratorConstants {
 
     public static final String SUFFIX_BACKUP = "$backup$";
 
+    public static final String VALUE_EMPTY = "__empty__";
+
     /**
      * Default (instantiation-restricting) constructor
      */

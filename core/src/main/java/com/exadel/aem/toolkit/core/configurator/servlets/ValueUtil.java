@@ -84,7 +84,7 @@ class ValueUtil {
      * @return The singular value; or null if the source is empty or contains no non-empty items
      */
     private static Object toSingleValue(Object source) {
-        if (isEmpty(source)) {
+        if (source == null) {
             return null;
         }
         if (source instanceof List<?>) {
