@@ -15,6 +15,13 @@
 hr {
     margin: 1rem -0.5rem;
 }
+hr.vertical {
+    border: none;
+    margin: 1rem;
+}
+hr.vertical:last-child {
+    margin: 0 0 0 1rem;
+}
 
 #config {
     width: 50%;
@@ -38,4 +45,8 @@ hr {
     display: block;
     font-size: 0.85rem;
     font-style: italic;
+}
+
+[coral-dialog-size] {
+    min-width: 30rem;
 }
