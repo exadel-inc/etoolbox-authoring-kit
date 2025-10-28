@@ -27,6 +27,7 @@ public class ConfiguratorConstants {
     public static final String PN_REPLICATION_ACTION = "cq:lastReplicationAction";
 
     public static final String ROOT_PATH = "/conf/etoolbox/authoring-kit/configurator";
+    public static final String RESOURCE_TYPE_CONFIG = "/bin/etoolbox/authoring-kit/config";
 
     public static final String SUFFIX_BACKUP = "$backup$";
 

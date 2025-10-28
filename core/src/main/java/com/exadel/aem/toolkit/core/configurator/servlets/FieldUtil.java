@@ -94,7 +94,7 @@ class FieldUtil {
         fieldCollection.add(newHidden(
             request,
             CoreConstants.RELATIVE_PATH_PREFIX + JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY,
-            "/bin/etoolbox/authoring-kit/config"));
+            ConfiguratorConstants.RESOURCE_TYPE_CONFIG));
 
         // Attribute fields
         for (ConfigAttribute attribute : CollectionUtils.emptyIfNull(config.getAttributes())) {

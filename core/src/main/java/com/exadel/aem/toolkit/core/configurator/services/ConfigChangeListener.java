@@ -290,6 +290,12 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
             return;
         }
         Dictionary<String, Object> backup = ConfigDataUtil.getBackup(configuration);
+        boolean shouldSkip = backup.isEmpty();
+        if (shouldSkip) {
+            // If there is not any backup, even consisting of the only "remove" marker, it means that the configuration
+            // has never been modified, or else has already been reset, so there is nothing to do
+            return;
+        }
         boolean shouldErase = backup.size() == 1
             && Session.ACTION_REMOVE.equals(backup.get(ConfiguratorConstants.SUFFIX_BACKUP));
         if (shouldErase) {

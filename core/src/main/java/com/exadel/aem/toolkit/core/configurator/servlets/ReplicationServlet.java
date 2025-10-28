@@ -20,7 +20,6 @@ import javax.servlet.Servlet;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.HttpConstants;
@@ -35,6 +34,8 @@ import com.day.cq.replication.ReplicationActionType;
 import com.day.cq.replication.ReplicationException;
 import com.day.cq.replication.Replicator;
 
+import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
+
 /**
  * Implements a servlet that handles publishing and unpublishing of configurations managed by the
  * {@code EToolbox Configurator} interface
@@ -45,7 +46,7 @@ import com.day.cq.replication.Replicator;
     service = Servlet.class,
     configurationPolicy = ConfigurationPolicy.REQUIRE,
     property = {
-        "sling.servlet.resourceTypes=" + "/bin/etoolbox/authoring-kit/config",
+        "sling.servlet.resourceTypes=" + ConfiguratorConstants.RESOURCE_TYPE_CONFIG,
         "sling.servlet.selectors=" + "publish",
         "sling.servlet.selectors=" + "unpublish",
         "sling.servlet.methods=" + HttpConstants.METHOD_POST,
@@ -105,8 +106,8 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
         try {
             resolver.delete(resource);
             resolver.commit();
-        } catch (PersistenceException e) {
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            LOG.error("Could not clean up configuration node {}", resource.getPath(), e);
         }
     }
 
