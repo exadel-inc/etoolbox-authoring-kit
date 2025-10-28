@@ -22,6 +22,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.junit.Test;
@@ -42,6 +43,7 @@ public class ConfigDataUtilTest {
     public void shouldConvertValueMapToDictionary() {
         Map<String, Object> sourceMap = new HashMap<>();
         sourceMap.put("string.property", "test value");
+        sourceMap.put("string.property.empty", ConfiguratorConstants.VALUE_EMPTY);
         sourceMap.put("int.property", 42);
         sourceMap.put("boolean.property", true);
         sourceMap.put("double.property", 3.14);
@@ -62,6 +64,7 @@ public class ConfigDataUtilTest {
         assertNotNull(result);
 
         assertEquals("test value", result.get("string.property"));
+        assertEquals(StringUtils.EMPTY, result.get("string.property.empty"));
         assertEquals(42, result.get("int.property"));
         assertEquals(true, result.get("boolean.property"));
         assertEquals(3.14, result.get("double.property"));
