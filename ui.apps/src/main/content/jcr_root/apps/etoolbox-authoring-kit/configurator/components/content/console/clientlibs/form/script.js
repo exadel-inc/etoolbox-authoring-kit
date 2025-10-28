@@ -73,7 +73,7 @@
             if (hasChange) {
                 foundationUi.notify('Success', 'Configuration reset successfully', 'success');
             } else {
-                foundationUi.notify('Error', 'No changes or configuration was not reset', 'error');
+                foundationUi.notify('Error', 'There were no changes, or configuration was not reset', 'error');
             }
         } catch (e) {
             console.error('Failed to retrieve configuration update status:', e);
@@ -280,14 +280,15 @@
      * Shows a prompt dialog and returns a promise resolved with the action taken by the user
      * @param {string} title
      * @param {string} message
+     * @param {string} type
      * @returns {Promise}
      */
-    function prompt(title, message) {
+    function prompt(title, message, type = 'default') {
         return new Promise((resolve) => {
             foundationUi.prompt(
                 title,
                 message,
-                'default',
+                type,
                 [
                     { id: 'yes', text: 'Yes', primary: true },
                     { id: 'no', text: 'No' }
@@ -319,9 +320,15 @@
      * Handles a click on the "Publish" button
      */
     async function onPublishClick() {
+        let action = await prompt('Publish configuration', 'Publish this configuration?', 'warning');
+        if (action !== 'yes') {
+            return;
+        }
         const foundationForm = $('#config').adaptTo('foundation-form');
         if (foundationForm.isDirty()) {
-            const action = await prompt('Unsaved changes', 'Save changes before publishing configuration?');
+            const action = await prompt(
+                'Unsaved changes',
+                'Save current changes before publishing?');
             if (action === 'yes') {
                 await save();
             }
@@ -336,7 +343,10 @@
         const $form = $('#config');
         let keepNode = false;
         if ($form.attr('data-published') === 'true' && $form.attr('data-replicable') === 'true') {
-            const action = await prompt('Published configuration', 'This configuration is published. Do you want to unpublish it before resetting?');
+            const action = await prompt(
+                'Published configuration',
+                'This configuration is published. Do you want to unpublish it before resetting?',
+                'warning');
             if (action === 'yes') {
                 await unpublish();
             } else {
@@ -357,10 +367,13 @@
      * Handles a click on the "Unpublish" button
      */
     async function onUnpublishClick() {
-        let action;
+        let action = await prompt('Unpublish configuration', 'Unpublish this configuration?', 'warning');
+        if (action !== 'yes') {
+            return;
+        }
         const $form = $('#config');
         if ($form.attr('data-modified') === 'true') {
-            action = await prompt('Unpublished configuration', 'Do you want to also reset this configuration on the current instance?');
+            action = await prompt('Unpublish configuration', 'Do you want to also reset this configuration on the current instance?');
         }
         await unpublish();
         if (action === 'yes') {
