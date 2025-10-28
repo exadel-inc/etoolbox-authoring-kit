@@ -320,8 +320,7 @@
      * Handles a click on the "Publish" button
      */
     async function onPublishClick() {
-        let action = await prompt('Publish configuration', 'Publish this configuration?', 'warning');
-        if (action !== 'yes') {
+        if (await prompt('Publish configuration', 'Publish this configuration?', 'warning') !== 'yes') {
             return;
         }
         const foundationForm = $('#config').adaptTo('foundation-form');
@@ -367,10 +366,10 @@
      * Handles a click on the "Unpublish" button
      */
     async function onUnpublishClick() {
-        let action = await prompt('Unpublish configuration', 'Unpublish this configuration?', 'warning');
-        if (action !== 'yes') {
+        if (await prompt('Unpublish configuration', 'Unpublish this configuration?', 'warning') !== 'yes') {
             return;
         }
+        let action;
         const $form = $('#config');
         if ($form.attr('data-modified') === 'true') {
             action = await prompt('Unpublish configuration', 'Do you want to also reset this configuration on the current instance?');
