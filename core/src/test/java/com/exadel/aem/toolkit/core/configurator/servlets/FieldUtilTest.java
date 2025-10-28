@@ -168,6 +168,7 @@ public class FieldUtilTest {
             .map(res -> res.getValueMap().get(CoreConstants.PN_NAME, String.class)
                 + "=" + res.getValueMap().get(CoreConstants.PN_VALUE, String.class))
             .filter(str -> !str.contains("@TypeHint"))
+            .filter(str -> !str.contains("@IgnoreBlanks"))
             .toArray(String[]::new);
         assertArrayEquals(
             new String[]{

@@ -175,12 +175,16 @@ class FieldUtil {
         Resource newInput = builder.child(childResource).multi(attribute.isMultiValue()).build();
         collection.add(newInput);
 
-        // Type hint
+        // Type and "IgnoreBlanks" hints for multifields
         if (attribute.isMultiValue()) {
             collection.add(newHidden(
                 request,
-                CoreConstants.RELATIVE_PATH_PREFIX + attribute.getDefinition().getID() + "@TypeHint",
+                NN_DATA_CHILD + attribute.getDefinition().getID() + "@TypeHint",
                 attribute.getJcrType()));
+            collection.add(newHidden(
+                request,
+                NN_DATA_CHILD + attribute.getDefinition().getID() + "@IgnoreBlanks",
+                Boolean.TRUE.toString()));
         }
 
         // Description
