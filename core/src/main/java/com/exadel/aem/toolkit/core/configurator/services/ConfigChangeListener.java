@@ -13,10 +13,10 @@
  */
 package com.exadel.aem.toolkit.core.configurator.services;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -33,9 +34,11 @@ import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.resource.observation.ExternalResourceChangeListener;
 import org.apache.sling.api.resource.observation.ResourceChange;
 import org.apache.sling.api.resource.observation.ResourceChangeListener;
+import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.Configuration;
@@ -191,31 +194,44 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
      */
     @Override
     public void onChange(List<ResourceChange> list) {
+        Set<String> configsToPatch = new HashSet<>();
         Set<String> configsToReset = new HashSet<>();
         Set<String> configsToUpdate = new HashSet<>();
-        LOG.debug(
-            "Received {} resource change(s): {}",
-            list.size(),
-            list.stream()
-                .map(change -> change.getType() + " at " + change.getPath() + (isRelevantChange(change) ? " (processable)" : " (ignored)"))
-                .reduce((a, b) -> a + SEPARATOR_COMMA_SPACE + b)
-                .orElse("(none)")
-        );
+        LOG.debug("Received {} resource change(s)", list.size());
         for (ResourceChange change : list) {
-            if (!isRelevantChange(change)) {
-                continue;
-            }
-            if (change.getType() == ResourceChange.ChangeType.REMOVED) {
+            boolean isRelevant = false;
+            boolean isDataNode = StringUtils.endsWith(change.getPath(), ConfiguratorConstants.SUFFIX_SLASH_DATA);
+            if (
+                (change.getType() == ResourceChange.ChangeType.ADDED
+                    || change.getType() == ResourceChange.ChangeType.CHANGED)
+                    && isDataNode
+            ) {
+                if (StringUtils.contains(change.getPath(), "/patch/")) {
+                    configsToPatch.add(change.getPath());
+                } else {
+                    configsToUpdate.add(change.getPath());
+                }
+                isRelevant = true;
+
+            } else if (change.getType() == ResourceChange.ChangeType.REMOVED
+                && !ConfiguratorConstants.ROOT_PATH.equals(change.getPath())) {
+
                 configsToReset.add(change.getPath());
-            } else {
-                configsToUpdate.add(change.getPath());
+                isRelevant = true;
             }
+            LOG.debug("{} at {}{}", change.getType(), change.getPath(), isRelevant ? " (processable)" : " (ignored)");
         }
-        if (configsToReset.isEmpty() && configsToUpdate.isEmpty()) {
+        if (configsToPatch.isEmpty() && configsToReset.isEmpty() && configsToUpdate.isEmpty()) {
             return;
         }
         asyncExecutor.submit(() -> {
             try (ResourceResolver resolver = newResolver()) {
+                for (String path : configsToPatch) {
+                    Resource resource = resolver.getResource(path);
+                    if (resource != null) {
+                        createPatchedConfigResource(extractPid(path), resource);
+                    }
+                }
                 for (String path : configsToUpdate) {
                     Resource resource = resolver.getResource(path);
                     if (resource == null) {
@@ -228,22 +244,13 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
                 for (String path : configsToReset) {
                     resetConfiguration(extractPid(path));
                 }
-            } catch (LoginException e) {
+                if (resolver.hasChanges()) {
+                    resolver.commit();
+                }
+            } catch (LoginException | PersistenceException e) {
                 LOG.error("Failed to process configuration changes", e);
             }
         });
-    }
-
-    /**
-     * Determines whether the specified resource change is relevant to configuration management
-     * @param change The resource change to check
-     * @return True or false
-     */
-    private static boolean isRelevantChange(ResourceChange change) {
-        if (change.getType() == ResourceChange.ChangeType.REMOVED) {
-            return !ConfiguratorConstants.ROOT_PATH.equals(change.getPath());
-        }
-        return StringUtils.endsWith(change.getPath(), CoreConstants.SEPARATOR_SLASH + ConfiguratorConstants.NN_DATA);
     }
 
     /* --------------------
@@ -266,6 +273,36 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
        ------------------- */
 
     /**
+     * Creates a new configuration resource patching an existing OSGi configuration with the data existing in
+     * {@code path}
+     * @param pid   Configuration identifier
+     * @param patch Resource containing data to patch the configuration with
+     */
+    private void createPatchedConfigResource(String pid, Resource patch) {
+        Configuration configuration = readConfiguration(pid);
+        ValueMap valueMap = new ValueMapDecorator(new HashMap<>());
+        if (configuration != null) {
+            valueMap.putAll(ConfigDataUtil.toMap(configuration.getProperties()));
+        }
+        valueMap.putAll(patch.getValueMap());
+        ResourceResolver resolver = patch.getResourceResolver();
+        try {
+            Resource root = resolver.getResource(ConfiguratorConstants.ROOT_PATH);
+            if (root == null) {
+                throw new RepositoryException("Configuration root not available");
+            }
+            Resource exising = resolver.getResource(root, pid);
+            if (exising != null) {
+                resolver.delete(exising);
+            }
+            resolver.create(root, pid, valueMap);
+            resolver.delete(patch);
+        } catch (Exception e) {
+            LOG.error("Could not create configuration for {}", pid, e);
+        }
+    }
+
+    /**
      * Retrieves an OSGi configuration by its identifier
      * @param pid Configuration identifier
      * @return The configuration instance, or null if it cannot be retrieved
@@ -273,7 +310,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
     private Configuration readConfiguration(String pid) {
         try {
             return configurationAdmin.getConfiguration(pid, null);
-        } catch (IOException | SecurityException e) {
+        } catch (Exception e) {
             LOG.error("Could not retrieve configuration for {}", pid, e);
         }
         return null;
@@ -303,7 +340,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
         }
         try {
             configuration.update(backup);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error("Could not reset configuration {}", pid, e);
         }
     }
