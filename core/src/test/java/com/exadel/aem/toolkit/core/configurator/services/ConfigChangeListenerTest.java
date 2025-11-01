@@ -49,8 +49,6 @@ public class ConfigChangeListenerTest {
     private static final String FIELD_CONFIG_ADMIN = "configurationAdmin";
     private static final String FIELD_RESOURCE_RESOLVER_FACTORY = "resourceResolverFactory";
 
-    private static final String NODE_DATA = "/data";
-
     private static final String TEST_PID = "com.example.test.Config";
 
     @Rule
@@ -89,7 +87,7 @@ public class ConfigChangeListenerTest {
         String configPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID;
         context.create().resource(configPath);
 
-        String dataPath = configPath + NODE_DATA;
+        String dataPath = configPath + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         Map<String, Object> props = new HashMap<>();
         props.put("test.property", "test.value");
         props.put("test.number", 42);
@@ -110,7 +108,7 @@ public class ConfigChangeListenerTest {
         String configPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID;
         context.create().resource(configPath);
 
-        String dataPath = configPath + NODE_DATA;
+        String dataPath = configPath + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         Map<String, Object> props = new HashMap<>();
         props.put("test.property", "updated.value");
         context.create().resource(dataPath, props);
@@ -135,7 +133,7 @@ public class ConfigChangeListenerTest {
 
     @Test
     public void shouldHandleResourceRemovalEvents() throws IOException, NoSuchFieldException, InterruptedException {
-        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + NODE_DATA;
+        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         context.resourceResolver().commit();
 
         Configuration mockConfig = Mockito.mock(Configuration.class);
@@ -183,7 +181,7 @@ public class ConfigChangeListenerTest {
 
     @Test
     public void shouldHandleConfigurationAdminException() throws IOException, NoSuchFieldException, InterruptedException {
-        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + NODE_DATA;
+        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         context.create().resource(dataPath);
         context.resourceResolver().commit();
 
@@ -214,7 +212,7 @@ public class ConfigChangeListenerTest {
         Mockito.when(mockConfigurationAdmin.getConfiguration(Mockito.eq(foreignPid), Mockito.isNull())).thenReturn(foreignConfig);
         Mockito.when(foreignConfig.getBundleLocation()).thenReturn(foreignBundleLocation);
 
-        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + foreignPid + NODE_DATA;
+        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + foreignPid + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         Map<String, Object> configProps = new HashMap<>();
         configProps.put("foreign.property", "foreign.value");
 
@@ -243,7 +241,7 @@ public class ConfigChangeListenerTest {
         ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
 
         String configPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID;
-        String dataPath = configPath + NODE_DATA;
+        String dataPath = configPath + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         Map<String, Object> props = new HashMap<>();
         props.put("test.property", "test.value");
         props.put("test.number", 42);

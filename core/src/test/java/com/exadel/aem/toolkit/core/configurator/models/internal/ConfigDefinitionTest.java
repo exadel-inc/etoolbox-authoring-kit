@@ -225,7 +225,7 @@ public class ConfigDefinitionTest {
 
         assertNotNull(result);
         assertNotNull(result.getCleanupAction());
-        assertTrue(result.getCleanupAction().endsWith("/data"));
+        assertTrue(result.getCleanupAction().endsWith(ConfiguratorConstants.SUFFIX_SLASH_DATA));
     }
 
     @Test

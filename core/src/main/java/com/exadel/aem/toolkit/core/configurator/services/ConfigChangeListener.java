@@ -411,7 +411,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
     private static String extractPid(String path) {
         String configRootPath = StringUtils.removeEnd(
             path,
-            CoreConstants.SEPARATOR_SLASH + ConfiguratorConstants.NN_DATA);
+            ConfiguratorConstants.SUFFIX_SLASH_DATA);
         return StringUtils.substringAfterLast(configRootPath, CoreConstants.SEPARATOR_SLASH);
     }
 }
