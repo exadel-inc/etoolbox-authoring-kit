@@ -23,19 +23,32 @@ import com.day.cq.replication.ReplicationPathTransformer;
 
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
 
+/**
+ * Transforms replication paths for configurator data to enable property-level patching
+ */
 class PropertyAwarePathTransformer implements ReplicationPathTransformer {
 
-//    private final ExpiringCache<ReplicationAction, List<String>> cache;
-//
-//    public PropertyAwarePathTransformer(ExpiringCache<ReplicationAction, List<String>> propertyCache) {
-//        this.cache = propertyCache;
-//    }
-
+    /**
+     * Transforms the replication path by replacing the standard configurator path segment with the patch-specific
+     * segment
+     * @param session           The JCR session performing the replication
+     * @param path              The original replication path
+     * @param replicationAction The replication action being performed
+     * @param agent             The replication agent executing the action
+     * @return The transformed path
+     */
     @Override
     public String transform(Session session, String path, ReplicationAction replicationAction, Agent agent) {
         return path.replace("/configurator/", "/configurator/patch/");
     }
 
+    /**
+     * Determines whether this transformer should be applied to the given replication action
+     * @param session           The JCR session performing the replication
+     * @param replicationAction The replication action being evaluated
+     * @param agent             The replication agent executing the action
+     * @return True or false
+     */
     @Override
     public boolean accepts(Session session, ReplicationAction replicationAction, Agent agent) {
         if (!replicationAction.getPath().startsWith(ConfiguratorConstants.ROOT_PATH)) {

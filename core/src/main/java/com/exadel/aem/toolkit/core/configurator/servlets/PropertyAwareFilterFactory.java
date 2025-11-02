@@ -27,27 +27,29 @@ import com.day.cq.replication.ReplicationContentFilterFactory;
 
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
 
+/**
+ * Creates replication content filters that selectively include only specific properties during replication
+ * of configurator data
+ */
 class PropertyAwareFilterFactory implements ReplicationContentFilterFactory {
 
-//    private final ExpiringCache<ReplicationAction, List<String>> cache;
-
-//    public PropertyAwareFilterFactory(ExpiringCache<ReplicationAction, List<String>> propertyCache) {
-//        this.cache = propertyCache;
-//    }
-
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public ReplicationContentFilter createFilter(ReplicationAction replicationAction) {
         if (!replicationAction.getPath().startsWith(ConfiguratorConstants.ROOT_PATH)) {
             return null;
         }
-//        List<String> properties = cache.get(replicationAction);
         List<String> properties = ReplicationContext.getProperties();
         if (CollectionUtils.isEmpty(properties)) {
             return null;
         }
 
         return new ReplicationContentFilter() {
-
+            /**
+             * {@inheritDoc}
+             */
             @Override
             public boolean accepts(Node node) {
                 try {
@@ -58,6 +60,9 @@ class PropertyAwareFilterFactory implements ReplicationContentFilterFactory {
                 }
             }
 
+            /**
+             * {@inheritDoc}
+             */
             @Override
             public boolean accepts(Property property) {
                 try {
@@ -69,11 +74,17 @@ class PropertyAwareFilterFactory implements ReplicationContentFilterFactory {
                 }
             }
 
+            /**
+             * {@inheritDoc}
+             */
             @Override
             public boolean allowsDescent(Node node) {
                 return true;
             }
 
+            /**
+             * {@inheritDoc}
+             */
             @Override
             public List<String> getFilteredPaths() {
                 return null;
