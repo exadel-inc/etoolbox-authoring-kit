@@ -199,7 +199,7 @@
      *     flag is unset, false otherwise
      */
     async function reloadAsync(trackChanges = false) {
-        const $reloadContainer = $('[data-reload-target]')
+        const $reloadContainer = $('[data-reload-target]');
         let $form = $reloadContainer.find('#config');
         const oldChangeCount = $form.length ? Number.parseInt($form.attr('data-change-count'), 10) : 0;
 
@@ -329,7 +329,7 @@
                     $form.find('[data-validation]').each((_, el) => {
                         const validationFacade = $(el).adaptTo('foundation-validation');
                         const validationName = el.dataset.validation;
-                            if (!validationFacade || !validations[validationName]) {
+                        if (!validationFacade || !validations[validationName]) {
                             return;
                         }
                         validations[validationName](el, validationFacade);
@@ -381,21 +381,21 @@
      */
     async function onPublishClick() {
         const options = $('#config [data-name]')
-            .map((_, el) => `<coral-checkbox class="option" name="properties" value="${ el.dataset.name }">${ el.dataset.fieldlabel }</coral-checkbox>`)
+            .map((_, el) => `<coral-checkbox class="option" name="properties" value="${el.dataset.name}">${el.dataset.fieldlabel}</coral-checkbox>`)
             .get()
             .join('<br>');
         const promptContent = `
             <p>Publish this configuration?</p>
             <form>
             <coral-checkbox class="option" name="properties" value="__all__" checked data-validation="atLeastOneChecked">All properties</coral-checkbox>
-            <div class="option-selection scrollable">${ options }</div>
+            <div class="option-selection scrollable">${options}</div>
             </form>`;
         const [action, values] = await prompt(
             'Publish configuration',
             promptContent,
             'warning',
             {
-                'atLeastOneChecked': (el, val) => val.setCustomValidity($(el).closest('form').find('[checked]').length === 0 ? 'Select an option' : null)
+                atLeastOneChecked: (el, val) => val.setCustomValidity($(el).closest('form').find('[checked]').length === 0 ? 'Select an option' : null)
             });
         if (action === 'no') {
             return;
