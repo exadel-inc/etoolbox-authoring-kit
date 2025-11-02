@@ -69,14 +69,13 @@ import com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener;
         "sling.servlet.methods=" + HttpConstants.METHOD_POST,
     }
 )
+@SuppressWarnings("DeclarationOrder")
 public class ReplicationServlet extends SlingAllMethodsServlet {
 
     private static final Logger LOG = LoggerFactory.getLogger(ReplicationServlet.class);
 
     static final String SELECTOR_PUBLISH = "publish";
     static final String SELECTOR_UNPUBLISH = "unpublish";
-
-//    private static final int PROPERTY_CACHE_TTL = 10_000;
 
     private static final String EXCEPTION_COULD_NOT_PUBLISH = "Could not publish configuration {}";
 
@@ -86,19 +85,11 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
     @Reference
     private transient Replicator replicator;
 
-//    private ExpiringCache<ReplicationAction, List<String>> propertyCache;
-
-//    private ServiceRegistration<Preprocessor> preprocessorRegistration;
-//    Preprocessor preprocessor;
-
     private ServiceRegistration<Filter> replicationContextRegistration;
-    ReplicationContext replicationContext;
 
     private ServiceRegistration<ReplicationPathTransformer> pathTransformerRegistration;
-    PropertyAwarePathTransformer pathTransformer;
 
     private ServiceRegistration<ReplicationContentFilterFactory> contentFilterFactoryRegistration;
-    PropertyAwareFilterFactory contentFilterFactory;
 
     /**
      * Activates the servlet component and registers subsidiary services
@@ -113,7 +104,7 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
             return;
         }
 
-        replicationContext = new ReplicationContext();
+        ReplicationContext replicationContext = new ReplicationContext();
         Dictionary<String, Object> replicationContextProps = new Hashtable<>();
         replicationContextProps.put(EngineConstants.SLING_FILTER_SCOPE, EngineConstants.FILTER_SCOPE_REQUEST);
         replicationContextProps.put("sling.filter.resourceTypes", ConfiguratorConstants.RESOURCE_TYPE_CONFIG);
@@ -122,12 +113,12 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
             replicationContext,
             replicationContextProps);
 
-        pathTransformer = new PropertyAwarePathTransformer();
+        PropertyAwarePathTransformer pathTransformer = new PropertyAwarePathTransformer();
         pathTransformerRegistration = context.registerService(ReplicationPathTransformer.class,
             pathTransformer,
             null);
 
-        contentFilterFactory = new PropertyAwareFilterFactory();
+        PropertyAwareFilterFactory contentFilterFactory = new PropertyAwareFilterFactory();
         contentFilterFactoryRegistration = context.registerService(
             ReplicationContentFilterFactory.class,
             contentFilterFactory,
@@ -147,14 +138,6 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
      * Unregisters subsidiary services
      */
     private void doDeactivate() {
-//        if (preprocessorRegistration != null) {
-//            preprocessorRegistration.unregister();
-//            preprocessorRegistration = null;
-//        }
-//        if (propertyCache != null) {
-//            propertyCache.close();
-//            propertyCache = null;
-//        }
         if (contentFilterFactoryRegistration != null) {
             contentFilterFactoryRegistration.unregister();
             contentFilterFactoryRegistration = null;
@@ -220,20 +203,6 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
             LOG.error(EXCEPTION_COULD_NOT_PUBLISH, request.getResource().getName(), e);
             sendError(response, SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
-        /*
-        PropertyAwareReplicationOptions options = new PropertyAwareReplicationOptions(optionList);
-        try {
-            replicator.replicate(
-                Objects.requireNonNull(request.getResourceResolver().adaptTo(Session.class)),
-                ReplicationActionType.ACTIVATE,
-                request.getResource().getPath());
-        } catch (ReplicationException e) {
-            LOG.error(EXCEPTION_COULD_NOT_PUBLISH, request.getResource().getName(), e);
-            sendError(response, SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
-        } finally {
-            propertyCache.remove(options.getAction());
-        }*/
-
     }
 
     /**
