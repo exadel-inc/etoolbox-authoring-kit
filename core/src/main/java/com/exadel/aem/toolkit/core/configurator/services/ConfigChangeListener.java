@@ -71,8 +71,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
     private static final int ASYNC_THREAD_COUNT = 5;
 
     private static final String UPDATABLE_CONFIG_TOKEN = "?";
-
-    private static final String SEPARATOR_COMMA_SPACE = ", ";
+    private static final String NODE_PATCH = "/patch/";
 
     @Reference
     private transient ConfigurationAdmin configurationAdmin;
@@ -206,7 +205,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
                     || change.getType() == ResourceChange.ChangeType.CHANGED)
                     && isDataNode
             ) {
-                if (StringUtils.contains(change.getPath(), "/patch/")) {
+                if (StringUtils.contains(change.getPath(), NODE_PATCH)) {
                     configsToPatch.add(change.getPath());
                 } else {
                     configsToUpdate.add(change.getPath());
@@ -214,7 +213,8 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
                 isRelevant = true;
 
             } else if (change.getType() == ResourceChange.ChangeType.REMOVED
-                && !ConfiguratorConstants.ROOT_PATH.equals(change.getPath())) {
+                && !ConfiguratorConstants.ROOT_PATH.equals(change.getPath())
+                && !StringUtils.contains(change.getPath(), NODE_PATCH)) {
 
                 configsToReset.add(change.getPath());
                 isRelevant = true;
@@ -291,12 +291,17 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
             if (root == null) {
                 throw new RepositoryException("Configuration root not available");
             }
-            Resource exising = resolver.getResource(root, pid);
-            if (exising != null) {
-                resolver.delete(exising);
+            Resource patchParent = ConfiguratorConstants.NN_DATA.equals(patch.getName()) ? patch.getParent() : patch;
+            if (patchParent == null) {
+                throw new RepositoryException("Could not locate the patch root");
             }
-            resolver.create(root, pid, valueMap);
-            resolver.delete(patch);
+            Resource exisingConfig = resolver.getResource(root, pid);
+            if (exisingConfig != null) {
+                resolver.delete(exisingConfig);
+            }
+            exisingConfig = resolver.create(root, pid, patchParent.getValueMap());
+            resolver.create(exisingConfig, ConfiguratorConstants.NN_DATA, valueMap);
+            resolver.delete(patchParent);
         } catch (Exception e) {
             LOG.error("Could not create configuration for {}", pid, e);
         }

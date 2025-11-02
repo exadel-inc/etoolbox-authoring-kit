@@ -85,9 +85,9 @@ import com.exadel.aem.toolkit.core.policymanagement.filters.TopLevelPolicyFilter
     ConfigDataSourceTest.class,
     ConfigDataUtilTest.class,
     ConfigDefinitionTest.class,
+    ReplicationServletTest.class,
     FieldUtilTest.class,
     PermissionUtilTest.class,
-    ReplicationServletTest.class,
     ValueUtilTest.class,
 
     TopLevelPolicyFilterTest.class
