@@ -41,6 +41,7 @@ public class RenderCondition {
     private static final Logger LOG = LoggerFactory.getLogger(RenderCondition.class);
 
     private static final Map<String, Predicate<SlingHttpServletRequest>> FEATURE_PREDICATES;
+
     static {
         FEATURE_PREDICATES = new HashMap<>();
 

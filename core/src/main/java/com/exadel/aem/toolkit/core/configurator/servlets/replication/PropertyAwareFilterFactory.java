@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.configurator.servlets;
+package com.exadel.aem.toolkit.core.configurator.servlets.replication;
 
 import java.util.List;
 import javax.jcr.Node;

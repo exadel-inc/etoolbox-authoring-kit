@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.configurator.servlets;
+package com.exadel.aem.toolkit.core.configurator.servlets.replication;
 
 import java.io.IOException;
 import java.util.Dictionary;
@@ -27,6 +27,7 @@ import javax.servlet.Servlet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.HttpConstants;
@@ -186,19 +187,27 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
      */
     private void doPublish(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
         String properties = request.getParameter("properties");
-        if (StringUtils.isNotBlank(properties) && !"all".equals(properties)) {
+        boolean isPerProperty = StringUtils.isNotBlank(properties) && !"all".equals(properties);
+        ReplicationOptions replicationOptions = new ReplicationOptions();
+        if (isPerProperty) {
             List<String> propertyList = Stream.of(properties.split("[,;]"))
                 .map(String::trim)
                 .filter(StringUtils::isNotEmpty)
                 .distinct()
                 .collect(Collectors.toList());
             ReplicationContext.setProperties(propertyList);
+            replicationOptions.setSuppressStatusUpdate(true);
         }
         try {
             replicator.replicate(
                 Objects.requireNonNull(request.getResourceResolver().adaptTo(Session.class)),
                 ReplicationActionType.ACTIVATE,
-                request.getResource().getPath());
+                request.getResource().getPath(),
+                replicationOptions);
+
+            if (isPerProperty) {
+                ModifiableValueMap propertiesMap = request.getResource().adaptTo(ModifiableValueMap.class);
+            }
         } catch (ReplicationException e) {
             LOG.error(EXCEPTION_COULD_NOT_PUBLISH, request.getResource().getName(), e);
             sendError(response, SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
