@@ -110,7 +110,10 @@ public enum ConfigAccess {
         }
 
         try {
-            BundleContext context = Objects.requireNonNull(FrameworkUtil.getBundle(ConfigAccess.class).getBundleContext());
+            BundleContext context = (BundleContext) request.getAttribute(BundleContext.class.getName());
+            if (context == null) {
+                context = Objects.requireNonNull(FrameworkUtil.getBundle(ConfigAccess.class).getBundleContext());
+            }
             ConfigChangeListener listener = Objects.requireNonNull(context.getService(context.getServiceReference(ConfigChangeListener.class)));
             if (!listener.isEnabled()) {
                 return DISABLED;

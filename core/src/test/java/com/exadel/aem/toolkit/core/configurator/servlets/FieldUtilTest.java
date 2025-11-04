@@ -145,7 +145,7 @@ public class FieldUtilTest {
         ConfigAttribute nameHintAttribute = new ConfigAttribute(nameHintDefinition, "hint value");
 
         Mockito.when(configDefinition.getAttributes()).thenReturn(
-            java.util.Arrays.asList(nameHintAttribute, textAttribute));
+            Arrays.asList(nameHintAttribute, textAttribute));
 
         FieldUtil.processRequest(context.request(), configDefinition);
 
