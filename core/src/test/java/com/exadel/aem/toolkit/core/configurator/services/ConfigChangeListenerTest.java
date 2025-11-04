@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.sling.api.resource.PersistenceException;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.resource.observation.ResourceChange;
 import org.apache.sling.jcr.resource.internal.JcrResourceChange;
@@ -49,9 +50,8 @@ public class ConfigChangeListenerTest {
     private static final String FIELD_CONFIG_ADMIN = "configurationAdmin";
     private static final String FIELD_RESOURCE_RESOLVER_FACTORY = "resourceResolverFactory";
 
-    private static final String NODE_DATA = "/data";
-
     private static final String TEST_PID = "com.example.test.Config";
+    private static final String NODE_PATCH = "/patch/";
 
     @Rule
     public AemContext context = AemContextFactory.newInstance();
@@ -89,7 +89,7 @@ public class ConfigChangeListenerTest {
         String configPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID;
         context.create().resource(configPath);
 
-        String dataPath = configPath + NODE_DATA;
+        String dataPath = configPath + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         Map<String, Object> props = new HashMap<>();
         props.put("test.property", "test.value");
         props.put("test.number", 42);
@@ -110,7 +110,7 @@ public class ConfigChangeListenerTest {
         String configPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID;
         context.create().resource(configPath);
 
-        String dataPath = configPath + NODE_DATA;
+        String dataPath = configPath + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         Map<String, Object> props = new HashMap<>();
         props.put("test.property", "updated.value");
         context.create().resource(dataPath, props);
@@ -135,7 +135,7 @@ public class ConfigChangeListenerTest {
 
     @Test
     public void shouldHandleResourceRemovalEvents() throws IOException, NoSuchFieldException, InterruptedException {
-        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + NODE_DATA;
+        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         context.resourceResolver().commit();
 
         Configuration mockConfig = Mockito.mock(Configuration.class);
@@ -165,12 +165,17 @@ public class ConfigChangeListenerTest {
             ConfiguratorConstants.ROOT_PATH,
             false,
             null);
+        ResourceChange patchDeletion = new JcrResourceChange(
+            ResourceChange.ChangeType.REMOVED,
+            ConfiguratorConstants.ROOT_PATH + NODE_PATCH + TEST_PID + ConfiguratorConstants.SUFFIX_SLASH_DATA,
+            false,
+            null);
         ResourceChange nonDataChange = new JcrResourceChange(
             ResourceChange.ChangeType.ADDED,
             ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID,
             false,
             null);
-        List<ResourceChange> changes = Arrays.asList(rootChange, nonDataChange);
+        List<ResourceChange> changes = Arrays.asList(rootChange, patchDeletion, nonDataChange);
 
         ConfigurationAdmin mockConfigurationAdmin = Mockito.mock(ConfigurationAdmin.class);
 
@@ -183,7 +188,7 @@ public class ConfigChangeListenerTest {
 
     @Test
     public void shouldHandleConfigurationAdminException() throws IOException, NoSuchFieldException, InterruptedException {
-        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + NODE_DATA;
+        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         context.create().resource(dataPath);
         context.resourceResolver().commit();
 
@@ -214,7 +219,7 @@ public class ConfigChangeListenerTest {
         Mockito.when(mockConfigurationAdmin.getConfiguration(Mockito.eq(foreignPid), Mockito.isNull())).thenReturn(foreignConfig);
         Mockito.when(foreignConfig.getBundleLocation()).thenReturn(foreignBundleLocation);
 
-        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + foreignPid + NODE_DATA;
+        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + foreignPid + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         Map<String, Object> configProps = new HashMap<>();
         configProps.put("foreign.property", "foreign.value");
 
@@ -243,7 +248,7 @@ public class ConfigChangeListenerTest {
         ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
 
         String configPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID;
-        String dataPath = configPath + NODE_DATA;
+        String dataPath = configPath + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         Map<String, Object> props = new HashMap<>();
         props.put("test.property", "test.value");
         props.put("test.number", 42);
@@ -260,6 +265,68 @@ public class ConfigChangeListenerTest {
         Thread.sleep(500); // Allow some time for async processing
         Mockito.verify(mockConfig, Mockito.never()).update(Mockito.any(Dictionary.class));
         Mockito.verify(mockConfigurationAdmin).getConfiguration(TEST_PID, null);
+    }
+
+    @Test
+    public void shouldCreatePatchedConfigResource() throws Exception {
+        ConfigurationAdmin mockConfigurationAdmin = Mockito.mock(ConfigurationAdmin.class);
+        Mockito.when(mockConfigurationAdmin.getConfiguration(TEST_PID, null)).thenReturn(null);
+
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
+
+        String patchPath = ConfiguratorConstants.ROOT_PATH + NODE_PATCH + TEST_PID + ConfiguratorConstants.SUFFIX_SLASH_DATA;
+        Map<String, Object> patchProps = new HashMap<>();
+        patchProps.put("patch.property", "patch.value");
+        patchProps.put("patch.number", 200);
+        context.create().resource(patchPath, patchProps);
+        context.resourceResolver().commit();
+
+        ResourceChange change = new JcrResourceChange(
+            ResourceChange.ChangeType.ADDED,
+            patchPath,
+            false,
+            null);
+        configChangeListener.onChange(Collections.singletonList(change));
+
+        Thread.sleep(500); // Allow some time for async processing
+        String expectedConfigPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID;
+        assertNotNull(context.resourceResolver().getResource(expectedConfigPath));
+        assertNull(context.resourceResolver().getResource(patchPath));
+    }
+
+    @Test
+    public void shouldReplaceExistingConfigResourceWhenPatchIsProcessed() throws Exception {
+        ConfigurationAdmin mockConfigurationAdmin = Mockito.mock(ConfigurationAdmin.class);
+        Mockito.when(mockConfigurationAdmin.getConfiguration(TEST_PID, null)).thenReturn(null);
+
+        String existingConfigPath = ConfiguratorConstants.ROOT_PATH
+            + CoreConstants.SEPARATOR_SLASH + TEST_PID
+            + ConfiguratorConstants.SUFFIX_SLASH_DATA;
+        Map<String, Object> existingProps = new HashMap<>();
+        existingProps.put("old.property", "old.value");
+        context.create().resource(existingConfigPath, existingProps);
+        context.resourceResolver().commit();
+
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
+
+        String patchPath = ConfiguratorConstants.ROOT_PATH + NODE_PATCH + TEST_PID + ConfiguratorConstants.SUFFIX_SLASH_DATA;
+        Map<String, Object> patchProps = new HashMap<>();
+        patchProps.put("new.property", "new.value");
+        context.create().resource(patchPath, patchProps);
+        context.resourceResolver().commit();
+
+        ResourceChange change = new JcrResourceChange(
+            ResourceChange.ChangeType.ADDED,
+            patchPath,
+            false,
+            null);
+        configChangeListener.onChange(Collections.singletonList(change));
+
+        Thread.sleep(500); // Allow some time for async processing
+        Resource existingResource = context.resourceResolver().getResource(existingConfigPath);
+        assertNotNull(existingResource);
+        assertEquals("new.value", existingResource.getValueMap().get("new.property", String.class));
+        assertNull(context.resourceResolver().getResource(patchPath));
     }
 
     private ConfigChangeListener registerInjectActivateListener() throws NoSuchFieldException {

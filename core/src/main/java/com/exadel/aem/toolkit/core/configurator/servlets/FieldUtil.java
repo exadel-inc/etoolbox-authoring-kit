@@ -18,7 +18,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -133,7 +135,9 @@ class FieldUtil {
         // Generic properties
         builder
             .resourceType(resourceType)
-            .property(CoreConstants.PN_NAME, NN_DATA_CHILD + attribute.getDefinition().getID());
+            .property(CoreConstants.PN_NAME, NN_DATA_CHILD + attribute.getDefinition().getID())
+            .data(CoreConstants.PN_NAME, attribute.getDefinition().getID())
+            .data(CoreConstants.PN_FIELD_LABEL, attribute.getDefinition().getName());
 
         // Labels
         if (ResourceTypes.CHECKBOX.equals(resourceType)) {
@@ -265,6 +269,7 @@ class FieldUtil {
         private final ResourceResolver resolver;
 
         private Resource child;
+        private Map<String, Object> data;
         private boolean isMultiValue;
         private String resourceType;
 
@@ -296,6 +301,20 @@ class FieldUtil {
         }
 
         /**
+         * Adds a {@code granite:data} property to the field being built
+         * @param name  The property name
+         * @param value The property value
+         * @return This instance
+         */
+        Builder data(String name, Object value) {
+            if (this.data == null) {
+                this.data = new HashMap<>();
+            }
+            this.data.put(name, value);
+            return this;
+        }
+
+        /**
          * Sets whether the field being built is multi-valued
          * @param value True or false
          * @return This instance
@@ -306,7 +325,7 @@ class FieldUtil {
         }
 
         /**
-         * Adds a property to the field being built
+         * Adds a generic property to the field being built
          * @param name  The property name
          * @param value The property value
          * @return This instance
@@ -333,6 +352,15 @@ class FieldUtil {
         Resource build() {
             String effectiveResourceType = StringUtils.defaultIfEmpty(resourceType, JcrConstants.NT_UNSTRUCTURED);
             ValueMap valueMap = new ValueMapDecorator(escapeTextProperties(properties));
+            Resource graniteDataResource = null;
+            if (data != null) {
+                ValueMap dataValueMap = new ValueMapDecorator(escapeTextProperties(data));
+                graniteDataResource = new ValueMapResource(
+                    resolver,
+                    path + "/granite:data",
+                    JcrConstants.NT_UNSTRUCTURED,
+                    dataValueMap);
+            }
             if (isMultiValue) {
                 ValueMap wrapperValueMap = new ValueMapDecorator(new HashMap<>());
                 wrapperValueMap.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.MULTIFIELD);
@@ -349,14 +377,14 @@ class FieldUtil {
                     path,
                     ResourceTypes.MULTIFIELD,
                     wrapperValueMap,
-                    Collections.singletonList(nestedField));
+                    Stream.of(nestedField, graniteDataResource).filter(Objects::nonNull).collect(Collectors.toList()));
             }
             return new ValueMapResource(
                 resolver,
                 path,
                 effectiveResourceType,
                 valueMap,
-                child != null ? Collections.singletonList(child) : null);
+                Stream.of(child, graniteDataResource).filter(Objects::nonNull).collect(Collectors.toList()));
         }
 
         /**

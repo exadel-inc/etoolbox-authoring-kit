@@ -23,22 +23,30 @@
 
     /**
      * Triggers asynchronous publishing of the configuration
+     * @param {string|Array} properties
      * @returns {Promise}
      */
-    async function publish() {
-        return await replicate('publish');
+    async function publish(properties) {
+        return await replicate('publish', properties);
     }
 
     /**
      * Triggers asynchronous replication (either "activate" or "deactivate") of the configuration
      * @param {string} command
+     * @param {string|array|null} properties
      * @returns {Promise}
      */
-    async function replicate(command) {
+    async function replicate(command, properties) {
         foundationUi.wait();
         const publishPath = $('#config').attr('action') + `.${command}.html`;
+        let propertiesData = null;
+        if (Array.isArray(properties)) {
+            propertiesData = properties.join(';');
+        } else if (properties) {
+            propertiesData = properties;
+        }
         try {
-            await requestAsync('POST', publishPath);
+            await requestAsync('POST', publishPath, { properties: propertiesData });
             await reloadAsync();
             foundationUi.notify('Success', `Started ${command}ing configuration`, 'success');
         } catch (e) {
@@ -191,7 +199,7 @@
      *     flag is unset, false otherwise
      */
     async function reloadAsync(trackChanges = false) {
-        const $reloadContainer = $('[data-reload-target]')
+        const $reloadContainer = $('[data-reload-target]');
         let $form = $reloadContainer.find('#config');
         const oldChangeCount = $form.length ? Number.parseInt($form.attr('data-change-count'), 10) : 0;
 
@@ -279,22 +287,74 @@
     /**
      * Shows a prompt dialog and returns a promise resolved with the action taken by the user
      * @param {string} title
-     * @param {string} message
+     * @param {string} content
      * @param {string} type
-     * @returns {Promise}
+     * @param {object} validations
+     * @returns {Promise<string|Array>}
      */
-    function prompt(title, message, type = 'default') {
+    function prompt(title, content, type = 'default', validations = {}) {
         return new Promise((resolve) => {
-            foundationUi.prompt(
-                title,
-                message,
-                type,
-                [
-                    { id: 'yes', text: 'Yes', primary: true },
-                    { id: 'no', text: 'No' }
-                ],
-                (action) => resolve(action)
-            );
+            if (!content.includes('<form')) {
+                return foundationUi.prompt(
+                    title,
+                    content,
+                    type,
+                    [
+                        { id: 'yes', text: 'Yes', primary: true },
+                        { id: 'no', text: 'No' }
+                    ],
+                    (action) => resolve(action)
+                );
+            }
+            const dialog = new Coral.Dialog().set({
+                id: 'prompt-dialog',
+                header: { innerHTML: title },
+                content: { innerHTML: content },
+                footer: {
+                    innerHTML: `
+                        <button is="coral-button" variant="primary" data-action="yes">Yes</button>
+                        <button is="coral-button" variant="default" data-action="no">No</button>`
+                },
+                variant: type
+            });
+            dialog.footer.querySelectorAll('button').forEach((button) => {
+                button.addEventListener('click', () => {
+                    const action = button.dataset.action;
+                    if (action !== 'yes') {
+                        resolve([action, {}]);
+                        dialog.remove();
+                        return;
+                    }
+                    const $form = $(dialog).find('form');
+                    $form.find('[data-validation]').each((_, el) => {
+                        const validationFacade = $(el).adaptTo('foundation-validation');
+                        const validationName = el.dataset.validation;
+                        if (!validationFacade || !validations[validationName]) {
+                            return;
+                        }
+                        validations[validationName](el, validationFacade);
+                        validationFacade.updateUI();
+                    });
+                    if ($form.find('[invalid]').length > 0) {
+                        return;
+                    }
+                    const states = $form.serializeArray()
+                        .reduce((acc, item) => {
+                            if (acc[item.name] === undefined) {
+                                acc[item.name] = item.value;
+                            } else if (Array.isArray(acc[item.name])) {
+                                acc[item.name].push(item.value);
+                            } else {
+                                acc[item.name] = [acc[item.name], item.value];
+                            }
+                            return acc;
+                        }, {});
+                    resolve([action, states]);
+                    dialog.remove();
+                });
+            });
+            document.body.appendChild(dialog);
+            dialog.show();
         });
     }
 
@@ -320,7 +380,24 @@
      * Handles a click on the "Publish" button
      */
     async function onPublishClick() {
-        if (await prompt('Publish configuration', 'Publish this configuration?', 'warning') !== 'yes') {
+        const options = $('#config [data-name]')
+            .map((_, el) => `<coral-checkbox class="option" name="properties" value="${el.dataset.name}">${el.dataset.fieldlabel}</coral-checkbox>`)
+            .get()
+            .join('<br>');
+        const promptContent = `
+            <p>Publish this configuration?</p>
+            <form>
+            <coral-checkbox class="option" name="properties" value="__all__" checked data-validation="atLeastOneChecked">All properties</coral-checkbox>
+            <div class="option-selection scrollable">${options}</div>
+            </form>`;
+        const [action, values] = await prompt(
+            'Publish configuration',
+            promptContent,
+            'warning',
+            {
+                atLeastOneChecked: (el, val) => val.setCustomValidity($(el).closest('form').find('[checked]').length === 0 ? 'Select an option' : null)
+            });
+        if (action === 'no') {
             return;
         }
         const foundationForm = $('#config').adaptTo('foundation-form');
@@ -332,7 +409,7 @@
                 await save();
             }
         }
-        await publish();
+        await publish(values.properties.includes('__all__') ? 'all' : values.properties);
     }
 
     /**

@@ -122,7 +122,7 @@ public class ConfigDefinition {
      */
     @SuppressWarnings("unused") // Used in Granite page
     public String getCleanupAction() {
-        return canCleanup ? getAction() : getAction() + "/data";
+        return canCleanup ? getAction() : getAction() + ConfiguratorConstants.SUFFIX_SLASH_DATA;
     }
 
     /**
