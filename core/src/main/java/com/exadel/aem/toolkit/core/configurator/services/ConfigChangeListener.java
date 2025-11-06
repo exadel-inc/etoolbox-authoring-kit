@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.core.configurator.services;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -24,7 +23,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -34,11 +32,9 @@ import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
-import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.resource.observation.ExternalResourceChangeListener;
 import org.apache.sling.api.resource.observation.ResourceChange;
 import org.apache.sling.api.resource.observation.ResourceChangeListener;
-import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.Configuration;
@@ -71,7 +67,6 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
     private static final int ASYNC_THREAD_COUNT = 5;
 
     private static final String UPDATABLE_CONFIG_TOKEN = "?";
-    private static final String NODE_PATCH = "/patch/";
 
     @Reference
     private transient ConfigurationAdmin configurationAdmin;
@@ -193,7 +188,6 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
      */
     @Override
     public void onChange(List<ResourceChange> list) {
-        Set<String> configsToPatch = new HashSet<>();
         Set<String> configsToReset = new HashSet<>();
         Set<String> configsToUpdate = new HashSet<>();
         LOG.debug("Received {} resource change(s)", list.size());
@@ -205,33 +199,22 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
                     || change.getType() == ResourceChange.ChangeType.CHANGED)
                     && isDataNode
             ) {
-                if (StringUtils.contains(change.getPath(), NODE_PATCH)) {
-                    configsToPatch.add(change.getPath());
-                } else {
-                    configsToUpdate.add(change.getPath());
-                }
+                configsToUpdate.add(change.getPath());
                 isRelevant = true;
 
             } else if (change.getType() == ResourceChange.ChangeType.REMOVED
-                && !ConfiguratorConstants.ROOT_PATH.equals(change.getPath())
-                && !StringUtils.contains(change.getPath(), NODE_PATCH)) {
+                && !ConfiguratorConstants.ROOT_PATH.equals(change.getPath())) {
 
                 configsToReset.add(change.getPath());
                 isRelevant = true;
             }
             LOG.debug("{} at {}{}", change.getType(), change.getPath(), isRelevant ? " (processable)" : " (ignored)");
         }
-        if (configsToPatch.isEmpty() && configsToReset.isEmpty() && configsToUpdate.isEmpty()) {
+        if (configsToReset.isEmpty() && configsToUpdate.isEmpty()) {
             return;
         }
         asyncExecutor.submit(() -> {
             try (ResourceResolver resolver = newResolver()) {
-                for (String path : configsToPatch) {
-                    Resource resource = resolver.getResource(path);
-                    if (resource != null) {
-                        createPatchedConfigResource(extractPid(path), resource);
-                    }
-                }
                 for (String path : configsToUpdate) {
                     Resource resource = resolver.getResource(path);
                     if (resource == null) {
@@ -271,41 +254,6 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
     /* -------------------
        Configuration logic
        ------------------- */
-
-    /**
-     * Creates a new configuration resource patching an existing OSGi configuration with the data existing in
-     * {@code path}
-     * @param pid   Configuration identifier
-     * @param patch Resource containing data to patch the configuration with
-     */
-    private void createPatchedConfigResource(String pid, Resource patch) {
-        Configuration configuration = readConfiguration(pid);
-        ValueMap valueMap = new ValueMapDecorator(new HashMap<>());
-        if (configuration != null) {
-            valueMap.putAll(ConfigDataUtil.toMap(configuration.getProperties()));
-        }
-        valueMap.putAll(patch.getValueMap());
-        ResourceResolver resolver = patch.getResourceResolver();
-        try {
-            Resource root = resolver.getResource(ConfiguratorConstants.ROOT_PATH);
-            if (root == null) {
-                throw new RepositoryException("Configuration root not available");
-            }
-            Resource patchParent = ConfiguratorConstants.NN_DATA.equals(patch.getName()) ? patch.getParent() : patch;
-            if (patchParent == null) {
-                throw new RepositoryException("Could not locate the patch root");
-            }
-            Resource exisingConfig = resolver.getResource(root, pid);
-            if (exisingConfig != null) {
-                resolver.delete(exisingConfig);
-            }
-            exisingConfig = resolver.create(root, pid, patchParent.getValueMap());
-            resolver.create(exisingConfig, ConfiguratorConstants.NN_DATA, valueMap);
-            resolver.delete(patchParent);
-        } catch (Exception e) {
-            LOG.error("Could not create configuration for {}", pid, e);
-        }
-    }
 
     /**
      * Retrieves an OSGi configuration by its identifier
@@ -361,7 +309,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
         if (configuration == null) {
             return;
         }
-        if (ConfigDataUtil.equals(configuration.getProperties(), resource.getValueMap())) {
+        if (ConfigDataUtil.containsAll(configuration.getProperties(), resource.getValueMap())) {
             LOG.debug("Configuration {} is up to date with user settings", pid);
             return;
         }
@@ -412,7 +360,8 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
         } catch (UnsupportedOperationException e) {
             // Ignored for the sake of using with wcm.io mocks
         }
-        Dictionary<String, Object> updateData = ConfigDataUtil.toDictionary(data.getValueMap());
+        Dictionary<String, Object> updateData = ConfigDataUtil.getData(configuration);
+        data.getValueMap().forEach(updateData::put);
         if (!backup.isEmpty()) {
             Enumeration<String> keys = backup.keys();
             while (keys.hasMoreElements()) {
