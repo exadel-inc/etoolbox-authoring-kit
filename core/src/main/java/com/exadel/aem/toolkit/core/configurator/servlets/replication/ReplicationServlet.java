@@ -27,7 +27,6 @@ import javax.servlet.Servlet;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.HttpConstants;
@@ -47,7 +46,6 @@ import com.day.cq.replication.ReplicationActionType;
 import com.day.cq.replication.ReplicationContentFilterFactory;
 import com.day.cq.replication.ReplicationException;
 import com.day.cq.replication.ReplicationOptions;
-import com.day.cq.replication.ReplicationPathTransformer;
 import com.day.cq.replication.Replicator;
 
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
@@ -88,8 +86,6 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
 
     private ServiceRegistration<Filter> replicationContextRegistration;
 
-    private ServiceRegistration<ReplicationPathTransformer> pathTransformerRegistration;
-
     private ServiceRegistration<ReplicationContentFilterFactory> contentFilterFactoryRegistration;
 
     /**
@@ -114,11 +110,6 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
             replicationContext,
             replicationContextProps);
 
-        PropertyAwarePathTransformer pathTransformer = new PropertyAwarePathTransformer();
-        pathTransformerRegistration = context.registerService(ReplicationPathTransformer.class,
-            pathTransformer,
-            null);
-
         PropertyAwareFilterFactory contentFilterFactory = new PropertyAwareFilterFactory();
         contentFilterFactoryRegistration = context.registerService(
             ReplicationContentFilterFactory.class,
@@ -142,10 +133,6 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
         if (contentFilterFactoryRegistration != null) {
             contentFilterFactoryRegistration.unregister();
             contentFilterFactoryRegistration = null;
-        }
-        if (pathTransformerRegistration != null) {
-            pathTransformerRegistration.unregister();
-            pathTransformerRegistration = null;
         }
         if (replicationContextRegistration != null) {
             replicationContextRegistration.unregister();
@@ -188,7 +175,6 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
     private void doPublish(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
         String properties = request.getParameter("properties");
         boolean isPerProperty = StringUtils.isNotBlank(properties) && !"all".equals(properties);
-        ReplicationOptions replicationOptions = new ReplicationOptions();
         if (isPerProperty) {
             List<String> propertyList = Stream.of(properties.split("[,;]"))
                 .map(String::trim)
@@ -196,18 +182,12 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
                 .distinct()
                 .collect(Collectors.toList());
             ReplicationContext.setProperties(propertyList);
-            replicationOptions.setSuppressStatusUpdate(true);
         }
         try {
             replicator.replicate(
                 Objects.requireNonNull(request.getResourceResolver().adaptTo(Session.class)),
                 ReplicationActionType.ACTIVATE,
-                request.getResource().getPath(),
-                replicationOptions);
-
-            if (isPerProperty) {
-                ModifiableValueMap propertiesMap = request.getResource().adaptTo(ModifiableValueMap.class);
-            }
+                request.getResource().getPath());
         } catch (ReplicationException e) {
             LOG.error(EXCEPTION_COULD_NOT_PUBLISH, request.getResource().getName(), e);
             sendError(response, SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
