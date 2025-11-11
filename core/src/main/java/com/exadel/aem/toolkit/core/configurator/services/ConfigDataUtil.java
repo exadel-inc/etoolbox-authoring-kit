@@ -149,30 +149,28 @@ class ConfigDataUtil {
     }
 
     /**
-     * Checks if the provided {@link Dictionary} and {@link Map} instances are equal in terms of keys and values
+     * Checks if the provided {@link Dictionary} contains all the values from the provided {@code Map}
      * @param dictionary The dictionary (usually a collection of values derived from an OSGi configuration)
      * @param map        The map (usually a collection of values derived from a JCR resource)
      * @return True or false
      */
-    public static boolean equals(Dictionary<String, ?> dictionary, Map<String, Object> map) {
+    public static boolean containsAll(Dictionary<String, ?> dictionary, Map<String, Object> map) {
         if (dictionary == null && map == null) {
             return true;
-        }
-        if (dictionary == null || map == null) {
+        } else if (dictionary == null) {
             return false;
         }
         Map<String, Object> dictAsMap = toMap(dictionary);
         map = ValueMapUtil.excludeSystemProperties(map);
-        if (dictAsMap.size() != MapUtils.size(map)) {
+        if (dictAsMap.size() < MapUtils.size(map)) {
             return false;
         }
-        for (String key : dictAsMap.keySet()) {
+        for (String key : map.keySet()) {
             Object dictValue = dictAsMap.get(key);
             Object mapValue = map.get(key);
-            if (dictValue == null && mapValue == null) {
+            if (mapValue == null) {
                 continue;
-            }
-            if (dictValue == null || mapValue == null) {
+            } else if (dictValue == null) {
                 return false;
             }
             if (isCollection(dictValue) && isCollection(mapValue)) {

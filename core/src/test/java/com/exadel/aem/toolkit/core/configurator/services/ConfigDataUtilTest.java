@@ -190,7 +190,7 @@ public class ConfigDataUtilTest {
 
     @SuppressWarnings({"UnnecessaryBoxing"})
     @Test
-    public void shouldReturnTrueForEqualDictionaryAndMap() {
+    public void shouldReturnTrueIfDictionaryContainsMap() {
         Dictionary<String, Object> dictionary = new Hashtable<>();
         dictionary.put("string.property", "test value");
         dictionary.put("int.property", 42);
@@ -201,20 +201,18 @@ public class ConfigDataUtilTest {
         dictionary.put("dummy$backup$", "dummy"); // Should be ignored
 
         Map<String, Object> map = new HashMap<>();
-        map.put("string.property", "test value");
-        map.put("int.property", 42);
         map.put("long.property", Long.valueOf(42L));
         map.put("boolean.property", Boolean.valueOf(true));
         map.put("string.array", new String[]{"value1", "value2"});
-        map.put("int.list", Arrays.asList(1, 2, Integer.getInteger("3")));
+        map.put("int.list", Arrays.asList(1, 2, new Integer("3")));
 
-        assertTrue(ConfigDataUtil.equals(dictionary, map));
+        assertTrue(ConfigDataUtil.containsAll(dictionary, map));
         map.put("string.array", Arrays.asList("value1", "value2"));
-        assertTrue(ConfigDataUtil.equals(dictionary, map));
+        assertTrue(ConfigDataUtil.containsAll(dictionary, map));
     }
 
     @Test
-    public void shouldReturnFalseForDifferingDictionaryAndMap() {
+    public void shouldReturnFalseIfDictionaryAndMapIntersect() {
         Dictionary<String, Object> dictionary = new Hashtable<>();
         dictionary.put("string.property", "test value");
         dictionary.put("int.property", 42);
@@ -223,14 +221,14 @@ public class ConfigDataUtilTest {
         map.put("string.property", "different value");
         map.put("int.property", 42);
 
-        assertFalse(ConfigDataUtil.equals(dictionary, map));
+        assertFalse(ConfigDataUtil.containsAll(dictionary, map));
     }
 
     @Test
-    public void shouldHandleNullValuesInEquals() {
-        assertTrue(ConfigDataUtil.equals(null, null));
-        assertFalse(ConfigDataUtil.equals(new Hashtable<>(), null));
-        assertFalse(ConfigDataUtil.equals(null, new HashMap<>()));
+    public void shouldHandleNullValuesInContainsAll() {
+        assertTrue(ConfigDataUtil.containsAll(null, null));
+        assertTrue(ConfigDataUtil.containsAll(new Hashtable<>(), null));
+        assertFalse(ConfigDataUtil.containsAll(null, new HashMap<>()));
 
         Dictionary<String, Object> dictionary = new Hashtable<>();
         dictionary.put("string.property", "test value");
@@ -239,11 +237,11 @@ public class ConfigDataUtilTest {
         map.put("string.property", "test value");
         map.put("null.property", null);
 
-        assertTrue(ConfigDataUtil.equals(dictionary, map));
+        assertTrue(ConfigDataUtil.containsAll(dictionary, map));
     }
 
     @Test
-    public void shouldIgnoreServicePropertiesInEquals() {
+    public void shouldIgnoreServicePropertiesInContainsAll() {
         Dictionary<String, Object> dictionary = new Hashtable<>();
         dictionary.put("service.pid", "com.example.service");
         dictionary.put("service.factoryPid", "com.example.factory");
@@ -252,7 +250,7 @@ public class ConfigDataUtilTest {
         Map<String, Object> map = new HashMap<>();
         map.put("string.property", "test value");
 
-        assertTrue(ConfigDataUtil.equals(dictionary, map));
+        assertTrue(ConfigDataUtil.containsAll(dictionary, map));
     }
 
     @Test
@@ -263,7 +261,7 @@ public class ConfigDataUtilTest {
         Map<String, Object> map = new HashMap<>();
         map.put("array.property", Arrays.asList("value1", "value2"));
 
-        assertTrue(ConfigDataUtil.equals(dictionary, map));
+        assertTrue(ConfigDataUtil.containsAll(dictionary, map));
     }
 
     @Test

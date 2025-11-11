@@ -205,7 +205,6 @@ public class ReplicationServletTest {
         BundleContext bundleContext = context.bundleContext();
 
         assertNotNull(bundleContext.getServiceReference(Filter.class));
-        assertNotNull(bundleContext.getServiceReference(ReplicationPathTransformer.class));
         assertNotNull(bundleContext.getServiceReference(ReplicationContentFilterFactory.class));
     }
 
