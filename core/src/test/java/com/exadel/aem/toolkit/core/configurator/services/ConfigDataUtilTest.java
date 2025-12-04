@@ -15,16 +15,12 @@ package com.exadel.aem.toolkit.core.configurator.services;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.resource.ValueMap;
-import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.junit.Test;
 import org.osgi.service.cm.Configuration;
 import static junitx.framework.Assert.assertFalse;
@@ -38,81 +34,6 @@ import static org.mockito.Mockito.when;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
 
 public class ConfigDataUtilTest {
-
-    @Test
-    public void shouldConvertValueMapToDictionary() {
-        Map<String, Object> sourceMap = new HashMap<>();
-        sourceMap.put("string.property", "test value");
-        sourceMap.put("string.property.empty", ConfiguratorConstants.VALUE_EMPTY);
-        sourceMap.put("int.property", 42);
-        sourceMap.put("boolean.property", true);
-        sourceMap.put("double.property", 3.14);
-
-        sourceMap.put("string.array", new String[]{"value1", "value2"});
-        sourceMap.put("int.array", new int[]{1, 2, 3});
-        sourceMap.put("empty.array", new String[0]);
-
-        sourceMap.put("string.list", Arrays.asList("value1", "value2"));
-        sourceMap.put("int.list", Arrays.asList(1, 2, 3));
-        sourceMap.put("mixed.list", Arrays.asList("string", 42, true));
-        sourceMap.put("null.list", Arrays.asList("value", null, "another"));
-        sourceMap.put("empty.list", Collections.emptyList());
-
-        ValueMap valueMap = new ValueMapDecorator(sourceMap);
-
-        Dictionary<String, ?> result = ConfigDataUtil.toDictionary(valueMap);
-        assertNotNull(result);
-
-        assertEquals("test value", result.get("string.property"));
-        assertEquals(StringUtils.EMPTY, result.get("string.property.empty"));
-        assertEquals(42, result.get("int.property"));
-        assertEquals(true, result.get("boolean.property"));
-        assertEquals(3.14, result.get("double.property"));
-
-        assertEquals(2, Array.getLength(result.get("string.array")));
-        assertEquals(3, Array.getLength(result.get("int.array")));
-        assertEquals(0, Array.getLength(result.get("empty.array")));
-
-        assertEquals(2, CollectionUtils.size(result.get("string.list")));
-        assertEquals(3, CollectionUtils.size(result.get("int.list")));
-        assertEquals(3, CollectionUtils.size(result.get("mixed.list")));
-        assertNull(result.get("null.list")); // Should be filtered out due to null element
-        assertEquals(0, CollectionUtils.size(result.get("empty.list")));
-    }
-
-    @Test
-    public void shouldExcludeSystemProperties() {
-        Map<String, Object> sourceMap = new HashMap<>();
-        sourceMap.put("jcr:primaryType", "nt:unstructured");
-        sourceMap.put("jcr:created", "2023-01-01");
-        sourceMap.put("sling:resourceType", "test/component");
-        sourceMap.put("normal.property", "test value");
-        ValueMap valueMap = new ValueMapDecorator(sourceMap);
-
-        Dictionary<String, ?> result = ConfigDataUtil.toDictionary(valueMap);
-        assertNotNull(result);
-
-        assertEquals("test value", result.get("normal.property"));
-        assertNull(result.get("jcr:primaryType"));
-        assertNull(result.get("jcr:created"));
-        assertNull(result.get("sling:resourceType"));
-    }
-
-    @Test
-    public void shouldExcludeUnsupportedTypesFromDictionary() {
-        Map<String, Object> sourceMap = new HashMap<>();
-        sourceMap.put("string.property", "valid");
-        sourceMap.put("object.property", new Object());
-        sourceMap.put("null.property", null);
-        ValueMap valueMap = new ValueMapDecorator(sourceMap);
-
-        Dictionary<String, ?> result = ConfigDataUtil.toDictionary(valueMap);
-        assertNotNull(result);
-
-        assertEquals("valid", result.get("string.property"));
-        assertNull(result.get("object.property"));
-        assertNull(result.get("null.property"));
-    }
 
     @Test
     public void shouldConvertDictionaryToValueMap() {

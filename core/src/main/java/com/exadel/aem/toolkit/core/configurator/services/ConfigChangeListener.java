@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
+import com.exadel.aem.toolkit.core.utils.ValueMapUtil;
 
 /**
  * Listens to changes in the repository under the specified root and updates OSGi configurations accordingly
@@ -361,7 +362,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
             // Ignored for the sake of using with wcm.io mocks
         }
         Dictionary<String, Object> updateData = ConfigDataUtil.getData(configuration);
-        data.getValueMap().forEach(updateData::put);
+        ValueMapUtil.excludeSystemProperties(data.getValueMap()).forEach(updateData::put);
         if (!backup.isEmpty()) {
             Enumeration<String> keys = backup.keys();
             while (keys.hasMoreElements()) {

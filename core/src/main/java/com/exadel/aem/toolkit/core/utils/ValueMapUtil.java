@@ -67,7 +67,7 @@ public class ValueMapUtil {
      * @param key Property name
      * @return True or false
      */
-    private static boolean isIgnorable(String key) {
+    public static boolean isIgnorable(String key) {
         if (StringUtils.isBlank(key)) {
             return true;
         }
