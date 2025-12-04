@@ -175,6 +175,10 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
     private void doPublish(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
         String properties = request.getParameter("properties");
         boolean isPerProperty = StringUtils.isNotBlank(properties) && !"all".equals(properties);
+        LOG.info(
+            "Request to publish configuration {}{}",
+            request.getResource().getName(),
+            isPerProperty ? " with properties: " + properties : StringUtils.EMPTY);
         if (isPerProperty) {
             List<String> propertyList = Stream.of(properties.split("[,;]"))
                 .map(String::trim)
@@ -201,6 +205,7 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
      * @throws IOException If an error occurs during unpublishing
      */
     private void doUnpublish(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
+        LOG.info("Request to unpublish configuration {}", request.getResource().getName());
         try {
             replicator.replicate(
                 Objects.requireNonNull(request.getResourceResolver().adaptTo(Session.class)),
@@ -224,6 +229,7 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
         if (resource.hasChildren()) {
             return;
         }
+        LOG.debug("Cleaning up empty configuration node {}", resource.getPath());
         try {
             resolver.delete(resource);
             resolver.commit();
