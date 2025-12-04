@@ -153,12 +153,14 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
      */
     private void doUnpublish(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
         LOG.info("Request to unpublish configuration {}", request.getResource().getName());
+        ReplicationOptions replicationOptions = new ReplicationOptions();
+        replicationOptions.setAggregateHandler(new ReplicationHandler(null));
         try {
             replicator.replicate(
                 Objects.requireNonNull(request.getResourceResolver().adaptTo(Session.class)),
                 ReplicationActionType.DEACTIVATE,
                 request.getResource().getPath(),
-                new ReplicationOptions());
+                replicationOptions);
         } catch (ReplicationException | NullPointerException e) {
             LOG.error("Could not unpublish configuration {}", request.getResource().getName(), e);
             sendError(response, SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
