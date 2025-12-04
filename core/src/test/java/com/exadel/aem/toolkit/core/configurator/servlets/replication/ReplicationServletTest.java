@@ -15,7 +15,6 @@ package com.exadel.aem.toolkit.core.configurator.servlets.replication;
 
 import java.io.IOException;
 import javax.jcr.Session;
-import javax.servlet.Filter;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
@@ -26,17 +25,18 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.osgi.framework.BundleContext;
+import com.day.cq.replication.AggregateHandler;
 import com.day.cq.replication.ReplicationActionType;
-import com.day.cq.replication.ReplicationContentFilterFactory;
 import com.day.cq.replication.ReplicationException;
 import com.day.cq.replication.ReplicationOptions;
-import com.day.cq.replication.ReplicationPathTransformer;
 import com.day.cq.replication.Replicator;
 import io.wcm.testing.mock.aem.junit.AemContext;
+import junitx.util.PrivateAccessor;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -85,24 +85,54 @@ public class ReplicationServletTest {
         Mockito.verify(replicator).replicate(
             any(Session.class),
             eq(ReplicationActionType.ACTIVATE),
-            eq(testResource.getPath())
+            eq(testResource.getPath()),
+            any(ReplicationOptions.class)
         );
         assertEquals(HttpStatus.SC_OK, context.response().getStatus());
     }
 
     @Test
-    public void shouldPublishAllProperties() throws IOException, ReplicationException {
+    public void shouldPublishAllProperties() throws IOException, ReplicationException, NoSuchFieldException {
         context.requestPathInfo().setSelectorString("publish");
         context.request().setParameterMap(java.util.Collections.singletonMap("properties", "all"));
 
         replicationServlet.doPost(context.request(), context.response());
 
+        ArgumentCaptor<ReplicationOptions> optionsCaptor = ArgumentCaptor.forClass(ReplicationOptions.class);
         Mockito.verify(replicator).replicate(
             any(Session.class),
             eq(ReplicationActionType.ACTIVATE),
-            eq(testResource.getPath())
+            eq(testResource.getPath()),
+            optionsCaptor.capture()
         );
         assertEquals(HttpStatus.SC_OK, context.response().getStatus());
+
+        AggregateHandler aggregateHandler = optionsCaptor.getValue().getAggregateHandler();
+        assertEquals(ReplicationHandler.class, aggregateHandler.getClass());
+        assertNull(PrivateAccessor.getField(aggregateHandler, "properties"));
+    }
+
+    @Test
+    public void shouldPublishSelectedProperties() throws IOException, ReplicationException, NoSuchFieldException {
+        context.requestPathInfo().setSelectorString("publish");
+        context.request().setParameterMap(java.util.Collections.singletonMap("properties", "myProp1,myProp2"));
+
+        replicationServlet.doPost(context.request(), context.response());
+
+        ArgumentCaptor<ReplicationOptions> optionsCaptor = ArgumentCaptor.forClass(ReplicationOptions.class);
+        Mockito.verify(replicator).replicate(
+            any(Session.class),
+            eq(ReplicationActionType.ACTIVATE),
+            eq(testResource.getPath()),
+            optionsCaptor.capture()
+        );
+        assertEquals(HttpStatus.SC_OK, context.response().getStatus());
+
+        AggregateHandler aggregateHandler = optionsCaptor.getValue().getAggregateHandler();
+        assertEquals(ReplicationHandler.class, aggregateHandler.getClass());
+
+        String[] properties = (String[]) PrivateAccessor.getField(aggregateHandler, "properties");
+        assertArrayEquals(new String[] {"myProp1", "myProp2"}, properties);
     }
 
     @Test
@@ -164,7 +194,8 @@ public class ReplicationServletTest {
         Mockito.doThrow(testException).when(replicator).replicate(
             any(Session.class),
             eq(ReplicationActionType.ACTIVATE),
-            eq(testResource.getPath())
+            eq(testResource.getPath()),
+            any(ReplicationOptions.class)
         );
 
         replicationServlet.doPost(context.request(), context.response());
@@ -198,30 +229,5 @@ public class ReplicationServletTest {
             any(ReplicationActionType.class),
             any(String.class)
         );
-    }
-
-    @Test
-    public void shouldRegisterSubsidiaryServicesWhenEnabled() {
-        BundleContext bundleContext = context.bundleContext();
-
-        assertNotNull(bundleContext.getServiceReference(Filter.class));
-        assertNotNull(bundleContext.getServiceReference(ReplicationContentFilterFactory.class));
-    }
-
-    @Test
-    public void shouldNotRegisterSubsidiaryServicesWhenDisabled() {
-        Mockito.when(configChangeListener.isEnabled()).thenReturn(false);
-
-        AemContext disabledContext = AemContextFactory.newInstance(ResourceResolverType.JCR_OAK);
-        disabledContext.registerService(Replicator.class, replicator);
-        disabledContext.registerService(ConfigChangeListener.class, configChangeListener);
-
-        disabledContext.registerInjectActivateService(new ReplicationServlet());
-
-        BundleContext bundleContext = disabledContext.bundleContext();
-
-        assertNull(bundleContext.getServiceReference(Filter.class));
-        assertNull(bundleContext.getServiceReference(ReplicationPathTransformer.class));
-        assertNull(bundleContext.getServiceReference(ReplicationContentFilterFactory.class));
     }
 }
