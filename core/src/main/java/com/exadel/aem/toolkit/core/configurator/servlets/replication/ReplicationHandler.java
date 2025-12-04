@@ -41,7 +41,7 @@ class ReplicationHandler extends DefaultAggregateHandler {
      * Instantiates a new replication handler
      * @param properties An array of property names to be included during replication; nullable
      */
-    public ReplicationHandler(String[] properties) {
+    ReplicationHandler(String[] properties) {
         this.properties = properties;
     }
 

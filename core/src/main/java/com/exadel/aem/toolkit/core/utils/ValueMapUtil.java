@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import com.day.cq.commons.jcr.JcrConstants;
 
@@ -55,10 +56,27 @@ public class ValueMapUtil {
      * @return Filtered map
      */
     public static Map<String, Object> excludeSystemProperties(Map<String, Object> properties) {
+        String[] validKeys = MapUtils.emptyIfNull(properties)
+            .keySet()
+            .stream()
+            .filter(k -> !isIgnorable(k)).toArray(String[]::new);
+        return filter(properties, validKeys);
+    }
+
+    /**
+     * Filters the provided map of properties including only those whose keys are listed in the provided array
+     * @param properties {@code Map} instance
+     * @param keys       Array of property names to include
+     * @return Filtered map
+     */
+    public static Map<String, Object> filter(Map<String, Object> properties, String[] keys) {
+        if (ArrayUtils.isEmpty(keys)) {
+            return MapUtils.emptyIfNull(properties);
+        }
         return MapUtils.emptyIfNull(properties)
             .entrySet()
             .stream()
-            .filter(entry -> !isIgnorable(entry.getKey()) && entry.getValue() != null)
+            .filter(entry -> ArrayUtils.contains(keys, entry.getKey()) && entry.getValue() != null)
             .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 

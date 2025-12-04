@@ -111,7 +111,7 @@ class ConfigDataUtil {
      * @param dictionary The source dictionary
      * @return The resulting map
      */
-    public static Map<String, Object> toMap(Dictionary<String, ?> dictionary) {
+    static Map<String, Object> toMap(Dictionary<String, ?> dictionary) {
         Map<String, Object> valueMap = new HashMap<>();
         if (dictionary == null) {
             return new ValueMapDecorator(new Hashtable<>());

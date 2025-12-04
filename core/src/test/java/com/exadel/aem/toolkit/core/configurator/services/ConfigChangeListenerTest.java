@@ -21,8 +21,11 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.PersistenceException;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.resource.observation.ResourceChange;
 import org.apache.sling.jcr.resource.internal.JcrResourceChange;
@@ -239,9 +242,16 @@ public class ConfigChangeListenerTest {
 
         String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         Map<String, Object> partialProps = new HashMap<>();
+        partialProps.put("existing.property", "modified.value");
+        partialProps.put("another.property", "another.modified.value");
         partialProps.put("numeric.property", 99);
         partialProps.put("boolean.property", false);
         context.create().resource(dataPath, partialProps);
+
+        Resource testResource = context.resourceResolver().getResource(ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID);
+        ModifiableValueMap valueMap = Objects.requireNonNull(testResource).adaptTo(ModifiableValueMap.class);
+        assertNotNull(valueMap);
+        valueMap.put(ConfiguratorConstants.PN_REPLICATION_PROPS, new String[] {"numeric.property", "boolean.property"});
         context.resourceResolver().commit();
 
         ResourceChange change = new JcrResourceChange(
