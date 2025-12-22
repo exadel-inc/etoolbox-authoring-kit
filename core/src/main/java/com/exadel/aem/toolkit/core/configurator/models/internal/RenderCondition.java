@@ -80,6 +80,11 @@ public class RenderCondition {
             req -> ConfigAccess.from(req).isGranted()
                 && StringUtils.isEmpty(RequestUtil.getConfigPid(req))
         );
+
+        FEATURE_PREDICATES.put(
+            "eak.configurator.showShortcut",
+            PermissionUtil::hasGlobalModifyPermission
+        );
     }
 
     @SlingObject
