@@ -39,8 +39,7 @@ public enum ConfigAccess {
     FACTORY_CONFIG("Factory configs are currently not supported"),
     INVALID_CONFIG("Configuration is missing or invalid"),
     NO_ACCESS("You don't have access to this feature"),
-    NO_CONFIG("No configuration specified"),
-    OSGI_FAILURE("Could not acquire OSGi entity");
+    NO_CONFIG("No configuration specified");
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigAccess.class);
 
@@ -76,11 +75,11 @@ public enum ConfigAccess {
      * Determines the access result for the current request; caches the result in the request attribute for future
      * reference
      * @param request The current request
-     * @return The access result
+     * @return A {@link ConfigAccess} value
      */
     public static ConfigAccess from(HttpServletRequest request) {
         if (request == null) {
-            return OSGI_FAILURE;
+            return NO_CONFIG;
         }
 
         ExpressionCustomizer customizer = ExpressionCustomizer.from(request);
@@ -96,7 +95,7 @@ public enum ConfigAccess {
     /**
      * Determines the access result for the current request
      * @param request The current request
-     * @return The access result
+     * @return A {@link ConfigAccess} value
      */
     private static ConfigAccess pick(HttpServletRequest request) {
         if (!PermissionUtil.hasModifyPermission(request)) {
@@ -106,21 +105,14 @@ public enum ConfigAccess {
         String configId = RequestUtil.getConfigPid(request);
         if (StringUtils.isEmpty(configId)) {
             return request.getRequestURI().contains("/etoolbox/config")
-                && PermissionUtil.hasGlobalModifyPermission(request) ? GRANTED : NO_CONFIG;
+                && PermissionUtil.hasGlobalModifyPermission(request)
+                && isGrantable(request)
+                ? GRANTED
+                : NO_CONFIG;
         }
 
-        try {
-            BundleContext context = (BundleContext) request.getAttribute(BundleContext.class.getName());
-            if (context == null) {
-                context = Objects.requireNonNull(FrameworkUtil.getBundle(ConfigAccess.class).getBundleContext());
-            }
-            ConfigChangeListener listener = Objects.requireNonNull(context.getService(context.getServiceReference(ConfigChangeListener.class)));
-            if (!listener.isEnabled()) {
-                return DISABLED;
-            }
-        } catch (RuntimeException e) {
-            LOG.error(OSGI_FAILURE.getError(), e);
-            return OSGI_FAILURE;
+        if (!isGrantable(request)) {
+            return DISABLED;
         }
 
         ConfigDefinition config = ConfigDefinition.from(request);
@@ -133,5 +125,24 @@ public enum ConfigAccess {
         }
 
         return GRANTED;
+    }
+
+    /**
+     * Checks whether the configurator is enabled in OSGi for the current request
+     * @param request The current request
+     * @return True or false
+     */
+    static boolean isGrantable(HttpServletRequest request) {
+        try {
+            BundleContext context = (BundleContext) request.getAttribute(BundleContext.class.getName());
+            if (context == null) {
+                context = Objects.requireNonNull(FrameworkUtil.getBundle(ConfigAccess.class).getBundleContext());
+            }
+            ConfigChangeListener listener = Objects.requireNonNull(context.getService(context.getServiceReference(ConfigChangeListener.class)));
+            return listener.isEnabled();
+        } catch (RuntimeException e) {
+            LOG.error("Could not acquire an OSGi entity", e);
+            return false;
+        }
     }
 }

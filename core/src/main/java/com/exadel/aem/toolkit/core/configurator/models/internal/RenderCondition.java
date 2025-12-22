@@ -83,7 +83,7 @@ public class RenderCondition {
 
         FEATURE_PREDICATES.put(
             "eak.configurator.showShortcut",
-            PermissionUtil::hasGlobalModifyPermission
+            req -> ConfigAccess.isGrantable(req) && PermissionUtil.hasGlobalModifyPermission(req)
         );
     }
 

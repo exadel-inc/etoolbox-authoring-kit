@@ -16,7 +16,7 @@
 
 <sly data-sly-template.configItem="${@ config}">
     <hr>
-    <a data-sly-set.href="${[request.pathInfo, '.html/', config.pid] @ join=''}"
+    <a data-sly-set.href="${[request.pathInfo, '/', config.pid] @ join=''}"
        is="coral-anchorlist-item"
        class="config ${config.factory ? 'factory' : ''}"
        icon="${config.factory ? 'gearsAdd' : 'gears'}"
@@ -35,7 +35,7 @@
         <a is="coral-anchorlist-item"
            class="config child"
            icon="gear"
-           href="${request.pathInfo}.html/${childConfig.pid}">
+           href="${request.pathInfo}/${childConfig.pid}">
 
             <div class="pid">${childConfig.pid}</div>
         </a>
