@@ -20,7 +20,8 @@
        is="coral-anchorlist-item"
        class="config ${config.factory ? 'factory' : ''}"
        icon="${config.factory ? 'gearsAdd' : 'gears'}"
-       href="${!config.factory ? href : ''}">
+       href="${!config.factory ? href : ''}"
+       x-cq-linkchecker="valid">
 
         <div class="caption">
             <span class="title">${config.title}</span>
@@ -35,7 +36,8 @@
         <a is="coral-anchorlist-item"
            class="config child"
            icon="gear"
-           href="${request.pathInfo}/${childConfig.pid}">
+           href="${request.pathInfo}/${childConfig.pid}"
+           x-cq-linkchecker="valid">
 
             <div class="pid">${childConfig.pid}</div>
         </a>
