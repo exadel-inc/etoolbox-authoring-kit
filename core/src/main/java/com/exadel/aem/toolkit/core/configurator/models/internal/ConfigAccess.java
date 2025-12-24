@@ -102,17 +102,16 @@ public enum ConfigAccess {
             return NO_ACCESS;
         }
 
+        if (!isGrantable(request)) {
+            return DISABLED;
+        }
+
         String configId = RequestUtil.getConfigPid(request);
         if (StringUtils.isEmpty(configId)) {
             return request.getRequestURI().contains("/etoolbox/config")
                 && PermissionUtil.hasGlobalModifyPermission(request)
-                && isGrantable(request)
                 ? GRANTED
                 : NO_CONFIG;
-        }
-
-        if (!isGrantable(request)) {
-            return DISABLED;
         }
 
         ConfigDefinition config = ConfigDefinition.from(request);
