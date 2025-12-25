@@ -32,6 +32,7 @@ import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.resource.observation.ExternalResourceChangeListener;
 import org.apache.sling.api.resource.observation.ResourceChange;
 import org.apache.sling.api.resource.observation.ResourceChangeListener;
@@ -49,6 +50,7 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
+import com.exadel.aem.toolkit.core.utils.ValueMapUtil;
 
 /**
  * Listens to changes in the repository under the specified root and updates OSGi configurations accordingly
@@ -309,7 +311,10 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
         if (configuration == null) {
             return;
         }
-        if (ConfigDataUtil.containsAll(configuration.getProperties(), resource.getValueMap())) {
+        String[] selectedProperties = extractSelectedProperties(resource);
+        if (ConfigDataUtil.containsAll(
+            configuration.getProperties(),
+            ValueMapUtil.filter(resource.getValueMap(), selectedProperties))) {
             LOG.debug("Configuration {} is up to date with user settings", pid);
             return;
         }
@@ -361,7 +366,12 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
             // Ignored for the sake of using with wcm.io mocks
         }
         Dictionary<String, Object> updateData = ConfigDataUtil.getData(configuration);
-        data.getValueMap().forEach(updateData::put);
+        String[] selectedProperties = extractSelectedProperties(data);
+        ValueMapUtil
+            .filter(
+                ValueMapUtil.excludeSystemProperties(data.getValueMap()),
+                selectedProperties)
+            .forEach(updateData::put);
         if (!backup.isEmpty()) {
             Enumeration<String> keys = backup.keys();
             while (keys.hasMoreElements()) {
@@ -404,5 +414,17 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
             path,
             ConfiguratorConstants.SUFFIX_SLASH_DATA);
         return StringUtils.substringAfterLast(configRootPath, CoreConstants.SEPARATOR_SLASH);
+    }
+
+    /**
+     * Extracts the selected properties from the specified resource
+     * @param resource The resource representing the configuration
+     * @return String array
+     */
+    private static String[] extractSelectedProperties(Resource resource) {
+        ValueMap valueMap = ConfiguratorConstants.NN_DATA.equals(resource.getName())
+            ? Objects.requireNonNull(resource.getParent()).getValueMap()
+            : resource.getValueMap();
+        return valueMap.get(ConfiguratorConstants.PN_REPLICATION_PROPS, String[].class);
     }
 }

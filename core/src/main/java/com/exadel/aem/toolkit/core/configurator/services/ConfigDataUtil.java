@@ -29,7 +29,6 @@ import java.util.function.UnaryOperator;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.osgi.service.cm.Configuration;
 
@@ -98,7 +97,7 @@ class ConfigDataUtil {
         Enumeration<String> keys = properties.keys();
         while (keys.hasMoreElements()) {
             String key = keys.nextElement();
-            if (!filter.test(key)) {
+            if (ValueMapUtil.isIgnorable(key) || !filter.test(key)) {
                 continue;
             }
             result.put(modifier.apply(key), properties.get(key));
@@ -107,30 +106,12 @@ class ConfigDataUtil {
     }
 
     /**
-     * Converts a {@link ValueMap} instance to a {@link Dictionary} instance, excluding system properties and properties
-     * with unsupported value types
-     * @param properties The source value map
-     * @return The resulting dictionary
-     */
-    public static Dictionary<String, Object> toDictionary(ValueMap properties) {
-        Dictionary<String, Object> dictionary = new Hashtable<>();
-        ValueMapUtil.excludeSystemProperties(properties)
-            .entrySet()
-            .stream()
-            .filter(entry -> isValid(entry.getValue()))
-            .forEach(entry -> dictionary.put(
-                entry.getKey(),
-                !ConfiguratorConstants.VALUE_EMPTY.equals(entry.getValue()) ? entry.getValue() : StringUtils.EMPTY));
-        return dictionary;
-    }
-
-    /**
      * Converts a {@link Dictionary} instance to a {@link Map} instance, excluding system properties and properties
      * with unsupported value types
      * @param dictionary The source dictionary
      * @return The resulting map
      */
-    public static Map<String, Object> toMap(Dictionary<String, ?> dictionary) {
+    static Map<String, Object> toMap(Dictionary<String, ?> dictionary) {
         Map<String, Object> valueMap = new HashMap<>();
         if (dictionary == null) {
             return new ValueMapDecorator(new Hashtable<>());
