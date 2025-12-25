@@ -11,7 +11,7 @@ seoTitle: Installation - Exadel Authoring Kit
 <dependency>
    <groupId>com.exadel.etoolbox</groupId>
    <artifactId>etoolbox-authoring-kit-core</artifactId>
-   <version>2.5.4</version> <!-- Prefer the latest stable version whenever possible -->
+   <version>2.7.1</version> <!-- Prefer the latest stable version whenever possible -->
    <scope>provided</scope> <!-- Do not use compile or runtime scope!-->
 </dependency>
 ```
@@ -21,7 +21,7 @@ seoTitle: Installation - Exadel Authoring Kit
 <plugin>
     <groupId>com.exadel.etoolbox</groupId>
     <artifactId>etoolbox-authoring-kit-plugin</artifactId>
-    <version>2.5.4</version>
+    <version>2.7.1</version>
     <executions>
         <execution>
             <goals>
@@ -69,21 +69,45 @@ If *terminateOn* is not configured, the default setting is effective. By default
 
 ## Installing assets
 
-For many of the ToolKit's features to work properly, namely *DependsOn* and *Lists*, you need to deploy the _etoolbox-authoring-kit-all-<version>.zip_ package to your AEM author instance.
+For many of the ToolKit's features to work properly, namely *DependsOn*, *Lists*, or *Configurator*, you need to deploy the _etoolbox-authoring-kit-all-<version>.zip_ package to your AEM author instance.
 
 If you are using <u>ready artifacts</u>, the easiest way is to append the cumulative _all_ package to one of your content packages. Since the package is small, this will not hamper your deployment process.
 
 You need to do two steps.
+
 1) Insert the dependency into the cumulative _all_ module in the _\<dependencies>_ section of the POM file of your **package**:
 ```xml
 <dependency>
     <groupId>com.exadel.etoolbox</groupId>
     <artifactId>etoolbox-authoring-kit-all</artifactId>
-    <version>2.5.4</version>
+    <version>2.7.1</version>
     <type>content-package</type>
 </dependency>
 ```
-2) Then specify the subpackage in the _Vault_ plugin  you are using (refer to your content plugin documentation for particulars).
+
+2) Then specify the package in the _vault_ plugin you are using.
+
+In case of _filevault-package-maven-plugin_ (modern):
+```xml
+    <plugin>
+        <groupId>org.apache.jackrabbit</groupId>
+        <artifactId>filevault-package-maven-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+            <!-- ... -->
+            <embeddeds>
+                <embedded>
+                    <groupId>com.exadel.etoolbox</groupId>
+                    <artifactId>etoolbox-authoring-kit-all</artifactId>
+                    <type>zip</type>
+                    <target>/apps/myapp-vendor-packages/container/install</target>
+                </embedded>
+            </embeddeds>
+        </configuration>
+    </plugin>
+```
+
+In case of _content-package-maven-plugin_ (legacy):
  ```xml
     <plugin>
         <groupId>com.day.jcr.vault</groupId>
@@ -102,6 +126,7 @@ You need to do two steps.
         </configuration>
     </plugin>
 ```
+(Refer to your vault plugin documentation for particulars).
 
 ### Compiling and deploying by hand
 
