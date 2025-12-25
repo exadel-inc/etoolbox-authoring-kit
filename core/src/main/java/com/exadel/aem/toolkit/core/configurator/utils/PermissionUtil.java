@@ -21,6 +21,7 @@ import javax.jcr.security.AccessControlManager;
 import javax.jcr.security.Privilege;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.slf4j.Logger;
@@ -137,6 +138,9 @@ public class PermissionUtil {
         try {
             AccessControlManager acm = session.getAccessControlManager();
             Privilege[] userPrivileges = acm.getPrivileges(resourcePath);
+            if (ArrayUtils.isEmpty(userPrivileges)) {
+                return false;
+            }
             for (Privilege privilege : userPrivileges) {
                 if (StringUtils.equalsAny(privilege.getName(), "crx:replicate", "jcr:all", Privilege.JCR_ALL)) {
                     return true;
