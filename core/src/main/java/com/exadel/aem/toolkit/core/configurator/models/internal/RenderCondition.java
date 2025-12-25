@@ -52,7 +52,8 @@ public class RenderCondition {
                 boolean configIsAvailable = configAccess.isGranted()
                     && ConfigDefinition.from(req).isValid();
                 return req.getRequestURI().contains("/etoolbox/config")
-                    && (configIsAvailable || configAccess == ConfigAccess.INVALID_CONFIG);
+                    && (configIsAvailable || configAccess == ConfigAccess.INVALID_CONFIG)
+                    && PermissionUtil.hasGlobalModifyPermission(req);
             }
         );
 
