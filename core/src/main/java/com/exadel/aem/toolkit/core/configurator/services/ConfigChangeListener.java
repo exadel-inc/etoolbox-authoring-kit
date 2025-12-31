@@ -36,6 +36,7 @@ import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.resource.observation.ExternalResourceChangeListener;
 import org.apache.sling.api.resource.observation.ResourceChange;
 import org.apache.sling.api.resource.observation.ResourceChangeListener;
+import org.apache.sling.settings.SlingSettingsService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.Configuration;
@@ -75,6 +76,9 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
 
     @Reference
     private transient ResourceResolverFactory resourceResolverFactory;
+
+    @Reference
+    private transient SlingSettingsService slingSettingsService;
 
     private ExecutorService asyncExecutor;
 
@@ -311,7 +315,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
         if (configuration == null) {
             return;
         }
-        String[] selectedProperties = extractSelectedProperties(resource);
+        String[] selectedProperties = isAuthorInstance() ? null : extractSelectedProperties(resource);
         if (ConfigDataUtil.containsAll(
             configuration.getProperties(),
             ValueMapUtil.filter(resource.getValueMap(), selectedProperties))) {
@@ -366,7 +370,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
             // Ignored for the sake of using with wcm.io mocks
         }
         Dictionary<String, Object> updateData = ConfigDataUtil.getData(configuration);
-        String[] selectedProperties = extractSelectedProperties(data);
+        String[] selectedProperties = isAuthorInstance() ? null : extractSelectedProperties(data);
         ValueMapUtil
             .filter(
                 ValueMapUtil.excludeSystemProperties(data.getValueMap()),
@@ -392,6 +396,14 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
     /* ---------------
        Utility methods
        --------------- */
+
+    /**
+     * Determines whether the current Sling instance is an author instance
+     * @return True or false
+     */
+    private boolean isAuthorInstance() {
+        return slingSettingsService == null || slingSettingsService.getRunModes().contains("author");
+    }
 
     /**
      * Extracts the configuration PID from the specified resource

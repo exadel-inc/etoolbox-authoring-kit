@@ -29,6 +29,8 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.resource.observation.ResourceChange;
 import org.apache.sling.jcr.resource.internal.JcrResourceChange;
+import org.apache.sling.settings.SlingSettingsService;
+import org.apache.sling.testing.mock.sling.services.MockSlingSettingService;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,6 +53,7 @@ public class ConfigChangeListenerTest {
 
     private static final String FIELD_CONFIG_ADMIN = "configurationAdmin";
     private static final String FIELD_RESOURCE_RESOLVER_FACTORY = "resourceResolverFactory";
+    private static final String FIELD_SLING_SETTINGS_SERVICE = "slingSettingsService";
 
     private static final String TEST_PID = "com.example.test.Config";
 
@@ -238,6 +241,10 @@ public class ConfigChangeListenerTest {
             "boolean.property", true);
         ConfigurationAdmin mockConfigurationAdmin = buildMockConfigurationAdmin(mockConfig);
 
+        MockSlingSettingService mockSlingSettingsService = (MockSlingSettingService) context.getService(SlingSettingsService.class);
+        assertNotNull(mockSlingSettingsService);
+        mockSlingSettingsService.setRunModes(Collections.singleton("publish"));
+
         ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
 
         String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + ConfiguratorConstants.SUFFIX_SLASH_DATA;
@@ -276,6 +283,10 @@ public class ConfigChangeListenerTest {
     public void shouldHandlePartialConfigurationWithNewProperty() throws Exception {
         Configuration mockConfig = buildMockConfiguration("existing.property", "existing.value");
         ConfigurationAdmin mockConfigurationAdmin = buildMockConfigurationAdmin(mockConfig);
+
+        MockSlingSettingService mockSlingSettingsService = (MockSlingSettingService) context.getService(SlingSettingsService.class);
+        assertNotNull(mockSlingSettingsService);
+        mockSlingSettingsService.setRunModes(Collections.singleton("publish"));
 
         ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
 
@@ -455,6 +466,7 @@ public class ConfigChangeListenerTest {
         ConfigChangeListener configChangeListener = context.registerService(new ConfigChangeListener());
         PrivateAccessor.setField(configChangeListener, FIELD_CONFIG_ADMIN, configAdmin);
         PrivateAccessor.setField(configChangeListener, FIELD_RESOURCE_RESOLVER_FACTORY, context.getService(ResourceResolverFactory.class));
+        PrivateAccessor.setField(configChangeListener, FIELD_SLING_SETTINGS_SERVICE, context.getService(SlingSettingsService.class));
         configChangeListener.activate(context.bundleContext(), config);
         return configChangeListener;
     }
@@ -467,11 +479,6 @@ public class ConfigChangeListenerTest {
         }
         Mockito.when(mockConfig.getProperties()).thenReturn(props);
         return mockConfig;
-    }
-
-    private static ConfigurationAdmin buildMockConfigurationAdmin(Object... properties) throws IOException {
-        Configuration mockConfig = buildMockConfiguration(properties);
-        return buildMockConfigurationAdmin(mockConfig);
     }
 
     private static ConfigurationAdmin buildMockConfigurationAdmin(Configuration config) throws IOException {
