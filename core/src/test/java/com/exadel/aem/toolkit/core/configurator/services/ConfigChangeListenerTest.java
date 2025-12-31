@@ -172,10 +172,22 @@ public class ConfigChangeListenerTest {
         ConfigurationAdmin mockConfigurationAdmin = Mockito.mock(ConfigurationAdmin.class);
 
         ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
+
+        MockSlingSettingService mockSlingSettingsService = (MockSlingSettingService) context.getService(SlingSettingsService.class);
+        assertNotNull(mockSlingSettingsService);
+
+        mockSlingSettingsService.setRunModes(Collections.singleton("author"));
         configChangeListener.onChange(changes);
 
         Thread.sleep(500);
         Mockito.verify(mockConfigurationAdmin, Mockito.never()).getConfiguration(Mockito.anyString(), Mockito.isNull());
+
+        mockSlingSettingsService.setRunModes(Collections.singleton("publish"));
+        configChangeListener.onChange(changes);
+
+        Thread.sleep(500);
+        Mockito.verify(mockConfigurationAdmin, Mockito.times(1))
+            .getConfiguration(Mockito.anyString(), Mockito.isNull());
     }
 
     @SuppressWarnings("unchecked")

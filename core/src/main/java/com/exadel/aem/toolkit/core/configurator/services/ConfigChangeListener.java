@@ -200,12 +200,17 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
         for (ResourceChange change : list) {
             boolean isRelevant = false;
             boolean isDataNode = StringUtils.endsWith(change.getPath(), ConfiguratorConstants.SUFFIX_SLASH_DATA);
+            boolean isPublish = !isAuthorInstance();
+            // In an author instance, we ignore a change outside a data subnode, because this could be a replication
+            // timestamp, etc. However, in a publisher, there is no authoring, so any change must be treated
+            // (e.g. when a partial publications is swapped for a complete publication, it comes down to removing the
+            // {@code eak.lastPublicationProperties} property)
             if (
                 (change.getType() == ResourceChange.ChangeType.ADDED
                     || change.getType() == ResourceChange.ChangeType.CHANGED)
-                    && isDataNode
+                    && (isDataNode || isPublish)
             ) {
-                configsToUpdate.add(change.getPath());
+                configsToUpdate.add(StringUtils.appendIfMissing(change.getPath(), ConfiguratorConstants.SUFFIX_SLASH_DATA));
                 isRelevant = true;
 
             } else if (change.getType() == ResourceChange.ChangeType.REMOVED
