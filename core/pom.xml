@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.exadel.etoolbox</groupId>
         <artifactId>etoolbox-authoring-kit</artifactId>
-        <version>2.7.0</version>
+        <version>2.7.1</version>
     </parent>
 
     <artifactId>etoolbox-authoring-kit-core</artifactId>
@@ -31,6 +31,7 @@
                         </Import-Package>
                         <Sling-Model-Packages>
                             com.exadel.aem.toolkit.core.authoring.models,
+                            com.exadel.aem.toolkit.core.configurator.models,
                             com.exadel.aem.toolkit.core.lists.models,
                             com.exadel.aem.toolkit.core.policymanagement.models
                         </Sling-Model-Packages>
@@ -38,6 +39,7 @@
                             com.exadel.aem.toolkit.api.*,
                             com.exadel.aem.toolkit.core.authoring.models,
                             com.exadel.aem.toolkit.core.injectors.*,
+                            com.exadel.aem.toolkit.core.configurator.models.*,
                             com.exadel.aem.toolkit.core.lists.models.*,
                             com.exadel.aem.toolkit.core.lists.utils,
                         </Export-Package>

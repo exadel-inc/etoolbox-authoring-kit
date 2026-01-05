@@ -13,6 +13,8 @@
  */
 package com.exadel.aem.toolkit.core.configurator;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
+
 /**
  * Contains constant values used across the {@code EToolbox Configurator} module
  * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
@@ -25,10 +27,15 @@ public class ConfiguratorConstants {
 
     public static final String NN_DATA = "data";
     public static final String PN_REPLICATION_ACTION = "cq:lastReplicationAction";
+    public static final String PN_REPLICATION_PROPS = "eak.lastReplicationProperties";
 
     public static final String ROOT_PATH = "/conf/etoolbox/authoring-kit/configurator";
+    public static final String RESOURCE_TYPE_CONFIG = "/bin/etoolbox/authoring-kit/config";
 
     public static final String SUFFIX_BACKUP = "$backup$";
+    public static final String SUFFIX_SLASH_DATA = CoreConstants.SEPARATOR_SLASH + NN_DATA;
+
+    public static final String VALUE_EMPTY = "__empty__";
 
     /**
      * Default (instantiation-restricting) constructor

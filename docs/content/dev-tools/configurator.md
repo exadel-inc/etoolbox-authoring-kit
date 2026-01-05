@@ -8,7 +8,7 @@ order: 6
 
 Configurator is a tool that allows editing OSGi configurations in a user-friendly manner.
 
-<em>Note:</em> As of Exadel Authoring Kit 2.7.0, <em>Configurator</em> is an experimental feature. You need to specially enable it through your own AEM project by adding a configuration file like the following:
+<em>Note:</em> As of Exadel Authoring Kit 2.7.1, <em>Configurator</em> is an experimental feature. You need to specially enable it through your own AEM project by adding a configuration file like the following:
 
 Path: `ui.config/src/main/content/jcr_root/apps/your_app/osgiconfig/config/com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener.xml`
 ```xml
@@ -48,3 +48,7 @@ By default, the Configurator is available to users who have the privilege to rea
 }
 ```
 In this script, we first provision the node structure that would appear if/when someone saves a custom config for `com.acme.service.impl.MyServiceImpl`. Then we assign privileges for the user _noadmin_. The _jcr:read_ and _rep:write_ privileges on the PID-specific node allow reading and saving a custom config for this PID. They are necessary to make config editing work for the user. The _crx:replicate_ privilege is optional. It allows publishing and unpublishing the config.
+
+## Gotchas
+
+Be careful modifying the configuration `com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener` with Configurator itself. Since it immediately affects how Configurator works, you may end up locking yourself out of Configurator or causing it to misbehave. If you were unlucky to do so, you need to make sure that the configuration node at `/conf/etoolbox/authoring-kit/configurator/com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener` is removed (via crx/de or with a content package, etc.).

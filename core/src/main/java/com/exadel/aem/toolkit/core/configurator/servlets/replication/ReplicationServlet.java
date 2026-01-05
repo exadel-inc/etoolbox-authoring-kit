@@ -1,0 +1,202 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.exadel.aem.toolkit.core.configurator.servlets.replication;
+
+import java.io.IOException;
+import java.util.Objects;
+import javax.jcr.Session;
+import javax.servlet.Servlet;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.servlets.HttpConstants;
+import org.apache.sling.api.servlets.SlingAllMethodsServlet;
+import org.jetbrains.annotations.NotNull;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.component.annotations.Activate;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.ConfigurationPolicy;
+import org.osgi.service.component.annotations.Deactivate;
+import org.osgi.service.component.annotations.Reference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.day.cq.replication.ReplicationActionType;
+import com.day.cq.replication.ReplicationException;
+import com.day.cq.replication.ReplicationOptions;
+import com.day.cq.replication.Replicator;
+
+import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
+import com.exadel.aem.toolkit.core.configurator.models.internal.ConfigAccess;
+import com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener;
+
+/**
+ * Implements a servlet that handles publishing and unpublishing of configurations managed by the
+ * {@code EToolbox Configurator} interface
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
+ */
+@Component(
+    service = Servlet.class,
+    configurationPolicy = ConfigurationPolicy.REQUIRE,
+    property = {
+        "sling.servlet.resourceTypes=" + ConfiguratorConstants.RESOURCE_TYPE_CONFIG,
+        "sling.servlet.selectors=" + ReplicationServlet.SELECTOR_PUBLISH,
+        "sling.servlet.selectors=" + ReplicationServlet.SELECTOR_UNPUBLISH,
+        "sling.servlet.methods=" + HttpConstants.METHOD_POST,
+    }
+)
+@SuppressWarnings("DeclarationOrder")
+public class ReplicationServlet extends SlingAllMethodsServlet {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ReplicationServlet.class);
+
+    static final String SELECTOR_PUBLISH = "publish";
+    static final String SELECTOR_UNPUBLISH = "unpublish";
+
+    private static final String EXCEPTION_COULD_NOT_PUBLISH = "Could not publish configuration {}";
+
+    @Reference
+    private transient ConfigChangeListener configChangeListener;
+
+    @Reference
+    private transient Replicator replicator;
+
+    /**
+     * Activates the servlet component and registers subsidiary services
+     * @param context The OSGi {@link BundleContext} instance
+     */
+    @Activate
+    private void activate(BundleContext context) {
+        LOG.info("Configuration replication is {}", configChangeListener.isEnabled() ? "enabled" : "disabled");
+    }
+
+    /**
+     * Deactivates the servlet component and unregisters subsidiary services
+     */
+    @Deactivate
+    private void deactivate() {
+        LOG.info("Configuration replication is shutting down");
+    }
+
+    /**
+     * Handles HTTP POST requests. Depending on the selector, it either publishes or unpublishes the configuration
+     * @param request  The HTTP request
+     * @param response The HTTP response
+     * @throws IOException If an error occurs during publishing or unpublishing
+     */
+    @Override
+    protected void doPost(
+        @NotNull SlingHttpServletRequest request,
+        @NotNull SlingHttpServletResponse response) throws IOException {
+
+        if (!configChangeListener.isEnabled()) {
+            sendError(response, SlingHttpServletResponse.SC_SERVICE_UNAVAILABLE, ConfigAccess.DISABLED.getError());
+            return;
+        }
+
+        String selector = request.getRequestPathInfo().getSelectorString();
+        if (SELECTOR_PUBLISH.equals(selector)) {
+            doPublish(request, response);
+        } else if (SELECTOR_UNPUBLISH.equals(selector)) {
+            doUnpublish(request, response);
+        } else {
+            sendError(response, SlingHttpServletResponse.SC_BAD_REQUEST, "Invalid selector");
+        }
+    }
+
+    /**
+     * Publishes the configuration represented by the target resource
+     * @param request  The HTTP request
+     * @param response The HTTP response
+     * @throws IOException If an error occurs during publishing
+     */
+    private void doPublish(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
+        String properties = request.getParameter("properties");
+        boolean isPerProperty = StringUtils.isNotBlank(properties) && !"all".equals(properties);
+        LOG.info(
+            "Request to publish configuration {}{}",
+            request.getResource().getName(),
+            isPerProperty ? " with properties: " + properties : StringUtils.EMPTY);
+        ReplicationOptions replicationOptions = new ReplicationOptions();
+        replicationOptions.setAggregateHandler(new ReplicationHandler(isPerProperty ? properties.split("[,;]") : null));
+        try {
+            replicator.replicate(
+                Objects.requireNonNull(request.getResourceResolver().adaptTo(Session.class)),
+                ReplicationActionType.ACTIVATE,
+                request.getResource().getPath(),
+                replicationOptions);
+        } catch (ReplicationException e) {
+            LOG.error(EXCEPTION_COULD_NOT_PUBLISH, request.getResource().getName(), e);
+            sendError(response, SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+        }
+    }
+
+    /**
+     * Unpublishes the configuration represented by the target resource
+     * @param request  The HTTP request
+     * @param response The HTTP response
+     * @throws IOException If an error occurs during unpublishing
+     */
+    private void doUnpublish(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
+        LOG.info("Request to unpublish configuration {}", request.getResource().getName());
+        ReplicationOptions replicationOptions = new ReplicationOptions();
+        replicationOptions.setAggregateHandler(new ReplicationHandler(null));
+        try {
+            replicator.replicate(
+                Objects.requireNonNull(request.getResourceResolver().adaptTo(Session.class)),
+                ReplicationActionType.DEACTIVATE,
+                request.getResource().getPath(),
+                replicationOptions);
+        } catch (ReplicationException | NullPointerException e) {
+            LOG.error("Could not unpublish configuration {}", request.getResource().getName(), e);
+            sendError(response, SlingHttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.getMessage());
+            return;
+        }
+        cleanUpEmptyUnpublishedNode(request.getResourceResolver(), request.getResource());
+    }
+
+    /**
+     * Removes the target resource if it has no children after unpublishing
+     * @param resolver The {@link ResourceResolver} instance
+     * @param resource The resource to remove if empty
+     */
+    private static void cleanUpEmptyUnpublishedNode(ResourceResolver resolver, Resource resource) {
+        if (resource.hasChildren()) {
+            return;
+        }
+        LOG.debug("Cleaning up empty configuration node {}", resource.getPath());
+        try {
+            resolver.delete(resource);
+            resolver.commit();
+        } catch (Exception e) {
+            LOG.error("Could not clean up configuration node {}", resource.getPath(), e);
+        }
+    }
+
+    /**
+     * Sends an error response with a specific status and message
+     * @param response The HTTP response
+     * @param status   The HTTP status code
+     * @param message  The message to include in the response body
+     * @throws IOException If an I/O error occurs
+     */
+    private static void sendError(SlingHttpServletResponse response, int status, String message) throws IOException {
+        response.setStatus(status);
+        response.getWriter().println(message);
+        response.getWriter().flush();
+    }
+}

@@ -13,7 +13,6 @@
  */
 package com.exadel.aem.toolkit.core.configurator.services;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -33,8 +32,11 @@ import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.api.resource.ValueMap;
+import org.apache.sling.api.resource.observation.ExternalResourceChangeListener;
 import org.apache.sling.api.resource.observation.ResourceChange;
 import org.apache.sling.api.resource.observation.ResourceChangeListener;
+import org.apache.sling.settings.SlingSettingsService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.cm.Configuration;
@@ -49,6 +51,7 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
+import com.exadel.aem.toolkit.core.utils.ValueMapUtil;
 
 /**
  * Listens to changes in the repository under the specified root and updates OSGi configurations accordingly
@@ -60,7 +63,7 @@ import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
     immediate = true
 )
 @Designate(ocd = ConfigChangeListenerConfiguration.class)
-public class ConfigChangeListener implements ResourceChangeListener {
+public class ConfigChangeListener implements ResourceChangeListener, ExternalResourceChangeListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(ConfigChangeListener.class);
 
@@ -68,13 +71,14 @@ public class ConfigChangeListener implements ResourceChangeListener {
 
     private static final String UPDATABLE_CONFIG_TOKEN = "?";
 
-    private static final String SEPARATOR_COMMA_SPACE = ", ";
-
     @Reference
     private transient ConfigurationAdmin configurationAdmin;
 
     @Reference
     private transient ResourceResolverFactory resourceResolverFactory;
+
+    @Reference
+    private transient SlingSettingsService slingSettingsService;
 
     private ExecutorService asyncExecutor;
 
@@ -192,23 +196,30 @@ public class ConfigChangeListener implements ResourceChangeListener {
     public void onChange(List<ResourceChange> list) {
         Set<String> configsToReset = new HashSet<>();
         Set<String> configsToUpdate = new HashSet<>();
-        LOG.debug(
-            "Received {} resource change(s): {}",
-            list.size(),
-            list.stream()
-                .map(change -> change.getType() + " at " + change.getPath() + (isRelevantChange(change) ? " (processable)" : " (ignored)"))
-                .reduce((a, b) -> a + SEPARATOR_COMMA_SPACE + b)
-                .orElse("(none)")
-        );
+        LOG.debug("Received {} resource change(s)", list.size());
         for (ResourceChange change : list) {
-            if (!isRelevantChange(change)) {
-                continue;
-            }
-            if (change.getType() == ResourceChange.ChangeType.REMOVED) {
+            boolean isRelevant = false;
+            boolean isDataNode = StringUtils.endsWith(change.getPath(), ConfiguratorConstants.SUFFIX_SLASH_DATA);
+            boolean isPublish = !isAuthorInstance();
+            // In an author instance, we ignore a change outside a data subnode, because this could be a replication
+            // timestamp, etc. However, in a publisher, there is no authoring, so any change must be treated
+            // (e.g. when a partial publications is swapped for a complete publication, it comes down to removing the
+            // {@code eak.lastPublicationProperties} property)
+            if (
+                (change.getType() == ResourceChange.ChangeType.ADDED
+                    || change.getType() == ResourceChange.ChangeType.CHANGED)
+                    && (isDataNode || isPublish)
+            ) {
+                configsToUpdate.add(StringUtils.appendIfMissing(change.getPath(), ConfiguratorConstants.SUFFIX_SLASH_DATA));
+                isRelevant = true;
+
+            } else if (change.getType() == ResourceChange.ChangeType.REMOVED
+                && !ConfiguratorConstants.ROOT_PATH.equals(change.getPath())) {
+
                 configsToReset.add(change.getPath());
-            } else {
-                configsToUpdate.add(change.getPath());
+                isRelevant = true;
             }
+            LOG.debug("{} at {}{}", change.getType(), change.getPath(), isRelevant ? " (processable)" : " (ignored)");
         }
         if (configsToReset.isEmpty() && configsToUpdate.isEmpty()) {
             return;
@@ -227,22 +238,13 @@ public class ConfigChangeListener implements ResourceChangeListener {
                 for (String path : configsToReset) {
                     resetConfiguration(extractPid(path));
                 }
-            } catch (LoginException e) {
+                if (resolver.hasChanges()) {
+                    resolver.commit();
+                }
+            } catch (LoginException | PersistenceException e) {
                 LOG.error("Failed to process configuration changes", e);
             }
         });
-    }
-
-    /**
-     * Determines whether the specified resource change is relevant to configuration management
-     * @param change The resource change to check
-     * @return True or false
-     */
-    private static boolean isRelevantChange(ResourceChange change) {
-        if (change.getType() == ResourceChange.ChangeType.REMOVED) {
-            return !ConfiguratorConstants.ROOT_PATH.equals(change.getPath());
-        }
-        return StringUtils.endsWith(change.getPath(), CoreConstants.SEPARATOR_SLASH + ConfiguratorConstants.NN_DATA);
     }
 
     /* --------------------
@@ -272,7 +274,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
     private Configuration readConfiguration(String pid) {
         try {
             return configurationAdmin.getConfiguration(pid, null);
-        } catch (IOException | SecurityException e) {
+        } catch (Exception e) {
             LOG.error("Could not retrieve configuration for {}", pid, e);
         }
         return null;
@@ -288,7 +290,13 @@ public class ConfigChangeListener implements ResourceChangeListener {
         if (configuration == null) {
             return;
         }
-        Dictionary<String, Object> backup = ConfigUtil.getBackup(configuration);
+        Dictionary<String, Object> backup = ConfigDataUtil.getBackup(configuration);
+        boolean shouldSkip = backup.isEmpty();
+        if (shouldSkip) {
+            // If there is not any backup, even consisting of the only "remove" marker, it means that the configuration
+            // has never been modified, or else has already been reset, so there is nothing to do
+            return;
+        }
         boolean shouldErase = backup.size() == 1
             && Session.ACTION_REMOVE.equals(backup.get(ConfiguratorConstants.SUFFIX_BACKUP));
         if (shouldErase) {
@@ -296,7 +304,7 @@ public class ConfigChangeListener implements ResourceChangeListener {
         }
         try {
             configuration.update(backup);
-        } catch (IOException e) {
+        } catch (Exception e) {
             LOG.error("Could not reset configuration {}", pid, e);
         }
     }
@@ -312,13 +320,16 @@ public class ConfigChangeListener implements ResourceChangeListener {
         if (configuration == null) {
             return;
         }
-        if (ConfigUtil.equals(configuration.getProperties(), resource.getValueMap())) {
+        String[] selectedProperties = isAuthorInstance() ? null : extractSelectedProperties(resource);
+        if (ConfigDataUtil.containsAll(
+            configuration.getProperties(),
+            ValueMapUtil.filter(resource.getValueMap(), selectedProperties))) {
             LOG.debug("Configuration {} is up to date with user settings", pid);
             return;
         }
-        Dictionary<String, ?> embeddedBackup = ConfigUtil.getBackup(configuration);
+        Dictionary<String, ?> embeddedBackup = ConfigDataUtil.getBackup(configuration);
         if (embeddedBackup.isEmpty()) {
-            embeddedBackup = ConfigUtil.getData(configuration);
+            embeddedBackup = ConfigDataUtil.getData(configuration);
             if (embeddedBackup.isEmpty()) {
                 // There is not a "real" configuration other than default values. When doing a reset, we will need to
                 // erase the properties of a current configuration to bring back the defaults
@@ -363,7 +374,13 @@ public class ConfigChangeListener implements ResourceChangeListener {
         } catch (UnsupportedOperationException e) {
             // Ignored for the sake of using with wcm.io mocks
         }
-        Dictionary<String, Object> updateData = ConfigUtil.toDictionary(data.getValueMap());
+        Dictionary<String, Object> updateData = ConfigDataUtil.getData(configuration);
+        String[] selectedProperties = isAuthorInstance() ? null : extractSelectedProperties(data);
+        ValueMapUtil
+            .filter(
+                ValueMapUtil.excludeSystemProperties(data.getValueMap()),
+                selectedProperties)
+            .forEach(updateData::put);
         if (!backup.isEmpty()) {
             Enumeration<String> keys = backup.keys();
             while (keys.hasMoreElements()) {
@@ -386,6 +403,14 @@ public class ConfigChangeListener implements ResourceChangeListener {
        --------------- */
 
     /**
+     * Determines whether the current Sling instance is an author instance
+     * @return True or false
+     */
+    private boolean isAuthorInstance() {
+        return slingSettingsService == null || slingSettingsService.getRunModes().contains("author");
+    }
+
+    /**
      * Extracts the configuration PID from the specified resource
      * @param resource The resource representing the configuration
      * @return String value
@@ -404,7 +429,19 @@ public class ConfigChangeListener implements ResourceChangeListener {
     private static String extractPid(String path) {
         String configRootPath = StringUtils.removeEnd(
             path,
-            CoreConstants.SEPARATOR_SLASH + ConfiguratorConstants.NN_DATA);
+            ConfiguratorConstants.SUFFIX_SLASH_DATA);
         return StringUtils.substringAfterLast(configRootPath, CoreConstants.SEPARATOR_SLASH);
+    }
+
+    /**
+     * Extracts the selected properties from the specified resource
+     * @param resource The resource representing the configuration
+     * @return String array
+     */
+    private static String[] extractSelectedProperties(Resource resource) {
+        ValueMap valueMap = ConfiguratorConstants.NN_DATA.equals(resource.getName())
+            ? Objects.requireNonNull(resource.getParent()).getValueMap()
+            : resource.getValueMap();
+        return valueMap.get(ConfiguratorConstants.PN_REPLICATION_PROPS, String[].class);
     }
 }

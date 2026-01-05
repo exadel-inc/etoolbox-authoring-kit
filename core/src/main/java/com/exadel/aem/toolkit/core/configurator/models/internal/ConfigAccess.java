@@ -1,0 +1,147 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License").
+ * You may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package com.exadel.aem.toolkit.core.configurator.models.internal;
+
+import java.util.Objects;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import com.adobe.granite.ui.components.ExpressionCustomizer;
+
+import com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener;
+import com.exadel.aem.toolkit.core.configurator.utils.PermissionUtil;
+import com.exadel.aem.toolkit.core.configurator.utils.RequestUtil;
+
+/**
+ * Enumerates possible outcomes of a configuration access request
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own code
+ */
+public enum ConfigAccess {
+
+    GRANTED(null),
+
+    DISABLED("This tool is disabled in OSGi configuration"),
+    FACTORY_CONFIG("Factory configs are currently not supported"),
+    INVALID_CONFIG("Configuration is missing or invalid"),
+    NO_ACCESS("You don't have access to this feature"),
+    NO_CONFIG("No configuration specified");
+
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigAccess.class);
+
+    private static final String KEY = "configAccess";
+
+    private final String error;
+
+    /**
+     * Default (instantiation-restricting) constructor
+     * @param error Error message; null if access is granted
+     */
+    ConfigAccess(String error) {
+        this.error = error;
+    }
+
+    /**
+     * Gets the error message associated with this access result
+     * @return String value; null if access is granted
+     */
+    public String getError() {
+        return error;
+    }
+
+    /**
+     * Indicates whether access is granted
+     * @return True or false
+     */
+    public boolean isGranted() {
+        return StringUtils.isEmpty(error);
+    }
+
+    /**
+     * Determines the access result for the current request; caches the result in the request attribute for future
+     * reference
+     * @param request The current request
+     * @return A {@link ConfigAccess} value
+     */
+    public static ConfigAccess from(HttpServletRequest request) {
+        if (request == null) {
+            return NO_CONFIG;
+        }
+
+        ExpressionCustomizer customizer = ExpressionCustomizer.from(request);
+        ConfigAccess result = (ConfigAccess) customizer.getVariable(KEY);
+        if (result != null) {
+            return result;
+        }
+        result = pick(request);
+        customizer.setVariable(KEY, result);
+        return result;
+    }
+
+    /**
+     * Determines the access result for the current request
+     * @param request The current request
+     * @return A {@link ConfigAccess} value
+     */
+    private static ConfigAccess pick(HttpServletRequest request) {
+        if (!PermissionUtil.hasModifyPermission(request)) {
+            return NO_ACCESS;
+        }
+
+        if (!isGrantable(request)) {
+            return DISABLED;
+        }
+
+        String configId = RequestUtil.getConfigPid(request);
+        if (StringUtils.isEmpty(configId)) {
+            return request.getRequestURI().contains("/etoolbox/config")
+                && PermissionUtil.hasGlobalModifyPermission(request)
+                ? GRANTED
+                : NO_CONFIG;
+        }
+
+        ConfigDefinition config = ConfigDefinition.from(request);
+        if (!config.isValid()) {
+            return INVALID_CONFIG;
+        }
+
+        if (config.isFactory()) {
+            return FACTORY_CONFIG;
+        }
+
+        return GRANTED;
+    }
+
+    /**
+     * Checks whether the configurator is enabled in OSGi for the current request
+     * @param request The current request
+     * @return True or false
+     */
+    static boolean isGrantable(HttpServletRequest request) {
+        try {
+            BundleContext context = (BundleContext) request.getAttribute(BundleContext.class.getName());
+            if (context == null) {
+                context = Objects.requireNonNull(FrameworkUtil.getBundle(ConfigAccess.class).getBundleContext());
+            }
+            ConfigChangeListener listener = Objects.requireNonNull(context.getService(context.getServiceReference(ConfigChangeListener.class)));
+            return listener.isEnabled();
+        } catch (RuntimeException e) {
+            LOG.error("Could not acquire an OSGi entity", e);
+            return false;
+        }
+    }
+}
