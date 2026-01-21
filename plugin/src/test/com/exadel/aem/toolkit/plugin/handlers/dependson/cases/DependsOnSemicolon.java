@@ -40,9 +40,14 @@ public class DependsOnSemicolon {
 
     @DialogField
     @TextField
-    @DependsOn(query = "';' === ';'")
+    @DependsOn(query = "@field1 === ';'")
     @DependsOn(query = "';' === ';'", action = DependsOnActions.REQUIRED)
     private String multipleActions;
+
+    @DialogField
+    @TextField
+    @DependsOn(query = "';' === ';'", action = {DependsOnActions.VISIBLE, DependsOnActions.REQUIRED})
+    private String multipleActionsPerQuery;
 
     @DialogField
     @TextField

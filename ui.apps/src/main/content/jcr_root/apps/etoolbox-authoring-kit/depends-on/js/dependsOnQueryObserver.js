@@ -81,12 +81,16 @@
          * */
         static initObserversList($el, queries, actions) {
             const actionCounter = {};
-            return queries.map((query, i) => {
-                const action = actions[i];
-                actionCounter[action] = actionCounter[action] || 0;
-                const data = ns.parseActionData($el[0], action, actionCounter[action]++);
-                return new QueryObserver($el, query, action, data);
+            const queryObservers = queries.map((query, i) => {
+                const observerActions = actions[i].split(',');
+                const resultActions = observerActions.map(action => {
+                    actionCounter[action] = actionCounter[action] || 0;
+                    const data = ns.parseActionData($el[0], action, actionCounter[action]++);
+                    return new QueryObserver($el, query, action, data);
+                });
+                return resultActions;
             });
+            return queryObservers.flat();
         }
 
         /**
