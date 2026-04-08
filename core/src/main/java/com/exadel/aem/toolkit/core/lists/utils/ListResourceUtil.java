@@ -21,12 +21,10 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.ClassUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
-import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
@@ -35,6 +33,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.lists.ListConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
+import com.exadel.aem.toolkit.core.utils.ResourceFactory;
 import com.exadel.aem.toolkit.core.utils.ValueMapUtil;
 
 /**
@@ -71,31 +70,6 @@ class ListResourceUtil {
     }
 
     /**
-     * Creates a {@link ValueMapResource} representation of a list entry using the provided {@code title} and {@code
-     * value}
-     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
-     * @param title            String value representing the title of the list entry
-     * @param value            String value representing the value of the list entry
-     * @return {@link ValueMapResource} object
-     */
-    public static Resource createValueMapResource(ResourceResolver resourceResolver, String title, Object value) {
-        Map<String, Object> properties = new HashMap<>();
-        properties.put(JcrConstants.JCR_TITLE, title);
-        properties.put(CoreConstants.PN_VALUE, value);
-        return createValueMapResource(resourceResolver, properties);
-    }
-
-    /**
-     * Creates a {@link ValueMapResource} representation of a list entry using the provided properties
-     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
-     * @param properties       Resource properties
-     * @return {@link ValueMapResource}
-     */
-    public static Resource createValueMapResource(ResourceResolver resourceResolver, Map<String, Object> properties) {
-        return new ValueMapResource(resourceResolver, StringUtils.EMPTY, JcrConstants.NT_UNSTRUCTURED, new ValueMapDecorator(properties));
-    }
-
-    /**
      * Converts a key-value map to the list of {@link ValueMapResource} objects
      * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
      * @param values           {@code Map} instance that will be converted to the {@link ValueMapResource}
@@ -105,7 +79,11 @@ class ListResourceUtil {
         return MapUtils.emptyIfNull(values)
             .entrySet()
             .stream()
-            .map(entry -> createValueMapResource(resourceResolver, entry.getKey(), entry.getValue()))
+            .map(entry -> ResourceFactory
+                .newResource(resourceResolver)
+                .property(JcrConstants.JCR_TITLE, entry.getKey())
+                .property(CoreConstants.PN_VALUE, entry.getValue())
+                .build())
             .collect(Collectors.toList());
     }
 
