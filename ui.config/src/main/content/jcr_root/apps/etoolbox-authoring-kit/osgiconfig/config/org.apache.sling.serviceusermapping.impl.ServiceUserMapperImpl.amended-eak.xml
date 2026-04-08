@@ -3,5 +3,5 @@
     xmlns:sling="http://sling.apache.org/jcr/sling/1.0"
     xmlns:jcr="http://www.jcp.org/jcr/1.0"
     jcr:primaryType="sling:OsgiConfig"
-    user.mapping="[com.exadel.etoolbox.authoring-kit-core:eak-service=[eak-service]]"
+    user.mapping="[com.exadel.etoolbox.authoring-kit-core:eak-service=eak-service,com.exadel.etoolbox.authoring-kit-core:eak-scripting=sling-scripting]"
 />
