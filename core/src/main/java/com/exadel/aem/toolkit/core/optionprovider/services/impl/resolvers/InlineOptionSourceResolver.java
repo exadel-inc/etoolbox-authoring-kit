@@ -15,13 +15,14 @@ package com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -62,19 +63,18 @@ class InlineOptionSourceResolver implements OptionSourceResolver {
             if (!(node instanceof ObjectNode)) {
                 continue;
             }
-            ValueMapBuilder valueMapBuilder = new ValueMapBuilder();
+            Map<String, Object> properties = new HashMap<>();
             for (Iterator<String> propertyNames = node.fieldNames(); propertyNames.hasNext();) {
                 String propertyName = propertyNames.next();
                 String propertyValue = node.get(propertyName).asText();
-                valueMapBuilder.put(propertyName, propertyValue);
+                properties.put(propertyName, propertyValue);
                 if (propertyName.equals(params.getTextMember()) && StringUtils.isNotEmpty(propertyValue)) {
-                    valueMapBuilder.put(OptionProviderConstants.PARAMETER_NAME, propertyValue);
+                    properties.put(OptionProviderConstants.PARAMETER_NAME, propertyValue);
                 }
             }
-            ValueMap valueMap = valueMapBuilder.build();
             Resource child = ResourceFactory.newResource(request.getResourceResolver())
-                .path(valueMap.get(OptionProviderConstants.PARAMETER_NAME, StringUtils.EMPTY))
-                .properties(valueMap)
+                .path(properties.getOrDefault(OptionProviderConstants.PARAMETER_NAME, StringUtils.EMPTY).toString())
+                .properties(properties)
                 .build();
             children.add(child);
         }

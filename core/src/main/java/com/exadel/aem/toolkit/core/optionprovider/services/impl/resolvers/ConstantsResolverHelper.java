@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +28,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
@@ -65,21 +65,23 @@ class ConstantsResolverHelper {
      * @return A non-null {@code Resource} object
      */
     Resource resolve(SlingHttpServletRequest request) {
-        List<ValueMap> individualFieldValueMaps = Arrays.stream(source.getFields())
+        List<Map<String, Object>> individualFieldValueMaps = Arrays.stream(source.getFields())
             .filter(field -> Modifier.isPublic(field.getModifiers()) && Modifier.isStatic(field.getModifiers()))
-            .map(field -> new ValueMapBuilder()
-                .put(OptionProviderConstants.PARAMETER_NAME, field.getName())
-                .put(JcrConstants.JCR_TITLE, field.getName())
-                .put(CoreConstants.PN_VALUE, getFieldInvocationResult(field))
-                .build())
+            .map(field -> {
+                Map<String, Object> map = new HashMap<>();
+                map.put(OptionProviderConstants.PARAMETER_NAME, field.getName());
+                map.put(JcrConstants.JCR_TITLE, field.getName());
+                map.put(CoreConstants.PN_VALUE, getFieldInvocationResult(field));
+                return map;
+            })
             .collect(Collectors.toList());
-        List<ValueMap> pairedValueMaps = reduce(individualFieldValueMaps, pathParameters);
+        List<Map<String, Object>> pairedValueMaps = reduce(individualFieldValueMaps, pathParameters);
 
         List<Resource> dataSourceOptions = pairedValueMaps
             .stream()
             .map(valueMap -> ResourceFactory
                 .newResource(request.getResourceResolver())
-                .path(valueMap.get(OptionProviderConstants.PARAMETER_NAME, String.class))
+                .path(valueMap.getOrDefault(OptionProviderConstants.PARAMETER_NAME, StringUtils.EMPTY).toString())
                 .properties(valueMap)
                 .build())
             .collect(Collectors.toList());
@@ -89,14 +91,17 @@ class ConstantsResolverHelper {
     }
 
     /**
-     * Compacts the provided list of {@link Resource}s that represent separate Java class constants. We search among the
+     * Compacts the provided list of {@code Map}s that represent separate Java class constants. We search among the
      * value maps for every pair that refer to the same logical item (like {@code COLOR_LABEL} and {@code COLOR_VALUE})
      * and merge it into a single value map that contains both title and value
      * @param individualMaps Collection of {@code Resource} instances representing constants
      * @param pathParameters {@link PathParameters} object that is used to modify the list of options
      * @return A reduced list of value maps
      */
-    private static List<ValueMap> reduce(List<ValueMap> individualMaps, PathParameters pathParameters) {
+    private static List<Map<String, Object>> reduce(
+        List<Map<String, Object>> individualMaps,
+        PathParameters pathParameters) {
+
         if (!PatternUtil.isPattern(pathParameters.getTextMember())
             || !PatternUtil.isPattern(pathParameters.getValueMember())
             || IterableUtils.isEmpty(individualMaps)) {
@@ -104,39 +109,44 @@ class ConstantsResolverHelper {
         }
         Map<String, Pair<String, String>> nameTextEntries = individualMaps
             .stream()
-            .filter(valueMap -> PatternUtil.isMatch(valueMap.get(JcrConstants.JCR_TITLE, String.class), pathParameters.getTextMember()))
+            .filter(valueMap -> PatternUtil.isMatch(
+                valueMap.getOrDefault(JcrConstants.JCR_TITLE, StringUtils.EMPTY).toString(),
+                pathParameters.getTextMember()))
             .collect(Collectors.toMap(
                 valueMap -> PatternUtil.strip(
-                    valueMap.get(JcrConstants.JCR_TITLE, String.class),
+                    valueMap.getOrDefault(JcrConstants.JCR_TITLE, StringUtils.EMPTY).toString(),
                     pathParameters.getTextMember()),
                 valueMap -> Pair.of(
-                    valueMap.get(OptionProviderConstants.PARAMETER_NAME, String.class),
-                    valueMap.get(CoreConstants.PN_VALUE, String.class)),
+                    valueMap.getOrDefault(OptionProviderConstants.PARAMETER_NAME, StringUtils.EMPTY).toString(),
+                    valueMap.getOrDefault(CoreConstants.PN_VALUE, StringUtils.EMPTY).toString()),
                 (first, second) -> first,
                 LinkedHashMap::new));
 
         Map<String, Object> valueEntries = individualMaps
             .stream()
-            .filter(valueMap -> PatternUtil.isMatch(valueMap.get(JcrConstants.JCR_TITLE, String.class), pathParameters.getValueMember()))
+            .filter(valueMap -> PatternUtil.isMatch(
+                valueMap.getOrDefault(JcrConstants.JCR_TITLE, StringUtils.EMPTY).toString(),
+                pathParameters.getValueMember()))
             .collect(Collectors.toMap(
-                valueMap -> PatternUtil.strip(valueMap.get(JcrConstants.JCR_TITLE, String.class), pathParameters.getValueMember()),
-                valueMap -> valueMap.get(CoreConstants.PN_VALUE, StringUtils.EMPTY)));
+                valueMap -> PatternUtil.strip(
+                    valueMap.getOrDefault(JcrConstants.JCR_TITLE, StringUtils.EMPTY).toString(),
+                    pathParameters.getValueMember()),
+                valueMap -> valueMap.getOrDefault(CoreConstants.PN_VALUE, StringUtils.EMPTY).toString()));
 
-        List<ValueMap> result = new ArrayList<>();
+        List<Map<String, Object>> result = new ArrayList<>();
         for (Map.Entry<String, Pair<String, String>> textEntry : nameTextEntries.entrySet()) {
             Object value = valueEntries.get(textEntry.getKey());
             if (value == null) {
                 continue;
             }
             Pair<String, String> nameAndText = textEntry.getValue();
-            ValueMap valueMap = new ValueMapBuilder()
-                .put(
+            Map<String, Object> map = new HashMap<>();
+            map.put(
                     OptionProviderConstants.PARAMETER_NAME,
-                    PatternUtil.strip(nameAndText.getLeft(), pathParameters.getTextMember()))
-                .put(pathParameters.getTextMember(), nameAndText.getRight())
-                .put(pathParameters.getValueMember(), value)
-                .build();
-            result.add(valueMap);
+                    PatternUtil.strip(nameAndText.getLeft(), pathParameters.getTextMember()));
+            map.put(pathParameters.getTextMember(), nameAndText.getRight());
+            map.put(pathParameters.getValueMember(), value);
+            result.add(map);
         }
         return result;
     }
