@@ -24,12 +24,13 @@ import java.util.stream.Stream;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
+import org.jetbrains.annotations.NotNull;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
 
@@ -55,7 +56,7 @@ public class ResourceFactory {
      * @param resolver The {@code ResourceResolver} to be used for resource creation
      * @return A {@link Builder} instance for fluent resource creation
      */
-    public static Builder<?> newResource(ResourceResolver resolver) {
+    public static Builder<?> newResource(@NotNull ResourceResolver resolver) {
         return new Builder<>(resolver, Builder.class);
     }
 
@@ -64,9 +65,9 @@ public class ResourceFactory {
      * @param request The {@code SlingHttpServletRequest} that serves as the context for field creation
      * @return A {@link FieldBuilder} instance for fluent field creation
      */
-    public static FieldBuilder newGraniteField(SlingHttpServletRequest request) {
+    public static FieldBuilder newGraniteField(@NotNull SlingHttpServletRequest request) {
         return new FieldBuilder(request.getResourceResolver())
-            .path(request.getResource().getPath() + "/field" + getAndIncrementFieldCount(request));
+            .path(request.getResource().getPath(), "field" + getAndIncrementFieldCount(request));
     }
 
     /**
@@ -89,7 +90,7 @@ public class ResourceFactory {
     public static class Builder<T extends Builder<?>> {
 
         private final ResourceResolver resolver;
-        private final Class<T> type;
+        private final Class<T> builderClass;
 
         private List<Resource> children;
         private String path;
@@ -103,7 +104,7 @@ public class ResourceFactory {
          */
         Builder(ResourceResolver resolver, Class<T> type) {
             this.resolver = resolver;
-            this.type = type;
+            this.builderClass = type;
         }
 
         // Builder methods
@@ -111,40 +112,40 @@ public class ResourceFactory {
         /**
          * Assigns child resources to the resource being built
          * @param value The collection of child resources
-         * @return The builder instance
+         * @return This builder instance
          */
         public T children(Collection<Resource> value) {
             if (CollectionUtils.isEmpty(value)) {
-                return type.cast(this);
+                return builderClass.cast(this);
             }
             value.forEach(this::child);
-            return type.cast(this);
+            return builderClass.cast(this);
         }
 
         /**
          * Assigns a single child resource to the resource being built
          * @param value The child resource
-         * @return The builder instance
+         * @return This builder instance
          */
         public T child(Resource value) {
             if (value == null) {
-                return type.cast(this);
+                return builderClass.cast(this);
             }
             if (children == null) {
                 children = new ArrayList<>();
             }
             children.add(value);
-            return type.cast(this);
+            return builderClass.cast(this);
         }
 
         /**
          * Assigns a path to the resource being built
          * @param value The path segments
-         * @return The builder instance
+         * @return This builder instance
          */
         public T path(String... value) {
             if (ArrayUtils.isEmpty(value)) {
-                return type.cast(this);
+                return builderClass.cast(this);
             }
             String effectivePath = Stream.of(value)
                 .map(v -> StringUtils.strip(v, CoreConstants.SEPARATOR_SLASH))
@@ -153,49 +154,49 @@ public class ResourceFactory {
             if (StringUtils.isNotEmpty(effectivePath)) {
                 path = effectivePath;
             }
-            return type.cast(this);
+            return builderClass.cast(this);
         }
 
         /**
          * Assigns multiple properties to the resource being built
          * @param value The map of properties
-         * @return The builder instance
+         * @return This builder instance
          */
         public T properties(Map<String, Object> value) {
             if (MapUtils.isEmpty(value)) {
-                return type.cast(this);
+                return builderClass.cast(this);
             }
             value.forEach(this::property);
-            return type.cast(this);
+            return builderClass.cast(this);
         }
 
         /**
          * Assigns a single property to the resource being built
          * @param name  The property name
          * @param value The property value
-         * @return The builder instance
-        */
+         * @return This builder instance
+         */
         public T property(String name, Object value) {
             if (StringUtils.isEmpty(name) || value == null) {
-                return type.cast(this);
+                return builderClass.cast(this);
             }
             if (properties == null) {
                 properties = new HashMap<>();
             }
             properties.put(name, value);
-            return type.cast(this);
+            return builderClass.cast(this);
         }
 
         /**
-         * Assigns a resource type to the resource being built
+         * Assigns a Sling resource type to the resource being built
          * @param value The resource type
-         * @return The builder instance
+         * @return This builder instance
          */
         public T resourceType(String value) {
             if (StringUtils.isNotEmpty(value)) {
                 this.resourceType = value;
             }
-            return type.cast(this);
+            return builderClass.cast(this);
         }
 
         /**

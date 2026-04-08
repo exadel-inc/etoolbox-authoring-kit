@@ -210,7 +210,7 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
                 }
                 Resource resource = ResourceFactory.newResource(request.getResourceResolver())
                     .path(path, nextField.getKey())
-                    .properties(createValueMap(nextField.getValue()))
+                    .properties(createPropertiesMap(nextField.getValue()))
                     .build();
                 children.add(resource);
             }
@@ -224,7 +224,7 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
                 }
                 Resource resource = ResourceFactory.newResource(request.getResourceResolver())
                     .path(path, CoreConstants.NN_ITEM + elementIndex++)
-                    .properties(createValueMap(nextElement))
+                    .properties(createPropertiesMap(nextElement))
                     .build();
                 children.add(resource);
             }
@@ -237,11 +237,11 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
 
     /**
      * Called by {@link HttpOptionSourceResolver#createResource(SlingHttpServletRequest, String, JsonNode)} to convert a
-     * particular {@link JsonNode} into a {@code ValueMap} containing all the keys and values contained in the node
+     * particular {@link JsonNode} into a {@code Map} containing all the keys and values contained in the node
      * @param jsonNode {@link JsonNode} object containing values for the value map
      * @return {@code Map} object
      */
-    private static Map<String, Object> createValueMap(JsonNode jsonNode) {
+    private static Map<String, Object> createPropertiesMap(JsonNode jsonNode) {
         return StreamSupport
             .stream(Spliterators.spliteratorUnknownSize(jsonNode.fields(), Spliterator.ORDERED), false)
             .collect(Collectors.toMap(Map.Entry::getKey, field -> field.getValue().asText()));

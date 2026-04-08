@@ -94,7 +94,7 @@ class ConstantsResolverHelper {
      * Compacts the provided list of {@code Map}s that represent separate Java class constants. We search among the
      * value maps for every pair that refer to the same logical item (like {@code COLOR_LABEL} and {@code COLOR_VALUE})
      * and merge it into a single value map that contains both title and value
-     * @param individualMaps Collection of {@code Resource} instances representing constants
+     * @param individualMaps Collection of {@code Map} instances representing constants
      * @param pathParameters {@link PathParameters} object that is used to modify the list of options
      * @return A reduced list of value maps
      */
