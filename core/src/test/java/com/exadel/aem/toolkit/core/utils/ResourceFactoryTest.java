@@ -16,8 +16,10 @@ package com.exadel.aem.toolkit.core.utils;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.junit.Rule;
@@ -109,17 +111,23 @@ public class ResourceFactoryTest {
         assertNotNull(resource);
         assertEquals("Main", resource.getValueMap().get("title", String.class));
 
-        Iterator<Resource> children = resource.listChildren();
+        List<Resource> children = IteratorUtils.toList(resource.listChildren());
         assertNotNull(children);
-        assertTrue(children.hasNext());
 
-        Resource alphaChild = children.next();
+        Resource alphaChild = children
+            .stream()
+            .filter(child -> "alpha".equals(child.getName()))
+            .findFirst()
+            .orElse(null);
         assertNotNull(alphaChild);
-        assertEquals("alpha", alphaChild.getName());
         assertEquals("Nested text", alphaChild.getValueMap().get("text", String.class));
         assertEquals("Nested value", alphaChild.getValueMap().get("value", String.class));
 
-        Resource betaChild = children.next();
+        Resource betaChild = children
+            .stream()
+            .filter(child -> "beta".equals(child.getName()))
+            .findFirst()
+            .orElse(null);
         assertNotNull(betaChild);
         assertEquals("More nested text", betaChild.getValueMap().get("text", String.class));
     }
