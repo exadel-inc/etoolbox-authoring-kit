@@ -101,7 +101,7 @@ public class ResourceFactory {
          * Constructs a new Builder instance
          * @param resolver The {@link ResourceResolver} to be used for resource creation
          * @param type     The class type of the builder
-         */ 
+         */
         Builder(ResourceResolver resolver, Class<T> type) {
             this.resolver = resolver;
             this.type = type;
@@ -338,7 +338,7 @@ public class ResourceFactory {
     /**
      * Extends the generic {@link Builder} class for creating Granite UI field resources with a fluent API
      */
-    public static class FieldBuilder extends Builder<FieldBuilder>{
+    public static class FieldBuilder extends Builder<FieldBuilder> {
         private boolean isMultiValue;
 
         /**

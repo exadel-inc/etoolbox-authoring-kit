@@ -49,6 +49,7 @@ import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.Option
 import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.OptionProviderInlineOptionsTest;
 import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.OptionProviderTest;
 import com.exadel.aem.toolkit.core.policymanagement.filters.TopLevelPolicyFilterTest;
+import com.exadel.aem.toolkit.core.utils.ResourceFactoryTest;
 
 /**
  * Shortcut class for running all available test cases in a batch
@@ -92,7 +93,9 @@ import com.exadel.aem.toolkit.core.policymanagement.filters.TopLevelPolicyFilter
     PermissionUtilTest.class,
     ValueUtilTest.class,
 
-    TopLevelPolicyFilterTest.class
+    TopLevelPolicyFilterTest.class,
+
+    ResourceFactoryTest.class
 })
 public class AllTests {
 }
