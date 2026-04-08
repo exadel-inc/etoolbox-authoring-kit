@@ -26,7 +26,6 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
@@ -76,7 +75,7 @@ class EnumResolverHelper {
     }
 
     /**
-     * Creates a {@link ValueMap} instance representing a single data source option for the given enum constant
+     * Creates a {@code Map} instance representing a single data source option for the given enum constant
      * @param enumConstant An enum object
      * @return {@link Map} object
      */

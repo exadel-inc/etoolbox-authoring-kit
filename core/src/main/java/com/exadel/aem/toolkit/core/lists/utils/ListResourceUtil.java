@@ -27,7 +27,6 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceUtil;
 import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import com.day.cq.commons.jcr.JcrConstants;
-import com.adobe.granite.ui.components.ds.ValueMapResource;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.lists.ListConstants;
@@ -70,12 +69,12 @@ class ListResourceUtil {
     }
 
     /**
-     * Converts a key-value map to the list of {@link ValueMapResource} objects
-     * @param resourceResolver Sling {@link ResourceResolver} instance used to create the list
-     * @param values           {@code Map} instance that will be converted to the {@link ValueMapResource}
-     * @return List of {@link ValueMapResource} objects
+     * Converts a key-value map to the list of resources representing list items
+     * @param resourceResolver {@link ResourceResolver} instance used to create the list
+     * @param values           {@code Map} instance that will be converted to the list of resources
+     * @return List of {@link Resource} objects
      */
-    public static List<Resource> mapToValueMapResources(ResourceResolver resourceResolver, Map<String, Object> values) {
+    public static List<Resource> mapToResources(ResourceResolver resourceResolver, Map<String, Object> values) {
         return MapUtils.emptyIfNull(values)
             .entrySet()
             .stream()
@@ -89,7 +88,7 @@ class ListResourceUtil {
 
     /**
      * Returns a {@code BiFunction} representing the conversion of a Sling model instance into a {@code Map} that can
-     * further be used for creating a {@link ValueMapResource}
+     * further be used for creating a list item resource
      * @param modelType Type of the Sling model
      * @return {@code BiFunction}.
      */

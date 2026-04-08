@@ -246,7 +246,7 @@ public class ListHelper {
             reportNoItems(path);
         }
 
-        List<Resource> resources = ListResourceUtil.mapToValueMapResources(resourceResolver, values);
+        List<Resource> resources = ListResourceUtil.mapToResources(resourceResolver, values);
         return createResourceList(resourceResolver, path, resources);
     }
 

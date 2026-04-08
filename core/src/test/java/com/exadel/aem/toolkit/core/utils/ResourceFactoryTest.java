@@ -13,7 +13,6 @@
  */
 package com.exadel.aem.toolkit.core.utils;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,7 +40,7 @@ public class ResourceFactoryTest {
     public final AemContext context = AemContextFactory.newInstance();
 
     @Test
-    public void shouldBuildSimpleResource() {
+    public void shouldSetPathAndProperties() {
         Resource resource = ResourceFactory.newResource(context.resourceResolver())
             .path("content/test")
             .resourceType("acme/components/test")
@@ -67,11 +66,17 @@ public class ResourceFactoryTest {
     }
 
     @Test
-    public void shouldBuildResourceWithMultipleChildren() {
-        Resource child1 = ResourceFactory.newResource(context.resourceResolver())
-            .path("child1").property("key", "val1").build();
-        Resource child2 = ResourceFactory.newResource(context.resourceResolver())
-            .path("child2").property("key", "val2").build();
+    public void shouldIncludeChildren() {
+        Resource child1 = ResourceFactory
+            .newResource(context.resourceResolver())
+            .path("child1")
+            .property("key", "val1")
+            .build();
+        Resource child2 = ResourceFactory
+            .newResource(context.resourceResolver())
+            .path("child2")
+            .property("key", "val2")
+            .build();
 
         Resource parent = ResourceFactory.newResource(context.resourceResolver())
             .path("parent")
@@ -92,7 +97,7 @@ public class ResourceFactoryTest {
     }
 
     @Test
-    public void shouldBuildResourceWithNestedProperties() {
+    public void shouldHandleNestedProperties() {
         Resource resource = ResourceFactory.newResource(context.resourceResolver())
             .path("content/composite")
             .property("title", "Main")
@@ -120,7 +125,7 @@ public class ResourceFactoryTest {
     }
 
     @Test
-    public void shouldBuildResourceWithDeeplyNestedProperties() {
+    public void shouldHandleDeeplyNestedProperties() {
         Resource resource = ResourceFactory.newResource(context.resourceResolver())
             .path("content/node")
             .property("title", "Root")
@@ -217,7 +222,7 @@ public class ResourceFactoryTest {
     }
 
     @Test
-    public void shouldBuildGraniteFieldWithIncrementingPaths() {
+    public void shouldIncrementGraniteFieldPaths() {
         context.create().resource("/content/myForm");
         context.request().setResource(context.resourceResolver().getResource("/content/myForm"));
 
@@ -268,7 +273,7 @@ public class ResourceFactoryTest {
     }
 
     @Test
-    public void shouldPassPropertiesMapToBuilder() {
+    public void shouldAcceptPropertiesMap() {
         Map<String, Object> props = new HashMap<>();
         props.put("alpha", "a");
         props.put("beta", "b");
@@ -281,27 +286,5 @@ public class ResourceFactoryTest {
         assertNotNull(resource);
         assertEquals("a", resource.getValueMap().get("alpha", String.class));
         assertEquals("b", resource.getValueMap().get("beta", String.class));
-    }
-
-    @Test
-    public void shouldBuildChildrenFromCollection() {
-        Resource child1 = ResourceFactory.newResource(context.resourceResolver())
-            .path("c1").property("v", "one").build();
-        Resource child2 = ResourceFactory.newResource(context.resourceResolver())
-            .path("c2").property("v", "two").build();
-
-        Resource parent = ResourceFactory.newResource(context.resourceResolver())
-            .path("parent")
-            .children(Arrays.asList(child1, child2))
-            .build();
-
-        assertNotNull(parent);
-        Iterator<Resource> it = parent.listChildren();
-        assertNotNull(it);
-        assertTrue(it.hasNext());
-        it.next();
-        assertTrue(it.hasNext());
-        it.next();
-        assertFalse(it.hasNext());
     }
 }

@@ -38,7 +38,7 @@ public class ListResourceUtilTest {
     public void shouldTransformKeyValuePairMapToResource() {
         Map<String, Object> properties = Collections.singletonMap("first", "firstValue");
 
-        List<Resource> resources = ListResourceUtil.mapToValueMapResources(context.resourceResolver(), properties);
+        List<Resource> resources = ListResourceUtil.mapToResources(context.resourceResolver(), properties);
 
         Resource resource = resources.get(0);
         assertNotNull(resource);

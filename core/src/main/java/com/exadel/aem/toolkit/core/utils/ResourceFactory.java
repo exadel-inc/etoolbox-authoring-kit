@@ -52,7 +52,7 @@ public class ResourceFactory {
     }
 
     /**
-     * Creates a new {@link Resource} instance based on the provided parameters
+     * Creates a new {@link Builder} instance for constructing a Sling resource with given features
      * @param resolver The {@code ResourceResolver} to be used for resource creation
      * @return A {@link Builder} instance for fluent resource creation
      */
@@ -61,7 +61,7 @@ public class ResourceFactory {
     }
 
     /**
-     * Creates a new {@link Resource} instance representing a Granite UI field based on the provided parameters
+     * Creates a new {@link FieldBuilder} instance for constructing a Granite field resource with given features
      * @param request The {@code SlingHttpServletRequest} that serves as the context for field creation
      * @return A {@link FieldBuilder} instance for fluent field creation
      */
@@ -73,7 +73,7 @@ public class ResourceFactory {
     /**
      * Retrieves and increments the field count stored in the request attribute
      * @param request The {@code SlingHttpServletRequest} that serves as the context for field creation
-     * @return Int value
+     * @return The zero-based field count so far for the current request, which can be used to generate unique field paths
      */
     private static int getAndIncrementFieldCount(SlingHttpServletRequest request) {
         int fieldCount = request.getAttribute(KEY_FIELD_COUNT) != null
@@ -171,10 +171,10 @@ public class ResourceFactory {
         }
 
         /**
-        * Assigns a single property to the resource being built
-        * @param name  The property name
-        * @param value The property value
-        * @return The builder instance
+         * Assigns a single property to the resource being built
+         * @param name  The property name
+         * @param value The property value
+         * @return The builder instance
         */
         public T property(String name, Object value) {
             if (StringUtils.isEmpty(name) || value == null) {
