@@ -30,7 +30,6 @@ import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.wrappers.ValueMapDecorator;
-import org.apache.sling.jcr.resource.api.JcrResourceConstants;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.adobe.granite.ui.components.ds.ValueMapResource;
 
@@ -310,6 +309,8 @@ public class ResourceFactory {
                     result.computeIfAbsent(parentPath, k -> new HashMap<>());
                 }
             });
+            // Ensure the main resource is represented in the result map even if it has no properties
+            result.computeIfAbsent(StringUtils.EMPTY, k -> new HashMap<>());
             return result;
         }
 
@@ -381,12 +382,13 @@ public class ResourceFactory {
                 return super.build();
             }
             Map<String, Object> wrapperValueMap = new HashMap<>();
-            wrapperValueMap.put(JcrResourceConstants.SLING_RESOURCE_TYPE_PROPERTY, ResourceTypes.MULTIFIELD);
-            wrapperValueMap.put(CoreConstants.PN_FIELD_LABEL, getProperties().get(CoreConstants.PN_FIELD_LABEL));
+            wrapperValueMap.put(
+                CoreConstants.PN_FIELD_LABEL,
+                MapUtils.emptyIfNull(getProperties()).get(CoreConstants.PN_FIELD_LABEL));
             if (ResourceTypes.CONTAINER.equals(getResourceType())) {
                 wrapperValueMap.put("composite", true);
             }
-            Map<String, Object> nestedValueMap = new HashMap<>(getProperties());
+            Map<String, Object> nestedValueMap = new HashMap<>(MapUtils.emptyIfNull(getProperties()));
             nestedValueMap.remove(CoreConstants.PN_FIELD_LABEL);
             Resource nestedField = ResourceFactory.newResource(getResolver())
                 .path(getPath(), "field")
