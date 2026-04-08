@@ -17,7 +17,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,16 +28,15 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ValueMap;
-import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
-import com.adobe.granite.ui.components.ds.ValueMapResource;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.OptionProviderConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.impl.PathParameters;
 import com.exadel.aem.toolkit.core.optionprovider.utils.PatternUtil;
+import com.exadel.aem.toolkit.core.utils.ResourceFactory;
 
 /**
  * Invoked by {@link ClassOptionSourceResolver} to convert a Java class containing constants into an options data
@@ -79,19 +77,15 @@ class ConstantsResolverHelper {
 
         List<Resource> dataSourceOptions = pairedValueMaps
             .stream()
-            .map(valueMap -> new ValueMapResource(
-                request.getResourceResolver(),
-                valueMap.get(OptionProviderConstants.PARAMETER_NAME, String.class),
-                JcrConstants.NT_UNSTRUCTURED,
-                valueMap))
+            .map(valueMap -> ResourceFactory
+                .newResource(request.getResourceResolver())
+                .path(valueMap.get(OptionProviderConstants.PARAMETER_NAME, String.class))
+                .properties(valueMap)
+                .build())
             .collect(Collectors.toList());
-
-        return new ValueMapResource(
-            request.getResourceResolver(),
-            StringUtils.EMPTY,
-            JcrConstants.NT_UNSTRUCTURED,
-            new ValueMapDecorator(Collections.emptyMap()),
-            dataSourceOptions);
+        return ResourceFactory.newResource(request.getResourceResolver())
+            .children(dataSourceOptions)
+            .build();
     }
 
     /**
