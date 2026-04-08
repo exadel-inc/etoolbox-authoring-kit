@@ -14,7 +14,6 @@
 package com.exadel.aem.toolkit.core.lists.servlets;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import javax.annotation.Nonnull;
@@ -26,21 +25,18 @@ import org.apache.sling.api.SlingException;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceMetadata;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.resource.ValueMap;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
-import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.osgi.service.component.annotations.Component;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
 import com.adobe.granite.ui.components.ds.DataSource;
 import com.adobe.granite.ui.components.ds.SimpleDataSource;
-import com.adobe.granite.ui.components.ds.ValueMapResource;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.utils.ResourceFactory;
 
 /**
  * Provides the collection of AEM resources that will represent Exadel Toolbox Lists items. This collection will be displayed
@@ -76,10 +72,11 @@ public class ItemComponentsServlet extends SlingSafeMethodsServlet {
             List<Resource> actualList = new ArrayList<>();
             while (resources.hasNext()) {
                 Resource item = resources.next();
-                ValueMap valueMap = new ValueMapDecorator(new HashMap<>());
-                valueMap.put(CoreConstants.PN_VALUE, item.getPath());
-                valueMap.put(CoreConstants.PN_TEXT, item.getValueMap().get(JcrConstants.JCR_TITLE, StringUtils.EMPTY));
-                actualList.add(new ValueMapResource(resolver, new ResourceMetadata(), JcrConstants.NT_UNSTRUCTURED, valueMap));
+                actualList.add(ResourceFactory
+                    .newResource(resolver)
+                    .property(CoreConstants.PN_VALUE, item.getPath())
+                    .property(CoreConstants.PN_TEXT, item.getValueMap().get(JcrConstants.JCR_TITLE, StringUtils.EMPTY))
+                    .build());
             }
             DataSource dataSource = new SimpleDataSource(actualList.iterator());
             request.setAttribute(DataSource.class.getName(), dataSource);
