@@ -245,7 +245,7 @@ public class XmlContextHelper implements XmlUtility {
      */
     @Override
     public String getValidFieldName(String name) {
-        return NamingUtil.getValidNodeName(name, DialogConstants.NN_FIELD);
+        return NamingUtil.getValidNodeName(name, CoreConstants.NN_FIELD);
     }
 
     /**

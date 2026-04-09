@@ -141,7 +141,7 @@ public class DialogFieldAnnotationHandler implements BiConsumer<Source, Target> 
         if (multifieldAncestor == null) {
             return false;
         }
-        return multifieldAncestor.getAttribute(DialogConstants.PN_COMPOSITE, StringUtils.EMPTY).equals("{Boolean}true");
+        return multifieldAncestor.getAttribute(CoreConstants.PN_COMPOSITE, StringUtils.EMPTY).equals("{Boolean}true");
     }
 
     /**

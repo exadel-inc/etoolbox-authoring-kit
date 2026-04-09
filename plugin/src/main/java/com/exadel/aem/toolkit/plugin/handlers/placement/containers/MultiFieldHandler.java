@@ -75,8 +75,8 @@ public class MultiFieldHandler extends ContainerHandler implements Handler {
      * @param name              The {@code name} attribute for the target multifield
      */
     private void placeMultiple(Source source, List<Source> multiFieldEntries, Target target, String name) {
-        target.attribute(DialogConstants.PN_COMPOSITE, true);
-        Target multifieldContainerElement = target.getOrCreateTarget(DialogConstants.NN_FIELD)
+        target.attribute(CoreConstants.PN_COMPOSITE, true);
+        Target multifieldContainerElement = target.getOrCreateTarget(CoreConstants.NN_FIELD)
             .attribute(CoreConstants.PN_NAME, name)
             .attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
         populateSingleSectionContainer(source, multiFieldEntries, multifieldContainerElement);
@@ -88,7 +88,7 @@ public class MultiFieldHandler extends ContainerHandler implements Handler {
      * @param target Current {@link Target} instance
      */
     private void placeOne(Source source, Target target) {
-        Handlers.forMember().accept(source, target.getOrCreateTarget(DialogConstants.NN_FIELD));
+        Handlers.forMember().accept(source, target.getOrCreateTarget(CoreConstants.NN_FIELD));
     }
 
     /**
