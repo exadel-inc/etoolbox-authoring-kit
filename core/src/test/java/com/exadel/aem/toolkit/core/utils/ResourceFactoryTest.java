@@ -99,6 +99,22 @@ public class ResourceFactoryTest {
     }
 
     @Test
+    public void shouldAcceptPropertiesMap() {
+        Map<String, Object> props = new HashMap<>();
+        props.put("alpha", "a");
+        props.put("beta", "b");
+
+        Resource resource = ResourceFactory.newResource(context.resourceResolver())
+            .path("content/test")
+            .properties(props)
+            .build();
+
+        assertNotNull(resource);
+        assertEquals("a", resource.getValueMap().get("alpha", String.class));
+        assertEquals("b", resource.getValueMap().get("beta", String.class));
+    }
+
+    @Test
     public void shouldHandleNestedProperties() {
         Resource resource = ResourceFactory.newResource(context.resourceResolver())
             .path("content/composite")
@@ -230,6 +246,69 @@ public class ResourceFactoryTest {
     }
 
     @Test
+    public void shouldBuildMultifieldWrapper() {
+        context.request().setResource(context.create().resource("/content/myForm"));
+
+        Resource multifield = ResourceFactory
+            .newGraniteField(context.request())
+            .path("content/form/myField")
+            .resourceType("acme/components/field")
+            .property(CoreConstants.PN_FIELD_LABEL, "Multi Label")
+            .property("name", "./myField")
+            .multi(true)
+            .build();
+
+        assertNotNull(multifield);
+        assertEquals(ResourceTypes.MULTIFIELD, multifield.getResourceType());
+        assertEquals("Multi Label", multifield.getValueMap().get(CoreConstants.PN_FIELD_LABEL, String.class));
+
+        Iterator<Resource> children = multifield.listChildren();
+        assertNotNull(children);
+        assertTrue(children.hasNext());
+        Resource nestedField = children.next();
+        assertNotNull(nestedField);
+        assertEquals("acme/components/field", nestedField.getResourceType());
+    }
+
+    @Test
+    public void shouldBuildCompositeMultifieldWrapper() {
+        context.request().setResource(context.create().resource("/content/myForm"));
+
+        Resource externalChild = ResourceFactory.newResource(context.resourceResolver())
+            .path("external")
+            .property("from", "external")
+            .build();
+
+        Resource multifield = ResourceFactory
+            .newGraniteField(context.request())
+            .path("content/form/compositeField")
+            .resourceType(ResourceTypes.CONTAINER)
+            .property(CoreConstants.PN_FIELD_LABEL, "Composite Label")
+            .multi(true)
+            .child(externalChild)
+            .build();
+
+        assertNotNull(multifield);
+        assertEquals(ResourceTypes.MULTIFIELD, multifield.getResourceType());
+        boolean composite = multifield.getValueMap().get("composite", false);
+        assertTrue(composite);
+
+        Iterator<Resource> wrapperChildren = multifield.listChildren();
+        assertNotNull(wrapperChildren);
+        assertTrue(wrapperChildren.hasNext());
+        Resource nestedField = wrapperChildren.next();
+        assertNotNull(nestedField);
+        assertNull(nestedField.getValueMap().get(CoreConstants.PN_FIELD_LABEL, String.class));
+
+        Iterator<Resource> nestedChildren = nestedField.listChildren();
+        assertNotNull(nestedChildren);
+        assertTrue(nestedChildren.hasNext());
+        Resource passedChild = nestedChildren.next();
+        assertNotNull(passedChild);
+        assertEquals("external", passedChild.getValueMap().get("from", String.class));
+    }
+
+    @Test
     public void shouldIncrementGraniteFieldPaths() {
         context.create().resource("/content/myForm");
         context.request().setResource(context.resourceResolver().getResource("/content/myForm"));
@@ -242,57 +321,26 @@ public class ResourceFactoryTest {
     }
 
     @Test
-    public void shouldBuildMultifieldWrapper() {
+    public void shouldApplyGraniteData() {
         ResourceFactory.FieldBuilder builder = new ResourceFactory.FieldBuilder(context.resourceResolver());
-        builder.path("content/form/myField")
-               .resourceType("acme/components/field")
-               .property(CoreConstants.PN_FIELD_LABEL, "Multi Label")
-               .property("name", "./myField")
-               .multi(true);
-
-        Resource wrapper = builder.build();
-
-        assertNotNull(wrapper);
-        assertEquals(ResourceTypes.MULTIFIELD, wrapper.getResourceType());
-        assertEquals("Multi Label", wrapper.getValueMap().get(CoreConstants.PN_FIELD_LABEL, String.class));
-
-        Iterator<Resource> children = wrapper.listChildren();
-        assertNotNull(children);
-        assertTrue(children.hasNext());
-        Resource nestedField = children.next();
-        assertNotNull(nestedField);
-        assertEquals("acme/components/field", nestedField.getResourceType());
-    }
-
-    @Test
-    public void shouldBuildCompositeMultifieldWrapper() {
-        ResourceFactory.FieldBuilder builder = new ResourceFactory.FieldBuilder(context.resourceResolver());
-        builder.path("content/form/compositeField")
-               .resourceType(ResourceTypes.CONTAINER)
-               .property(CoreConstants.PN_FIELD_LABEL, "Composite Label")
-               .multi(true);
-
-        Resource wrapper = builder.build();
-
-        assertNotNull(wrapper);
-        assertEquals(ResourceTypes.MULTIFIELD, wrapper.getResourceType());
-        boolean composite = wrapper.getValueMap().get("composite", false);
-        assertTrue(composite);
-    }
-
-    @Test
-    public void shouldAcceptPropertiesMap() {
-        Map<String, Object> props = new HashMap<>();
-        props.put("alpha", "a");
-        props.put("beta", "b");
-
-        Resource resource = ResourceFactory.newResource(context.resourceResolver())
-            .path("content/test")
-            .properties(props)
+        Resource resource = builder
+            .path("content/field")
+            .graniteData("myKey", "myValue")
             .build();
 
         assertNotNull(resource);
-        assertEquals("a", resource.getValueMap().get("alpha", String.class));
-        assertEquals("b", resource.getValueMap().get("beta", String.class));
+        List<Resource> children = IteratorUtils.toList(resource.listChildren());
+        assertNotNull(children);
+        assertEquals(1, children.size());
+        Resource graniteDataNode = children.get(0);
+        assertNotNull(graniteDataNode);
+        assertEquals(CoreConstants.NN_GRANITE_DATA, graniteDataNode.getName());
+        assertEquals("myValue", graniteDataNode.getValueMap().get("myKey", String.class));
+
+        ResourceFactory.FieldBuilder ignored = new ResourceFactory.FieldBuilder(context.resourceResolver());
+        ignored.graniteData("", "val");
+        ignored.graniteData(null, "val");
+        ignored.graniteData("key", null);
+        assertNull(ignored.getProperties());
     }
 }
