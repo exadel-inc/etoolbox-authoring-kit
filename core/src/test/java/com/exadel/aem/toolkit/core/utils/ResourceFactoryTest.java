@@ -290,7 +290,7 @@ public class ResourceFactoryTest {
 
         assertNotNull(multifield);
         assertEquals(ResourceTypes.MULTIFIELD, multifield.getResourceType());
-        boolean composite = multifield.getValueMap().get("composite", false);
+        boolean composite = multifield.getValueMap().get(CoreConstants.PN_COMPOSITE, false);
         assertTrue(composite);
 
         Iterator<Resource> wrapperChildren = multifield.listChildren();

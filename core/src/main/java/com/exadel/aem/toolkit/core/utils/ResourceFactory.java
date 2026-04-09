@@ -67,7 +67,7 @@ public class ResourceFactory {
      */
     public static FieldBuilder newGraniteField(@NotNull SlingHttpServletRequest request) {
         return new FieldBuilder(request.getResourceResolver())
-            .path(request.getResource().getPath(), "field" + getAndIncrementFieldCount(request));
+            .path(request.getResource().getPath(), CoreConstants.NN_FIELD + getAndIncrementFieldCount(request));
     }
 
     /**
@@ -387,12 +387,12 @@ public class ResourceFactory {
                 CoreConstants.PN_FIELD_LABEL,
                 MapUtils.emptyIfNull(getProperties()).get(CoreConstants.PN_FIELD_LABEL));
             if (ResourceTypes.CONTAINER.equals(getResourceType())) {
-                wrapperValueMap.put("composite", true);
+                wrapperValueMap.put(CoreConstants.PN_COMPOSITE, true);
             }
             Map<String, Object> nestedValueMap = new HashMap<>(MapUtils.emptyIfNull(getProperties()));
             nestedValueMap.remove(CoreConstants.PN_FIELD_LABEL);
             Resource nestedField = ResourceFactory.newResource(getResolver())
-                .path(getPath(), "field")
+                .path(getPath(), CoreConstants.NN_FIELD)
                 .resourceType(getResourceType())
                 .properties(nestedValueMap)
                 .children(getChildren())
