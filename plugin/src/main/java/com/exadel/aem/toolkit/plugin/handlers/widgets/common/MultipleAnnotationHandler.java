@@ -75,8 +75,8 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
 
         // Facilitate the modified targetFacade to work as Multifield
         if (isComposite) {
-            target.getOrCreateTarget(DialogConstants.NN_FIELD).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
-            target.attribute(DialogConstants.PN_COMPOSITE, true);
+            target.getOrCreateTarget(CoreConstants.NN_FIELD).attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.CONTAINER);
+            target.attribute(CoreConstants.PN_COMPOSITE, true);
         }
         target.getAttributes().remove(CoreConstants.PN_NAME);
         target.attribute(DialogConstants.PN_SLING_RESOURCE_TYPE, ResourceTypes.MULTIFIELD);
@@ -114,7 +114,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
             return true;
         }
         boolean hasSingularFieldNode = target.getChildren().size() == 1
-            && DialogConstants.NN_FIELD.equals(target.getChildren().get(0).getName());
+            && CoreConstants.NN_FIELD.equals(target.getChildren().get(0).getName());
         if (!hasSingularFieldNode) {
             return false;
         }
@@ -132,7 +132,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      * @param target Previously created {@code Target} being converted to a synthetic multifield
      */
     private void wrapSingularField(Source source, Target target) {
-        Target fieldSubresource = target.createTarget(DialogConstants.NN_FIELD);
+        Target fieldSubresource = target.createTarget(CoreConstants.NN_FIELD);
         // Move the content to the new wrapper but leave alone the newly created "field" subnode.
         // To achieve this, we specially override it in transfer policies by path
         Map<String, PropertyTransferPolicy> transferPolicies = getTransferPolicies(source);
@@ -146,7 +146,7 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
      * @param target Previously created {@code Target} being converted to a synthetic multifield
      */
     private void wrapFieldSet(Target target) {
-        Target fieldSubresource = target.createTarget(DialogConstants.NN_FIELD);
+        Target fieldSubresource = target.createTarget(CoreConstants.NN_FIELD);
         // Get the existing "items" node and remove leading "./"-s from the "name" attributes of particular items
         Target itemsSubresource = target.getTarget(DialogConstants.NN_ITEMS);
         itemsSubresource.getChildren().forEach(child -> {
@@ -174,22 +174,22 @@ public class MultipleAnnotationHandler implements BiConsumer<Source, Target> {
     private void wrapNestedMultifield(Source source, Target target) {
         // We will create a new "field" subresource,
         // but we need it "detached" not to mingle with the existing "field" subresource
-        Target fieldSubresource = Targets.newTarget(DialogConstants.NN_FIELD, target);
+        Target fieldSubresource = Targets.newTarget(CoreConstants.NN_FIELD, target);
         Target itemsSubresource = fieldSubresource.createTarget(DialogConstants.NN_ITEMS);
         Target nestedMultifield = itemsSubresource.createTarget(source.getName() + POSTFIX_NESTED);
 
         // Move existing multifield attributes to the nested multifield
         Map<String, PropertyTransferPolicy> standardPolicies = getTransferPolicies(source);
         Map<String, PropertyTransferPolicy> multifieldPolicies = new LinkedHashMap<>();
-        multifieldPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_COMPOSITE, PropertyTransferPolicy.COPY_TO_NESTED_NODE);
-        multifieldPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + DialogConstants.NN_FIELD, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
+        multifieldPolicies.put(CoreConstants.SEPARATOR_AT + CoreConstants.PN_COMPOSITE, PropertyTransferPolicy.COPY_TO_NESTED_NODE);
+        multifieldPolicies.put(DialogConstants.RELATIVE_PATH_PREFIX + CoreConstants.NN_FIELD, PropertyTransferPolicy.MOVE_TO_NESTED_NODE);
         multifieldPolicies.putAll(standardPolicies);
         multifieldPolicies.put(CoreConstants.SEPARATOR_AT + DialogConstants.PN_SLING_RESOURCE_TYPE, PropertyTransferPolicy.COPY_TO_NESTED_NODE);
         transferProperties(target, nestedMultifield, multifieldPolicies);
 
         // Set the "name" attribute of the "source" node of the current multifield
         // At the same time, alter the "name" attribute of the nested multifield not to get mixed with the name of the current one
-        Target nestedMultifieldFieldSubresource = nestedMultifield.getTarget(DialogConstants.NN_FIELD);
+        Target nestedMultifieldFieldSubresource = nestedMultifield.getTarget(CoreConstants.NN_FIELD);
         String nestedMultifieldFieldName = StringUtils.defaultString(nestedMultifieldFieldSubresource.getAttributes().get(CoreConstants.PN_NAME));
 
         fieldSubresource.attribute(CoreConstants.PN_NAME, nestedMultifieldFieldName);

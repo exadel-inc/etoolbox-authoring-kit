@@ -56,7 +56,6 @@ public class DialogConstants {
     public static final String NN_INLINE = "inline";
     public static final String NN_INPLACE_EDITING = "cq:inplaceEditing";
     public static final String NN_ITEMS = "items";
-    public static final String NN_FIELD = "field";
     public static final String NN_FIXED_COLUMNS = "fixedColumns";
     public static final String NN_FORMATS = "formats";
     public static final String NN_FULLSCREEN = "fullscreen";
@@ -100,7 +99,6 @@ public class DialogConstants {
     public static final String PN_ALLOW_BLOCK_TAGS = "allowBlockTags";
     public static final String PN_ATTRIBUTE_MEMBERS = "attributeMembers";
     public static final String PN_ATTRIBUTES = "attributes";
-    public static final String PN_COMPOSITE = "composite";
     public static final String PN_CSS_EXTERNAL = "cssExternal";
     public static final String PN_CSS_INTERNAL = "cssInternal";
     public static final String PN_DEFAULT_PASTE_MODE = "defaultPasteMode";

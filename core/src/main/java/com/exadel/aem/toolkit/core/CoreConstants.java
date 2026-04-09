@@ -24,11 +24,13 @@ public class CoreConstants {
 
     public static final String NN_DATASOURCE = "datasource";
     public static final String NN_GRANITE_DATA = "granite:data";
+    public static final String NN_FIELD = "field";
     public static final String NN_ITEM = "item";
     public static final String NN_LIST = "list";
 
     public static final String PN_APPEND = "append";
     public static final String PN_CHECKED = "checked";
+    public static final String PN_COMPOSITE = "composite";
     public static final String PN_FIELD_LABEL = "fieldLabel";
     public static final String PN_ITEM_RESOURCE_TYPE = "itemResourceType";
     public static final String PN_LIMIT = "limit";

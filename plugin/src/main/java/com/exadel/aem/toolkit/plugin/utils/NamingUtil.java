@@ -47,7 +47,7 @@ public class NamingUtil {
      * @return String value
      */
     public static String getValidFieldName(String value) {
-        return FIELD_HELPER.getValidName(value, DialogConstants.NN_FIELD);
+        return FIELD_HELPER.getValidName(value, CoreConstants.NN_FIELD);
     }
 
     /**
