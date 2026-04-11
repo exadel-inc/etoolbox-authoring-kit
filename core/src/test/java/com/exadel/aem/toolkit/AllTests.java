@@ -21,12 +21,13 @@ import com.exadel.aem.toolkit.api.annotations.meta.StringTransformationTest;
 import com.exadel.aem.toolkit.core.configurator.models.internal.ConfigDefinitionTest;
 import com.exadel.aem.toolkit.core.configurator.models.internal.RenderConditionTest;
 import com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListenerTest;
-import com.exadel.aem.toolkit.core.configurator.services.ConfigDataUtilTest;
+import com.exadel.aem.toolkit.core.configurator.services.ConfigDataHelperTest;
 import com.exadel.aem.toolkit.core.configurator.servlets.form.ConfigDataSourceTest;
-import com.exadel.aem.toolkit.core.configurator.servlets.form.FieldUtilTest;
-import com.exadel.aem.toolkit.core.configurator.servlets.form.ValueUtilTest;
+import com.exadel.aem.toolkit.core.configurator.servlets.form.FieldProcessorTest;
+import com.exadel.aem.toolkit.core.configurator.servlets.form.ValueProcessorTest;
 import com.exadel.aem.toolkit.core.configurator.servlets.replication.ReplicationServletTest;
 import com.exadel.aem.toolkit.core.configurator.utils.PermissionUtilTest;
+import com.exadel.aem.toolkit.core.configurator.utils.ResolverUtilTest;
 import com.exadel.aem.toolkit.core.injectors.ChildInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.ChildrenInjectorTest;
 import com.exadel.aem.toolkit.core.injectors.EToolboxListInjectorTest;
@@ -49,6 +50,7 @@ import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.Option
 import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.OptionProviderInlineOptionsTest;
 import com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers.OptionProviderTest;
 import com.exadel.aem.toolkit.core.policymanagement.filters.TopLevelPolicyFilterTest;
+import com.exadel.aem.toolkit.core.utils.ResourceFactoryTest;
 
 /**
  * Shortcut class for running all available test cases in a batch
@@ -84,15 +86,18 @@ import com.exadel.aem.toolkit.core.policymanagement.filters.TopLevelPolicyFilter
 
     ConfigChangeListenerTest.class,
     ConfigDataSourceTest.class,
-    ConfigDataUtilTest.class,
+    ConfigDataHelperTest.class,
     ConfigDefinitionTest.class,
     ReplicationServletTest.class,
     RenderConditionTest.class,
-    FieldUtilTest.class,
+    FieldProcessorTest.class,
     PermissionUtilTest.class,
-    ValueUtilTest.class,
+    ResolverUtilTest.class,
+    ValueProcessorTest.class,
 
-    TopLevelPolicyFilterTest.class
+    TopLevelPolicyFilterTest.class,
+
+    ResourceFactoryTest.class
 })
 public class AllTests {
 }

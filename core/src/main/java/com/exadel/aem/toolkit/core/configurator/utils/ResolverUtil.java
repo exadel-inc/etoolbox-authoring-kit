@@ -68,7 +68,7 @@ public class ResolverUtil {
         @NotNull String name) throws LoginException {
 
         SlingBindings bindings = (SlingBindings) request.getAttribute(SlingBindings.class.getName());
-        SlingScriptHelper  scriptHelper = bindings != null ? (SlingScriptHelper) bindings.get("sling") : null;
+        SlingScriptHelper scriptHelper = bindings != null ? (SlingScriptHelper) bindings.get(SlingBindings.SLING) : null;
         ResourceResolverFactory factory = scriptHelper != null
             ? scriptHelper.getService(ResourceResolverFactory.class)
             : null;
