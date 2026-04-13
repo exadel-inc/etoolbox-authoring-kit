@@ -95,7 +95,7 @@
      */
     function getContainerProperties(editable, graniteAuthor, skipFirstParent) {
         return {
-            template: document.querySelector('[name="cq:template"]').content,
+            template: document.querySelector('[name="cq:template"]')?.content || 'unknown-template',
             pageResType: graniteAuthor.pageInfo.pageResourceType,
             parentsResTypes: editable.getAllParents().map((parent) => parent.type).slice(skipFirstParent ? 1 : 0).reverse(),
             pagePath: editable.path.substring(0, editable.path.indexOf('/jcr:content')),
