@@ -10,7 +10,7 @@ export default [
             'no-useless-call': 'off'
         },
         languageOptions: {
-            ecmaVersion: 2017,
+            ecmaVersion: 2022,
             sourceType: 'module',
             parserOptions: {
                 projectService: true
