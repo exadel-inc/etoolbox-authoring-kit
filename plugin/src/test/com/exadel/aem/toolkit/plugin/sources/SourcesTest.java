@@ -26,12 +26,12 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ComplexComponent1;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.viewpattern.component1.views.DesignDialogView;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.policies.AllowedChildrenTestCases;
-import com.exadel.aem.toolkit.plugin.maven.EvaluationRule;
+import com.exadel.aem.toolkit.plugin.maven.PluginContextRule;
 
 public class SourcesTest {
 
     @Rule
-    public EvaluationRule evaluation = new EvaluationRule();
+    public PluginContextRule context = new PluginContextRule();
 
     @Test
     public void testCacheMetadata1() {

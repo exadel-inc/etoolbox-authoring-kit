@@ -32,7 +32,6 @@ import java.util.stream.StreamSupport;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
-import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -45,8 +44,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.annotations.cases.NestedAnnotations;
 import com.exadel.aem.toolkit.plugin.exceptions.PluginException;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ScriptedComponent;
-import com.exadel.aem.toolkit.plugin.maven.FileSystemRule;
-import com.exadel.aem.toolkit.plugin.maven.PluginContextRenderingRule;
+import com.exadel.aem.toolkit.plugin.maven.PluginContextRule;
 import com.exadel.aem.toolkit.plugin.maven.ThrowsPluginException;
 
 public class MetadataTest {
@@ -54,11 +52,8 @@ public class MetadataTest {
     private static final String PN_OPTIONS = "moreOptions";
     private static final String PN_NUMBERS = "numbers";
 
-    @ClassRule
-    public static FileSystemRule fileSystemHost = new FileSystemRule();
-
     @Rule
-    public PluginContextRenderingRule pluginContext = new PluginContextRenderingRule(fileSystemHost.getFileSystem());
+    public PluginContextRule context = new PluginContextRule();
 
     @Test
     public void testAnnotationCreation() {

@@ -16,12 +16,13 @@ package com.exadel.aem.toolkit.plugin.maven;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 import org.junit.rules.TestRule;
 import org.junit.runner.Description;
 import org.junit.runners.model.Statement;
 
-public abstract class PluginContextRule implements TestRule {
+public class PluginContextRule implements TestRule {
 
     private static final String PLUGIN_MODULE_TARGET = Paths.get("target", "classes").toAbsolutePath().toString();
     private static final String PLUGIN_MODULE_TEST_TARGET = Paths.get( "target", "test-classes").toAbsolutePath().toString();
@@ -33,37 +34,52 @@ public abstract class PluginContextRule implements TestRule {
         API_MODULE_TARGET
     );
 
+    private static final UnaryOperator<Statement> PLAIN = (stmt) -> new Statement() {
+        @Override
+        public void evaluate() throws Throwable {
+            try {
+                setUp();
+                stmt.evaluate();
+            } finally {
+                tearDown();
+            }
+        }
+    };
+
+    private static final UnaryOperator<Statement> EXCEPTION_AWARE = (stmt) -> new Statement() {
+        @Override
+        public void evaluate() throws Throwable {
+            try {
+                setUp();
+                exceptionHandler.unmute();
+                stmt.evaluate();
+            } finally {
+                if (exceptionHandler != null) {
+                    exceptionHandler.mute();
+                }
+                tearDown();
+            }
+        }
+    };
+
+
     private static MuteableExceptionHandler exceptionHandler;
 
     @Override
     public Statement apply(Statement statement, Description description) {
         if (description.getAnnotation(ThrowsPluginException.class) == null
             && description.getTestClass().getAnnotation(ThrowsPluginException.class) == null) {
-            return statement;
+            return PLAIN.apply(statement);
         }
-        if (exceptionHandler != null) {
-            exceptionHandler.unmute();
-        }
-        return new Statement() {
-            @Override
-            public void evaluate() throws Throwable {
-                try {
-                    statement.evaluate();
-                } finally {
-                    if (exceptionHandler != null) {
-                        exceptionHandler.mute();
-                    }
-                }
-            }
-        };
+        return EXCEPTION_AWARE.apply(statement);
     }
 
-    public static void initializeContext() {
+    static void setUp() {
         PluginSettings settings = PluginSettings
             .builder()
             .defaultPathBase(TestConstants.PACKAGE_ROOT_PATH)
             .build();
-        exceptionHandler = new MuteableExceptionHandler();
+        exceptionHandler = exceptionHandler == null ? new MuteableExceptionHandler() : exceptionHandler;
         PluginRuntime.contextBuilder()
             .classPathElements(CLASSPATH_ELEMENTS)
             .settings(settings)
@@ -71,11 +87,7 @@ public abstract class PluginContextRule implements TestRule {
             .build();
     }
 
-    public static void closeContext() {
+    static void tearDown() {
         PluginRuntime.close();
-    }
-
-    protected static boolean isContextInitialized() {
-        return exceptionHandler != null;
     }
 }
