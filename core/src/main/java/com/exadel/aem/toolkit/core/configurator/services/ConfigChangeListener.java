@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
-import com.exadel.aem.toolkit.core.configurator.utils.ResolverUtil;
+import com.exadel.aem.toolkit.core.utils.ResolverUtil;
 import com.exadel.aem.toolkit.core.utils.ValueMapUtil;
 
 /**
@@ -71,8 +71,6 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
     private static final int ASYNC_THREAD_COUNT = 5;
 
     private static final String UPDATABLE_CONFIG_TOKEN = "?";
-
-    private static final String SERVICE_USER_ID = "eak-service";
 
     @Reference
     private transient ConfigurationAdmin configurationAdmin;
@@ -99,7 +97,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
     @Activate
     void activate(BundleContext context, ConfigChangeListenerConfiguration config) {
         LOG.info("Configuration change listener is {}", config.enabled() ? "enabled" : "disabled");
-        try (ResourceResolver resolver = ResolverUtil.newResolver(resourceResolverFactory, SERVICE_USER_ID)) {
+        try (ResourceResolver resolver = ResolverUtil.newResolver(resourceResolverFactory)) {
             if (ArrayUtils.isNotEmpty(config.cleanUp())) {
                 activateWithCleanUp(resolver, config.cleanUp());
             }
@@ -228,7 +226,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
             return;
         }
         asyncExecutor.submit(() -> {
-            try (ResourceResolver resolver = ResolverUtil.newResolver(resourceResolverFactory, SERVICE_USER_ID)) {
+            try (ResourceResolver resolver = ResolverUtil.newResolver(resourceResolverFactory)) {
                 for (String path : configsToUpdate) {
                     Resource resource = resolver.getResource(path);
                     if (resource == null) {

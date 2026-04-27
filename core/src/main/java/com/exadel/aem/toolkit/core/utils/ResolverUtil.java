@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.configurator.utils;
+package com.exadel.aem.toolkit.core.utils;
 
 import java.util.Collections;
 
@@ -30,6 +30,8 @@ import org.jetbrains.annotations.NotNull;
  */
 public class ResolverUtil {
 
+    private static final String SERVICE_USER_ID = "eak-service";
+
     /**
      * Default (instantiation-restricting) constructor
      */
@@ -40,17 +42,14 @@ public class ResolverUtil {
      * Creates a new {@link ResourceResolver} instance for the given username using the provided resource resolver
      * factory
      * @param factory  The {@code ResourceResolverFactory} instance
-     * @param userName The username for which the resolver should be created
      * @return New instance of {@code ResourceResolver}
      * @throws LoginException If the resolver cannot be created
      */
     @NotNull
-    public static ResourceResolver newResolver(
-        @NotNull ResourceResolverFactory factory,
-        @NotNull String userName) throws LoginException {
+    public static ResourceResolver newResolver(@NotNull ResourceResolverFactory factory) throws LoginException {
 
         return factory.getServiceResourceResolver(
-            Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, userName)
+            Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, SERVICE_USER_ID)
         );
     }
 
@@ -58,14 +57,11 @@ public class ResolverUtil {
      * Creates a new {@link ResourceResolver} instance for the given username using the resource resolver factory
      * obtained from the provided request's Sling bindings
      * @param request A {@link SlingHttpServletRequest} instance
-     * @param name    The username or subservice name for which the resolver should be created
      * @return New instance of {@code ResourceResolver}
      * @throws LoginException If the resolver cannot be created
      */
     @NotNull
-    public static ResourceResolver newResolver(
-        @NotNull SlingHttpServletRequest request,
-        @NotNull String name) throws LoginException {
+    public static ResourceResolver newResolver(@NotNull SlingHttpServletRequest request) throws LoginException {
 
         SlingBindings bindings = (SlingBindings) request.getAttribute(SlingBindings.class.getName());
         SlingScriptHelper scriptHelper = bindings != null ? (SlingScriptHelper) bindings.get(SlingBindings.SLING) : null;
@@ -76,7 +72,7 @@ public class ResolverUtil {
             throw new LoginException("Could not obtain ResourceResolverFactory");
         }
         return factory.getServiceResourceResolver(
-            Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, name)
+            Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, SERVICE_USER_ID)
         );
     }
 }

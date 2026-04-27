@@ -11,7 +11,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.exadel.aem.toolkit.core.configurator.utils;
+package com.exadel.aem.toolkit.core.utils;
 
 import java.util.Collections;
 
@@ -36,8 +36,6 @@ import com.exadel.aem.toolkit.core.AemContextFactory;
 @RunWith(MockitoJUnitRunner.class)
 public class ResolverUtilTest {
 
-    private static final String USER_NAME = "testServiceUser";
-
     private static final String FACTORY_ERROR = "Could not obtain ResourceResolverFactory";
     private static final String LOGIN_ERROR = "Test error";
 
@@ -49,12 +47,12 @@ public class ResolverUtilTest {
         ResourceResolverFactory factory = Mockito.mock(ResourceResolverFactory.class);
         ResourceResolver expected = Mockito.mock(ResourceResolver.class);
         Mockito.when(factory.getServiceResourceResolver(
-            Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, USER_NAME))).thenReturn(expected);
+            Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, "eak-service"))).thenReturn(expected);
 
-        ResourceResolver resultFromFactory = ResolverUtil.newResolver(factory, USER_NAME);
+        ResourceResolver resultFromFactory = ResolverUtil.newResolver(factory);
         assertEquals(expected, resultFromFactory);
 
-        ResourceResolver resultFromRequest = ResolverUtil.newResolver(newRequestWithFactory(factory), USER_NAME);
+        ResourceResolver resultFromRequest = ResolverUtil.newResolver(newRequestWithFactory(factory));
         assertEquals(expected, resultFromRequest);
     }
 
@@ -101,7 +99,7 @@ public class ResolverUtilTest {
     }
 
     private static void assertLoginException(SlingHttpServletRequest request, String errorMessage) {
-        try (ResourceResolver ignored = ResolverUtil.newResolver(request, USER_NAME)) {
+        try (ResourceResolver ignored = ResolverUtil.newResolver(request)) {
             Assert.fail("Expected LoginException");
         } catch (LoginException e) {
             assertEquals(errorMessage, e.getMessage());
@@ -110,7 +108,7 @@ public class ResolverUtilTest {
 
     @SuppressWarnings("SameParameterValue")
     private static void assertLoginException(ResourceResolverFactory factory, String errorMessage) {
-        try (ResourceResolver ignored = ResolverUtil.newResolver(factory, USER_NAME)) {
+        try (ResourceResolver ignored = ResolverUtil.newResolver(factory)) {
             Assert.fail("Expected LoginException");
         } catch (LoginException e) {
             assertEquals(errorMessage, e.getMessage());
