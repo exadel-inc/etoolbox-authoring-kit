@@ -65,6 +65,9 @@ public class ResourceHelper {
         Resource result = effectiveResolver.getResource(path);
         if (result == null) {
             LOG.warn("Could not resolve {} with user {}", path, effectiveResolver.getUserID());
+            if (!effectiveResolver.equals(basicResolver)) {
+                effectiveResolver.close();
+            }
             return onFailure.get();
         }
         if (!effectiveResolver.equals(basicResolver)) {

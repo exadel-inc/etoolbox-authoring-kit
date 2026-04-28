@@ -139,7 +139,7 @@ class PathSampler {
         String effectiveExpression = expression.trim();
         Matcher matcher = LIMIT_PREDICATE.matcher(effectiveExpression);
         int limit = -1;
-        if (matcher.matches()) {
+        if (matcher.find()) {
             limit = Integer.parseInt(matcher.group(1));
             effectiveExpression = effectiveExpression.replace(matcher.group(), StringUtils.EMPTY).trim();
         }
@@ -157,7 +157,7 @@ class PathSampler {
                 result.add(next.getPath());
             }
             return result;
-        } catch (RepositoryException e) {
+        } catch (RepositoryException | NullPointerException e) {
             LOG.error("Failed to parse the path sample expression {}", expression, e);
             return Collections.emptyList();
         }
