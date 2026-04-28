@@ -13,12 +13,13 @@
  */
 package com.exadel.aem.toolkit.core.relay.services;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,16 +46,24 @@ import com.exadel.aem.toolkit.core.relay.utils.PathHelper;
 import com.exadel.aem.toolkit.core.relay.utils.ResourceHelper;
 import com.exadel.aem.toolkit.core.utils.ResolverUtil;
 
+/**
+ * A Sling {@link ResourceProvider} and {@link ResourceChangeListener} that transparently relays resource
+ * resolution and change notifications from a source JCR path to a configurable target path. Optionally maps
+ * the resource resolver user identity to a different user or service account
+ */
 class RelayProvider extends ResourceProvider<Void> implements ResourceChangeListener, ExternalResourceChangeListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(RelayProvider.class);
 
     private ResourceResolverFactory resolverFactory;
-    private ScriptSampler scriptSampler;
+    private PathSampler pathSampler;
     private String source;
     private String target;
     private Map<String, String> userMappings;
 
+    /**
+     * Default (instantiation-blocking) constructor
+     */
     private RelayProvider() {
     }
 
@@ -62,6 +71,9 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
        ResourceProvider members
        ------------------------ */
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Resource getResource(
         @Nonnull ResolveContext<Void> context,
@@ -86,6 +98,9 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
                 parent));
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Nullable
     public Iterator<Resource> listChildren(@Nonnull ResolveContext<Void> context, @Nonnull Resource parent) {
@@ -114,31 +129,32 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
         return ResourceHelper.listChildren(targetResource, parent.getPath());
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void start(@Nonnull ProviderContext providerContext) {
         LOG.info("Relay provider for {} -> {} is starting", source, target);
         super.start(providerContext);
-        if (!StringUtils.startsWithAny(source, "/apps", "/libs")
-            || !StringUtils.startsWith(target, "/content")) {
-            return;
-        }
         try (ResourceResolver resolver = ResolverUtil.newResolver(resolverFactory)) {
             Session session = resolver.adaptTo(Session.class);
-            scriptSampler = ScriptSampler.from(Objects.requireNonNull(session), source, target);
-            Collection<ResourceChange> declaredChanges = scriptSampler.generateChanges();
-            if (!declaredChanges.isEmpty()) {
-                providerContext.getObservationReporter().reportChanges(declaredChanges, false);
+            Collection<ResourceChange> changes = pathSampler.createChanges(session);
+            if (!changes.isEmpty()) {
+                providerContext.getObservationReporter().reportChanges(changes, false);
             }
         } catch (LoginException e) {
             LOG.error("Failed to create a JCR session for script sampling at {}", target, e);
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void stop() {
         LOG.info("Relay provider for {} -> {} is stopping", source, target);
-        if (getProviderContext() != null && scriptSampler != null) {
-            Collection<ResourceChange> declaredChanges = scriptSampler.generateChanges();
+        if (getProviderContext() != null && !pathSampler.isEmpty()) {
+            Collection<ResourceChange> declaredChanges = pathSampler.createChanges();
             if (!declaredChanges.isEmpty()) {
                 getProviderContext().getObservationReporter().reportChanges(declaredChanges, false);
             }
@@ -150,6 +166,9 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
        ResourceChangeListener members
        ------------------------------ */
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onChange(@Nonnull List<ResourceChange> changes) {
         if (getProviderContext() == null) {
@@ -168,6 +187,12 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
        Service methods
        --------------- */
 
+    /**
+     * Returns a {@link ResourceResolver} for the user identity mapped to the provided resolver's user ID.
+     * If no mapping is configured for the current user, returns the original resolver unchanged
+     * @param resolver {@code ResourceResolver} whose user ID is used as the mapping key
+     * @return A non-null {@code ResourceResolver} instance; may be the original if no mapping applies
+     */
     private ResourceResolver getMappedResourceResolver(ResourceResolver resolver) {
         String mappedId = userMappings.get(resolver.getUserID());
         if (mappedId != null && !mappedId.equals(resolver.getUserID())) {
@@ -196,47 +221,100 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
        Factory logic
        ------------- */
 
+    /**
+     * Creates a new {@link Builder} for configuring and instantiating a {@link RelayProvider}
+     * @return A new {@code Builder} instance
+     */
     static Builder builder() {
         return new Builder();
     }
 
-    @SuppressWarnings("unused")
+    /**
+     * Constructs {@link RelayProvider} instances with the required configuration
+     */
+    @SuppressWarnings({"UnusedReturnValue"})
     static class Builder {
 
+        private List<String> reportedPaths;
         private ResourceResolverFactory resolverFactory;
         private String source;
         private String target;
         private Map<String, String> userMappings;
 
+        /**
+         * Default (instantiation-restricting) constructor
+         */
         private Builder() {
         }
 
+        /**
+         * Adds a JCR path to report as changed when the provider starts or stops
+         * @param value JCR path to include in change reports
+         * @return This builder
+         */
+        Builder reportedPath(String value) {
+            if (reportedPaths == null) {
+                reportedPaths = new ArrayList<>();
+            }
+            reportedPaths.add(value);
+            return this;
+        }
+
+        /**
+         * Sets the {@link ResourceResolverFactory} used to create user-mapped resolvers
+         * @param value {@link ResourceResolverFactory} instance
+         * @return This builder
+         */
         Builder resolverFactory(ResourceResolverFactory value) {
             resolverFactory = value;
             return this;
         }
 
+        /**
+         * Sets the JCR source path handled by this provider
+         * @param value Source JCR path
+         * @return This builder
+         */
         Builder source(String value) {
             this.source = value;
             return this;
         }
 
+        /**
+         * Sets the JCR target path to which resource resolution is delegated
+         * @param value Target JCR path
+         * @return This builder
+         */
         Builder target(String value) {
             this.target = value;
             return this;
         }
 
-        Builder userMappings(Map<String, String> value) {
-            this.userMappings = value;
+        /**
+         * Adds a user identity mapping from a source user ID to a target user or subservice
+         * @param source Source user ID
+         * @param value  Target user ID, {@code "user:password"} credential string, or service subservice name
+         * @return This builder
+         */
+        Builder userMapping(String source, String value) {
+            if (userMappings == null) {
+                userMappings = new HashMap<>();
+            }
+            userMappings.put(source, value);
             return this;
         }
 
+        /**
+         * Creates a configured {@link RelayProvider} from the current builder state
+         * @return A new {@link RelayProvider} instance
+         */
         RelayProvider build() {
             RelayProvider result = new RelayProvider();
+            result.pathSampler = new PathSampler(reportedPaths);
             result.resolverFactory = resolverFactory;
             result.source = source;
             result.target = target;
-            result.userMappings = userMappings;
+            result.userMappings = userMappings != null ? userMappings : Collections.emptyMap();
             return result;
         }
     }

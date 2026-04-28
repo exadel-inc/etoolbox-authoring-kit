@@ -22,11 +22,21 @@ import org.apache.sling.api.resource.ResourceWrapper;
 
 import com.exadel.aem.toolkit.core.relay.utils.ResourceHelper;
 
+/**
+ * An implementation of {@link Resource} used by the relay provider to expose resources at a mapped source path.
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
+ */
 public class RelayResource extends ResourceWrapper {
 
     private final String path;
     private final ResourceMetadata resourceMetadata;
 
+    /**
+     * Creates a new {@code RelayResource} wrapping the provided resource and overriding its path
+     * @param original A non-null original {@link Resource} to wrap
+     * @param path     A non-null JCR path to expose for this resource
+     */
     public RelayResource(@Nonnull Resource original, @Nonnull String path) {
         super(original);
         this.path = path;
@@ -39,18 +49,21 @@ public class RelayResource extends ResourceWrapper {
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     @Nonnull
     public String getPath() {
         return path;
     }
 
+    /** {@inheritDoc} */
     @Override
     @Nonnull
     public ResourceMetadata getResourceMetadata() {
         return resourceMetadata;
     }
 
+    /** {@inheritDoc} */
     @Override
     public @Nonnull Iterator<Resource> listChildren() {
         return ResourceHelper.listChildren(getResource(), path);

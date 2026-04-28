@@ -16,21 +16,38 @@ package com.exadel.aem.toolkit.core.relay.services;
 import org.osgi.service.metatype.annotations.AttributeDefinition;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
+/**
+ * OSGi Metatype configuration for the relay provider host. Defines path and user mappings and optional
+ * change-reporting settings
+ */
 @ObjectClassDefinition(name = "EToolbox Authoring Kit - Relay Configuration")
 public @interface RelayConfig {
 
+    /**
+     * Gets whether this relay configuration is active
+     * @return True or false
+     */
     @AttributeDefinition(
         name = "Enable",
         description = "Is the relay enabled?"
     )
     boolean enabled();
 
+    /**
+     * Gets the list of JCR path mapping rules
+     * @return A non-null array of path mapping rule strings; might be empty
+     */
     @AttributeDefinition(
         name = "Path mappings",
         description = "List of path mapping rules."
     )
     String[] pathMappings();
 
+    /**
+     * Gets the optional list of user mapping rules. Each entry is either a {@code "user:password"} credential
+     * string or a registered subservice name
+     * @return A non-null array of user mapping rule strings; might be empty
+     */
     @AttributeDefinition(
         name = "User mappings",
         description = "Optional list of user mapping rules. " +
@@ -38,9 +55,14 @@ public @interface RelayConfig {
     )
     String[] userMappings() default {};
 
+    /**
+     * Gets the optional list of JCR paths or XPath expressions whose matching resources are reported as changed
+     * when the relay is enabled or disabled
+     * @return A non-null array of path or XPath expression strings; might be empty
+     */
     @AttributeDefinition(
         name = "Report paths",
-        description = "Optional list of XPath expressions. " +
+        description = "Optional list of JCR paths or XPath expressions. " +
             "Target paths matching the list will be reported as changed as the relay is enabled or disabled."
 
     )

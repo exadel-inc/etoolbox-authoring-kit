@@ -17,11 +17,23 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 
+/**
+ * Provides utility methods for JCR path manipulation within the relay infrastructure
+ */
 public class PathHelper {
 
+    /** Default (instantiation-blocking) constructor */
     private PathHelper() {
     }
 
+    /**
+     * Replaces the {@code source} prefix in the provided path with the {@code target} prefix. Returns the original
+     * path unchanged if it does not start with {@code source}
+     * @param path   JCR path to transform
+     * @param source Prefix to replace
+     * @param target Replacement prefix
+     * @return A non-null transformed path string
+     */
     public static String replace(String path, String source, String target) {
         if (StringUtils.equals(path, source)) {
             return target;
