@@ -17,6 +17,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.UnaryOperator;
 
 import org.apache.sling.api.resource.Resource;
@@ -92,7 +98,7 @@ public class ResourceHelperTest {
             PATH_TARGET,
             resource -> resource,
             () -> null);
-        assertEquals(modifiedResolver, propertyMap.get("subsidiary"));
+        assertTrue(propertyMap.get("subsidiary") instanceof ResourceHelper.ResolverHolder);
 
         // Second call with a different modified resolver → existing subsidiary is closed, new one stored
         ResourceResolver nextResolver = Mockito.mock(ResourceResolver.class);
@@ -106,7 +112,54 @@ public class ResourceHelperTest {
             resource -> resource,
             () -> null);
         Mockito.verify(modifiedResolver).close();
-        assertEquals(nextResolver, propertyMap.get("subsidiary"));
+        assertTrue(propertyMap.get(ResourceHelper.KEY_SUBSIDIARY) instanceof ResourceHelper.ResolverHolder);
+    }
+
+    @Test
+    public void shouldHandleConcurrentSubsidiaryAccess() throws InterruptedException {
+        Resource targetResource = context.create().resource(PATH_TARGET);
+
+        int threadCount = 8;
+        Map<String, Object> propertyMap = new ConcurrentHashMap<>();
+        ResourceResolver basicResolver = Mockito.mock(ResourceResolver.class);
+        Mockito.when(basicResolver.getPropertyMap()).thenReturn(propertyMap);
+
+        AtomicInteger closedCount = new AtomicInteger();
+        ResourceResolver[] resolvers = new ResourceResolver[threadCount];
+        for (int i = 0; i < threadCount; i++) {
+            ResourceResolver mock = Mockito.mock(ResourceResolver.class);
+            Mockito.when(mock.getResource(PATH_TARGET)).thenReturn(targetResource);
+            Mockito.when(mock.getUserID()).thenReturn("user-" + i);
+            Mockito.doAnswer(inv -> {
+                closedCount.incrementAndGet();
+                return null;
+            }).when(mock).close();
+            resolvers[i] = mock;
+        }
+
+        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
+        CountDownLatch startLatch = new CountDownLatch(1);
+        for (ResourceResolver resolver : resolvers) {
+            executor.submit(() -> {
+                try {
+                    startLatch.await();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+                ResourceHelper.getResource(
+                    basicResolver,
+                    r -> resolver,
+                    PATH_TARGET,
+                    resource -> resource,
+                    () -> null);
+            });
+        }
+        startLatch.countDown();
+        executor.shutdown();
+        assertTrue(executor.awaitTermination(5, TimeUnit.SECONDS));
+
+        assertNotNull(propertyMap.get(ResourceHelper.KEY_SUBSIDIARY));
+        assertEquals(threadCount - 1, closedCount.get());
     }
 
     @Test

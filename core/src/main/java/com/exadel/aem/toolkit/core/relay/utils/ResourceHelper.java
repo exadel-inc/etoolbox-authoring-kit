@@ -13,7 +13,9 @@
  */
 package com.exadel.aem.toolkit.core.relay.utils;
 
+import java.io.Closeable;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -38,7 +40,7 @@ public class ResourceHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResourceHelper.class);
 
-    private static final String KEY_SUBSIDIARY = "subsidiary";
+    static final String KEY_SUBSIDIARY = "subsidiary";
 
     /** Default (instantiation-blocking) constructor */
     private ResourceHelper() {}
@@ -74,14 +76,17 @@ public class ResourceHelper {
             // We have created another {@link ResourceResolver} via the {@code resolverModifier}. We cannot close it
             // in place -- instead, we need it to live as long as the resource(-s) we have resolved with it live.
             // To achieve that, we put it into the property map of the {@code basicResolver} so that it will be
-            // automatically closed when the {@code basicResolver} is closed by Sling
-            // See {@link ResourceResolver#getPropertyMap()}.
-            ResourceResolver existingSubsidiary = (ResourceResolver) basicResolver.getPropertyMap().get(KEY_SUBSIDIARY);
-            if (existingSubsidiary != null) {
-                LOG.warn("A subsidiary resolver for {} will close", existingSubsidiary.getUserID());
-                existingSubsidiary.close();
-            }
-            basicResolver.getPropertyMap().put(KEY_SUBSIDIARY, effectiveResolver);
+            // automatically closed when the {@code basicResolver} is closed by Sling.
+            // A {@link SubsidiaryHolder} wrapper is used so that the swap-and-close of replaced resolvers is atomic.
+            // See {@link ResourceResolver#getPropertyMap()}
+            Map<String, Object> propertyMap = basicResolver.getPropertyMap();
+            propertyMap.compute(KEY_SUBSIDIARY, (key, existing) -> {
+                if (existing instanceof SubsidiaryHolder) {
+                    ((SubsidiaryHolder) existing).swap(effectiveResolver);
+                    return existing;
+                }
+                return new SubsidiaryHolder(effectiveResolver);
+            });
         }
         LOG.debug("Resolved {} to {} with user {}", path, result.getPath(), effectiveResolver.getUserID());
         return onSuccess.apply(result);
@@ -155,5 +160,46 @@ public class ResourceHelper {
      */
     private static void reportMissingContext(String path) {
         LOG.warn("Missing resolution context for {}", path);
+    }
+
+    /**
+     * A thread-safe {@link Closeable} wrapper around a subsidiary {@link ResourceResolver}. Stored in the property
+     * map of a base resolver so that Sling automatically closes the held resolver when the base resolver is closed.
+     * The {@link #swap(ResourceResolver)} method atomically replaces the held resolver, closing the previous one
+     */
+    static class SubsidiaryHolder implements Closeable {
+
+        private ResourceResolver resolver;
+
+        /**
+         * Creates a new holder with the provided resolver
+         * @param resolver Initial subsidiary {@link ResourceResolver}
+         */
+        SubsidiaryHolder(ResourceResolver resolver) {
+            this.resolver = resolver;
+        }
+
+        /**
+         * Atomically replaces the held resolver with a new one, closing the previous resolver if present
+         * @param newResolver The replacement {@link ResourceResolver}
+         */
+        synchronized void swap(ResourceResolver newResolver) {
+            if (resolver != null) {
+                LOG.warn("A subsidiary resolver for {} will close", resolver.getUserID());
+                resolver.close();
+            }
+            resolver = newResolver;
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
+        public synchronized void close() {
+            if (resolver != null) {
+                resolver.close();
+                resolver = null;
+            }
+        }
     }
 }
