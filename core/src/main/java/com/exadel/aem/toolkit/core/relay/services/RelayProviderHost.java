@@ -135,14 +135,14 @@ public class RelayProviderHost {
                 .builder()
                 .resolverFactory(resolverFactory)
                 .source(pathMapping.getFrom())
-                .target(pathMapping.getFrom());
+                .target(pathMapping.getTo());
             userMappings.forEach(mapping -> builder.userMapping(mapping.getFrom(), mapping.getTo()));
             Arrays.stream(reportedPaths).forEach(builder::reportedPath);
             RelayProvider provider = builder.build();
 
             Dictionary<String, Object> properties = new Hashtable<>();
             properties.put(ResourceProvider.PROPERTY_ROOT, pathMapping.getFrom());
-            properties.put(ResourceChangeListener.PATHS, new String[]{pathMapping.getFrom()});
+            properties.put(ResourceChangeListener.PATHS, new String[]{pathMapping.getTo()});
 
             ServiceRegistration<?> registration = context.registerService(
                 new String[]{ResourceProvider.class.getName(), ResourceChangeListener.class.getName()},
