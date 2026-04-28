@@ -292,15 +292,15 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
 
         /**
          * Adds a user identity mapping from a source user ID to a target user or subservice
-         * @param source Source user ID
-         * @param value  Target user ID, {@code "user:password"} credential string, or service subservice name
+         * @param from Source user ID
+         * @param to   Target user ID, {@code "user:password"} credential string, or service subservice name
          * @return This builder
          */
-        Builder userMapping(String source, String value) {
+        Builder userMapping(String from, String to) {
             if (userMappings == null) {
                 userMappings = new HashMap<>();
             }
-            userMappings.put(source, value);
+            userMappings.put(from, to);
             return this;
         }
 

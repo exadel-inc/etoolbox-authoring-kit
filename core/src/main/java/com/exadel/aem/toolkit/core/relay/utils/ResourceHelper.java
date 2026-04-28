@@ -35,6 +35,8 @@ import com.exadel.aem.toolkit.core.relay.models.RelayResource;
 
 /**
  * Provides utility methods for resolving and listing Sling resources within the relay infrastructure
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  */
 public class ResourceHelper {
 
@@ -74,7 +76,7 @@ public class ResourceHelper {
         }
         if (!effectiveResolver.equals(basicResolver)) {
             // We have created another {@link ResourceResolver} via the {@code resolverModifier}. We cannot close it
-            // in place -- instead, we need it to live as long as the resource(-s) we have resolved with it live.
+            // in place - instead, we need it to live as long as the resource(-s) we have resolved with it live.
             // To achieve that, we put it into the property map of the {@code basicResolver} so that it will be
             // automatically closed when the {@code basicResolver} is closed by Sling.
             // A {@link SubsidiaryHolder} wrapper is used so that the swap-and-close of replaced resolvers is atomic.
@@ -114,7 +116,7 @@ public class ResourceHelper {
             return null;
         }
         LOG.debug("Falling back to parent resource provider for {}", path);
-        return ((ResourceProvider<Void>)resourceProvider).getResource((ResolveContext<Void>) resolveContext, path, resourceContext, parent);
+        return ((ResourceProvider<Void>) resourceProvider).getResource((ResolveContext<Void>) resolveContext, path, resourceContext, parent);
     }
 
     /**
@@ -134,7 +136,7 @@ public class ResourceHelper {
             reportMissingContext(parent.getPath());
             return null;
         }
-        return ((ResourceProvider<Void>)resourceProvider).listChildren((ResolveContext<Void>) resolveContext, parent);
+        return ((ResourceProvider<Void>) resourceProvider).listChildren((ResolveContext<Void>) resolveContext, parent);
     }
 
     /**
@@ -162,6 +164,10 @@ public class ResourceHelper {
         LOG.warn("Missing resolution context for {}", path);
     }
 
+    /* ------------------
+       Subsidiary classes
+       ------------------ */
+
     /**
      * A thread-safe {@link Closeable} wrapper around a subsidiary {@link ResourceResolver}. Stored in the property
      * map of a base resolver so that Sling automatically closes the held resolver when the base resolver is closed.
@@ -175,7 +181,7 @@ public class ResourceHelper {
          * Creates a new holder with the provided resolver
          * @param resolver Initial subsidiary {@link ResourceResolver}
          */
-        SubsidiaryHolder(ResourceResolver resolver) {
+        ResolverHolder(ResourceResolver resolver) {
             this.resolver = resolver;
         }
 

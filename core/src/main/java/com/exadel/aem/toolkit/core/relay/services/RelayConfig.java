@@ -50,8 +50,8 @@ public @interface RelayConfig {
      */
     @AttributeDefinition(
         name = "User mappings",
-        description = "Optional list of user mapping rules. " +
-            "The mapping target is either \"user:password\" or \"registered_subservice\"."
+        description = "Optional list of user mapping rules. "
+            + "The mapping target is either \"user:password\" or \"registered_subservice\"."
     )
     String[] userMappings() default {};
 
@@ -62,8 +62,8 @@ public @interface RelayConfig {
      */
     @AttributeDefinition(
         name = "Report paths",
-        description = "Optional list of JCR paths or XPath expressions. " +
-            "Target paths matching the list will be reported as changed as the relay is enabled or disabled."
+        description = "Optional list of JCR paths or XPath expressions. "
+            + "Target paths matching the list will be reported as changed as the relay is enabled or disabled."
 
     )
     String[] reportedPaths() default {};

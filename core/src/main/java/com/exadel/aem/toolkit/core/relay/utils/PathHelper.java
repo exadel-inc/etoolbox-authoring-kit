@@ -19,6 +19,8 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
  * Provides utility methods for JCR path manipulation within the relay infrastructure
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
+ * code</p>
  */
 public class PathHelper {
 

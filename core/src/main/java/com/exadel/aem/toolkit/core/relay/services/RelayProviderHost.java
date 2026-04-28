@@ -156,6 +156,9 @@ public class RelayProviderHost {
      * Represents a source-to-target mapping entry used for path or user identity translation
      */
     private static class Mapping {
+
+        private static final int HASH_SEED = 31;
+
         private final String from;
         private final String to;
 
@@ -204,7 +207,7 @@ public class RelayProviderHost {
         @Override
         public int hashCode() {
             int result = Objects.hashCode(from);
-            result = 31 * result + Objects.hashCode(to);
+            result = HASH_SEED * result + Objects.hashCode(to);
             return result;
         }
 
