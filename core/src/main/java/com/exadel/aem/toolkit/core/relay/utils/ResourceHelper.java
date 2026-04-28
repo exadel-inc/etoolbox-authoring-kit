@@ -81,11 +81,11 @@ public class ResourceHelper {
             // See {@link ResourceResolver#getPropertyMap()}
             Map<String, Object> propertyMap = basicResolver.getPropertyMap();
             propertyMap.compute(KEY_SUBSIDIARY, (key, existing) -> {
-                if (existing instanceof SubsidiaryHolder) {
-                    ((SubsidiaryHolder) existing).swap(effectiveResolver);
+                if (existing instanceof ResolverHolder) {
+                    ((ResolverHolder) existing).swap(effectiveResolver);
                     return existing;
                 }
-                return new SubsidiaryHolder(effectiveResolver);
+                return new ResolverHolder(effectiveResolver);
             });
         }
         LOG.debug("Resolved {} to {} with user {}", path, result.getPath(), effectiveResolver.getUserID());
@@ -167,7 +167,7 @@ public class ResourceHelper {
      * map of a base resolver so that Sling automatically closes the held resolver when the base resolver is closed.
      * The {@link #swap(ResourceResolver)} method atomically replaces the held resolver, closing the previous one
      */
-    static class SubsidiaryHolder implements Closeable {
+    static class ResolverHolder implements Closeable {
 
         private ResourceResolver resolver;
 
