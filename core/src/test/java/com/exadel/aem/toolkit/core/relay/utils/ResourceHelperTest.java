@@ -59,23 +59,19 @@ public class ResourceHelperTest {
         context.create().resource(PATH_TARGET);
         ResourceResolver resolver = context.resourceResolver();
 
-        // Resource found → onSuccess applied
+        // Resource found → returned directly
         Resource found = ResourceHelper.getResource(
             resolver,
             UnaryOperator.identity(),
-            PATH_TARGET,
-            resource -> resource,
-            () -> null);
+            PATH_TARGET);
         assertNotNull(found);
         assertEquals(PATH_TARGET, found.getPath());
 
-        // Resource not found → onFailure invoked
+        // Resource not found → null
         Resource notFound = ResourceHelper.getResource(
             resolver,
             UnaryOperator.identity(),
-            PATH_TARGET + "/missing",
-            resource -> resource,
-            () -> null);
+            PATH_TARGET + "/missing");
         assertNull(notFound);
     }
 
@@ -95,9 +91,7 @@ public class ResourceHelperTest {
         ResourceHelper.getResource(
             basicResolver,
             resolver -> modifiedResolver,
-            PATH_TARGET,
-            resource -> resource,
-            () -> null);
+            PATH_TARGET);
         assertTrue(propertyMap.get("subsidiary") instanceof ResourceHelper.ResolverHolder);
 
         // Second call with a different modified resolver → existing subsidiary is closed, new one stored
@@ -108,9 +102,7 @@ public class ResourceHelperTest {
         ResourceHelper.getResource(
             basicResolver,
             resolver -> nextResolver,
-            PATH_TARGET,
-            resource -> resource,
-            () -> null);
+            PATH_TARGET);
         Mockito.verify(modifiedResolver).close();
         assertTrue(propertyMap.get(ResourceHelper.KEY_SUBSIDIARY) instanceof ResourceHelper.ResolverHolder);
     }
@@ -149,9 +141,7 @@ public class ResourceHelperTest {
                 ResourceHelper.getResource(
                     basicResolver,
                     r -> resolver,
-                    PATH_TARGET,
-                    resource -> resource,
-                    () -> null);
+                    PATH_TARGET);
             });
         }
         startLatch.countDown();
@@ -167,14 +157,17 @@ public class ResourceHelperTest {
         Resource targetResource = context.create().resource(PATH_TARGET);
 
         ResourceProvider<Void> mockProvider = newMockProvider();
-        ResolveContext<Void> mockResolveContext = newMockResolveContext();
+        ResolveContext<Void> mockParentContext = newMockResolveContext();
         ResourceContext mockResourceContext = Mockito.mock(ResourceContext.class);
         Mockito.when(mockProvider.getResource(Mockito.any(), Mockito.eq(PATH_TARGET), Mockito.any(), Mockito.any()))
             .thenReturn(targetResource);
 
+        ResolveContext<Void> mockResolveContext = newMockResolveContext();
+        Mockito.doReturn(mockProvider).when(mockResolveContext).getParentResourceProvider();
+        Mockito.doReturn(mockParentContext).when(mockResolveContext).getParentResolveContext();
+
         // Happy path → delegates to parent provider
         Resource result = ResourceHelper.getResource(
-            mockProvider,
             mockResolveContext,
             PATH_TARGET,
             mockResourceContext,
@@ -182,11 +175,13 @@ public class ResourceHelperTest {
         assertNotNull(result);
         assertEquals(PATH_TARGET, result.getPath());
 
-        // Null provider → null
-        assertNull(ResourceHelper.getResource(null, mockResolveContext, PATH_TARGET, mockResourceContext, null));
-
         // Null context → null
-        assertNull(ResourceHelper.getResource(mockProvider, null, PATH_TARGET, mockResourceContext, null));
+        assertNull(ResourceHelper.getResource(null, PATH_TARGET, mockResourceContext, null));
+
+        // Null parent provider → null
+        ResolveContext<Void> noProviderContext = newMockResolveContext();
+        Mockito.doReturn(null).when(noProviderContext).getParentResourceProvider();
+        assertNull(ResourceHelper.getResource(noProviderContext, PATH_TARGET, mockResourceContext, null));
     }
 
     @Test
@@ -195,21 +190,27 @@ public class ResourceHelperTest {
         Resource child = context.create().resource(PATH_TARGET + PATH_CHILD);
 
         ResourceProvider<Void> mockProvider = newMockProvider();
-        ResolveContext<Void> mockResolveContext = newMockResolveContext();
+        ResolveContext<Void> mockParentContext = newMockResolveContext();
         Mockito.when(mockProvider.listChildren(Mockito.any(), Mockito.eq(parent)))
             .thenReturn(Collections.singletonList(child).iterator());
 
+        ResolveContext<Void> mockResolveContext = newMockResolveContext();
+        Mockito.doReturn(mockProvider).when(mockResolveContext).getParentResourceProvider();
+        Mockito.doReturn(mockParentContext).when(mockResolveContext).getParentResolveContext();
+
         // Happy path → delegates to parent provider
-        Iterator<Resource> result = ResourceHelper.listChildren(mockProvider, mockResolveContext, parent);
+        Iterator<Resource> result = ResourceHelper.listChildren(mockResolveContext, parent);
         assertNotNull(result);
         assertTrue(result.hasNext());
         assertEquals(PATH_TARGET + PATH_CHILD, result.next().getPath());
 
-        // Null provider → null
-        assertNull(ResourceHelper.listChildren(null, mockResolveContext, parent));
-
         // Null context → null
-        assertNull(ResourceHelper.listChildren(mockProvider, null, parent));
+        assertNull(ResourceHelper.listChildren(null, parent));
+
+        // Null parent provider → null
+        ResolveContext<Void> noProviderContext = newMockResolveContext();
+        Mockito.doReturn(null).when(noProviderContext).getParentResourceProvider();
+        assertNull(ResourceHelper.listChildren(noProviderContext, parent));
     }
 
     @Test

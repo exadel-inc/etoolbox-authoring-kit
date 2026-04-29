@@ -16,8 +16,6 @@ package com.exadel.aem.toolkit.core.relay.utils;
 import java.io.Closeable;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.StreamSupport;
 
@@ -48,22 +46,19 @@ public class ResourceHelper {
     private ResourceHelper() {}
 
     /**
-     * Resolves a resource at the provided path using a potentially modified {@link ResourceResolver}. Falls back to
-     * the {@code onFailure} supplier when the path cannot be resolved
+     * Resolves a resource at the provided path using a potentially modified {@link ResourceResolver}. Returns
+     * the resolved resource or {@code null} when the path cannot be resolved. Manages the lifecycle of any
+     * subsidiary resolver created by the {@code resolverModifier}
      * @param basicResolver    The base {@link ResourceResolver} instance used for resolution
      * @param resolverModifier A {@code UnaryOperator} that optionally produces an alternative {@code ResourceResolver}
      *                         from the provided one
      * @param path             JCR path of the resource to resolve
-     * @param onSuccess        A {@code Function} applied to the resolved resource to produce the final result
-     * @param onFailure        A {@code Supplier} invoked when the resource cannot be resolved
      * @return A nullable {@link Resource} instance
      */
     public static Resource getResource(
         ResourceResolver basicResolver,
         UnaryOperator<ResourceResolver> resolverModifier,
-        String path,
-        Function<Resource, ? extends Resource> onSuccess,
-        Supplier<Resource> onFailure) {
+        String path) {
 
         ResourceResolver effectiveResolver = resolverModifier.apply(basicResolver);
         Resource result = effectiveResolver.getResource(path);
@@ -72,7 +67,7 @@ public class ResourceHelper {
             if (!effectiveResolver.equals(basicResolver)) {
                 effectiveResolver.close();
             }
-            return onFailure.get();
+            return null;
         }
         if (!effectiveResolver.equals(basicResolver)) {
             // We have created another {@link ResourceResolver} via the {@code resolverModifier}. We cannot close it
@@ -91,52 +86,62 @@ public class ResourceHelper {
             });
         }
         LOG.debug("Resolved {} to {} with user {}", path, result.getPath(), effectiveResolver.getUserID());
-        return onSuccess.apply(result);
+        return result;
     }
 
     /**
-     * Delegates resource resolution for the provided path to a parent {@link ResourceProvider}
-     * @param resourceProvider Parent {@code ResourceProvider} instance
-     * @param resolveContext   {@link ResolveContext} associated with the current resolution
-     * @param path             JCR path of the resource to resolve
-     * @param resourceContext  {@link ResourceContext} for the resolution request
-     * @param parent           Nullable parent {@link Resource}
-     * @return A nullable {@link Resource} resolved by the parent provider, or {@code null} if the provider or
-     * context is missing
+     * Delegates resource resolution for the provided path to a parent {@link ResourceProvider} obtained from the
+     * given {@link ResolveContext}
+     * @param resolveContext {@link ResolveContext} from which the parent provider and parent context are extracted
+     * @param path           JCR path of the resource to resolve
+     * @param resourceContext {@link ResourceContext} for the resolution request
+     * @param parent         Nullable parent {@link Resource}
+     * @return A nullable {@link Resource} resolved by the parent provider, or {@code null} if the context or parent
+     * provider is missing
      */
     @SuppressWarnings("unchecked")
     public static Resource getResource(
-        ResourceProvider<?> resourceProvider,
         ResolveContext<?> resolveContext,
         String path,
         ResourceContext resourceContext,
         Resource parent) {
-        if (resourceProvider == null || resolveContext == null) {
+        if (resolveContext == null) {
+            reportMissingContext(path);
+            return null;
+        }
+        ResourceProvider<?> resourceProvider = resolveContext.getParentResourceProvider();
+        ResolveContext<?> parentContext = resolveContext.getParentResolveContext();
+        if (resourceProvider == null || parentContext == null) {
             reportMissingContext(path);
             return null;
         }
         LOG.debug("Falling back to parent resource provider for {}", path);
-        return ((ResourceProvider<Void>) resourceProvider).getResource((ResolveContext<Void>) resolveContext, path, resourceContext, parent);
+        return ((ResourceProvider<Void>) resourceProvider).getResource((ResolveContext<Void>) parentContext, path, resourceContext, parent);
     }
 
     /**
-     * Delegates child listing for the provided parent resource to a parent {@link ResourceProvider}
-     * @param resourceProvider Parent {@code ResourceProvider} instance
-     * @param resolveContext   {@link ResolveContext} associated with the current child listing
-     * @param parent           Parent {@link Resource} whose children to list
-     * @return A nullable {@code Iterator} of child {@link Resource} instances, or {@code null} if the provider or
-     * context is missing
+     * Delegates child listing for the provided parent resource to a parent {@link ResourceProvider} obtained from the
+     * given {@link ResolveContext}
+     * @param resolveContext {@link ResolveContext} from which the parent provider and parent context are extracted
+     * @param parent         Parent {@link Resource} whose children to list
+     * @return A nullable {@code Iterator} of child {@link Resource} instances, or {@code null} if the context or
+     * parent provider is missing
      */
     @SuppressWarnings("unchecked")
     public static Iterator<Resource> listChildren(
-        ResourceProvider<?> resourceProvider,
         ResolveContext<?> resolveContext,
         Resource parent) {
-        if (resourceProvider == null || resolveContext == null) {
+        if (resolveContext == null) {
             reportMissingContext(parent.getPath());
             return null;
         }
-        return ((ResourceProvider<Void>) resourceProvider).listChildren((ResolveContext<Void>) resolveContext, parent);
+        ResourceProvider<?> resourceProvider = resolveContext.getParentResourceProvider();
+        ResolveContext<?> parentContext = resolveContext.getParentResolveContext();
+        if (resourceProvider == null || parentContext == null) {
+            reportMissingContext(parent.getPath());
+            return null;
+        }
+        return ((ResourceProvider<Void>) resourceProvider).listChildren((ResolveContext<Void>) parentContext, parent);
     }
 
     /**
