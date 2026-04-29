@@ -37,6 +37,7 @@ public class ServiceUtil {
     private static final String ERROR_CONTEXT = "Could not obtain OSGi bundle context for {}";
     private static final String ERROR_HANDLING = "Error handling a service reference for {}";
     private static final String ERROR_RETRIEVAL = "Could not retrieve instance of {}";
+    private static final String ERROR_RUNNING = "Error running a method against {}";
 
     /**
      * Default (instantiation-blocking) constructor
@@ -54,7 +55,7 @@ public class ServiceUtil {
     public static <T> void withService(
         @Nonnull Class<T> serviceClass,
         @Nonnull Consumer<T> consumer) {
-        Bundle bundle = FrameworkUtil.getBundle(serviceClass);
+        Bundle bundle = FrameworkUtil.getBundle(ServiceUtil.class);
         BundleContext context = bundle != null ? bundle.getBundleContext() : null;
         if (context == null) {
             LOG.error(ERROR_CONTEXT, serviceClass.getName());
@@ -77,7 +78,7 @@ public class ServiceUtil {
         @Nonnull Class<T> serviceClass,
         @Nonnull Function<T, U> processor,
         U defaultValue) {
-        Bundle bundle = FrameworkUtil.getBundle(serviceClass);
+        Bundle bundle = FrameworkUtil.getBundle(ServiceUtil.class);
         BundleContext context = bundle != null ? bundle.getBundleContext() : null;
         if (context == null) {
             LOG.error(ERROR_CONTEXT, serviceClass.getName());
@@ -107,7 +108,11 @@ public class ServiceUtil {
                 LOG.error(ERROR_RETRIEVAL, serviceClass.getName());
                 return;
             }
-            consumer.accept(service);
+            try {
+                consumer.accept(service);
+            } catch (RuntimeException e) {
+                LOG.error(ERROR_RUNNING, serviceClass.getName(), e);
+            }
         } catch (IllegalArgumentException | IllegalStateException e) {
             LOG.error(ERROR_HANDLING, serviceClass.getName(), e);
         } finally {
@@ -141,7 +146,12 @@ public class ServiceUtil {
                 LOG.error(ERROR_RETRIEVAL, serviceClass.getName());
                 return defaultValue;
             }
-            result = processor.apply(service);
+            try {
+                result = processor.apply(service);
+            } catch (RuntimeException e) {
+                LOG.error(ERROR_RUNNING, serviceClass.getName(), e);
+                return defaultValue;
+            }
         } catch (IllegalArgumentException | IllegalStateException e) {
             LOG.error(ERROR_HANDLING, serviceClass.getName(), e);
         } finally {

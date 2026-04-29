@@ -85,7 +85,7 @@ public class ServiceUtilTest {
 
     @Test
     public void shouldSwallowExceptionsAndReleaseService() {
-        // Consumer throws: exception swallowed, service still released in the finally block
+        // Consumer throws IllegalArgumentException: exception swallowed, service still released in the finally block
         MockContext consumerCtx = newMockContextReturningService();
         ServiceUtil.withService(
             StubService.class,
@@ -93,7 +93,15 @@ public class ServiceUtilTest {
             s -> { throw new IllegalArgumentException(TEST_EXCEPTION_MESSAGE); });
         Mockito.verify(consumerCtx.bundleContext).ungetService(consumerCtx.serviceRef);
 
-        // Function throws: returns default, service still released in the finally block
+        // Consumer throws generic RuntimeException: exception also swallowed
+        MockContext consumerRteCtx = newMockContextReturningService();
+        ServiceUtil.withService(
+            StubService.class,
+            consumerRteCtx.bundleContext,
+            s -> { throw new RuntimeException(TEST_EXCEPTION_MESSAGE); });
+        Mockito.verify(consumerRteCtx.bundleContext).ungetService(consumerRteCtx.serviceRef);
+
+        // Function throws IllegalStateException: returns default, service still released in the finally block
         MockContext functionCtx = newMockContextReturningService();
         String result = ServiceUtil.withService(
             StubService.class,
@@ -102,6 +110,16 @@ public class ServiceUtilTest {
             DEFAULT_VALUE);
         assertEquals(DEFAULT_VALUE, result);
         Mockito.verify(functionCtx.bundleContext).ungetService(functionCtx.serviceRef);
+
+        // Function throws generic RuntimeException: also returns default
+        MockContext functionRteCtx = newMockContextReturningService();
+        String result2 = ServiceUtil.withService(
+            StubService.class,
+            functionRteCtx.bundleContext,
+            s -> { throw new RuntimeException(TEST_EXCEPTION_MESSAGE); },
+            DEFAULT_VALUE);
+        assertEquals(DEFAULT_VALUE, result2);
+        Mockito.verify(functionRteCtx.bundleContext).ungetService(functionRteCtx.serviceRef);
 
         // UngetService itself throws: exception is swallowed, prior consumer side effects are preserved
         MockContext ungetCtx = newMockContextThrowingOnUnget();
