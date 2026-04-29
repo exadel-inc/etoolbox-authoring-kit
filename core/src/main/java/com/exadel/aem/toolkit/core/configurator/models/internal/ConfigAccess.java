@@ -13,12 +13,10 @@
  */
 package com.exadel.aem.toolkit.core.configurator.models.internal;
 
-import java.util.Objects;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.adobe.granite.ui.components.ExpressionCustomizer;
@@ -26,6 +24,7 @@ import com.adobe.granite.ui.components.ExpressionCustomizer;
 import com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener;
 import com.exadel.aem.toolkit.core.configurator.utils.PermissionUtil;
 import com.exadel.aem.toolkit.core.configurator.utils.RequestUtil;
+import com.exadel.aem.toolkit.core.utils.ServiceUtil;
 
 /**
  * Enumerates possible outcomes of a configuration access request
@@ -132,16 +131,10 @@ public enum ConfigAccess {
      * @return True or false
      */
     static boolean isGrantable(HttpServletRequest request) {
-        try {
-            BundleContext context = (BundleContext) request.getAttribute(BundleContext.class.getName());
-            if (context == null) {
-                context = Objects.requireNonNull(FrameworkUtil.getBundle(ConfigAccess.class).getBundleContext());
-            }
-            ConfigChangeListener listener = Objects.requireNonNull(context.getService(context.getServiceReference(ConfigChangeListener.class)));
-            return listener.isEnabled();
-        } catch (RuntimeException e) {
-            LOG.error("Could not acquire an OSGi entity", e);
-            return false;
+        BundleContext context = (BundleContext) request.getAttribute(BundleContext.class.getName());
+        if (context != null) {
+            return ServiceUtil.withService(ConfigChangeListener.class, context, ConfigChangeListener::isEnabled, false);
         }
+        return ServiceUtil.withService(ConfigChangeListener.class, ConfigChangeListener::isEnabled, false);
     }
 }

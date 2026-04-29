@@ -103,18 +103,11 @@ public class ConfigDataSourceTest {
         ConfigurationAdmin mockConfigAdmin = Mockito.mock(ConfigurationAdmin.class);
         Mockito.when(mockConfigAdmin.getConfiguration(Mockito.eq(configId), Mockito.isNull())).thenReturn(null);
 
-        MetaTypeService mockMetaTypeService = Mockito.mock(MetaTypeService.class);
-
         BundleContext mockBundleContext = Mockito.mock(BundleContext.class);
         @SuppressWarnings("unchecked")
         ServiceReference<ConfigurationAdmin> mockConfigAdminRef = Mockito.mock(ServiceReference.class);
         Mockito.when(mockBundleContext.getServiceReference(Mockito.eq(ConfigurationAdmin.class))).thenReturn(mockConfigAdminRef);
         Mockito.when(mockBundleContext.getService(Mockito.eq(mockConfigAdminRef))).thenReturn(mockConfigAdmin);
-
-        @SuppressWarnings("unchecked")
-        ServiceReference<MetaTypeService> mockMetaTypeServiceRef = Mockito.mock(ServiceReference.class);
-        Mockito.when(mockBundleContext.getServiceReference(Mockito.eq(MetaTypeService.class))).thenReturn(mockMetaTypeServiceRef);
-        Mockito.when(mockBundleContext.getService(Mockito.eq(mockMetaTypeServiceRef))).thenReturn(mockMetaTypeService);
 
         context.request().setAttribute(BundleContext.class.getName(), mockBundleContext);
     }
