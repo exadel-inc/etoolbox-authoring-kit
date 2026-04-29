@@ -20,7 +20,7 @@ import org.osgi.service.metatype.annotations.ObjectClassDefinition;
  * OSGi Metatype configuration for the relay provider host. Defines path and user mappings and optional
  * change-reporting settings
  */
-@ObjectClassDefinition(name = "EToolbox Authoring Kit - Relay Configuration")
+@ObjectClassDefinition(name = "EToolbox Authoring Kit - Relay")
 public @interface RelayConfig {
 
     /**
@@ -53,7 +53,7 @@ public @interface RelayConfig {
         description = "Optional list of user mapping rules. "
             + "The mapping target is either \"user:password\" or \"registered_subservice\"."
     )
-    String[] userMappings() default {};
+    String[] userMappings();
 
     /**
      * Gets the optional list of JCR paths or XPath expressions whose matching resources are reported as changed
@@ -61,11 +61,11 @@ public @interface RelayConfig {
      * @return A non-null array of path or XPath expression strings; might be empty
      */
     @AttributeDefinition(
-        name = "Report paths",
+        name = "Announce changes",
         description = "Optional list of JCR paths or XPath expressions. "
-            + "Target paths matching the list will be reported as changed as the relay is enabled or disabled."
+            + "Target paths matching the list will be announced as changed as the relay is enabled or disabled."
 
     )
-    String[] reportedPaths() default {};
+    String[] announced();
 }
 

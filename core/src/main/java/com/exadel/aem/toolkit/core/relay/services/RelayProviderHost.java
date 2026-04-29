@@ -93,7 +93,7 @@ public class RelayProviderHost {
                 context,
                 pathMappings,
                 userMappings,
-                ArrayUtils.nullToEmpty(config.reportedPaths()));
+                ArrayUtils.nullToEmpty(config.announced()));
         } finally {
             lock.unlock();
         }
