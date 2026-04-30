@@ -16,10 +16,10 @@ package com.exadel.aem.toolkit.core.relay.utils;
 import java.io.Closeable;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Spliterators;
 import java.util.function.UnaryOperator;
 import java.util.stream.StreamSupport;
 
-import org.apache.commons.collections4.IteratorUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.spi.resource.provider.ResolveContext;
@@ -90,12 +90,13 @@ public class ResourceHelper {
     }
 
     /**
-     * Delegates resource resolution for the provided path to a parent {@link ResourceProvider} obtained from the
-     * given {@link ResolveContext}
-     * @param resolveContext {@link ResolveContext} from which the parent provider and parent context are extracted
-     * @param path           JCR path of the resource to resolve
+     * Delegates resource resolution for the provided path to a parent {@link ResourceProvider} obtained from the given
+     * {@link ResolveContext}. This is generally used as a fallback method for
+     * {@link #getResource(ResourceResolver, UnaryOperator, String)}
+     * @param resolveContext  {@link ResolveContext} from which the parent provider and parent context are extracted
+     * @param path            JCR path of the resource to resolve
      * @param resourceContext {@link ResourceContext} for the resolution request
-     * @param parent         Nullable parent {@link Resource}
+     * @param parent          Nullable parent {@link Resource}
      * @return A nullable {@link Resource} resolved by the parent provider, or {@code null} if the context or parent
      * provider is missing
      */
@@ -109,39 +110,14 @@ public class ResourceHelper {
             reportMissingContext(path);
             return null;
         }
-        ResourceProvider<?> resourceProvider = resolveContext.getParentResourceProvider();
+        ResourceProvider<?> parentResourceProvider = resolveContext.getParentResourceProvider();
         ResolveContext<?> parentContext = resolveContext.getParentResolveContext();
-        if (resourceProvider == null || parentContext == null) {
+        if (parentResourceProvider == null || parentContext == null) {
             reportMissingContext(path);
             return null;
         }
-        LOG.debug("Falling back to parent resource provider for {}", path);
-        return ((ResourceProvider<Void>) resourceProvider).getResource((ResolveContext<Void>) parentContext, path, resourceContext, parent);
-    }
-
-    /**
-     * Delegates child listing for the provided parent resource to a parent {@link ResourceProvider} obtained from the
-     * given {@link ResolveContext}
-     * @param resolveContext {@link ResolveContext} from which the parent provider and parent context are extracted
-     * @param parent         Parent {@link Resource} whose children to list
-     * @return A nullable {@code Iterator} of child {@link Resource} instances, or {@code null} if the context or
-     * parent provider is missing
-     */
-    @SuppressWarnings("unchecked")
-    public static Iterator<Resource> listChildren(
-        ResolveContext<?> resolveContext,
-        Resource parent) {
-        if (resolveContext == null) {
-            reportMissingContext(parent.getPath());
-            return null;
-        }
-        ResourceProvider<?> resourceProvider = resolveContext.getParentResourceProvider();
-        ResolveContext<?> parentContext = resolveContext.getParentResolveContext();
-        if (resourceProvider == null || parentContext == null) {
-            reportMissingContext(parent.getPath());
-            return null;
-        }
-        return ((ResourceProvider<Void>) resourceProvider).listChildren((ResolveContext<Void>) parentContext, parent);
+        reportFallingBack(path);
+        return ((ResourceProvider<Void>) parentResourceProvider).getResource((ResolveContext<Void>) parentContext, path, resourceContext, parent);
     }
 
     /**
@@ -155,10 +131,37 @@ public class ResourceHelper {
         if (target instanceof RelayResource) {
             return target.listChildren();
         }
-        return StreamSupport.stream(IteratorUtils.asIterable(target.listChildren()).spliterator(), false)
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(target.listChildren(), 0), false)
             .map(child -> new RelayResource(child, path + CoreConstants.SEPARATOR_SLASH + child.getName()))
             .map(Resource.class::cast)
             .iterator();
+    }
+
+    /**
+     * Delegates child listing for the provided parent resource to a parent {@link ResourceProvider} obtained from the
+     * given {@link ResolveContext}. This is generally used as a fallback method for listing children of a resource that
+     * has not been relayed (is "original")
+     * @param resolveContext {@link ResolveContext} from which the parent provider and parent context are extracted
+     * @param parent         Parent {@link Resource} whose children to list
+     * @return A nullable {@code Iterator} of child {@link Resource} instances, or {@code null} if the context or parent
+     * provider is missing
+     */
+    @SuppressWarnings("unchecked")
+    public static Iterator<Resource> listChildren(
+        ResolveContext<?> resolveContext,
+        Resource parent) {
+        if (resolveContext == null) {
+            reportMissingContext(parent.getPath());
+            return null;
+        }
+        ResourceProvider<?> parentResourceProvider = resolveContext.getParentResourceProvider();
+        ResolveContext<?> parentContext = resolveContext.getParentResolveContext();
+        if (parentResourceProvider == null || parentContext == null) {
+            reportMissingContext(parent.getPath());
+            return null;
+        }
+        reportFallingBack(parent.getPath());
+        return ((ResourceProvider<Void>) parentResourceProvider).listChildren((ResolveContext<Void>) parentContext, parent);
     }
 
     /**
@@ -167,6 +170,14 @@ public class ResourceHelper {
      */
     private static void reportMissingContext(String path) {
         LOG.warn("Missing resolution context for {}", path);
+    }
+
+    /**
+     * Logs a debug message when falling back to the parent resource provider for the given path
+     * @param path JCR path that is being resolved
+     */
+    private static void reportFallingBack(String path) {
+        LOG.debug("Falling back to parent resource provider for {}", path);
     }
 
     /* ------------------
