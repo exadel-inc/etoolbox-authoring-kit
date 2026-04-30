@@ -17,6 +17,9 @@ import java.util.Collection;
 import java.util.Collections;
 import javax.annotation.Nonnull;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Represents the set of data required to configure and operate a {@code RelayProvider}.
  * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
@@ -47,20 +50,38 @@ public class RelayInfo {
     }
 
     /**
-     * Gets the source-to-target mapping entry for path translation
-     * @return A non-null {@link RelayMapping} instance
+     * Gets the source JCR path used for path translation in this relay
+     * @return A non-null string value
      */
     @Nonnull
-    public RelayMapping getPathMapping() {
-        return pathMapping;
+    public String getSource() {
+        return StringUtils.defaultString(pathMapping.getFrom());
     }
 
     /**
-     * Gets the collection of source-to-target mapping entries for user identity translation
-     * @return A collection of {@link RelayMapping} instances
+     * Gets the target JCR path used for path translation in this relay
+     * @return A non-null string value
      */
-    public Collection<RelayMapping> getUserMappings() {
-        return userMappings;
+    @Nonnull
+    public String getTarget() {
+        return StringUtils.defaultString(pathMapping.getTo());
+    }
+
+    /**
+     * Retrieves the mapped user ID per the collection of user mappings defined in this relay
+     * @param source The source user ID to translate
+     * @return A nullable target user ID
+     */
+    public String getUserMapping(String source) {
+        if (CollectionUtils.isEmpty(userMappings)) {
+            return null;
+        }
+        return userMappings
+            .stream()
+            .filter(mapping -> StringUtils.equals(source, mapping.getFrom()))
+            .map(RelayMapping::getTo)
+            .findFirst()
+            .orElse(null);
     }
 
     /**

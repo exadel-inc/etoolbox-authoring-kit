@@ -16,7 +16,6 @@ package com.exadel.aem.toolkit.core.relay.services;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -38,7 +37,6 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.relay.models.RelayInfo;
-import com.exadel.aem.toolkit.core.relay.models.RelayMapping;
 import com.exadel.aem.toolkit.core.relay.models.RelayResource;
 import com.exadel.aem.toolkit.core.relay.utils.PathHelper;
 import com.exadel.aem.toolkit.core.relay.utils.ResourceHelper;
@@ -54,20 +52,18 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
     private static final Logger LOG = LoggerFactory.getLogger(RelayProvider.class);
 
     private final ResourceResolverFactory resolverFactory;
+    private volatile RelayInfo relay;
     private PathSampler sampler;
-    private String source;
-    private String target;
-    private Map<String, String> userMappings;
 
     /**
      * Creates a new {@code RelayProvider} instance for the given relay model
      * @param resolverFactory The {@link ResourceResolverFactory} instance used to create mapped resource resolvers for
      *                        change sampling and user identity mapping
-     * @param model           The {@link RelayInfo} model containing the configuration for this provider
+     * @param relay           The {@link RelayInfo} model containing the configuration for this provider
      */
-    RelayProvider(ResourceResolverFactory resolverFactory, RelayInfo model) {
+    RelayProvider(ResourceResolverFactory resolverFactory, RelayInfo relay) {
         this.resolverFactory = resolverFactory;
-        update(model);
+        update(relay);
     }
 
     /**
@@ -76,19 +72,7 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
      * @param model The {@link RelayInfo} model containing the new configuration for this provider
      */
     void update(RelayInfo model) {
-        this.sampler = PathSampler
-            .builder()
-            .resolverFactory(resolverFactory)
-            .source(model.getPathMapping().getFrom())
-            .target(model.getPathMapping().getTo())
-            .samples(model.getChangeSamples())
-            .build();
-        this.source = model.getPathMapping().getFrom();
-        this.target = model.getPathMapping().getTo();
-        this.userMappings = model
-            .getUserMappings()
-            .stream()
-            .collect(Collectors.toMap(RelayMapping::getFrom, RelayMapping::getTo));
+        this.relay = model;
     }
 
     /* ------------------------
@@ -105,10 +89,10 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
         @Nonnull ResourceContext resourceContext,
         @Nullable Resource parent) {
 
-        if (!StringUtils.equals(path, source) && !StringUtils.startsWith(path, source + CoreConstants.SEPARATOR_SLASH)) {
+        if (!StringUtils.equals(path, relay.getSource()) && !StringUtils.startsWith(path, relay.getSource() + CoreConstants.SEPARATOR_SLASH)) {
             return null;
         }
-        String targetPath = target + StringUtils.substring(path, source.length());
+        String targetPath = relay.getTarget() + StringUtils.substring(path, relay.getSource().length());
         Resource resolved = ResourceHelper.getResource(
             context.getResourceResolver(),
             this::getMappedResourceResolver,
@@ -126,7 +110,7 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
     @Nullable
     public Iterator<Resource> listChildren(@Nonnull ResolveContext<Void> context, @Nonnull Resource parent) {
         String path = parent.getPath();
-        String targetPath = PathHelper.replace(path, source, target);
+        String targetPath = PathHelper.replace(path, relay.getSource(), relay.getTarget());
         Resource targetResource = ResourceHelper.getResource(
             context.getResourceResolver(),
             this::getMappedResourceResolver,
@@ -138,7 +122,7 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
         }
         if (targetResource == null) {
             return null;
-        } else if (targetResource.getPath().equals(parent.getPath())) {
+        } else if (!(targetResource instanceof RelayResource)) {
             // We have fallen back to an "original" resource, so we should iterate through it without any mapping
             return ResourceHelper.listChildren(context, parent);
         }
@@ -150,8 +134,16 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
      */
     @Override
     public void start(@Nonnull ProviderContext providerContext) {
-        LOG.info("Relay provider for {} -> {} is starting", source, target);
+        LOG.info("Relay provider for {} -> {} is starting", relay.getSource(), relay.getTarget());
         super.start(providerContext);
+        sampler = PathSampler
+            .builder()
+            .resolverFactory(resolverFactory)
+            .source(relay.getSource())
+            .target(relay.getTarget())
+            .samples(relay.getChangeSamples())
+            .build();
+
         Collection<ResourceChange> changes = sampler.createChanges();
         if (!changes.isEmpty()) {
             providerContext.getObservationReporter().reportChanges(changes, false);
@@ -163,8 +155,8 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
      */
     @Override
     public void stop() {
-        LOG.info("Relay provider for {} -> {} is stopping", source, target);
-        if (getProviderContext() != null && !sampler.isEmpty()) {
+        LOG.info("Relay provider for {} -> {} is stopping", relay.getSource(), relay.getTarget());
+        if (getProviderContext() != null && sampler != null && !sampler.isEmpty()) {
             Collection<ResourceChange> declaredChanges = sampler.createChanges();
             if (!declaredChanges.isEmpty()) {
                 getProviderContext().getObservationReporter().reportChanges(declaredChanges, false);
@@ -188,7 +180,7 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
         List<ResourceChange> mappedChanges = changes.stream()
             .map(change -> new ResourceChange(
                 change.getType(),
-                PathHelper.replace(change.getPath(), target, source),
+                PathHelper.replace(change.getPath(), relay.getTarget(), relay.getSource()),
                 change.isExternal()))
             .collect(Collectors.toList());
         getProviderContext().getObservationReporter().reportChanges(mappedChanges, false);
@@ -205,7 +197,7 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
      * @return A non-null {@code ResourceResolver} instance; may be the original if no mapping applies
      */
     private ResourceResolver getMappedResourceResolver(ResourceResolver resolver) {
-        String mappedId = userMappings.get(resolver.getUserID());
+        String mappedId = relay.getUserMapping(resolver.getUserID());
         if (mappedId != null && !mappedId.equals(resolver.getUserID())) {
             try {
                 return ResolverUtil.newResolver(resolverFactory, mappedId);

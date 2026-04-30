@@ -85,7 +85,7 @@ public class RelayProviderHost {
                     .getReference()
                     .getProperty(ResourceProvider.PROPERTY_ROOT);
                 RelayInfo matchingRelay = relays.stream()
-                    .filter(relay -> relay.getPathMapping().getFrom().equals(existingRoot))
+                    .filter(relay -> StringUtils.equals(relay.getSource(), existingRoot))
                     .findFirst()
                     .orElse(null);
                 if (matchingRelay != null) {
@@ -107,21 +107,20 @@ public class RelayProviderHost {
             // Register providers for the remaining new relays that didn't match any existing ones
             Map<String, String> providedPaths = getExternallyProvidedPaths(context);
             for (RelayInfo relay : relays) {
-                String from = relay.getPathMapping().getFrom();
                 String shadowedEntries = providedPaths.entrySet().stream()
-                    .filter(e -> PathHelper.isSubpath(e.getKey(), from))
+                    .filter(e -> PathHelper.isSubpath(e.getKey(), relay.getSource()))
                     .map(e -> e.getKey() + " by " + e.getValue())
                     .collect(Collectors.joining(CoreConstants.SEPARATOR_COMMA + StringUtils.SPACE));
                 if (!shadowedEntries.isEmpty()) {
                     LOG.warn(
                         "Skipping relay registration for path {} to avoid shadowing {}",
-                        from,
+                        relay.getSource(),
                         shadowedEntries);
                     continue;
                 }
                 RelayProvider provider = new RelayProvider(resolverFactory, relay);
                 Dictionary<String, Object> properties = new Hashtable<>();
-                properties.put(ResourceProvider.PROPERTY_ROOT, from);
+                properties.put(ResourceProvider.PROPERTY_ROOT, relay.getSource());
                 ServiceRegistration<?> registration = context.registerService(
                     new String[]{ResourceProvider.class.getName(), ResourceChangeListener.class.getName()},
                     provider,
