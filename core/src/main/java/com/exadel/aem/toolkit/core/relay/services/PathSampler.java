@@ -99,23 +99,19 @@ class PathSampler {
             resolver.close();
         }
         // All resolved paths must point to {@code source} instead of {@code target}
-        paths = paths
-            .stream()
-            .map(p -> PathHelper.isSubpath(p, target) ?  PathHelper.replace(p, target, source) : p)
-            .collect(Collectors.toSet());
-
         return paths
             .stream()
+            .map(p -> PathHelper.isSubpath(p, target) ?  PathHelper.replace(p, target, source) : p)
             .map(path -> new ResourceChange(ResourceChange.ChangeType.CHANGED, path, false))
             .collect(Collectors.toList());
     }
 
     /**
-     * Gets whether this sampler has no configured path samples
+     * Gets whether this sampler has no paths to report as changed
      * @return True or false
      */
     public boolean isEmpty() {
-        return CollectionUtils.isEmpty(samples);
+        return paths == null;
     }
 
     /**
@@ -177,10 +173,11 @@ class PathSampler {
      */
     private ResourceResolver rotateResolver(ResourceResolver existing, String userId) {
         if (existing != null) {
-            if (StringUtils.isEmpty(userId) || userId.equals(existing.getPropertyMap().get(PROPERTY_USER_ID))) {
+            boolean userIdMatches = StringUtils.isEmpty(userId)
+                || userId.equals(existing.getPropertyMap().get(PROPERTY_USER_ID));
+            if (userIdMatches) {
                 return existing;
             }
-            existing.close();
         }
         try {
             ResourceResolver newResolver = ResolverUtil.newResolver(resolverFactory, userId);
