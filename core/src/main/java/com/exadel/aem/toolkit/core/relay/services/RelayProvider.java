@@ -14,7 +14,6 @@
 package com.exadel.aem.toolkit.core.relay.services;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -38,7 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
-import com.exadel.aem.toolkit.core.relay.models.ChangeSample;
+import com.exadel.aem.toolkit.core.relay.models.RelayInfo;
 import com.exadel.aem.toolkit.core.relay.models.RelayMapping;
 import com.exadel.aem.toolkit.core.relay.models.RelayResource;
 import com.exadel.aem.toolkit.core.relay.utils.PathHelper;
@@ -54,16 +53,42 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
 
     private static final Logger LOG = LoggerFactory.getLogger(RelayProvider.class);
 
-    private ResourceResolverFactory resolverFactory;
+    private final ResourceResolverFactory resolverFactory;
     private PathSampler sampler;
     private String source;
     private String target;
     private Map<String, String> userMappings;
 
     /**
-     * Default (instantiation-restricting) constructor
+     * Creates a new {@code RelayProvider} instance for the given relay model
+     * @param resolverFactory The {@link ResourceResolverFactory} instance used to create mapped resource resolvers for
+     *                        change sampling and user identity mapping
+     * @param model           The {@link RelayInfo} model containing the configuration for this provider
      */
-    private RelayProvider() {
+    RelayProvider(ResourceResolverFactory resolverFactory, RelayInfo model) {
+        this.resolverFactory = resolverFactory;
+        update(model);
+    }
+
+    /**
+     * Updates the configuration of this provider based on the given relay model. This method is called when the OSGi
+     * component is activated or its configuration is updated to apply the new configuration to this provider instance
+     * @param model The {@link RelayInfo} model containing the new configuration for this provider
+     */
+    void update(RelayInfo model) {
+        this.sampler = PathSampler
+            .builder()
+            .resolverFactory(resolverFactory)
+            .source(model.getPathMapping().getFrom())
+            .target(model.getPathMapping().getTo())
+            .samples(model.getChangeSamples())
+            .build();
+        this.source = model.getPathMapping().getFrom();
+        this.target = model.getPathMapping().getTo();
+        this.userMappings = model
+            .getUserMappings()
+            .stream()
+            .collect(Collectors.toMap(RelayMapping::getFrom, RelayMapping::getTo));
     }
 
     /* ------------------------
@@ -194,111 +219,6 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
             }
         }
         return resolver;
-    }
-
-    /* -------------
-       Factory logic
-       ------------- */
-
-    /**
-     * Creates a new {@link Builder} for configuring and instantiating a {@link RelayProvider}
-     * @return A new {@code Builder} instance
-     */
-    static Builder builder() {
-        return new Builder();
-    }
-
-    /**
-     * Constructs {@link RelayProvider} instances with the required configuration
-     */
-    @SuppressWarnings({"UnusedReturnValue"})
-    static class Builder {
-
-        private Collection<ChangeSample> announcements;
-        private ResourceResolverFactory resolverFactory;
-        private String source;
-        private String target;
-        private Collection<RelayMapping> userMappings;
-
-        /**
-         * Default (instantiation-restricting) constructor
-         */
-        private Builder() {
-        }
-
-        /**
-         * Sets the collection of {@link ChangeSample} instances defining the paths to report as changed when the
-         * provider is enabled or disabled
-         * @param value Collection of {@code  ChangeAnnouncement} instances the provider is enabled or disabled
-         * @return This builder
-         */
-        Builder samples(Collection<ChangeSample> value) {
-            announcements = value;
-            return this;
-        }
-
-        /**
-         * Sets the {@link ResourceResolverFactory} used to create user-mapped resolvers
-         * @param value {@link ResourceResolverFactory} instance
-         * @return This builder
-         */
-        Builder resolverFactory(ResourceResolverFactory value) {
-            resolverFactory = value;
-            return this;
-        }
-
-        /**
-         * Sets the JCR source path handled by this provider
-         * @param value Source JCR path
-         * @return This builder
-         */
-        Builder source(String value) {
-            this.source = value;
-            return this;
-        }
-
-        /**
-         * Sets the JCR target path to which resource resolution is delegated
-         * @param value Target JCR path
-         * @return This builder
-         */
-        Builder target(String value) {
-            this.target = value;
-            return this;
-        }
-
-        /**
-         * Sets the collection of {@link RelayMapping} instances defining the user identity mappings to apply when
-         * creating mapped resource resolvers
-         * @param value Collection of {@code RelayMapping} instances defining user identity mappings
-         * @return This builder
-         */
-        Builder userMappings(Collection<RelayMapping> value) {
-            userMappings = value;
-            return this;
-        }
-
-        /**
-         * Creates a configured {@link RelayProvider} from the current builder state
-         * @return A new {@link RelayProvider} instance
-         */
-        RelayProvider build() {
-            RelayProvider result = new RelayProvider();
-            result.sampler = PathSampler
-                .builder()
-                .source(source)
-                .target(target)
-                .resolverFactory(resolverFactory)
-                .samples(announcements)
-                .build();
-            result.resolverFactory = resolverFactory;
-            result.source = source;
-            result.target = target;
-            result.userMappings = userMappings == null
-                ? Collections.emptyMap()
-                : userMappings.stream().filter(RelayMapping::isValid).collect(Collectors.toMap(RelayMapping::getFrom, RelayMapping::getTo));
-            return result;
-        }
     }
 }
 

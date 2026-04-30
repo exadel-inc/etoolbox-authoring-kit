@@ -13,13 +13,12 @@
  */
 package com.exadel.aem.toolkit.core.relay.services;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -44,6 +43,7 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.relay.models.ChangeSample;
+import com.exadel.aem.toolkit.core.relay.models.RelayInfo;
 import com.exadel.aem.toolkit.core.relay.models.RelayMapping;
 import com.exadel.aem.toolkit.core.relay.utils.PathHelper;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
@@ -63,7 +63,7 @@ public class RelayProviderHost {
     @Reference
     private transient ResourceResolverFactory resolverFactory;
 
-    private final List<ServiceRegistration<?>> registrations = new ArrayList<>();
+    private final Map<ServiceRegistration<?>, RelayProvider> registrations = new HashMap<>();
 
     private final ReentrantLock lock = new ReentrantLock();
 
@@ -75,45 +75,59 @@ public class RelayProviderHost {
      */
     @Activate
     private void activate(BundleContext context, RelayConfig config) {
+        List<RelayInfo> relays = parseConfig(config);
         lock.lock();
         try {
-            deactivate();
-            if (!config.enabled()) {
+            Iterator<ServiceRegistration<?>> iterator = registrations.keySet().iterator();
+            while (iterator.hasNext()) {
+                ServiceRegistration<?> registration = iterator.next();
+                String existingRoot = (String) registration
+                    .getReference()
+                    .getProperty(ResourceProvider.PROPERTY_ROOT);
+                RelayInfo matchingRelay = relays.stream()
+                    .filter(relay -> relay.getPathMapping().getFrom().equals(existingRoot))
+                    .findFirst()
+                    .orElse(null);
+                if (matchingRelay != null) {
+                    registrations.get(registration).update(matchingRelay);
+                    relays.remove(matchingRelay);
+                } else {
+                    try {
+                        registration.unregister();
+                        iterator.remove();
+                    } catch (IllegalStateException e) {
+                        LOG.warn("Could not unregister relay provider for path {}", existingRoot, e);
+                    }
+                }
+            }
+            if (relays.isEmpty()) {
                 return;
             }
 
-            Set<RelayMapping> pathMappings = new HashSet<>();
-            for (String mappingSource : config.pathMappings()) {
-                RelayMapping mapping = ObjectConversionUtil.toObject(mappingSource, RelayMapping.class);
-                if  (mapping != null && mapping.isValid()) {
-                    pathMappings.add(mapping);
+            // Register providers for the remaining new relays that didn't match any existing ones
+            Map<String, String> providedPaths = getExternallyProvidedPaths(context);
+            for (RelayInfo relay : relays) {
+                String from = relay.getPathMapping().getFrom();
+                String shadowedEntries = providedPaths.entrySet().stream()
+                    .filter(e -> PathHelper.isSubpath(e.getKey(), from))
+                    .map(e -> e.getKey() + " by " + e.getValue())
+                    .collect(Collectors.joining(CoreConstants.SEPARATOR_COMMA + StringUtils.SPACE));
+                if (!shadowedEntries.isEmpty()) {
+                    LOG.warn(
+                        "Skipping relay registration for path {} to avoid shadowing {}",
+                        from,
+                        shadowedEntries);
+                    continue;
                 }
+                RelayProvider provider = new RelayProvider(resolverFactory, relay);
+                Dictionary<String, Object> properties = new Hashtable<>();
+                properties.put(ResourceProvider.PROPERTY_ROOT, from);
+                ServiceRegistration<?> registration = context.registerService(
+                    new String[]{ResourceProvider.class.getName(), ResourceChangeListener.class.getName()},
+                    provider,
+                    properties);
+                registrations.put(registration, provider);
             }
-            if (pathMappings.isEmpty()) {
-                return;
-            }
-
-            Set<RelayMapping> userMappings = new HashSet<>();
-            for (String mappingSource : config.userMappings()) {
-                RelayMapping mapping = ObjectConversionUtil.toObject(mappingSource, RelayMapping.class);
-                if (mapping != null && mapping.isValid()) {
-                    userMappings.add(mapping);
-                }
-            }
-
-            Set<ChangeSample> samples = new HashSet<>();
-            for (String sampleSource : config.announcedPaths()) {
-                ChangeSample announcement = ObjectConversionUtil.toObject(sampleSource, ChangeSample.class);
-                if (announcement != null && StringUtils.isNotBlank(announcement.getPath())) {
-                    samples.add(announcement);
-                }
-            }
-
-            createRelays(
-                context,
-                pathMappings,
-                userMappings,
-                samples);
         } finally {
             lock.unlock();
         }
@@ -126,7 +140,7 @@ public class RelayProviderHost {
     private void deactivate() {
         lock.lock();
         try {
-            for (ServiceRegistration<?> registration : registrations) {
+            for (ServiceRegistration<?> registration : registrations.keySet()) {
                 registration.unregister();
             }
             registrations.clear();
@@ -136,59 +150,50 @@ public class RelayProviderHost {
     }
 
     /**
-     * Creates and registers a {@link RelayProvider} service instance for each entry in the provided path mappings
-     * collection
-     * @param context      OSGi {@link BundleContext} used to register provider services
-     * @param pathMappings Collection of path mapping rules defining source-to-target path redirections
-     * @param userMappings Collection of user mapping rules defining source-to-target user identity redirections
-     * @param samples      Collection of rules defining JCR paths or XPath expressions to report as changed when the
-     *                     relay is enabled or disabled
+     * Parses the given {@link RelayConfig} instance to create a list of {@link RelayInfo} models for valid path mappings
+     * @param config A {@code RelayConfig} instance; expected to be non-null
+     * @return A list of {@code Relay} models; might be empty but never null
      */
-    private void createRelays(
-        BundleContext context,
-        Collection<RelayMapping> pathMappings,
-        Collection<RelayMapping> userMappings,
-        Collection<ChangeSample> samples) {
-
-        Map<String, String> providedPaths = getExternallyProvidedPaths(context);
-
-        for (RelayMapping pathMapping : pathMappings) {
-            String from = pathMapping.getFrom();
-            String shadowedEntries = providedPaths.entrySet().stream()
-                .filter(e -> PathHelper.isSubpath(e.getKey(), from))
-                .map(e -> e.getKey() + " by " + e.getValue())
-                .collect(Collectors.joining(CoreConstants.SEPARATOR_COMMA + StringUtils.SPACE));
-            if (!shadowedEntries.isEmpty()) {
-                LOG.warn(
-                    "Skipping relay registration for path {} to avoid shadowing {}",
-                    from,
-                    shadowedEntries);
-                continue;
-            }
-            RelayProvider provider = RelayProvider
-                .builder()
-                .resolverFactory(resolverFactory)
-                .source(pathMapping.getFrom())
-                .target(pathMapping.getTo())
-                .userMappings(userMappings)
-                .samples(samples)
-                .build();
-
-            Dictionary<String, Object> properties = new Hashtable<>();
-            properties.put(ResourceProvider.PROPERTY_ROOT, pathMapping.getFrom());
-            properties.put(ResourceChangeListener.PATHS, new String[]{pathMapping.getTo()});
-
-            ServiceRegistration<?> registration = context.registerService(
-                new String[]{ResourceProvider.class.getName(), ResourceChangeListener.class.getName()},
-                provider,
-                properties);
-            registrations.add(registration);
+    private static List<RelayInfo> parseConfig(RelayConfig config) {
+        if (!config.enabled()) {
+            return Collections.emptyList();
         }
+
+        Set<RelayMapping> pathMappings = new HashSet<>();
+        for (String mappingSource : config.pathMappings()) {
+            RelayMapping mapping = ObjectConversionUtil.toObject(mappingSource, RelayMapping.class);
+            if  (mapping != null && mapping.isValid()) {
+                pathMappings.add(mapping);
+            }
+        }
+        if (pathMappings.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        Set<RelayMapping> userMappings = new HashSet<>();
+        for (String mappingSource : config.userMappings()) {
+            RelayMapping mapping = ObjectConversionUtil.toObject(mappingSource, RelayMapping.class);
+            if (mapping != null && mapping.isValid()) {
+                userMappings.add(mapping);
+            }
+        }
+
+        Set<ChangeSample> samples = new HashSet<>();
+        for (String sampleSource : config.announcedPaths()) {
+            ChangeSample changeSample = ObjectConversionUtil.toObject(sampleSource, ChangeSample.class);
+            if (changeSample != null && StringUtils.isNotBlank(changeSample.getPath())) {
+                samples.add(changeSample);
+            }
+        }
+
+        return pathMappings.stream()
+            .map(m -> new RelayInfo(m, userMappings, samples))
+            .collect(Collectors.toList());
     }
 
     /**
-     * Collects the JCR paths already provided by registered {@link ResourceProvider} services to avoid "shadowing"
-     * external providers
+     * Collects the JCR paths already provided by already registered {@link ResourceProvider} services to avoid
+     * "shadowing" external providers
      * @param context OSGi {@link BundleContext} used to query registered provider services
      * @return A map of JCR path-to-provider name entries; might be empty but never null
      */
@@ -204,9 +209,6 @@ public class RelayProviderHost {
         }
         Map<String, String> result = new HashMap<>();
         for (ServiceReference<?> ref : serviceReferences) {
-            if (ref.toString().startsWith(CoreConstants.ROOT_PACKAGE)) {
-                continue;
-            }
             Object providedPath = ref.getProperty(ResourceProvider.PROPERTY_ROOT);
             Object providerId = ref.getProperty(ResourceProvider.PROPERTY_NAME);
             if (providerId == null || providerId.toString().isEmpty()) {
