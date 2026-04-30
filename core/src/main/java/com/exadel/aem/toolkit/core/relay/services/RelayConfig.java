@@ -52,8 +52,9 @@ public @interface RelayConfig {
      */
     @AttributeDefinition(
         name = "User mappings",
-        description = "Optional list of user mapping rules. "
-            + "The mapping target is either \"user:password\" or \"registered_subservice\"."
+        description = "List of user mapping rules (optional). "
+            + "Each entry is either a credential string or a registered subservice name "
+            + " with or without a \"@bundle_id\" suffix."
     )
     String[] userMappings();
 
