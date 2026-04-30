@@ -14,31 +14,38 @@
 package com.exadel.aem.toolkit.core.relay.services;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Objects;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.resource.observation.ResourceChangeListener;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Deactivate;
 import org.osgi.service.component.annotations.Reference;
 import org.osgi.service.metatype.annotations.Designate;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.relay.models.ChangeSample;
+import com.exadel.aem.toolkit.core.relay.models.RelayMapping;
+import com.exadel.aem.toolkit.core.relay.utils.PathHelper;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
 /**
@@ -50,6 +57,8 @@ import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 @Component(immediate = true, service = RelayProviderHost.class)
 @Designate(ocd = RelayConfig.class, factory = true)
 public class RelayProviderHost {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RelayProviderHost.class);
 
     @Reference
     private transient ResourceResolverFactory resolverFactory;
@@ -72,28 +81,39 @@ public class RelayProviderHost {
             if (!config.enabled()) {
                 return;
             }
-            Set<Mapping> pathMappings = new HashSet<>();
-            Set<Mapping> userMappings = new HashSet<>();
+
+            Set<RelayMapping> pathMappings = new HashSet<>();
             for (String mappingSource : config.pathMappings()) {
-                Mapping mapping = ObjectConversionUtil.toObject(mappingSource, Mapping.class);
-                if  (Mapping.isValid(mapping)) {
+                RelayMapping mapping = ObjectConversionUtil.toObject(mappingSource, RelayMapping.class);
+                if  (mapping != null && mapping.isValid()) {
                     pathMappings.add(mapping);
                 }
             }
             if (pathMappings.isEmpty()) {
                 return;
             }
+
+            Set<RelayMapping> userMappings = new HashSet<>();
             for (String mappingSource : config.userMappings()) {
-                Mapping mapping = ObjectConversionUtil.toObject(mappingSource, Mapping.class);
-                if (Mapping.isValid(mapping)) {
+                RelayMapping mapping = ObjectConversionUtil.toObject(mappingSource, RelayMapping.class);
+                if (mapping != null && mapping.isValid()) {
                     userMappings.add(mapping);
                 }
             }
+
+            Set<ChangeSample> samples = new HashSet<>();
+            for (String sampleSource : config.announcedPaths()) {
+                ChangeSample announcement = ObjectConversionUtil.toObject(sampleSource, ChangeSample.class);
+                if (announcement != null && StringUtils.isNotBlank(announcement.getPath())) {
+                    samples.add(announcement);
+                }
+            }
+
             createRelays(
                 context,
                 pathMappings,
                 userMappings,
-                ArrayUtils.nullToEmpty(config.announced()));
+                samples);
         } finally {
             lock.unlock();
         }
@@ -118,27 +138,41 @@ public class RelayProviderHost {
     /**
      * Creates and registers a {@link RelayProvider} service instance for each entry in the provided path mappings
      * collection
-     * @param context       OSGi {@link BundleContext} used to register provider services
-     * @param pathMappings  Collection of path mapping rules defining source-to-target path redirections
-     * @param userMappings  Collection of user mapping rules defining source-to-target user identity redirections
-     * @param reportedPaths Array of JCR paths to report as changed when a provider starts or stops
+     * @param context      OSGi {@link BundleContext} used to register provider services
+     * @param pathMappings Collection of path mapping rules defining source-to-target path redirections
+     * @param userMappings Collection of user mapping rules defining source-to-target user identity redirections
+     * @param samples      Collection of rules defining JCR paths or XPath expressions to report as changed when the
+     *                     relay is enabled or disabled
      */
     private void createRelays(
         BundleContext context,
-        Collection<Mapping> pathMappings,
-        Collection<Mapping> userMappings,
-        String[] reportedPaths) {
+        Collection<RelayMapping> pathMappings,
+        Collection<RelayMapping> userMappings,
+        Collection<ChangeSample> samples) {
 
-        for (Mapping pathMapping : pathMappings) {
+        Map<String, String> providedPaths = getExternallyProvidedPaths(context);
 
-            RelayProvider.Builder builder = RelayProvider
+        for (RelayMapping pathMapping : pathMappings) {
+            String from = pathMapping.getFrom();
+            String shadowedEntries = providedPaths.entrySet().stream()
+                .filter(e -> PathHelper.isSubpath(e.getKey(), from))
+                .map(e -> e.getKey() + " by " + e.getValue())
+                .collect(Collectors.joining(CoreConstants.SEPARATOR_COMMA + StringUtils.SPACE));
+            if (!shadowedEntries.isEmpty()) {
+                LOG.warn(
+                    "Skipping relay registration for path {} to avoid shadowing {}",
+                    from,
+                    shadowedEntries);
+                continue;
+            }
+            RelayProvider provider = RelayProvider
                 .builder()
                 .resolverFactory(resolverFactory)
                 .source(pathMapping.getFrom())
-                .target(pathMapping.getTo());
-            userMappings.forEach(mapping -> builder.userMapping(mapping.getFrom(), mapping.getTo()));
-            Arrays.stream(reportedPaths).forEach(builder::reportedPath);
-            RelayProvider provider = builder.build();
+                .target(pathMapping.getTo())
+                .userMappings(userMappings)
+                .samples(samples)
+                .build();
 
             Dictionary<String, Object> properties = new Hashtable<>();
             properties.put(ResourceProvider.PROPERTY_ROOT, pathMapping.getFrom());
@@ -153,72 +187,37 @@ public class RelayProviderHost {
     }
 
     /**
-     * Represents a source-to-target mapping entry used for path or user identity translation
+     * Collects the JCR paths already provided by registered {@link ResourceProvider} services to avoid "shadowing"
+     * external providers
+     * @param context OSGi {@link BundleContext} used to query registered provider services
+     * @return A map of JCR path-to-provider name entries; might be empty but never null
      */
-    private static class Mapping {
-
-        private static final int HASH_SEED = 31;
-
-        private final String from;
-        private final String to;
-
-        /**
-         * Creates a new {@code Mapping} with the provided source and target values
-         * @param from Source value
-         * @param to   Target value
-         */
-        @JsonCreator
-        Mapping(@JsonProperty("from") String from, @JsonProperty("to") String to) {
-            this.from = from;
-            this.to = to;
+    private static Map<String, String> getExternallyProvidedPaths(BundleContext context) {
+        ServiceReference<?>[] serviceReferences = null;
+        try {
+            serviceReferences = context.getServiceReferences(ResourceProvider.class.getName(), null);
+        } catch (InvalidSyntaxException e) {
+            LOG.warn("Could not collect info on predefined resource providers", e);
         }
-
-        /**
-         * Gets the source value of this mapping
-         * @return A nullable source string
-         */
-        String getFrom() {
-            return from;
+        if (serviceReferences == null) {
+            return Collections.emptyMap();
         }
-
-        /**
-         * Gets the target value of this mapping
-         * @return A nullable target string
-         */
-        String getTo() {
-            return to;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public final boolean equals(Object other) {
-            if (!(other instanceof Mapping)) {
-                return false;
+        Map<String, String> result = new HashMap<>();
+        for (ServiceReference<?> ref : serviceReferences) {
+            if (ref.toString().startsWith(CoreConstants.ROOT_PACKAGE)) {
+                continue;
             }
-            Mapping mapping = (Mapping) other;
-            return Objects.equals(from, mapping.from) && Objects.equals(to, mapping.to);
+            Object providedPath = ref.getProperty(ResourceProvider.PROPERTY_ROOT);
+            Object providerId = ref.getProperty(ResourceProvider.PROPERTY_NAME);
+            if (providerId == null || providerId.toString().isEmpty()) {
+                 providerId = ref.getBundle().getSymbolicName();
+            }
+            String providedPathString = providedPath instanceof String ? (String) providedPath : null;
+            if (StringUtils.isNotEmpty(providedPathString)) {
+                result.put(StringUtils.stripEnd(providedPathString, CoreConstants.SEPARATOR_SLASH), providerId.toString());
+            }
         }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public int hashCode() {
-            int result = Objects.hashCode(from);
-            result = HASH_SEED * result + Objects.hashCode(to);
-            return result;
-        }
-
-        /**
-         * Gets whether the provided mapping is non-null and has non-blank source and target values
-         * @param value Nullable {@code Mapping} instance to validate
-         * @return True or false
-         */
-        static boolean isValid(Mapping value) {
-            return value != null && StringUtils.isNoneBlank(value.getFrom(), value.getTo());
-        }
+        return result;
     }
 }
 
