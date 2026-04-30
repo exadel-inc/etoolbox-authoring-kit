@@ -29,6 +29,19 @@ public class PathHelper {
     }
 
     /**
+     * Gets whether the provided path is a descendant of the provided root path
+     * @param path JCR path to check
+     * @param root Root JCR path to check against
+     * @return True or false
+     */
+    public static boolean isSubpath(String path, String root) {
+        String normalizedPath = StringUtils.stripEnd(path, CoreConstants.SEPARATOR_SLASH);
+        String normalizedRoot = StringUtils.stripEnd(StringUtils.defaultString(root), CoreConstants.SEPARATOR_SLASH);
+        return StringUtils.equals(normalizedPath, normalizedRoot)
+                || StringUtils.startsWith(path, normalizedRoot + CoreConstants.SEPARATOR_SLASH);
+    }
+
+    /**
      * Replaces the {@code source} prefix in the provided path with the {@code target} prefix. Returns the original
      * path unchanged if it does not start with {@code source}
      * @param path   JCR path to transform
