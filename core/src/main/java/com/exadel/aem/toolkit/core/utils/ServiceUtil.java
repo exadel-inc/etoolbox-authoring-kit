@@ -105,7 +105,9 @@ public class ServiceUtil {
             reference = context.getServiceReference(serviceClass);
             T service = reference != null ? context.getService(reference) : null;
             if (service == null) {
-                LOG.error(ERROR_RETRIEVAL, serviceClass.getName());
+                // This is rather an anticipated case because a service might not be registered due to a particular config,
+                // e.g., a ConfigChangeListener
+                LOG.debug(ERROR_RETRIEVAL, serviceClass.getName());
                 return;
             }
             try {
@@ -143,7 +145,9 @@ public class ServiceUtil {
             reference = context.getServiceReference(serviceClass);
             T service = reference != null ? context.getService(reference) : null;
             if (service == null) {
-                LOG.error(ERROR_RETRIEVAL, serviceClass.getName());
+                // This is rather an anticipated case because a service might not be registered due to a particular config,
+                // e.g., a ConfigChangeListener
+                LOG.debug(ERROR_RETRIEVAL, serviceClass.getName());
                 return defaultValue;
             }
             try {
