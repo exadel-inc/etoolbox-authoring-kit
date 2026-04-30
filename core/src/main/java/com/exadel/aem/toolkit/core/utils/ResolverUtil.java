@@ -13,20 +13,29 @@
  */
 package com.exadel.aem.toolkit.core.utils;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import javax.annotation.Nonnull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.scripting.SlingBindings;
 import org.apache.sling.api.scripting.SlingScriptHelper;
-import org.jetbrains.annotations.NotNull;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+
+import com.exadel.aem.toolkit.core.CoreConstants;
 
 /**
- * Provides utility methods for creating {@link ResourceResolver} instances in the context of
- * {@code EToolbox Configurator}
- * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own code
+ * Provides utility methods for creating {@link ResourceResolver} instances
+ * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own code</p>
  */
 public class ResolverUtil {
 
@@ -39,18 +48,80 @@ public class ResolverUtil {
     }
 
     /**
-     * Creates a new {@link ResourceResolver} instance for the given username using the provided resource resolver
-     * factory
+     * Creates a new {@link ResourceResolver} instance using the provided resource resolver factory
      * @param factory  The {@code ResourceResolverFactory} instance
      * @return New instance of {@code ResourceResolver}
      * @throws LoginException If the resolver cannot be created
      */
-    @NotNull
-    public static ResourceResolver newResolver(@NotNull ResourceResolverFactory factory) throws LoginException {
-
+    @Nonnull
+    public static ResourceResolver newResolver(@Nonnull ResourceResolverFactory factory) throws LoginException {
         return factory.getServiceResourceResolver(
             Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, SERVICE_USER_ID)
         );
+    }
+
+    /**
+     * Creates a new {@link ResourceResolver} instance for the given user identifier using the provided resource
+     * resolver factory. The user identifier may be in the format of {@code username@bundleId} or
+     * {@code login:password}
+     * @param factory The {@code ResourceResolverFactory} instance
+     * @param user    The user identifier string
+     * @return New instance of {@code ResourceResolver}
+     * @throws LoginException If the resolver cannot be created
+     */
+    @Nonnull
+    public static ResourceResolver newResolver(
+        @Nonnull ResourceResolverFactory factory,
+        String user) throws LoginException {
+
+        if (!StringUtils.contains(user, CoreConstants.SEPARATOR_AT)) {
+            Map<String, Object> authInfo = new HashMap<>();
+            if (StringUtils.contains(user, CoreConstants.SEPARATOR_COLON)) {
+                authInfo.put(
+                    ResourceResolverFactory.USER,
+                    StringUtils.substringBefore(user, CoreConstants.SEPARATOR_COLON));
+                authInfo.put(
+                    ResourceResolverFactory.PASSWORD,
+                    StringUtils.substringAfter(user, CoreConstants.SEPARATOR_COLON).toCharArray());
+                return factory.getResourceResolver(authInfo);
+            }
+            authInfo.put(ResourceResolverFactory.SUBSERVICE, user);
+            return factory.getServiceResourceResolver(authInfo);
+        }
+
+        String localizedUserId = StringUtils.substringBefore(user, CoreConstants.SEPARATOR_AT);
+        String bundleId = StringUtils.substringAfter(user, CoreConstants.SEPARATOR_AT);
+        BundleContext bundleContext = FrameworkUtil.getBundle(ResolverUtil.class).getBundleContext();
+        Bundle targetBundle = Arrays
+            .stream(bundleContext.getBundles())
+            .filter(b -> b.getSymbolicName().equals(bundleId))
+            .findFirst()
+            .orElse(null);
+        if (targetBundle == null) {
+            return factory.getResourceResolver(null);
+        }
+
+        AtomicReference<LoginException> nestedException = new AtomicReference<>();
+        ResourceResolver resolverByTargetBundle = ServiceUtil.withService(
+            ResourceResolverFactory.class,
+            targetBundle.getBundleContext(),
+            f -> {
+                try {
+                    return f.getServiceResourceResolver(
+                        Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, localizedUserId)
+                    );
+                } catch (LoginException e) {
+                    nestedException.set(e);
+                    return null;
+                }
+            },
+            null);
+        if (nestedException.get() != null) {
+            throw nestedException.get();
+        } else if (resolverByTargetBundle == null) {
+            throw new LoginException("No resource resolver created. See above log for details");
+        }
+        return resolverByTargetBundle;
     }
 
     /**
@@ -60,8 +131,8 @@ public class ResolverUtil {
      * @return New instance of {@code ResourceResolver}
      * @throws LoginException If the resolver cannot be created
      */
-    @NotNull
-    public static ResourceResolver newResolver(@NotNull SlingHttpServletRequest request) throws LoginException {
+    @Nonnull
+    public static ResourceResolver newResolver(@Nonnull SlingHttpServletRequest request) throws LoginException {
 
         SlingBindings bindings = (SlingBindings) request.getAttribute(SlingBindings.class.getName());
         SlingScriptHelper scriptHelper = bindings != null ? (SlingScriptHelper) bindings.get(SlingBindings.SLING) : null;
