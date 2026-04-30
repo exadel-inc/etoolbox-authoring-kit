@@ -139,10 +139,16 @@ public class RelayProviderHost {
     private void deactivate() {
         lock.lock();
         try {
-            for (ServiceRegistration<?> registration : registrations.keySet()) {
-                registration.unregister();
+            Iterator<ServiceRegistration<?>> iterator = registrations.keySet().iterator();
+            while (iterator.hasNext()) {
+                ServiceRegistration<?> registration = iterator.next();
+                try {
+                    registration.unregister();
+                    iterator.remove();
+                } catch (IllegalStateException e) {
+                    LOG.warn("Could not unregister relay provider", e);
+                }
             }
-            registrations.clear();
         } finally {
             lock.unlock();
         }
