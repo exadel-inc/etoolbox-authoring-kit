@@ -13,17 +13,14 @@
  */
 package com.exadel.aem.toolkit.core.relay.services;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.jcr.Session;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.LoginException;
@@ -41,6 +38,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
+import com.exadel.aem.toolkit.core.relay.models.ChangeSample;
+import com.exadel.aem.toolkit.core.relay.models.RelayMapping;
 import com.exadel.aem.toolkit.core.relay.models.RelayResource;
 import com.exadel.aem.toolkit.core.relay.utils.PathHelper;
 import com.exadel.aem.toolkit.core.relay.utils.ResourceHelper;
@@ -56,13 +55,13 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
     private static final Logger LOG = LoggerFactory.getLogger(RelayProvider.class);
 
     private ResourceResolverFactory resolverFactory;
-    private PathSampler pathSampler;
+    private PathSampler sampler;
     private String source;
     private String target;
     private Map<String, String> userMappings;
 
     /**
-     * Default (instantiation-blocking) constructor
+     * Default (instantiation-restricting) constructor
      */
     private RelayProvider() {
     }
@@ -85,17 +84,14 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
             return null;
         }
         String targetPath = target + StringUtils.substring(path, source.length());
-        return ResourceHelper.getResource(
+        Resource resolved = ResourceHelper.getResource(
             context.getResourceResolver(),
             this::getMappedResourceResolver,
-            targetPath,
-            resource -> resource != null ? new RelayResource(resource, path) : null,
-            () -> ResourceHelper.getResource(
-                context.getParentResourceProvider(),
-                context.getParentResolveContext(),
-                path,
-                resourceContext,
-                parent));
+            targetPath);
+        if (resolved != null) {
+            return new RelayResource(resolved, path);
+        }
+        return ResourceHelper.getResource(context, path, resourceContext, parent);
     }
 
     /**
@@ -109,22 +105,17 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
         Resource targetResource = ResourceHelper.getResource(
             context.getResourceResolver(),
             this::getMappedResourceResolver,
-            targetPath,
-            resource -> resource != null ? new RelayResource(resource, path) : null,
-            () -> ResourceHelper.getResource(
-                context.getParentResourceProvider(),
-                context.getParentResolveContext(),
-                path,
-                null,
-                parent));
+            targetPath);
+        if (targetResource != null) {
+            targetResource = new RelayResource(targetResource, path);
+        } else {
+            targetResource = ResourceHelper.getResource(context, path, null, parent);
+        }
         if (targetResource == null) {
             return null;
         } else if (targetResource.getPath().equals(parent.getPath())) {
             // We have fallen back to an "original" resource, so we should iterate through it without any mapping
-            return ResourceHelper.listChildren(
-                context.getParentResourceProvider(),
-                context.getParentResolveContext(),
-                parent);
+            return ResourceHelper.listChildren(context, parent);
         }
         return ResourceHelper.listChildren(targetResource, parent.getPath());
     }
@@ -136,14 +127,9 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
     public void start(@Nonnull ProviderContext providerContext) {
         LOG.info("Relay provider for {} -> {} is starting", source, target);
         super.start(providerContext);
-        try (ResourceResolver resolver = ResolverUtil.newResolver(resolverFactory)) {
-            Session session = resolver.adaptTo(Session.class);
-            Collection<ResourceChange> changes = pathSampler.createChanges(session);
-            if (!changes.isEmpty()) {
-                providerContext.getObservationReporter().reportChanges(changes, false);
-            }
-        } catch (LoginException e) {
-            LOG.error("Failed to create a JCR session for script sampling at {}", target, e);
+        Collection<ResourceChange> changes = sampler.createChanges();
+        if (!changes.isEmpty()) {
+            providerContext.getObservationReporter().reportChanges(changes, false);
         }
     }
 
@@ -153,8 +139,8 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
     @Override
     public void stop() {
         LOG.info("Relay provider for {} -> {} is stopping", source, target);
-        if (getProviderContext() != null && !pathSampler.isEmpty()) {
-            Collection<ResourceChange> declaredChanges = pathSampler.createChanges();
+        if (getProviderContext() != null && !sampler.isEmpty()) {
+            Collection<ResourceChange> declaredChanges = sampler.createChanges();
             if (!declaredChanges.isEmpty()) {
                 getProviderContext().getObservationReporter().reportChanges(declaredChanges, false);
             }
@@ -196,21 +182,14 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
     private ResourceResolver getMappedResourceResolver(ResourceResolver resolver) {
         String mappedId = userMappings.get(resolver.getUserID());
         if (mappedId != null && !mappedId.equals(resolver.getUserID())) {
-            Map<String, Object> authInfo = new HashMap<>();
             try {
-                if (StringUtils.contains(mappedId, CoreConstants.SEPARATOR_COLON)) {
-                    authInfo.put(ResourceResolverFactory.USER, StringUtils.substringBefore(mappedId, CoreConstants.SEPARATOR_COLON));
-                    authInfo.put(ResourceResolverFactory.PASSWORD, StringUtils.substringAfter(mappedId, CoreConstants.SEPARATOR_COLON).toCharArray());
-                    return resolverFactory.getResourceResolver(authInfo);
-                }
-                authInfo.put(ResourceResolverFactory.SUBSERVICE, mappedId);
-                return resolverFactory.getServiceResourceResolver(authInfo);
+                return ResolverUtil.newResolver(resolverFactory, mappedId);
             } catch (LoginException e) {
                 LOG.error(
                     "Failed to create a resource resolver for user {}",
-                    authInfo.containsKey(ResourceResolverFactory.USER)
-                        ? authInfo.get(ResourceResolverFactory.USER)
-                        : authInfo.get(ResourceResolverFactory.SUBSERVICE),
+                    StringUtils.contains(mappedId, CoreConstants.SEPARATOR_COLON)
+                        ? StringUtils.substringBefore(mappedId, CoreConstants.SEPARATOR_COLON)
+                        : mappedId,
                     e);
             }
         }
@@ -235,11 +214,11 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
     @SuppressWarnings({"UnusedReturnValue"})
     static class Builder {
 
-        private List<String> reportedPaths;
+        private Collection<ChangeSample> announcements;
         private ResourceResolverFactory resolverFactory;
         private String source;
         private String target;
-        private Map<String, String> userMappings;
+        private Collection<RelayMapping> userMappings;
 
         /**
          * Default (instantiation-restricting) constructor
@@ -248,15 +227,13 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
         }
 
         /**
-         * Adds a JCR path to report as changed when the provider starts or stops
-         * @param value JCR path to include in change reports
+         * Sets the collection of {@link ChangeSample} instances defining the paths to report as changed when the
+         * provider is enabled or disabled
+         * @param value Collection of {@code  ChangeAnnouncement} instances the provider is enabled or disabled
          * @return This builder
          */
-        Builder reportedPath(String value) {
-            if (reportedPaths == null) {
-                reportedPaths = new ArrayList<>();
-            }
-            reportedPaths.add(value);
+        Builder samples(Collection<ChangeSample> value) {
+            announcements = value;
             return this;
         }
 
@@ -291,16 +268,13 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
         }
 
         /**
-         * Adds a user identity mapping from a source user ID to a target user or subservice
-         * @param from Source user ID
-         * @param to   Target user ID, {@code "user:password"} credential string, or service subservice name
+         * Sets the collection of {@link RelayMapping} instances defining the user identity mappings to apply when
+         * creating mapped resource resolvers
+         * @param value Collection of {@code RelayMapping} instances defining user identity mappings
          * @return This builder
          */
-        Builder userMapping(String from, String to) {
-            if (userMappings == null) {
-                userMappings = new HashMap<>();
-            }
-            userMappings.put(from, to);
+        Builder userMappings(Collection<RelayMapping> value) {
+            userMappings = value;
             return this;
         }
 
@@ -310,11 +284,19 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
          */
         RelayProvider build() {
             RelayProvider result = new RelayProvider();
-            result.pathSampler = new PathSampler(reportedPaths);
+            result.sampler = PathSampler
+                .builder()
+                .source(source)
+                .target(target)
+                .resolverFactory(resolverFactory)
+                .samples(announcements)
+                .build();
             result.resolverFactory = resolverFactory;
             result.source = source;
             result.target = target;
-            result.userMappings = userMappings != null ? userMappings : Collections.emptyMap();
+            result.userMappings = userMappings == null
+                ? Collections.emptyMap()
+                : userMappings.stream().filter(RelayMapping::isValid).collect(Collectors.toMap(RelayMapping::getFrom, RelayMapping::getTo));
             return result;
         }
     }
