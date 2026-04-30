@@ -74,6 +74,10 @@ public class ResolverUtil {
         @Nonnull ResourceResolverFactory factory,
         String user) throws LoginException {
 
+        if (StringUtils.isBlank(user)) {
+            return newResolver(factory);   // Use the default eak-service resolver
+        }
+
         if (!StringUtils.contains(user, CoreConstants.SEPARATOR_AT)) {
             Map<String, Object> authInfo = new HashMap<>();
             if (StringUtils.contains(user, CoreConstants.SEPARATOR_COLON)) {
@@ -91,14 +95,18 @@ public class ResolverUtil {
 
         String localizedUserId = StringUtils.substringBefore(user, CoreConstants.SEPARATOR_AT);
         String bundleId = StringUtils.substringAfter(user, CoreConstants.SEPARATOR_AT);
-        BundleContext bundleContext = FrameworkUtil.getBundle(ResolverUtil.class).getBundleContext();
+        Bundle bundle = FrameworkUtil.getBundle(ResolverUtil.class);
+        BundleContext bundleContext = bundle != null ? bundle.getBundleContext() : null;
+        if (bundleContext == null) {
+            throw new LoginException("Not running in an OSGi container");
+        }
         Bundle targetBundle = Arrays
             .stream(bundleContext.getBundles())
             .filter(b -> b.getSymbolicName().equals(bundleId))
             .findFirst()
             .orElse(null);
         if (targetBundle == null) {
-            return factory.getResourceResolver(null);
+            throw new LoginException("Could not locate required bundle: " + bundleId);
         }
 
         AtomicReference<LoginException> nestedException = new AtomicReference<>();
