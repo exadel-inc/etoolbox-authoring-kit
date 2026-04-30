@@ -38,7 +38,7 @@ public class PathHelper {
         String normalizedPath = StringUtils.stripEnd(path, CoreConstants.SEPARATOR_SLASH);
         String normalizedRoot = StringUtils.stripEnd(StringUtils.defaultString(root), CoreConstants.SEPARATOR_SLASH);
         return StringUtils.equals(normalizedPath, normalizedRoot)
-                || StringUtils.startsWith(path, normalizedRoot + CoreConstants.SEPARATOR_SLASH);
+                || StringUtils.startsWith(normalizedPath, normalizedRoot + CoreConstants.SEPARATOR_SLASH);
     }
 
     /**
@@ -47,7 +47,7 @@ public class PathHelper {
      * @param path   JCR path to transform
      * @param source Prefix to replace
      * @param target Replacement prefix
-     * @return A non-null transformed path string
+     * @return A transformed path string
      */
     public static String replace(String path, String source, String target) {
         if (StringUtils.equals(path, source)) {
