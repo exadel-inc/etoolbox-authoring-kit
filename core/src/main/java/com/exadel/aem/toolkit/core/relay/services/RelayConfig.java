@@ -14,6 +14,7 @@
 package com.exadel.aem.toolkit.core.relay.services;
 
 import org.osgi.service.metatype.annotations.AttributeDefinition;
+import org.osgi.service.metatype.annotations.AttributeType;
 import org.osgi.service.metatype.annotations.ObjectClassDefinition;
 
 /**
@@ -29,7 +30,8 @@ public @interface RelayConfig {
      */
     @AttributeDefinition(
         name = "Enable",
-        description = "Is the relay enabled?"
+        description = "Is the relay enabled?",
+        type = AttributeType.BOOLEAN
     )
     boolean enabled();
 
@@ -66,6 +68,6 @@ public @interface RelayConfig {
             + "Target paths matching the list will be announced as changed as the relay is enabled or disabled."
 
     )
-    String[] announced();
+    String[] announcedPaths();
 }
 
