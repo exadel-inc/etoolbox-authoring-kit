@@ -121,7 +121,7 @@ public class RelayProviderHost {
                 RelayProvider provider = new RelayProvider(resolverFactory, relay);
                 Dictionary<String, Object> properties = new Hashtable<>();
                 properties.put(ResourceProvider.PROPERTY_ROOT, relay.getSource());
-                properties.put(ResourceChangeListener.PATHS, new String[]{ relay.getTarget() });
+                properties.put(ResourceChangeListener.PATHS, new String[]{relay.getTarget()});
                 ServiceRegistration<?> registration = context.registerService(
                     new String[]{ResourceProvider.class.getName(), ResourceChangeListener.class.getName()},
                     provider,
@@ -217,7 +217,7 @@ public class RelayProviderHost {
         for (ServiceReference<?> ref : serviceReferences) {
             Object providedPath = ref.getProperty(ResourceProvider.PROPERTY_ROOT);
             Object providerId = ref.getProperty(ResourceProvider.PROPERTY_NAME);
-            if (providerId == null || providerId.toString().isEmpty()) {
+            if (providerId == null || StringUtils.isEmpty(providerId.toString())) {
                  providerId = ref.getBundle().getSymbolicName();
             }
             String providedPathString = providedPath instanceof String ? (String) providedPath : null;

@@ -53,7 +53,7 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
 
     private final ResourceResolverFactory resolverFactory;
     private volatile RelayInfo relay;
-    private PathSampler sampler;
+    private volatile PathSampler sampler;
 
     /**
      * Creates a new {@code RelayProvider} instance for the given relay model
