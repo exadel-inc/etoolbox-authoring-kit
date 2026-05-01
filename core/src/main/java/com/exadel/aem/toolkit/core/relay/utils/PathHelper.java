@@ -24,7 +24,9 @@ import com.exadel.aem.toolkit.core.CoreConstants;
  */
 public class PathHelper {
 
-    /** Default (instantiation-blocking) constructor */
+    /**
+     * Default (instantiation-blocking) constructor
+     */
     private PathHelper() {
     }
 

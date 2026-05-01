@@ -65,7 +65,7 @@ class PathSampler {
 
     /**
      * Resolves the configured path samples and produces a collection of {@link ResourceChange} notifications
-     * @return A non-null, possibly empty collection of {@link ResourceChange} instances
+     * @return A non-null, possibly empty collection of {@code ResourceChange} instances
      */
     Collection<ResourceChange> createChanges() {
         if (paths != null) {
@@ -234,7 +234,6 @@ class PathSampler {
             this.resolverFactory = value;
             return this;
         }
-
 
         /**
          * Sets the collection of path samples to resolve and report as changed when the relay is enabled or disabled

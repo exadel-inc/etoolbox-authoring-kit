@@ -42,7 +42,9 @@ public class ResourceHelper {
 
     static final String KEY_SUBSIDIARY = "subsidiary";
 
-    /** Default (instantiation-blocking) constructor */
+    /**
+     * Default (instantiation-blocking) constructor
+     */
     private ResourceHelper() {}
 
     /**
@@ -75,7 +77,7 @@ public class ResourceHelper {
             // To achieve that, we put it into the property map of the {@code basicResolver} so that it will be
             // automatically closed when the {@code basicResolver} is closed by Sling.
             // A {@link SubsidiaryHolder} wrapper is used so that the swap-and-close of replaced resolvers is atomic.
-            // See {@link ResourceResolver#getPropertyMap()}
+            // See https://sling.apache.org/apidocs/sling12/org/apache/sling/api/resource/ResourceResolver.html#getPropertyMap
             Map<String, Object> propertyMap = basicResolver.getPropertyMap();
             propertyMap.compute(KEY_SUBSIDIARY, (key, existing) -> {
                 if (existing instanceof ResolverHolder) {

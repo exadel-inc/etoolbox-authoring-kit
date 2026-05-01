@@ -49,21 +49,27 @@ public class RelayResource extends ResourceWrapper {
         }
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Nonnull
     public String getPath() {
         return path;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     @Nonnull
     public ResourceMetadata getResourceMetadata() {
         return resourceMetadata;
     }
 
-    /** {@inheritDoc} */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public @Nonnull Iterator<Resource> listChildren() {
         return ResourceHelper.listChildren(getResource(), path);

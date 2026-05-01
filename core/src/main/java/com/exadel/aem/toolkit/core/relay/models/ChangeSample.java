@@ -71,6 +71,8 @@ public class ChangeSample {
 
     /**
      * {@inheritDoc}
+     * <p>The equality check is based solely on the {@code path} property since we do not want to report the
+     * same path as changed multiple times</p>
      */
     @Override
     public final boolean equals(Object other) {
@@ -83,6 +85,8 @@ public class ChangeSample {
 
     /**
      * {@inheritDoc}
+     * <p>The hash code is based solely on the {@code path} property since we do not want to report the same path as
+     * changed multiple times</p>
      */
     @Override
     public int hashCode() {
