@@ -121,6 +121,7 @@ public class RelayProviderHost {
                 RelayProvider provider = new RelayProvider(resolverFactory, relay);
                 Dictionary<String, Object> properties = new Hashtable<>();
                 properties.put(ResourceProvider.PROPERTY_ROOT, relay.getSource());
+                properties.put(ResourceChangeListener.PATHS, new String[]{ relay.getTarget() });
                 ServiceRegistration<?> registration = context.registerService(
                     new String[]{ResourceProvider.class.getName(), ResourceChangeListener.class.getName()},
                     provider,
