@@ -60,8 +60,7 @@ public class ResolverUtil {
 
     /**
      * Creates a new {@link ResourceResolver} instance for the given user identifier using the provided resource
-     * resolver factory. The user identifier may be in the format of {@code username@bundleId} or
-     * {@code login:password}
+     * resolver factory
      * @param factory The {@code ResourceResolverFactory} instance
      * @param user    The user identifier string
      * @return New instance of {@code ResourceResolver}
@@ -100,13 +99,19 @@ public class ResolverUtil {
         ResourceResolver resolverByTargetBundle = ServiceUtil.withService(
             ResourceResolverFactory.class,
             targetBundle.getBundleContext(),
-            f -> {
+            (f, callback) -> {
                 try {
-                    return f.getServiceResourceResolver(
+                    ResourceResolver resolver = f.getServiceResourceResolver(
                         Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, localizedUserId)
                     );
+                    // By adding the callback to the resolver's property map, we ensure that the obtained service
+                    // will be unget no sooner than the resolver is closed
+                    // See https://sling.apache.org/apidocs/sling12/org/apache/sling/api/resource/ResourceResolver.html#getPropertyMap
+                    resolver.getPropertyMap().put("unget", (AutoCloseable) callback::run);
+                    return resolver;
                 } catch (LoginException e) {
                     nestedException.set(e);
+                    callback.run();
                     return null;
                 }
             },

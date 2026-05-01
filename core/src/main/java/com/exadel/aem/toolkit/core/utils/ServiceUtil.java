@@ -13,6 +13,8 @@
  */
 package com.exadel.aem.toolkit.core.utils;
 
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import javax.annotation.Nonnull;
@@ -45,6 +47,10 @@ public class ServiceUtil {
     private ServiceUtil() {
     }
 
+    /* --------------------------------------
+       Consumer-style methods (non-returning)
+       -------------------------------------- */
+
     /**
      * Executes the provided routine with an instance of the specified service class, if available. The service is
      * automatically obtained and released after the consumer is executed
@@ -58,33 +64,11 @@ public class ServiceUtil {
         Bundle bundle = FrameworkUtil.getBundle(ServiceUtil.class);
         BundleContext context = bundle != null ? bundle.getBundleContext() : null;
         if (context == null) {
-            LOG.error(ERROR_CONTEXT, serviceClass.getName());
+            // Absence of bundle is generally unlikely
+            LOG.debug(ERROR_CONTEXT, serviceClass.getName());
             return;
         }
         withService(serviceClass, context, consumer);
-    }
-
-    /**
-     * Executes the provided routine with an instance of the specified service class to get a result, if available. The
-     * service is automatically obtained and released after the processor is executed
-     * @param serviceClass The class of the service to be used
-     * @param processor    The routine to compute the result with the service instance
-     * @param defaultValue The value to be returned if the service is not available or an error occurs
-     * @param <T>          The type of the service
-     * @param <U>          The type of the result
-     * @return The result of the processor execution, or the default value
-     */
-    public static <T, U> U withService(
-        @Nonnull Class<T> serviceClass,
-        @Nonnull Function<T, U> processor,
-        U defaultValue) {
-        Bundle bundle = FrameworkUtil.getBundle(ServiceUtil.class);
-        BundleContext context = bundle != null ? bundle.getBundleContext() : null;
-        if (context == null) {
-            LOG.error(ERROR_CONTEXT, serviceClass.getName());
-            return defaultValue;
-        }
-        return withService(serviceClass, context, processor, defaultValue);
     }
 
     /**
@@ -105,7 +89,7 @@ public class ServiceUtil {
             reference = context.getServiceReference(serviceClass);
             T service = reference != null ? context.getService(reference) : null;
             if (service == null) {
-                // This is rather an anticipated case because a service might not be registered due to a particular config,
+                // This is an anticipated case because a service might not be registered due to a particular config,
                 // e.g., a ConfigChangeListener
                 LOG.debug(ERROR_RETRIEVAL, serviceClass.getName());
                 return;
@@ -120,6 +104,68 @@ public class ServiceUtil {
         } finally {
             ungetService(context, reference);
         }
+    }
+
+    /**
+     * Executes the provided routine with an instance of the specified service class, if available. The service is
+     * automatically obtained. It is released when the client code triggers the provided callback
+     * @param serviceClass The class of the service to be used
+     * @param context      The OSGi bundle context to be used for service retrieval
+     * @param consumer     The routine to be executed with the service instance. The second argument is a callback to
+     *                     trigger service release
+     * @param <T>          The type of the service
+     */
+    public static <T> void withService(
+        @Nonnull Class<T> serviceClass,
+        @Nonnull BundleContext context,
+        @Nonnull BiConsumer<T, Runnable> consumer) {
+
+        try {
+            ServiceReference<T> reference = context.getServiceReference(serviceClass);
+            T service = reference != null ? context.getService(reference) : null;
+            if (service == null) {
+                // This is an anticipated case because a service might not be registered due to a particular config,
+                // e.g., a ConfigChangeListener
+                LOG.debug(ERROR_RETRIEVAL, serviceClass.getName());
+                return;
+            }
+            try {
+                consumer.accept(service, () -> ungetService(context, reference));
+            } catch (RuntimeException e) {
+                LOG.error(ERROR_RUNNING, serviceClass.getName(), e);
+                ungetService(context, reference);
+            }
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            LOG.error(ERROR_HANDLING, serviceClass.getName(), e);
+        }
+    }
+
+    /* ----------------------
+       Function-style methods
+       ---------------------- */
+
+    /**
+     * Executes the provided routine with an instance of the specified service class to get a result, if available. The
+     * service is automatically obtained and released after the processor is executed
+     * @param serviceClass The class of the service to be used
+     * @param processor    The routine to compute the result with the service instance
+     * @param defaultValue The value to be returned if the service is not available or an error occurs
+     * @param <T>          The type of the service
+     * @param <U>          The type of the result
+     * @return The result of the processor execution, or the default value
+     */
+    public static <T, U> U withService(
+        @Nonnull Class<T> serviceClass,
+        @Nonnull Function<T, U> processor,
+        U defaultValue) {
+        Bundle bundle = FrameworkUtil.getBundle(ServiceUtil.class);
+        BundleContext context = bundle != null ? bundle.getBundleContext() : null;
+        if (context == null) {
+            // Absence of bundle is generally unlikely
+            LOG.debug(ERROR_CONTEXT, serviceClass.getName());
+            return defaultValue;
+        }
+        return withService(serviceClass, context, processor, defaultValue);
     }
 
     /**
@@ -145,7 +191,7 @@ public class ServiceUtil {
             reference = context.getServiceReference(serviceClass);
             T service = reference != null ? context.getService(reference) : null;
             if (service == null) {
-                // This is rather an anticipated case because a service might not be registered due to a particular config,
+                // This is an anticipated case because a service might not be registered due to a particular config,
                 // e.g., a ConfigChangeListener
                 LOG.debug(ERROR_RETRIEVAL, serviceClass.getName());
                 return defaultValue;
@@ -163,6 +209,51 @@ public class ServiceUtil {
         }
         return result;
     }
+
+    /**
+     * Executes the provided routine with an instance of the specified service class to get a result, if available. The
+     * service is automatically obtained. It is released when the client code triggers the provided callback
+     * @param serviceClass The class of the service to be used
+     * @param context      The OSGi bundle context to be used for service retrieval
+     * @param processor    The routine to compute the result with the service instance. The second argument is a
+     *                     callback to trigger service release
+     * @param defaultValue The value to be returned if the service is not available or an error occurs
+     * @param <T>          The type of the service
+     * @param <U>          The type of the result
+     * @return The result of the processor execution, or the default value
+     */
+    public static <T, U> U withService(
+        @Nonnull Class<T> serviceClass,
+        @Nonnull BundleContext context,
+        @Nonnull BiFunction<T, Runnable, U> processor,
+        U defaultValue) {
+
+        U result = defaultValue;
+        try {
+            ServiceReference<T> reference = context.getServiceReference(serviceClass);
+            T service = reference != null ? context.getService(reference) : null;
+            if (service == null) {
+                // This is an anticipated case because a service might not be registered due to a particular config,
+                // e.g., a ConfigChangeListener
+                LOG.debug(ERROR_RETRIEVAL, serviceClass.getName());
+                return defaultValue;
+            }
+            try {
+                result = processor.apply(service, () -> ungetService(context, reference));
+            } catch (RuntimeException e) {
+                LOG.error(ERROR_RUNNING, serviceClass.getName(), e);
+                ungetService(context, reference);
+                return defaultValue;
+            }
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            LOG.error(ERROR_HANDLING, serviceClass.getName(), e);
+        }
+        return result;
+    }
+
+    /* ---------------
+       Utility methods
+       --------------- */
 
     /**
      * Safely ungets the provided service reference from the context, suppressing any exceptions that might occur
