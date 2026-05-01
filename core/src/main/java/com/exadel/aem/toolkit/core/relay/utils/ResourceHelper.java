@@ -65,7 +65,7 @@ public class ResourceHelper {
         ResourceResolver effectiveResolver = resolverModifier.apply(basicResolver);
         Resource result = effectiveResolver.getResource(path);
         if (result == null) {
-            LOG.warn("Could not resolve {} with user {}", path, effectiveResolver.getUserID());
+            LOG.debug("Could not resolve {} with user {}", path, effectiveResolver.getUserID());
             if (!effectiveResolver.equals(basicResolver)) {
                 effectiveResolver.close();
             }
@@ -108,6 +108,7 @@ public class ResourceHelper {
         String path,
         ResourceContext resourceContext,
         Resource parent) {
+        reportFallingBack(path);
         if (resolveContext == null) {
             reportMissingContext(path);
             return null;
@@ -118,7 +119,6 @@ public class ResourceHelper {
             reportMissingContext(path);
             return null;
         }
-        reportFallingBack(path);
         return ((ResourceProvider<Void>) parentResourceProvider).getResource((ResolveContext<Void>) parentContext, path, resourceContext, parent);
     }
 
@@ -152,6 +152,7 @@ public class ResourceHelper {
     public static Iterator<Resource> listChildren(
         ResolveContext<?> resolveContext,
         Resource parent) {
+        reportFallingBack(parent.getPath());
         if (resolveContext == null) {
             reportMissingContext(parent.getPath());
             return null;
@@ -162,7 +163,6 @@ public class ResourceHelper {
             reportMissingContext(parent.getPath());
             return null;
         }
-        reportFallingBack(parent.getPath());
         return ((ResourceProvider<Void>) parentResourceProvider).listChildren((ResolveContext<Void>) parentContext, parent);
     }
 
@@ -193,7 +193,7 @@ public class ResourceHelper {
      */
     static class ResolverHolder implements Closeable {
 
-        private ResourceResolver resolver;
+        private volatile ResourceResolver resolver;
 
         /**
          * Creates a new holder with the provided resolver
