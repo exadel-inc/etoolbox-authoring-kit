@@ -16,138 +16,314 @@ package com.exadel.aem.toolkit.core.relay.services;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
+import java.util.stream.Collectors;
 import javax.jcr.Session;
-import javax.jcr.query.Query;
 
+import org.apache.sling.api.resource.LoginException;
+import org.apache.sling.api.resource.PersistenceException;
+import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.resource.observation.ResourceChange;
-import org.apache.sling.testing.mock.jcr.MockJcr;
+import org.apache.sling.testing.mock.sling.ResourceResolverType;
+import org.junit.Rule;
 import org.junit.Test;
+import org.mockito.Mockito;
+import io.wcm.testing.mock.aem.junit.AemContext;
+import io.wcm.testing.mock.aem.junit.AemContextBuilder;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+
+import com.exadel.aem.toolkit.core.relay.models.ChangeSample;
+import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
 public class PathSamplerTest {
 
-    private static final String PATH_PLAIN = "/content/plain";
-    private static final String PATH_ANOTHER = "/content/another";
+    private static final String PATH_SOURCE = "/content/source";
+    private static final String PATH_TARGET = "/content/target";
+    private static final String PATH_CHILD = "/page1";
 
-    private static final String XPATH_MATCH_SAMPLED = "/jcr:root/content//*[@type='sampled']";
+    private static final String XPATH_CHILDREN = "/jcr:root/content/target/*";
+    private static final String XPATH_INVALID = "//[@invalid syntax";
+
+    @Rule
+    public final AemContext context = new AemContextBuilder()
+        .resourceResolverType(ResourceResolverType.JCR_OAK)
+        .build();
+
+    /* ----------------
+       JCR path samples
+       ---------------- */
 
     @Test
-    public void shouldReportEmptyWhenSamplesAreNullOrEmpty() {
-        assertTrue(new PathSampler(null).isEmpty());
-        assertTrue(new PathSampler(Collections.emptyList()).isEmpty());
-        assertFalse(new PathSampler(Collections.singletonList(PATH_PLAIN)).isEmpty());
+    public void shouldReturnEmptyForNoSamples() {
+        PathSampler samplerWithNull = PathSampler
+            .builder()
+            .source(PATH_SOURCE)
+            .target(PATH_TARGET)
+            .build();
+        assertTrue(samplerWithNull.createChanges().isEmpty());
+
+        PathSampler samplerWithEmpty = PathSampler
+            .builder()
+            .source(PATH_SOURCE)
+            .target(PATH_TARGET)
+            .samples(Collections.emptyList())
+            .build();
+        assertTrue(samplerWithEmpty.createChanges().isEmpty());
     }
 
     @Test
-    public void shouldReturnEmptyChangesWithoutResolution() {
-        PathSampler sampler = new PathSampler(Collections.singletonList(PATH_PLAIN));
+    public void shouldCreateChangesFromJcrPaths() {
+        // Single path: emits one CHANGED event
+        PathSampler singleSampler = PathSampler
+            .builder()
+            .source(PATH_SOURCE)
+            .target(PATH_TARGET)
+            .samples(Collections.singletonList(newChangeSample(PATH_TARGET + PATH_CHILD)))
+            .build();
+
+        Collection<ResourceChange> singleResult = singleSampler.createChanges();
+        assertEquals(1, singleResult.size());
+        assertEquals(ResourceChange.ChangeType.CHANGED, singleResult.iterator().next().getType());
+
+        // Multiple distinct paths: each emits a separate event
+        PathSampler multiSampler = PathSampler
+            .builder()
+            .source(PATH_SOURCE)
+            .target(PATH_TARGET)
+            .samples(Arrays.asList(
+                newChangeSample(PATH_TARGET + "/page1"),
+                newChangeSample(PATH_TARGET + "/page2")))
+            .build();
+        assertEquals(2, multiSampler.createChanges().size());
+
+        // Duplicate path in samples: deduplicated by the internal path set
+        PathSampler dupSampler = PathSampler.builder()
+            .source(PATH_SOURCE)
+            .target(PATH_TARGET)
+            .samples(Arrays.asList(
+                newChangeSample(PATH_TARGET + PATH_CHILD),
+                newChangeSample(PATH_TARGET + PATH_CHILD)))
+            .build();
+        assertEquals(1, dupSampler.createChanges().size());
+    }
+
+    @Test
+    public void shouldRewriteTargetPaths() {
+        PathSampler sampler = PathSampler
+            .builder()
+            .source(PATH_SOURCE)
+            .target(PATH_TARGET)
+            .samples(Arrays.asList(
+                newChangeSample(PATH_TARGET + PATH_CHILD),
+                newChangeSample("/content/unrelated/page")))
+            .build();
+
+        Collection<ResourceChange> changes = sampler.createChanges();
+        List<String> paths = changes.stream()
+            .map(ResourceChange::getPath)
+            .collect(Collectors.toList());
+
+        assertEquals(2, paths.size());
+        // Path under target is rewritten to source prefix
+        assertTrue(paths.contains(PATH_SOURCE + PATH_CHILD));
+        // Path outside target is returned unchanged
+        assertTrue(paths.contains("/content/unrelated/page"));
+    }
+
+    /* --------------
+       Result caching
+       -------------- */
+
+    @Test
+    public void shouldCacheResolvedPaths() {
+        PathSampler sampler = PathSampler
+            .builder()
+            .source(PATH_SOURCE)
+            .target(PATH_TARGET)
+            .samples(Collections.singletonList(newChangeSample(PATH_TARGET + PATH_CHILD)))
+            .build();
+
+        // First call applies target→source rewriting
+        Collection<ResourceChange> firstResult = sampler.createChanges();
+        assertEquals(1, firstResult.size());
+        assertEquals(PATH_SOURCE + PATH_CHILD, firstResult.iterator().next().getPath());
+
+        // Second call returns raw cached paths without rewriting
+        Collection<ResourceChange> secondResult = sampler.createChanges();
+        assertEquals(1, secondResult.size());
+        assertEquals(PATH_TARGET + PATH_CHILD, secondResult.iterator().next().getPath());
+    }
+
+    /* ----------------
+       XPath resolution
+       ---------------- */
+
+    @Test
+    public void shouldResolveXpathExpression() throws LoginException, PersistenceException {
+        context.create().resource(PATH_TARGET + PATH_CHILD);
+        context.resourceResolver().commit();
+
+        PathSampler sampler = PathSampler
+            .builder()
+            .resolverFactory(newMockFactory())
+            .source(PATH_SOURCE)
+            .target(PATH_TARGET)
+            .samples(Collections.singletonList(newChangeSample(XPATH_CHILDREN)))
+            .build();
 
         Collection<ResourceChange> changes = sampler.createChanges();
 
-        assertTrue(changes.isEmpty());
+        assertEquals(1, changes.size());
+        assertEquals(PATH_SOURCE + PATH_CHILD, changes.iterator().next().getPath());
     }
 
     @Test
-    public void shouldProduceChangesFromJcrPaths() {
-        // Session is not accessed during plain JCR path resolution; null is safe here
-        PathSampler sampler = new PathSampler(Arrays.asList(PATH_PLAIN, PATH_ANOTHER));
+    public void shouldApplyQueryLimit() throws LoginException, PersistenceException {
+        for (int i = 0; i < 10; i++) {
+            context.create().resource(PATH_TARGET + "/node" + i);
+        }
+        context.resourceResolver().commit();
 
-        Collection<ResourceChange> changes = sampler.createChanges(null);
+        PathSampler sampler = PathSampler
+            .builder()
+            .resolverFactory(newMockFactory())
+            .source(PATH_SOURCE)
+            .target(PATH_TARGET)
+            .samples(Collections.singletonList(newChangeSampleWithLimit(XPATH_CHILDREN, 5)))
+            .build();
 
-        assertEquals(2, changes.size());
-        assertTrue(changes.stream().anyMatch(c -> PATH_PLAIN.equals(c.getPath())));
-        assertTrue(changes.stream().anyMatch(c -> PATH_ANOTHER.equals(c.getPath())));
-        changes.forEach(c -> assertEquals(ResourceChange.ChangeType.CHANGED, c.getType()));
+        Collection<ResourceChange> changes = sampler.createChanges();
+
+        assertEquals(5, changes.size());
     }
 
     @Test
-    public void shouldProduceChangesFromXPathExpression() throws RepositoryException {
-        Session session = MockJcr.newSession();
-        Node contentNode = session.getRootNode().addNode("content");
-        Node plainNode = contentNode.addNode("plain");
-        Node anotherNode = contentNode.addNode("another");
-        setXpathQueryResult(session, XPATH_MATCH_SAMPLED, Arrays.asList(plainNode, anotherNode));
+    public void shouldSkipXpathOnError() throws LoginException {
+        // Invalid XPath syntax causes Oak to throw InvalidQueryException (extends RepositoryException)
+        PathSampler repositoryErrorSampler = PathSampler
+            .builder()
+            .resolverFactory(newMockFactory())
+            .source(PATH_SOURCE)
+            .target(PATH_TARGET)
+            .samples(Collections.singletonList(newChangeSample(XPATH_INVALID)))
+            .build();
 
-        PathSampler sampler = new PathSampler(Collections.singletonList(XPATH_MATCH_SAMPLED));
-        Collection<ResourceChange> changes = sampler.createChanges(session);
+        assertTrue(repositoryErrorSampler.createChanges().isEmpty());
 
-        assertEquals(2, changes.size());
-        assertTrue(changes.stream().anyMatch(c -> PATH_PLAIN.equals(c.getPath())));
-        assertTrue(changes.stream().anyMatch(c -> PATH_ANOTHER.equals(c.getPath())));
-        changes.forEach(c -> assertEquals(ResourceChange.ChangeType.CHANGED, c.getType()));
+        // LoginException when obtaining a resolver: sample is skipped
+        ResourceResolverFactory failingFactory = Mockito.mock(ResourceResolverFactory.class);
+        Mockito
+            .when(failingFactory.getServiceResourceResolver(Mockito.any()))
+            .thenThrow(new LoginException("Service user not found"));
+
+        PathSampler loginErrorSampler = PathSampler
+            .builder()
+            .resolverFactory(failingFactory)
+            .source(PATH_SOURCE)
+            .target(PATH_TARGET)
+            .samples(Collections.singletonList(newChangeSample(XPATH_CHILDREN)))
+            .build();
+
+        assertTrue(loginErrorSampler.createChanges().isEmpty());
+    }
+
+    /* -----------------
+       Resolver rotation
+       ----------------- */
+
+    @Test
+    public void shouldReuseResolverForSameUser() throws LoginException {
+        ResourceResolver sessionResolver = newMockResolver();
+        ResourceResolverFactory factory = Mockito.mock(ResourceResolverFactory.class);
+        Mockito.when(factory.getServiceResourceResolver(Mockito.any())).thenReturn(sessionResolver);
+
+        PathSampler sampler = PathSampler.builder()
+            .resolverFactory(factory)
+            .source(PATH_SOURCE)
+            .target(PATH_TARGET)
+            .samples(Arrays.asList(
+                newChangeSampleWithUser(XPATH_CHILDREN, "author"),
+                newChangeSampleWithUser("/jcr:root/content//element(*)", "author")))
+            .build();
+
+        sampler.createChanges();
+
+        // Factory is called once; the same resolver is reused for the second sample
+        Mockito.verify(factory, Mockito.times(1)).getServiceResourceResolver(Mockito.any());
     }
 
     @Test
-    public void shouldProduceChangesFromMixedSamples() throws RepositoryException {
-        Session session = MockJcr.newSession();
-        Node anotherNode = session.getRootNode().addNode("content").addNode("another");
-        setXpathQueryResult(session, XPATH_MATCH_SAMPLED, Collections.singletonList(anotherNode));
+    public void shouldRotateResolverOnUserChange() throws LoginException {
+        ResourceResolver resolverA = newMockResolver();
+        ResourceResolver resolverB = newMockResolver();
 
-        // PATH_PLAIN is a plain JCR path; PATH_ANOTHER is resolved via the XPath expression
-        PathSampler sampler = new PathSampler(Arrays.asList(PATH_PLAIN, XPATH_MATCH_SAMPLED));
-        Collection<ResourceChange> changes = sampler.createChanges(session);
+        ResourceResolverFactory factory = Mockito.mock(ResourceResolverFactory.class);
+        Mockito.when(factory.getServiceResourceResolver(Mockito.any()))
+            .thenReturn(resolverA)
+            .thenReturn(resolverB);
 
-        assertEquals(2, changes.size());
-        assertTrue(changes.stream().anyMatch(c -> PATH_PLAIN.equals(c.getPath())));
-        assertTrue(changes.stream().anyMatch(c -> PATH_ANOTHER.equals(c.getPath())));
-    }
+        PathSampler sampler = PathSampler.builder()
+            .resolverFactory(factory)
+            .source(PATH_SOURCE)
+            .target(PATH_TARGET)
+            .samples(Arrays.asList(
+                newChangeSampleWithUser(XPATH_CHILDREN, "user1"),
+                newChangeSampleWithUser("/jcr:root/content//element(*)", "user2")))
+            .build();
 
-    @Test
-    public void shouldSkipUnrecognizedSamples() {
-        PathSampler sampler = new PathSampler(Arrays.asList("not-a-path", "relative/path", ""));
+        sampler.createChanges();
 
-        // Session is not accessed because none of the samples require resolution; null is safe
-        Collection<ResourceChange> changes = sampler.createChanges(null);
-
-        assertTrue(changes.isEmpty());
-    }
-
-    @Test
-    public void shouldReturnEmptyChangesWhenXPathYieldsNoResults() {
-        Session session = MockJcr.newSession();
-        setXpathQueryResult(session, XPATH_MATCH_SAMPLED, Collections.emptyList());
-
-        PathSampler sampler = new PathSampler(Collections.singletonList(XPATH_MATCH_SAMPLED));
-        Collection<ResourceChange> changes = sampler.createChanges(session);
-
-        assertTrue(changes.isEmpty());
-    }
-
-    @Test
-    public void shouldResolveSamplesOnce() throws RepositoryException {
-        Session session = MockJcr.newSession();
-        Node plainNode = session.getRootNode().addNode("content").addNode("plain");
-        setXpathQueryResult(session, XPATH_MATCH_SAMPLED, Collections.singletonList(plainNode));
-
-        PathSampler sampler = new PathSampler(Collections.singletonList(XPATH_MATCH_SAMPLED));
-        Collection<ResourceChange> firstResult = sampler.createChanges(session);
-        // Second call with null session — if resolution were not cached, a NullPointerException would occur
-        Collection<ResourceChange> secondResult = sampler.createChanges(null);
-
-        assertEquals(firstResult.size(), secondResult.size());
-        assertTrue(secondResult.stream().anyMatch(c -> PATH_PLAIN.equals(c.getPath())));
-    }
-
-    @Test
-    public void shouldReturnEmptyChangesForNullSamples() {
-        PathSampler sampler = new PathSampler(null);
-
-        Collection<ResourceChange> changes = sampler.createChanges(null);
-
-        assertTrue(changes.isEmpty());
+        // Factory is called once per distinct user
+        Mockito.verify(factory, Mockito.times(2)).getServiceResourceResolver(Mockito.any());
+        // The first resolver is closed when the user changes
+        Mockito.verify(resolverA).close();
     }
 
     /* ---------------
        Utility methods
        --------------- */
 
-    @SuppressWarnings({"deprecation", "SameParameterValue"})
-    private static void setXpathQueryResult(Session session, String expression, List<Node> nodes) {
-        MockJcr.setQueryResult(session, expression, Query.XPATH, nodes);
+    private static ChangeSample newChangeSample(String path) {
+        return ObjectConversionUtil.toObject(
+            "{\"path\":\"" + path + "\"}",
+            ChangeSample.class);
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private static ChangeSample newChangeSampleWithLimit(String path, int limit) {
+        return ObjectConversionUtil.toObject(
+            "{\"path\":\"" + path + "\",\"limit\":" + limit + "}",
+            ChangeSample.class);
+    }
+
+    private static ChangeSample newChangeSampleWithUser(String path, String user) {
+        return ObjectConversionUtil.toObject(
+            "{\"path\":\"" + path + "\",\"user\":\"" + user + "\"}",
+            ChangeSample.class);
+    }
+
+    private ResourceResolverFactory newMockFactory() throws LoginException {
+        // We are not using the built-in resource resolver factory because of lack of support for
+        // ResourceResolver#getPropertyMap() in the built-in mock resource resolver (dependency version issue).
+        // Can be revised to use the real factory once the dependency is updated
+        ResourceResolverFactory factory = Mockito.mock(ResourceResolverFactory.class);
+        ResourceResolver sessionResolver = newMockResolver();
+        Mockito
+            .when(factory.getServiceResourceResolver(Mockito.any()))
+            .thenReturn(sessionResolver);
+        return factory;
+    }
+
+    private ResourceResolver newMockResolver() {
+        Session session = context.resourceResolver().adaptTo(Session.class);
+        assertNotNull(session);
+        ResourceResolver resolver = Mockito.mock(ResourceResolver.class);
+        Mockito.when(resolver.adaptTo(Session.class)).thenReturn(session);
+        Mockito.when(resolver.getPropertyMap()).thenReturn(new HashMap<>());
+        return resolver;
     }
 }
