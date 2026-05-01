@@ -13,13 +13,21 @@
  */
 package com.exadel.aem.toolkit.core.relay.services;
 
+import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Map;
+import javax.annotation.Nonnull;
 
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.spi.resource.provider.ResolveContext;
+import org.apache.sling.spi.resource.provider.ResourceContext;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.apache.sling.testing.mock.osgi.MockOsgi;
 import org.junit.Rule;
 import org.junit.Test;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
@@ -35,35 +43,27 @@ public class RelayProviderHostTest {
     @Rule
     public final AemContext context = AemContextFactory.newInstance();
 
-    @Test
-    public void shouldNotRegisterServicesWhenDisabled() throws Exception {
-        context.registerInjectActivateService(
-            new RelayProviderHost(),
-            newProps(false, PATH_MAPPING_A));
+    /* ------------------
+       Service activation
+       ------------------ */
 
+    @Test
+    public void shouldNotRegisterForInvalidConfig() throws InvalidSyntaxException {
+        // Disabled with a valid mapping
+        context.registerInjectActivateService(new RelayProviderHost(), newProps(false, PATH_MAPPING_A));
+        assertEquals(0, countRegisteredProviders());
+
+        // No path mappings
+        context.registerInjectActivateService(new RelayProviderHost(), newProps(true));
+        assertEquals(0, countRegisteredProviders());
+
+        // Invalid mapping (missing "to" value)
+        context.registerInjectActivateService(new RelayProviderHost(), newProps(true, PATH_MAPPING_MISSING_TO));
         assertEquals(0, countRegisteredProviders());
     }
 
     @Test
-    public void shouldNotRegisterServicesWithoutValidPathMappings() throws Exception {
-        context.registerInjectActivateService(
-            new RelayProviderHost(),
-            newProps(true));
-
-        assertEquals(0, countRegisteredProviders());
-    }
-
-    @Test
-    public void shouldSkipInvalidPathMappings() throws Exception {
-        context.registerInjectActivateService(
-            new RelayProviderHost(),
-            newProps(true, PATH_MAPPING_MISSING_TO));
-
-        assertEquals(0, countRegisteredProviders());
-    }
-
-    @Test
-    public void shouldRegisterServicesForEachValidPathMapping() throws Exception {
+    public void shouldRegisterForEachValidMapping() throws InvalidSyntaxException {
         context.registerInjectActivateService(
             new RelayProviderHost(),
             newProps(true, PATH_MAPPING_A, PATH_MAPPING_B));
@@ -72,7 +72,66 @@ public class RelayProviderHostTest {
     }
 
     @Test
-    public void shouldUnregisterServicesOnDeactivate() throws Exception {
+    public void shouldSkipShadowedPath() throws InvalidSyntaxException {
+        Dictionary<String, Object> extProps = new Hashtable<>();
+        extProps.put(ResourceProvider.PROPERTY_ROOT, "/content/source");
+        extProps.put(ResourceProvider.PROPERTY_NAME, "external-provider");
+        context.bundleContext().registerService(ResourceProvider.class.getName(), new StubResourceProvider(), extProps);
+
+        context.registerInjectActivateService(new RelayProviderHost(), newProps(true, PATH_MAPPING_A));
+
+        assertEquals(1, countRegisteredProviders());
+    }
+
+    /* ---------------------
+       Service re-activation
+       --------------------- */
+
+    @Test
+    public void shouldUpdateProviderOnReactivate() throws InvalidSyntaxException {
+        RelayProviderHost host = context.registerInjectActivateService(
+            new RelayProviderHost(),
+            newProps(true, PATH_MAPPING_A));
+
+        assertEquals(1, countRegisteredProviders());
+
+        MockOsgi.activate(host, context.bundleContext(), newProps(true, PATH_MAPPING_A));
+
+        assertEquals(1, countRegisteredProviders());
+    }
+
+    @Test
+    public void shouldUnregisterRemovedMappingOnReactivate() throws InvalidSyntaxException {
+        RelayProviderHost host = context.registerInjectActivateService(
+            new RelayProviderHost(),
+            newProps(true, PATH_MAPPING_A, PATH_MAPPING_B));
+
+        assertEquals(2, countRegisteredProviders());
+
+        MockOsgi.activate(host, context.bundleContext(), newProps(true, PATH_MAPPING_A));
+
+        assertEquals(1, countRegisteredProviders());
+    }
+
+    @Test
+    public void shouldRegisterAddedMappingOnReactivate() throws InvalidSyntaxException {
+        RelayProviderHost host = context.registerInjectActivateService(
+            new RelayProviderHost(),
+            newProps(true, PATH_MAPPING_A));
+
+        assertEquals(1, countRegisteredProviders());
+
+        MockOsgi.activate(host, context.bundleContext(), newProps(true, PATH_MAPPING_A, PATH_MAPPING_B));
+
+        assertEquals(2, countRegisteredProviders());
+    }
+
+    /* ------------
+       Deactivation
+       ------------ */
+
+    @Test
+    public void shouldUnregisterOnDeactivate() throws InvalidSyntaxException {
         RelayProviderHost host = context.registerInjectActivateService(
             new RelayProviderHost(),
             newProps(true, PATH_MAPPING_A));
@@ -88,7 +147,7 @@ public class RelayProviderHostTest {
        Utility methods
        --------------- */
 
-    private int countRegisteredProviders() throws Exception {
+    private int countRegisteredProviders() throws InvalidSyntaxException {
         ServiceReference<?>[] refs = context.bundleContext()
             .getAllServiceReferences(ResourceProvider.class.getName(), null);
         return refs != null ? refs.length : 0;
@@ -99,5 +158,22 @@ public class RelayProviderHostTest {
         props.put("enabled", enabled);
         props.put("pathMappings", pathMappings);
         return props;
+    }
+
+    private static class StubResourceProvider extends ResourceProvider<Void> {
+
+        @Override
+        public Resource getResource(
+            @Nonnull ResolveContext<Void> ctx,
+            @Nonnull String path,
+            @Nonnull ResourceContext resourceContext,
+            Resource parent) {
+            return null;
+        }
+
+        @Override
+        public Iterator<Resource> listChildren(@Nonnull ResolveContext<Void> ctx, @Nonnull Resource parent) {
+            return null;
+        }
     }
 }
