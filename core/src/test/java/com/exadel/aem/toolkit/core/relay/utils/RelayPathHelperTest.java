@@ -17,22 +17,22 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class PathHelperTest {
+public class RelayPathHelperTest {
 
     private static final String PATH_SOURCE = "/content/source";
     private static final String PATH_TARGET = "/content/target";
 
     @Test
     public void shouldReplacePrefix() {
-        assertEquals(PATH_TARGET, PathHelper.replace(PATH_SOURCE, PATH_SOURCE, PATH_TARGET));
-        assertEquals(PATH_TARGET + "/child", PathHelper.replace(PATH_SOURCE + "/child", PATH_SOURCE, PATH_TARGET));
-        assertEquals(PATH_TARGET + "/a/b/c", PathHelper.replace(PATH_SOURCE + "/a/b/c", PATH_SOURCE, PATH_TARGET));
+        assertEquals(PATH_TARGET, RelayPathHelper.replace(PATH_SOURCE, PATH_SOURCE, PATH_TARGET));
+        assertEquals(PATH_TARGET + "/child", RelayPathHelper.replace(PATH_SOURCE + "/child", PATH_SOURCE, PATH_TARGET));
+        assertEquals(PATH_TARGET + "/a/b/c", RelayPathHelper.replace(PATH_SOURCE + "/a/b/c", PATH_SOURCE, PATH_TARGET));
     }
 
     @Test
     public void shouldReturnPathUnchanged() {
-        assertEquals("/content/other", PathHelper.replace("/content/other", PATH_SOURCE, PATH_TARGET));
-        assertEquals(PATH_SOURCE + "-extra", PathHelper.replace(PATH_SOURCE + "-extra", PATH_SOURCE, PATH_TARGET));
-        assertNull(PathHelper.replace(null, PATH_SOURCE, PATH_TARGET));
+        assertEquals("/content/other", RelayPathHelper.replace("/content/other", PATH_SOURCE, PATH_TARGET));
+        assertEquals(PATH_SOURCE + "-extra", RelayPathHelper.replace(PATH_SOURCE + "-extra", PATH_SOURCE, PATH_TARGET));
+        assertNull(RelayPathHelper.replace(null, PATH_SOURCE, PATH_TARGET));
     }
 }

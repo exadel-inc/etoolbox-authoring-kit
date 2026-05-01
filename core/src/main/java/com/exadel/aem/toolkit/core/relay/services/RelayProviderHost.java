@@ -46,7 +46,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.relay.models.ChangeSample;
 import com.exadel.aem.toolkit.core.relay.models.RelayInfo;
 import com.exadel.aem.toolkit.core.relay.models.RelayMapping;
-import com.exadel.aem.toolkit.core.relay.utils.PathHelper;
+import com.exadel.aem.toolkit.core.relay.utils.RelayPathHelper;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
 /**
@@ -109,7 +109,7 @@ public class RelayProviderHost {
             Map<String, String> providedPaths = getExternallyProvidedPaths(context);
             for (RelayInfo relay : relays) {
                 String shadowedEntries = providedPaths.entrySet().stream()
-                    .filter(e -> PathHelper.isSubpath(e.getKey(), relay.getSource()))
+                    .filter(e -> RelayPathHelper.isSubpath(e.getKey(), relay.getSource()))
                     .map(e -> e.getKey() + " by " + e.getValue())
                     .collect(Collectors.joining(CoreConstants.SEPARATOR_COMMA + StringUtils.SPACE));
                 if (!shadowedEntries.isEmpty()) {

@@ -45,7 +45,7 @@ import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.relay.models.RelayResource;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ResourceHelperTest {
+public class RelayResourceHelperTest {
 
     private static final String PATH_TARGET = "/content/target";
     private static final String PATH_CHILD = "/child";
@@ -60,7 +60,7 @@ public class ResourceHelperTest {
         ResourceResolver resolver = context.resourceResolver();
 
         // Resource found → returned directly
-        Resource found = ResourceHelper.getResource(
+        Resource found = RelayResourceHelper.getResource(
             resolver,
             UnaryOperator.identity(),
             PATH_TARGET);
@@ -68,7 +68,7 @@ public class ResourceHelperTest {
         assertEquals(PATH_TARGET, found.getPath());
 
         // Resource not found → null
-        Resource notFound = ResourceHelper.getResource(
+        Resource notFound = RelayResourceHelper.getResource(
             resolver,
             UnaryOperator.identity(),
             PATH_TARGET + "/missing");
@@ -88,23 +88,23 @@ public class ResourceHelperTest {
         Mockito.when(basicResolver.getPropertyMap()).thenReturn(propertyMap);
 
         // Modified resolver → stored as subsidiary in the basic resolver's property map
-        ResourceHelper.getResource(
+        RelayResourceHelper.getResource(
             basicResolver,
             resolver -> modifiedResolver,
             PATH_TARGET);
-        assertTrue(propertyMap.get("subsidiary") instanceof ResourceHelper.ResolverHolder);
+        assertTrue(propertyMap.get("subsidiary") instanceof RelayResourceHelper.ResolverHolder);
 
         // Second call with a different modified resolver → existing subsidiary is closed, new one stored
         ResourceResolver nextResolver = Mockito.mock(ResourceResolver.class);
         Mockito.when(nextResolver.getResource(PATH_TARGET)).thenReturn(targetResource);
         Mockito.when(nextResolver.getUserID()).thenReturn("next-user");
 
-        ResourceHelper.getResource(
+        RelayResourceHelper.getResource(
             basicResolver,
             resolver -> nextResolver,
             PATH_TARGET);
         Mockito.verify(modifiedResolver).close();
-        assertTrue(propertyMap.get(ResourceHelper.KEY_SUBSIDIARY) instanceof ResourceHelper.ResolverHolder);
+        assertTrue(propertyMap.get(RelayResourceHelper.KEY_SUBSIDIARY) instanceof RelayResourceHelper.ResolverHolder);
     }
 
     @Test
@@ -138,7 +138,7 @@ public class ResourceHelperTest {
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                 }
-                ResourceHelper.getResource(
+                RelayResourceHelper.getResource(
                     basicResolver,
                     r -> resolver,
                     PATH_TARGET);
@@ -148,7 +148,7 @@ public class ResourceHelperTest {
         executor.shutdown();
         assertTrue(executor.awaitTermination(5, TimeUnit.SECONDS));
 
-        assertNotNull(propertyMap.get(ResourceHelper.KEY_SUBSIDIARY));
+        assertNotNull(propertyMap.get(RelayResourceHelper.KEY_SUBSIDIARY));
         assertEquals(threadCount - 1, closedCount.get());
     }
 
@@ -167,7 +167,7 @@ public class ResourceHelperTest {
         Mockito.doReturn(mockParentContext).when(mockResolveContext).getParentResolveContext();
 
         // Happy path → delegates to parent provider
-        Resource result = ResourceHelper.getResource(
+        Resource result = RelayResourceHelper.getResource(
             mockResolveContext,
             PATH_TARGET,
             mockResourceContext,
@@ -176,12 +176,12 @@ public class ResourceHelperTest {
         assertEquals(PATH_TARGET, result.getPath());
 
         // Null context → null
-        assertNull(ResourceHelper.getResource(null, PATH_TARGET, mockResourceContext, null));
+        assertNull(RelayResourceHelper.getResource(null, PATH_TARGET, mockResourceContext, null));
 
         // Null parent provider → null
         ResolveContext<Void> noProviderContext = newMockResolveContext();
         Mockito.doReturn(null).when(noProviderContext).getParentResourceProvider();
-        assertNull(ResourceHelper.getResource(noProviderContext, PATH_TARGET, mockResourceContext, null));
+        assertNull(RelayResourceHelper.getResource(noProviderContext, PATH_TARGET, mockResourceContext, null));
     }
 
     @Test
@@ -199,18 +199,18 @@ public class ResourceHelperTest {
         Mockito.doReturn(mockParentContext).when(mockResolveContext).getParentResolveContext();
 
         // Happy path → delegates to parent provider
-        Iterator<Resource> result = ResourceHelper.listChildren(mockResolveContext, parent);
+        Iterator<Resource> result = RelayResourceHelper.listChildren(mockResolveContext, parent);
         assertNotNull(result);
         assertTrue(result.hasNext());
         assertEquals(PATH_TARGET + PATH_CHILD, result.next().getPath());
 
         // Null context → null
-        assertNull(ResourceHelper.listChildren(null, parent));
+        assertNull(RelayResourceHelper.listChildren(null, parent));
 
         // Null parent provider → null
         ResolveContext<Void> noProviderContext = newMockResolveContext();
         Mockito.doReturn(null).when(noProviderContext).getParentResourceProvider();
-        assertNull(ResourceHelper.listChildren(noProviderContext, parent));
+        assertNull(RelayResourceHelper.listChildren(noProviderContext, parent));
     }
 
     @Test
@@ -219,7 +219,7 @@ public class ResourceHelperTest {
         context.create().resource(PATH_TARGET + PATH_CHILD);
 
         // Non-RelayResource → children wrapped in RelayResource using the supplied exposed path
-        Iterator<Resource> result = ResourceHelper.listChildren(target, PATH_EXPOSED);
+        Iterator<Resource> result = RelayResourceHelper.listChildren(target, PATH_EXPOSED);
         assertNotNull(result);
         assertTrue(result.hasNext());
         assertEquals(PATH_EXPOSED + PATH_CHILD, result.next().getPath());
@@ -227,7 +227,7 @@ public class ResourceHelperTest {
         // RelayResource → listChildren() passthrough; the path argument is ignored and the
         // relay resource's own path is used when mapping child names
         RelayResource relayTarget = new RelayResource(target, PATH_EXPOSED);
-        Iterator<Resource> relayResult = ResourceHelper.listChildren(relayTarget, "/content/ignored");
+        Iterator<Resource> relayResult = RelayResourceHelper.listChildren(relayTarget, "/content/ignored");
         assertNotNull(relayResult);
         assertTrue(relayResult.hasNext());
         assertEquals(PATH_EXPOSED + PATH_CHILD, relayResult.next().getPath());

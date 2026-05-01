@@ -36,16 +36,16 @@ import com.exadel.aem.toolkit.core.relay.models.RelayResource;
  * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
  * code</p>
  */
-public class ResourceHelper {
+public class RelayResourceHelper {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ResourceHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RelayResourceHelper.class);
 
     static final String KEY_SUBSIDIARY = "subsidiary";
 
     /**
      * Default (instantiation-blocking) constructor
      */
-    private ResourceHelper() {}
+    private RelayResourceHelper() {}
 
     /**
      * Resolves a resource at the provided path using a potentially modified {@link ResourceResolver}. Returns

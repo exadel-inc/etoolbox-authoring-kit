@@ -20,7 +20,7 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceMetadata;
 import org.apache.sling.api.resource.ResourceWrapper;
 
-import com.exadel.aem.toolkit.core.relay.utils.ResourceHelper;
+import com.exadel.aem.toolkit.core.relay.utils.RelayResourceHelper;
 
 /**
  * An implementation of {@link Resource} used by the relay provider to expose resources at a mapped source path.
@@ -72,7 +72,7 @@ public class RelayResource extends ResourceWrapper {
      */
     @Override
     public @Nonnull Iterator<Resource> listChildren() {
-        return ResourceHelper.listChildren(getResource(), path);
+        return RelayResourceHelper.listChildren(getResource(), path);
     }
 }
 

@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.relay.models.ChangeSample;
-import com.exadel.aem.toolkit.core.relay.utils.PathHelper;
+import com.exadel.aem.toolkit.core.relay.utils.RelayPathHelper;
 import com.exadel.aem.toolkit.core.utils.ResolverUtil;
 
 /**
@@ -104,7 +104,7 @@ class PathSampler {
         // All resolved paths must point to source instead of target
         return paths
             .stream()
-            .map(p -> PathHelper.isSubpath(p, target) ?  PathHelper.replace(p, target, source) : p)
+            .map(p -> RelayPathHelper.isSubpath(p, target) ?  RelayPathHelper.replace(p, target, source) : p)
             .map(path -> new ResourceChange(ResourceChange.ChangeType.CHANGED, path, false))
             .collect(Collectors.toList());
     }

@@ -37,8 +37,8 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.relay.models.RelayInfo;
 import com.exadel.aem.toolkit.core.relay.models.RelayResource;
-import com.exadel.aem.toolkit.core.relay.utils.PathHelper;
-import com.exadel.aem.toolkit.core.relay.utils.ResourceHelper;
+import com.exadel.aem.toolkit.core.relay.utils.RelayPathHelper;
+import com.exadel.aem.toolkit.core.relay.utils.RelayResourceHelper;
 import com.exadel.aem.toolkit.core.utils.ResolverUtil;
 
 /**
@@ -88,19 +88,19 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
         @Nonnull ResourceContext resourceContext,
         @Nullable Resource parent) {
 
-        RelayInfo relay = this.relay;   // Use a local copy to avoid potential race conditions with the update() method
-        if (!PathHelper.isSubpath(path, relay.getSource())) {
+        RelayInfo localRelay = relay;   // Use a local copy to avoid potential race conditions with the update() method
+        if (!RelayPathHelper.isSubpath(path, localRelay.getSource())) {
             return null;
         }
-        String targetPath = relay.getTarget() + StringUtils.substring(path, relay.getSource().length());
-        Resource resolved = ResourceHelper.getResource(
+        String targetPath = localRelay.getTarget() + StringUtils.substring(path, localRelay.getSource().length());
+        Resource resolved = RelayResourceHelper.getResource(
             context.getResourceResolver(),
             this::getMappedResourceResolver,
             targetPath);
         if (resolved != null) {
             return new RelayResource(resolved, path);
         }
-        return ResourceHelper.getResource(context, path, resourceContext, parent);
+        return RelayResourceHelper.getResource(context, path, resourceContext, parent);
     }
 
     /**
@@ -110,25 +110,25 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
     @Nullable
     public Iterator<Resource> listChildren(@Nonnull ResolveContext<Void> context, @Nonnull Resource parent) {
 
-        RelayInfo relay = this.relay;   // Use a local copy to avoid potential race conditions with the update() method
+        RelayInfo localRelay = relay;   // Use a local copy to avoid potential race conditions with the update() method
         String path = parent.getPath();
-        String targetPath = PathHelper.replace(path, relay.getSource(), relay.getTarget());
-        Resource targetResource = ResourceHelper.getResource(
+        String targetPath = RelayPathHelper.replace(path, localRelay.getSource(), localRelay.getTarget());
+        Resource targetResource = RelayResourceHelper.getResource(
             context.getResourceResolver(),
             this::getMappedResourceResolver,
             targetPath);
         if (targetResource != null) {
             targetResource = new RelayResource(targetResource, path);
         } else {
-            targetResource = ResourceHelper.getResource(context, path, null, parent);
+            targetResource = RelayResourceHelper.getResource(context, path, null, parent);
         }
         if (targetResource == null) {
             return null;
         } else if (!(targetResource instanceof RelayResource)) {
             // We have fallen back to an "original" resource, so we should iterate through it without any mapping
-            return ResourceHelper.listChildren(context, parent);
+            return RelayResourceHelper.listChildren(context, parent);
         }
-        return ResourceHelper.listChildren(targetResource, parent.getPath());
+        return RelayResourceHelper.listChildren(targetResource, parent.getPath());
     }
 
     /**
@@ -136,15 +136,15 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
      */
     @Override
     public void start(@Nonnull ProviderContext providerContext) {
-        RelayInfo relay = this.relay;   // Use a local copy to avoid potential race conditions with the update() method
-        LOG.info("Relay provider for {} -> {} is starting", relay.getSource(), relay.getTarget());
+        RelayInfo localRelay = relay;   // Use a local copy to avoid potential race conditions with the update() method
+        LOG.info("Relay provider for {} -> {} is starting", localRelay.getSource(), localRelay.getTarget());
         super.start(providerContext);
         sampler = PathSampler
             .builder()
             .resolverFactory(resolverFactory)
-            .source(relay.getSource())
-            .target(relay.getTarget())
-            .samples(relay.getChangeSamples())
+            .source(localRelay.getSource())
+            .target(localRelay.getTarget())
+            .samples(localRelay.getChangeSamples())
             .build();
 
         Collection<ResourceChange> changes = sampler.createChanges();
@@ -158,8 +158,8 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
      */
     @Override
     public void stop() {
-        RelayInfo relay = this.relay;   // Use a local copy to avoid potential race conditions with the update() method
-        LOG.info("Relay provider for {} -> {} is stopping", relay.getSource(), relay.getTarget());
+        RelayInfo localRelay = relay;   // Use a local copy to avoid potential race conditions with the update() method
+        LOG.info("Relay provider for {} -> {} is stopping", localRelay.getSource(), localRelay.getTarget());
         if (getProviderContext() != null && sampler != null) {
             Collection<ResourceChange> declaredChanges = sampler.createChanges();
             if (!declaredChanges.isEmpty()) {
@@ -181,11 +181,11 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
         if (getProviderContext() == null) {
             return;
         }
-        RelayInfo relay = this.relay;   // Use a local copy to avoid potential race conditions with the update() method
+        RelayInfo localRelay = relay;   // Use a local copy to avoid potential race conditions with the update() method
         List<ResourceChange> mappedChanges = changes.stream()
             .map(change -> new ResourceChange(
                 change.getType(),
-                PathHelper.replace(change.getPath(), relay.getTarget(), relay.getSource()),
+                RelayPathHelper.replace(change.getPath(), localRelay.getTarget(), localRelay.getSource()),
                 change.isExternal()))
             .collect(Collectors.toList());
         getProviderContext().getObservationReporter().reportChanges(mappedChanges, false);
