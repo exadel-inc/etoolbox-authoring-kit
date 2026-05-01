@@ -202,12 +202,7 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
             try {
                 return ResolverUtil.newResolver(resolverFactory, mappedId);
             } catch (LoginException e) {
-                LOG.error(
-                    "Failed to create a resource resolver for user {}",
-                    StringUtils.contains(mappedId, CoreConstants.SEPARATOR_COLON)
-                        ? StringUtils.substringBefore(mappedId, CoreConstants.SEPARATOR_COLON)
-                        : mappedId,
-                    e);
+                LOG.error("Failed to create a resource resolver for {}", mappedId, e);
             }
         }
         return resolver;

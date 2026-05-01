@@ -15,8 +15,6 @@ package com.exadel.aem.toolkit.core.utils;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
 
@@ -79,18 +77,7 @@ public class ResolverUtil {
         }
 
         if (!StringUtils.contains(user, CoreConstants.SEPARATOR_AT)) {
-            Map<String, Object> authInfo = new HashMap<>();
-            if (StringUtils.contains(user, CoreConstants.SEPARATOR_COLON)) {
-                authInfo.put(
-                    ResourceResolverFactory.USER,
-                    StringUtils.substringBefore(user, CoreConstants.SEPARATOR_COLON));
-                authInfo.put(
-                    ResourceResolverFactory.PASSWORD,
-                    StringUtils.substringAfter(user, CoreConstants.SEPARATOR_COLON).toCharArray());
-                return factory.getResourceResolver(authInfo);
-            }
-            authInfo.put(ResourceResolverFactory.SUBSERVICE, user);
-            return factory.getServiceResourceResolver(authInfo);
+            return factory.getServiceResourceResolver(Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, user));
         }
 
         String localizedUserId = StringUtils.substringBefore(user, CoreConstants.SEPARATOR_AT);
@@ -102,7 +89,7 @@ public class ResolverUtil {
         }
         Bundle targetBundle = Arrays
             .stream(bundleContext.getBundles())
-            .filter(b -> b.getSymbolicName().equals(bundleId))
+            .filter(b -> StringUtils.equals(b.getSymbolicName(), bundleId))
             .findFirst()
             .orElse(null);
         if (targetBundle == null) {

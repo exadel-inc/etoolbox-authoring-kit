@@ -190,11 +190,7 @@ class PathSampler {
             }
             return newResolver;
         } catch (LoginException e) {
-            LOG.error("Failed to create a resource resolver for user {}",
-                StringUtils.contains(userId, CoreConstants.SEPARATOR_COLON)
-                    ? StringUtils.substringBefore(userId, CoreConstants.SEPARATOR_COLON)
-                    : userId,
-                e);
+            LOG.error("Failed to create a resource resolver for {}", userId, e);
             return existing;
         }
     }

@@ -46,28 +46,24 @@ public @interface RelayConfig {
     String[] pathMappings();
 
     /**
-     * Gets the optional list of user mapping rules. Each entry is either a {@code "user:password"} credential
-     * string or a registered subservice name
+     * Gets the optional list of user mapping rules
      * @return A non-null array of user mapping rule strings; might be empty
      */
     @AttributeDefinition(
         name = "User mappings",
         description = "List of user mapping rules (optional). "
-            + "Each entry is either a credential string or a registered subservice name "
-            + " with or without a \"@bundle_id\" suffix."
+            + "For mapping targets, we support registered subservice names with optional \"@<bundle_id>\" suffix."
     )
     String[] userMappings();
 
     /**
      * Gets the optional list of JCR paths or XPath expressions whose matching resources are reported as changed
-     * when the relay is enabled or disabled
      * @return A non-null array of path or XPath expression strings; might be empty
      */
     @AttributeDefinition(
         name = "Announce changes",
         description = "Optional list of JCR paths or XPath expressions. "
             + "Target paths matching the list will be announced as changed as the relay is enabled or disabled."
-
     )
     String[] announcedPaths();
 }
