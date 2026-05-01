@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.resource.observation.ResourceChangeListener;
@@ -166,7 +167,7 @@ public class RelayProviderHost {
         }
 
         Set<RelayMapping> pathMappings = new HashSet<>();
-        for (String mappingSource : config.pathMappings()) {
+        for (String mappingSource : ArrayUtils.nullToEmpty(config.pathMappings())) {
             RelayMapping mapping = ObjectConversionUtil.toObject(mappingSource, RelayMapping.class);
             if  (mapping != null && mapping.isValid()) {
                 pathMappings.add(mapping);
@@ -177,7 +178,7 @@ public class RelayProviderHost {
         }
 
         Set<RelayMapping> userMappings = new HashSet<>();
-        for (String mappingSource : config.userMappings()) {
+        for (String mappingSource : ArrayUtils.nullToEmpty(config.userMappings())) {
             RelayMapping mapping = ObjectConversionUtil.toObject(mappingSource, RelayMapping.class);
             if (mapping != null && mapping.isValid()) {
                 userMappings.add(mapping);
@@ -185,7 +186,7 @@ public class RelayProviderHost {
         }
 
         Set<ChangeSample> samples = new HashSet<>();
-        for (String sampleSource : config.announcedPaths()) {
+        for (String sampleSource : ArrayUtils.nullToEmpty(config.announcedPaths())) {
             ChangeSample changeSample = ObjectConversionUtil.toObject(sampleSource, ChangeSample.class);
             if (changeSample != null && StringUtils.isNotBlank(changeSample.getPath())) {
                 samples.add(changeSample);
