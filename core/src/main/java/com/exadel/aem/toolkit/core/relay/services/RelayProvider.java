@@ -35,7 +35,6 @@ import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.relay.models.RelayInfo;
 import com.exadel.aem.toolkit.core.relay.models.RelayResource;
 import com.exadel.aem.toolkit.core.relay.utils.PathHelper;
@@ -89,7 +88,8 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
         @Nonnull ResourceContext resourceContext,
         @Nullable Resource parent) {
 
-        if (!StringUtils.equals(path, relay.getSource()) && !StringUtils.startsWith(path, relay.getSource() + CoreConstants.SEPARATOR_SLASH)) {
+        RelayInfo relay = this.relay;   // Use a local copy to avoid potential race conditions with the update() method
+        if (!PathHelper.isSubpath(path, relay.getSource())) {
             return null;
         }
         String targetPath = relay.getTarget() + StringUtils.substring(path, relay.getSource().length());
@@ -109,6 +109,8 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
     @Override
     @Nullable
     public Iterator<Resource> listChildren(@Nonnull ResolveContext<Void> context, @Nonnull Resource parent) {
+
+        RelayInfo relay = this.relay;   // Use a local copy to avoid potential race conditions with the update() method
         String path = parent.getPath();
         String targetPath = PathHelper.replace(path, relay.getSource(), relay.getTarget());
         Resource targetResource = ResourceHelper.getResource(
@@ -134,6 +136,7 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
      */
     @Override
     public void start(@Nonnull ProviderContext providerContext) {
+        RelayInfo relay = this.relay;   // Use a local copy to avoid potential race conditions with the update() method
         LOG.info("Relay provider for {} -> {} is starting", relay.getSource(), relay.getTarget());
         super.start(providerContext);
         sampler = PathSampler
@@ -155,8 +158,9 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
      */
     @Override
     public void stop() {
+        RelayInfo relay = this.relay;   // Use a local copy to avoid potential race conditions with the update() method
         LOG.info("Relay provider for {} -> {} is stopping", relay.getSource(), relay.getTarget());
-        if (getProviderContext() != null && sampler != null && !sampler.isEmpty()) {
+        if (getProviderContext() != null && sampler != null) {
             Collection<ResourceChange> declaredChanges = sampler.createChanges();
             if (!declaredChanges.isEmpty()) {
                 getProviderContext().getObservationReporter().reportChanges(declaredChanges, false);
@@ -177,6 +181,7 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
         if (getProviderContext() == null) {
             return;
         }
+        RelayInfo relay = this.relay;   // Use a local copy to avoid potential race conditions with the update() method
         List<ResourceChange> mappedChanges = changes.stream()
             .map(change -> new ResourceChange(
                 change.getType(),

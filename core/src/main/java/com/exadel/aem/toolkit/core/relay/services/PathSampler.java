@@ -101,20 +101,12 @@ class PathSampler {
                 resolver.close();
             }
         }
-        // All resolved paths must point to {@code source} instead of {@code target}
+        // All resolved paths must point to source instead of target
         return paths
             .stream()
             .map(p -> PathHelper.isSubpath(p, target) ?  PathHelper.replace(p, target, source) : p)
             .map(path -> new ResourceChange(ResourceChange.ChangeType.CHANGED, path, false))
             .collect(Collectors.toList());
-    }
-
-    /**
-     * Gets whether this sampler has no paths to report as changed
-     * @return True or false
-     */
-    boolean isEmpty() {
-        return paths == null;
     }
 
     /**
