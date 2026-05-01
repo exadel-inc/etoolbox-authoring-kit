@@ -78,25 +78,28 @@ class PathSampler {
         paths = new HashSet<>();
 
         ResourceResolver resolver = null;
-        for (ChangeSample sample : CollectionUtils.emptyIfNull(samples)) {
-            if (isXpath(sample.getPath())) {
-                resolver = rotateResolver(resolver, sample.getUser());
-                if (resolver == null) {
-                    // Exception is already logged
-                    continue;
+        try {
+            for (ChangeSample sample : CollectionUtils.emptyIfNull(samples)) {
+                if (isXpath(sample.getPath())) {
+                    resolver = rotateResolver(resolver, sample.getUser());
+                    if (resolver == null) {
+                        // Exception is already logged
+                        continue;
+                    }
+                    Session session = resolver.adaptTo(Session.class);
+                    if (session == null) {
+                        LOG.error("Failed to adapt a session from the resolver for user {}", resolver.getUserID());
+                        continue;
+                    }
+                    paths.addAll(resolveXpath(sample, session));
+                } else if (isJcrPath(sample.getPath())) {
+                    paths.add(sample.getPath());
                 }
-                Session session = resolver.adaptTo(Session.class);
-                if (session == null) {
-                    LOG.error("Failed to adapt a session from the resolver for user {}", resolver.getUserID());
-                    continue;
-                }
-                paths.addAll(resolveXpath(sample, session));
-            } else if (isJcrPath(sample.getPath())) {
-                paths.add(sample.getPath());
             }
-        }
-        if (resolver != null) {
-            resolver.close();
+        } finally {
+            if (resolver != null) {
+                resolver.close();
+            }
         }
         // All resolved paths must point to {@code source} instead of {@code target}
         return paths
@@ -110,7 +113,7 @@ class PathSampler {
      * Gets whether this sampler has no paths to report as changed
      * @return True or false
      */
-    public boolean isEmpty() {
+    boolean isEmpty() {
         return paths == null;
     }
 
@@ -158,7 +161,7 @@ class PathSampler {
                 result.add(next.getPath());
             }
             return result;
-        } catch (RepositoryException | NullPointerException e) {
+        } catch (RepositoryException e) {
             LOG.error("Failed to execute the XPath expression {}", sample.getPath(), e);
             return Collections.emptyList();
         }
