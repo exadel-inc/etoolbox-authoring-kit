@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.relay.services;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,6 +23,7 @@ import java.util.Map;
 
 import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceMetadata;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.resource.observation.ResourceChange;
@@ -32,278 +34,634 @@ import org.apache.sling.spi.resource.provider.ResourceContext;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.exadel.aem.toolkit.core.AemContextFactory;
+import com.exadel.aem.toolkit.core.relay.models.ChangeSample;
+import com.exadel.aem.toolkit.core.relay.models.RelayInfo;
+import com.exadel.aem.toolkit.core.relay.models.RelayMapping;
+import com.exadel.aem.toolkit.core.relay.models.RelayResource;
+import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
 
-@RunWith(MockitoJUnitRunner.class)
 public class RelayProviderTest {
 
-    private static final String PATH_ASSET = "/content/asset";
     private static final String PATH_SOURCE = "/content/source";
     private static final String PATH_TARGET = "/content/target";
-
-    private static final String SUBPATH_CHILD = "/child";
-    private static final String SUBPATH_PAGE = "/page";
-
+    private static final String PATH_CHILD_A = "/page1";
+    private static final String PATH_CHILD_B = "/page2";
+    private static final String USER_AUTHOR = "author";
 
     @Rule
     public final AemContext context = AemContextFactory.newInstance();
 
+    /* ------------------------------
+       getResource(): path resolution
+       ------------------------------ */
+
     @Test
     public void shouldReturnRelayResource() {
+        // Path under source prefix
         context.create().resource(PATH_TARGET);
-        context.create().resource(PATH_TARGET + SUBPATH_CHILD);
-
-        RelayProvider provider = newProvider();
+        context.create().resource(PATH_TARGET + PATH_CHILD_A);
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
         ResolveContext<Void> resolveContext = newResolveContext();
-        ResourceContext mockResourceContext = Mockito.mock(ResourceContext.class);
+        ResourceContext resourceContext = Mockito.mock(ResourceContext.class);
 
-        // Path outside the configured source → null regardless of what the resolver holds
-        Resource unrelated = provider.getResource(resolveContext, "/content/other", mockResourceContext, null);
-        assertNull(unrelated);
+        Resource result = provider.getResource(resolveContext, PATH_SOURCE + PATH_CHILD_A, resourceContext, null);
 
-        // No target resource for source → null (parent provider also absent)
-        Resource missingTarget = provider.getResource(resolveContext, PATH_SOURCE + "/missing", mockResourceContext, null);
-        assertNull(missingTarget);
+        assertNotNull(result);
+        assertTrue(result instanceof RelayResource);
+        assertEquals(PATH_SOURCE + PATH_CHILD_A, result.getPath());
 
-        // When the target resource exists, a relay resource is created based on the target resource,
-        // but it reports the source path
-        Resource existingTarget = provider.getResource(resolveContext, PATH_SOURCE, mockResourceContext, null);
-        assertNotNull(existingTarget);
-        assertEquals(PATH_SOURCE, existingTarget.getPath());
+        // Exact source path
+        provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+        resolveContext = newResolveContext();
+        resourceContext = Mockito.mock(ResourceContext.class);
 
-        // When the target resource exists with a child, a relay resource is created based on the target resource's child,
-        // but it reports the source path
-        Resource existingTargetChild = provider.getResource(
-            resolveContext,
-            PATH_SOURCE + SUBPATH_CHILD,
-            mockResourceContext,
-            null);
-        assertNotNull(existingTargetChild);
-        assertEquals(PATH_SOURCE + SUBPATH_CHILD, existingTargetChild.getPath());
+        result = provider.getResource(resolveContext, PATH_SOURCE, resourceContext, null);
+
+        assertNotNull(result);
+        assertTrue(result instanceof RelayResource);
+        assertEquals(PATH_SOURCE, result.getPath());
     }
 
     @Test
-    public void shouldDelegateChildListingToParentProvider() {
+    public void shouldReturnNullWhenPathNotUnderSource() {
+        String otherPath = "/content/other/page";
+        context.create().resource(otherPath);
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+        ResolveContext<Void> resolveContext = newResolveContext();
+        ResourceContext resourceContext = Mockito.mock(ResourceContext.class);
+
+        Resource result = provider.getResource(resolveContext, otherPath, resourceContext, null);
+
+        assertNull(result);
+    }
+
+    /* ---------------------------------------
+       getResource(): parent provider fallback
+       --------------------------------------- */
+
+    @Test
+    public void shouldFallBackToParentProvider() {
+        ResourceProvider<Void> mockProvider = newMockProvider();
+        ResolveContext<Void> parentCtx = newMockResolveContext();
+        Resource fallbackResource = context.create().resource(PATH_SOURCE + PATH_CHILD_A);
+        Mockito.when(mockProvider.getResource(Mockito.any(), Mockito.eq(PATH_SOURCE + PATH_CHILD_A), Mockito.any(), Mockito.any()))
+            .thenReturn(fallbackResource);
+
+        ResolveContext<Void> resolveContext = newResolveContext();
+        Mockito.doReturn(mockProvider).when(resolveContext).getParentResourceProvider();
+        Mockito.doReturn(parentCtx).when(resolveContext).getParentResolveContext();
+
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+        ResourceContext resourceContext = Mockito.mock(ResourceContext.class);
+
+        Resource result = provider.getResource(resolveContext, PATH_SOURCE + PATH_CHILD_A, resourceContext, null);
+
+        assertNotNull(result);
+        assertEquals(PATH_SOURCE + PATH_CHILD_A, result.getPath());
+        assertFalse(result instanceof RelayResource);
+    }
+
+    @Test
+    public void shouldReturnNullWhenTargetAndParentMiss() {
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+        ResolveContext<Void> resolveContext = newResolveContext();
+        ResourceContext resourceContext = Mockito.mock(ResourceContext.class);
+
+        Resource result = provider.getResource(resolveContext, PATH_SOURCE + PATH_CHILD_A, resourceContext, null);
+
+        assertNull(result);
+    }
+
+    /* --------------
+       listChildren()
+       -------------- */
+
+    @Test
+    public void shouldListRelayChildren() {
         context.create().resource(PATH_TARGET);
+        context.create().resource(PATH_TARGET + PATH_CHILD_A);
+
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+        ResolveContext<Void> resolveContext = newResolveContext();
         Resource parent = context.create().resource(PATH_SOURCE);
-        Resource expectedChild = context.create().resource(PATH_SOURCE + SUBPATH_CHILD);
 
-        @SuppressWarnings("unchecked")
-        ResourceProvider<Void> mockParentProvider = Mockito.mock(ResourceProvider.class);
-        @SuppressWarnings("unchecked")
-        ResolveContext<Void> mockParentContext = Mockito.mock(ResolveContext.class);
-        Mockito.when(mockParentProvider.listChildren(Mockito.any(), Mockito.eq(parent)))
-            .thenReturn(Collections.singletonList(expectedChild).iterator());
-
-        ResolveContext<Void> resolveContext = newResolveContextWithParent(mockParentProvider, mockParentContext);
-
-        RelayProvider provider = newProvider();
+        // Single child
         Iterator<Resource> result = provider.listChildren(resolveContext, parent);
 
         assertNotNull(result);
         assertTrue(result.hasNext());
-        assertEquals(PATH_SOURCE + SUBPATH_CHILD, result.next().getPath());
+        Resource child = result.next();
+        assertEquals(PATH_SOURCE + PATH_CHILD_A, child.getPath());
+        assertTrue(child instanceof RelayResource);
+        assertFalse(result.hasNext());
+
+        // Multiple children
+        context.create().resource(PATH_TARGET + PATH_CHILD_B);
+        result = provider.listChildren(resolveContext, parent);
+
+        assertNotNull(result);
+        Map<String, Resource> children = new HashMap<>();
+        while (result.hasNext()) {
+            Resource c = result.next();
+            children.put(c.getPath(), c);
+        }
+        assertEquals(2, children.size());
+        assertTrue(children.containsKey(PATH_SOURCE + PATH_CHILD_A));
+        assertTrue(children.containsKey(PATH_SOURCE + PATH_CHILD_B));
+        assertTrue(children.get(PATH_SOURCE + PATH_CHILD_A) instanceof RelayResource);
+        assertTrue(children.get(PATH_SOURCE + PATH_CHILD_B) instanceof RelayResource);
     }
 
     @Test
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public void shouldNotifyChangedPaths() throws LoginException {
-        ResourceResolverFactory mockFactory = newMockFactory();
-        RelayProvider provider = newProvider(mockFactory);
+    public void shouldReturnNullWhenTargetNotFound() {
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+        ResolveContext<Void> resolveContext = newResolveContext();
 
-        // onChange before start() → no providerContext, must not throw
-        ResourceChange earlyChange = new ResourceChange(
-            ResourceChange.ChangeType.CHANGED,
-            PATH_TARGET + SUBPATH_PAGE,
-            false);
-        provider.onChange(Collections.singletonList(earlyChange));
+        Resource parent = context.create().resource(PATH_SOURCE);
 
-        // Start the provider so providerContext is established
-        ProviderContext mockProviderContext = Mockito.mock(ProviderContext.class);
-        ObservationReporter mockReporter = Mockito.mock(ObservationReporter.class);
-        Mockito.when(mockProviderContext.getObservationReporter()).thenReturn(mockReporter);
-        provider.start(mockProviderContext);
+        Iterator<Resource> result = provider.listChildren(resolveContext, parent);
 
-        // onChange after start → changes translated from target to source path
-        ResourceChange change = new ResourceChange(
-            ResourceChange.ChangeType.CHANGED,
-            PATH_TARGET + SUBPATH_PAGE,
-            false);
-        provider.onChange(Collections.singletonList(change));
-
-        ArgumentCaptor<List> captor = ArgumentCaptor.forClass(List.class);
-        Mockito.verify(mockReporter).reportChanges(captor.capture(), Mockito.eq(false));
-
-        List<ResourceChange> reported = captor.getValue();
-        assertEquals(1, reported.size());
-        assertEquals(PATH_SOURCE + SUBPATH_PAGE, reported.get(0).getPath());
+        assertNull(result);
     }
 
     @Test
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public void shouldReportChangesOnStartAndStop() throws LoginException {
-        ResourceResolverFactory mockFactory = newMockFactory();
-        RelayProvider provider = RelayProvider
-            .builder()
-            .resolverFactory(mockFactory)
-            .source(PATH_SOURCE)
-            .target(PATH_TARGET)
-            .reportedPath(PATH_ASSET)
-            .build();
+    public void shouldDelegateToParentProvider() {
+        ResourceProvider<Void> mockProvider = newMockProvider();
+        ResolveContext<Void> parentCtx = newMockResolveContext();
+        Resource fallbackResource = context.create().resource("/content/fallback");
+        Mockito.when(mockProvider.getResource(Mockito.any(), Mockito.eq(PATH_SOURCE), Mockito.isNull(), Mockito.any()))
+            .thenReturn(fallbackResource);
 
-        ProviderContext mockProviderContext = Mockito.mock(ProviderContext.class);
-        ObservationReporter mockReporter = Mockito.mock(ObservationReporter.class);
-        Mockito.when(mockProviderContext.getObservationReporter()).thenReturn(mockReporter);
+        Resource parent = context.create().resource(PATH_SOURCE);
+        Resource expectedChild = context.create().resource(parent, "page1");
+        Mockito.when(mockProvider.listChildren(Mockito.any(), Mockito.any()))
+            .thenReturn(Collections.singletonList(expectedChild).iterator());
 
-        provider.start(mockProviderContext);
+        ResolveContext<Void> resolveContext = newResolveContext();
+        Mockito.doReturn(mockProvider).when(resolveContext).getParentResourceProvider();
+        Mockito.doReturn(parentCtx).when(resolveContext).getParentResolveContext();
 
-        ArgumentCaptor<Collection> startCaptor = ArgumentCaptor.forClass(Collection.class);
-        Mockito.verify(mockReporter).reportChanges(startCaptor.capture(), Mockito.eq(false));
-        Collection<ResourceChange> startChanges = startCaptor.getValue();
-        assertEquals(1, startChanges.size());
-        assertEquals(PATH_ASSET, startChanges.iterator().next().getPath());
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+
+        Iterator<Resource> result = provider.listChildren(resolveContext, parent);
+
+        assertNotNull(result);
+        assertTrue(result.hasNext());
+        assertEquals(PATH_SOURCE + PATH_CHILD_A, result.next().getPath());
+    }
+
+    /* ----------------------
+       Start / stop lifecycle
+       ---------------------- */
+
+    @Test
+    public void shouldStartWithEmptyChangeSamples() {
+        ObservationReporter reporter = Mockito.mock(ObservationReporter.class);
+        ProviderContext providerContext = newMockProviderContext(reporter);
+
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+        provider.start(providerContext);
+
+        Mockito.verify(reporter, Mockito.never()).reportChanges(Mockito.any(), Mockito.anyBoolean());
+    }
+
+    @Test
+    public void shouldStartAndReportChangeSamples() {
+        ChangeSample sample = newChangeSample(PATH_TARGET + PATH_CHILD_A);
+        RelayInfo relay = newRelayInfo(
+            PATH_SOURCE, PATH_TARGET,
+            Collections.emptyList(),
+            Collections.singletonList(sample));
+
+        ObservationReporter reporter = Mockito.mock(ObservationReporter.class);
+        ProviderContext providerContext = newMockProviderContext(reporter);
+
+        RelayProvider provider = newProvider(relay);
+        provider.start(providerContext);
+
+        ArgumentCaptor<Collection<ResourceChange>> captor = changeCaptor();
+        Mockito.verify(reporter).reportChanges(captor.capture(), Mockito.eq(false));
+
+        Collection<ResourceChange> changes = captor.getValue();
+        assertEquals(1, changes.size());
+        ResourceChange change = changes.iterator().next();
+        assertEquals(PATH_SOURCE + PATH_CHILD_A, change.getPath());
+        assertEquals(ResourceChange.ChangeType.CHANGED, change.getType());
+    }
+
+    @Test
+    public void shouldSetProviderContext() {
+        ObservationReporter reporter = Mockito.mock(ObservationReporter.class);
+        ProviderContext providerContext = newMockProviderContext(reporter);
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+
+        // Before start: onChange is a no-op because providerContext is null
+        provider.onChange(Collections.singletonList(
+            new ResourceChange(ResourceChange.ChangeType.CHANGED, PATH_TARGET + PATH_CHILD_A, false)));
+        Mockito.verify(reporter, Mockito.never()).reportChanges(Mockito.any(), Mockito.anyBoolean());
+
+        // After start: onChange calls reportChanges because providerContext is set
+        provider.start(providerContext);
+        provider.onChange(Collections.singletonList(
+            new ResourceChange(ResourceChange.ChangeType.CHANGED, PATH_TARGET + PATH_CHILD_A, false)));
+        Mockito.verify(reporter, Mockito.times(1)).reportChanges(Mockito.any(), Mockito.eq(false));
+    }
+
+    @Test
+    public void shouldStopGracefullyBeforeStart() {
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+
+        // Calling stop() without a prior start() must not throw (providerContext and sampler are null)
+        provider.stop();
+    }
+
+    @Test
+    public void shouldStopWithEmptyChangeSamples() {
+        ObservationReporter reporter = Mockito.mock(ObservationReporter.class);
+        ProviderContext providerContext = newMockProviderContext(reporter);
+
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+        provider.start(providerContext);
+        Mockito.reset(reporter);
 
         provider.stop();
 
-        // reportChanges called once on start and once on stop
-        Mockito.verify(mockReporter, Mockito.times(2))
-            .reportChanges(Mockito.any(), Mockito.eq(false));
+        Mockito.verify(reporter, Mockito.never()).reportChanges(Mockito.any(), Mockito.anyBoolean());
     }
 
     @Test
-    public void shouldHandleLoginExceptionOnStart() throws LoginException {
-        ResourceResolverFactory mockFactory = Mockito.mock(ResourceResolverFactory.class);
-        Mockito.when(mockFactory.getServiceResourceResolver(Mockito.anyMap()))
-            .thenThrow(new LoginException("NOT AN EXCEPTION: Testing login failure handling"));
+    public void shouldStopAndReportChanges() {
+        ChangeSample sample = newChangeSample(PATH_TARGET + PATH_CHILD_A);
+        RelayInfo relay = newRelayInfo(
+            PATH_SOURCE, PATH_TARGET,
+            Collections.emptyList(),
+            Collections.singletonList(sample));
 
-        RelayProvider provider = RelayProvider
-            .builder()
-            .resolverFactory(mockFactory)
-            .source(PATH_SOURCE)
-            .target(PATH_TARGET)
-            .reportedPath(PATH_ASSET)
-            .build();
+        ObservationReporter reporter = Mockito.mock(ObservationReporter.class);
+        ProviderContext providerContext = newMockProviderContext(reporter);
 
-        // LoginException must be caught internally; no exception propagates to the caller
-        provider.start(Mockito.mock(ProviderContext.class));
+        RelayProvider provider = newProvider(relay);
+        provider.start(providerContext);
+
+        Mockito.reset(reporter);
+
+        provider.stop();
+
+        ArgumentCaptor<Collection<ResourceChange>> captor = changeCaptor();
+        Mockito.verify(reporter).reportChanges(captor.capture(), Mockito.eq(false));
+
+        Collection<ResourceChange> changes = captor.getValue();
+        assertEquals(1, changes.size());
+        // PathSampler's second createChanges() call returns the raw cached paths (still target-prefixed)
+        assertEquals(PATH_TARGET + PATH_CHILD_A, changes.iterator().next().getPath());
+    }
+
+    /* --------------------
+       Change event mapping
+       -------------------- */
+
+    @Test
+    public void shouldNoOpWhenProviderContextIsNull() {
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+
+        // Not started: providerContext is null, so onChange returns immediately without throwing
+        provider.onChange(Collections.singletonList(
+            new ResourceChange(ResourceChange.ChangeType.CHANGED, PATH_TARGET + PATH_CHILD_A, false)));
     }
 
     @Test
-    public void shouldApplyUserMapping() throws LoginException {
-        Resource targetResource = context.create().resource(PATH_TARGET);
+    public void shouldMapSingleChange() {
+        ObservationReporter reporter = Mockito.mock(ObservationReporter.class);
+        ProviderContext providerContext = newMockProviderContext(reporter);
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+        provider.start(providerContext);
 
-        ResourceResolverFactory mockFactory = Mockito.mock(ResourceResolverFactory.class);
+        provider.onChange(Collections.singletonList(
+            new ResourceChange(ResourceChange.ChangeType.REMOVED, PATH_TARGET + PATH_CHILD_A, false)));
+
+        ArgumentCaptor<List<ResourceChange>> captor = listChangeCaptor();
+        Mockito.verify(reporter).reportChanges(captor.capture(), Mockito.eq(false));
+
+        List<ResourceChange> mapped = captor.getValue();
+        assertEquals(1, mapped.size());
+        assertEquals(PATH_SOURCE + PATH_CHILD_A, mapped.get(0).getPath());
+        assertEquals(ResourceChange.ChangeType.REMOVED, mapped.get(0).getType());
+    }
+
+    @Test
+    public void shouldMapChangePathsFromTargetToSource() {
+        ObservationReporter reporter = Mockito.mock(ObservationReporter.class);
+        ProviderContext providerContext = newMockProviderContext(reporter);
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+        provider.start(providerContext);
+
+        // Single change
+        provider.onChange(Collections.singletonList(
+            new ResourceChange(ResourceChange.ChangeType.REMOVED, PATH_TARGET + PATH_CHILD_A, false)));
+
+        ArgumentCaptor<List<ResourceChange>> captor = listChangeCaptor();
+        Mockito.verify(reporter).reportChanges(captor.capture(), Mockito.eq(false));
+
+        List<ResourceChange> mapped = captor.getValue();
+        assertEquals(1, mapped.size());
+        assertEquals(PATH_SOURCE + PATH_CHILD_A, mapped.get(0).getPath());
+        assertEquals(ResourceChange.ChangeType.REMOVED, mapped.get(0).getType());
+
+        Mockito.reset(reporter);
+
+        // Multiple changes
+        List<ResourceChange> incoming = Arrays.asList(
+            new ResourceChange(ResourceChange.ChangeType.CHANGED, PATH_TARGET + PATH_CHILD_A, false),
+            new ResourceChange(ResourceChange.ChangeType.ADDED, PATH_TARGET + PATH_CHILD_B, false));
+        provider.onChange(incoming);
+
+        captor = listChangeCaptor();
+        Mockito.verify(reporter).reportChanges(captor.capture(), Mockito.eq(false));
+
+        mapped = captor.getValue();
+        assertEquals(2, mapped.size());
+        assertEquals(PATH_SOURCE + PATH_CHILD_A, mapped.get(0).getPath());
+        assertEquals(ResourceChange.ChangeType.CHANGED, mapped.get(0).getType());
+        assertEquals(PATH_SOURCE + PATH_CHILD_B, mapped.get(1).getPath());
+        assertEquals(ResourceChange.ChangeType.ADDED, mapped.get(1).getType());
+    }
+
+    @Test
+    public void shouldHandleEmptyChangeList() {
+        ObservationReporter reporter = Mockito.mock(ObservationReporter.class);
+        ProviderContext providerContext = newMockProviderContext(reporter);
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+        provider.start(providerContext);
+
+        provider.onChange(Collections.emptyList());
+
+        ArgumentCaptor<Collection<ResourceChange>> captor = changeCaptor();
+        Mockito.verify(reporter).reportChanges(captor.capture(), Mockito.eq(false));
+        assertTrue(captor.getValue().isEmpty());
+    }
+
+    @Test
+    public void shouldPreserveChangeExternalFlag() {
+        ObservationReporter reporter = Mockito.mock(ObservationReporter.class);
+        ProviderContext providerContext = newMockProviderContext(reporter);
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+        provider.start(providerContext);
+
+        provider.onChange(Collections.singletonList(
+            new ResourceChange(ResourceChange.ChangeType.CHANGED, PATH_TARGET + PATH_CHILD_A, true)));
+
+        ArgumentCaptor<List<ResourceChange>> captor = listChangeCaptor();
+        Mockito.verify(reporter).reportChanges(captor.capture(), Mockito.eq(false));
+
+        List<ResourceChange> mapped = captor.getValue();
+        assertEquals(1, mapped.size());
+        assertTrue(mapped.get(0).isExternal());
+        assertEquals(PATH_SOURCE + PATH_CHILD_A, mapped.get(0).getPath());
+    }
+
+    @Test
+    public void shouldNotMapChangesOutsideTarget() {
+        ObservationReporter reporter = Mockito.mock(ObservationReporter.class);
+        ProviderContext providerContext = newMockProviderContext(reporter);
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+        provider.start(providerContext);
+
+        String unrelatedPath = "/content/unrelated/page";
+        provider.onChange(Collections.singletonList(
+            new ResourceChange(ResourceChange.ChangeType.CHANGED, unrelatedPath, false)));
+
+        ArgumentCaptor<List<ResourceChange>> captor = listChangeCaptor();
+        Mockito.verify(reporter).reportChanges(captor.capture(), Mockito.eq(false));
+
+        List<ResourceChange> mapped = captor.getValue();
+        assertEquals(1, mapped.size());
+        // Path not under target prefix → returned unchanged
+        assertEquals(unrelatedPath, mapped.get(0).getPath());
+    }
+
+    /* -------------
+       Config update
+       ------------- */
+
+    @Test
+    public void shouldUpdateRelayConfig() {
+        String altTarget = PATH_TARGET + "2";
+        String altSource = PATH_SOURCE + "2";
+        context.create().resource(altTarget + PATH_CHILD_A);
+
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+        RelayInfo newRelay = newRelayInfo(altSource, altTarget);
+        provider.update(newRelay);
+
+        ResolveContext<Void> resolveContext = newResolveContext();
+        ResourceContext resourceContext = Mockito.mock(ResourceContext.class);
+
+        // Old source path no longer matches after the relay was updated
+        Resource oldResult = provider.getResource(resolveContext, PATH_SOURCE + PATH_CHILD_A, resourceContext, null);
+        assertNull(oldResult);
+
+        // New source path resolves to a RelayResource
+        Resource newResult = provider.getResource(resolveContext, altSource + PATH_CHILD_A, resourceContext, null);
+        assertNotNull(newResult);
+        assertTrue(newResult instanceof RelayResource);
+        assertEquals(altSource + PATH_CHILD_A, newResult.getPath());
+    }
+
+    /* ---------------------
+       User resolver mapping
+       --------------------- */
+
+    @Test
+    public void shouldUseOriginalResolverWhenNoUserMapping() {
+        context.create().resource(PATH_TARGET + PATH_CHILD_A);
+
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, PATH_TARGET));
+        ResolveContext<Void> resolveContext = newResolveContext();
+        ResourceContext resourceContext = Mockito.mock(ResourceContext.class);
+
+        Resource result = provider.getResource(resolveContext, PATH_SOURCE + PATH_CHILD_A, resourceContext, null);
+
+        assertNotNull(result);
+        assertTrue(result instanceof RelayResource);
+        assertEquals(PATH_SOURCE + PATH_CHILD_A, result.getPath());
+    }
+
+    @Test
+    public void shouldUseMappedUserResolver() throws LoginException {
+        String userService = "eak-service";
+        RelayInfo relay = newRelayInfo(
+            PATH_SOURCE, PATH_TARGET,
+            Collections.singletonList(newMapping(USER_AUTHOR, userService)),
+            Collections.emptyList());
+
+        Resource mockTargetResource = Mockito.mock(Resource.class);
+        Mockito.when(mockTargetResource.getPath()).thenReturn(PATH_TARGET + PATH_CHILD_A);
+        Mockito.when(mockTargetResource.getResourceMetadata()).thenReturn(new ResourceMetadata());
+
         ResourceResolver mappedResolver = Mockito.mock(ResourceResolver.class);
-        Map<String, Object> propertyMap = new HashMap<>();
-        Mockito.when(mappedResolver.getResource(PATH_TARGET)).thenReturn(targetResource);
-        Mockito.when(mappedResolver.getUserID()).thenReturn("mapped-user");
+        Mockito.when(mappedResolver.getResource(PATH_TARGET + PATH_CHILD_A)).thenReturn(mockTargetResource);
+        Mockito.when(mappedResolver.getUserID()).thenReturn(userService);
 
+        ResourceResolverFactory factory = Mockito.mock(ResourceResolverFactory.class);
+        Mockito.when(factory.getServiceResourceResolver(Mockito.any())).thenReturn(mappedResolver);
+
+        Map<String, Object> propertyMap = new HashMap<>();
         ResourceResolver basicResolver = Mockito.mock(ResourceResolver.class);
-        Mockito.when(basicResolver.getUserID()).thenReturn("testUser");
+        Mockito.when(basicResolver.getUserID()).thenReturn(USER_AUTHOR);
         Mockito.when(basicResolver.getPropertyMap()).thenReturn(propertyMap);
 
-        @SuppressWarnings("unchecked")
-        ResolveContext<Void> resolveContext = Mockito.mock(ResolveContext.class);
-        Mockito.when(resolveContext.getResourceResolver()).thenReturn(basicResolver);
-        ResourceContext mockResourceContext = Mockito.mock(ResourceContext.class);
+        ResolveContext<Void> resolveContext = newResolveContext(basicResolver);
+        ResourceContext resourceContext = Mockito.mock(ResourceContext.class);
 
-        // Subservice user mapping: target is a plain service name (no colon)
-        Mockito.when(mockFactory.getServiceResourceResolver(Mockito.anyMap())).thenReturn(mappedResolver);
+        RelayProvider provider = newProvider(factory, relay);
+        Resource result = provider.getResource(resolveContext, PATH_SOURCE + PATH_CHILD_A, resourceContext, null);
 
-        RelayProvider providerWithSubservice = RelayProvider
-            .builder()
-            .resolverFactory(mockFactory)
-            .source(PATH_SOURCE)
-            .target(PATH_TARGET)
-            .userMapping("testUser", "mySubservice")
-            .build();
-
-        Resource result = providerWithSubservice.getResource(resolveContext, PATH_SOURCE, mockResourceContext, null);
         assertNotNull(result);
-        assertEquals(PATH_SOURCE, result.getPath());
-        Mockito.verify(mockFactory).getServiceResourceResolver(
-            Mockito.argThat(map -> "mySubservice".equals(map.get(ResourceResolverFactory.SUBSERVICE))));
+        assertTrue(result instanceof RelayResource);
+        assertEquals(PATH_SOURCE + PATH_CHILD_A, result.getPath());
+        Mockito.verify(mappedResolver).getResource(PATH_TARGET + PATH_CHILD_A);
+    }
 
-        // Credentials user mapping: target is "user:password" (contains colon)
-        Mockito.reset(mockFactory, mappedResolver);
-        propertyMap.clear();
-        Mockito.when(mappedResolver.getResource(PATH_TARGET)).thenReturn(targetResource);
-        Mockito.when(mockFactory.getResourceResolver(Mockito.anyMap())).thenReturn(mappedResolver);
+    @Test
+    public void shouldUseOriginalResolver() {
+        RelayInfo relay = newRelayInfo(
+            PATH_SOURCE, PATH_TARGET,
+            Collections.singletonList(newMapping(USER_AUTHOR, USER_AUTHOR)),
+            Collections.emptyList());
 
-        RelayProvider providerWithCredentials = RelayProvider
-            .builder()
-            .resolverFactory(mockFactory)
-            .source(PATH_SOURCE)
-            .target(PATH_TARGET)
-            .userMapping("testUser", "svcUser:svcPass")
-            .build();
+        Resource mockTargetResource = Mockito.mock(Resource.class);
+        Mockito.when(mockTargetResource.getPath()).thenReturn(PATH_TARGET + PATH_CHILD_A);
+        Mockito.when(mockTargetResource.getResourceMetadata()).thenReturn(new ResourceMetadata());
 
-        result = providerWithCredentials.getResource(resolveContext, PATH_SOURCE, mockResourceContext, null);
+        ResourceResolver basicResolver = Mockito.mock(ResourceResolver.class);
+        Mockito.when(basicResolver.getUserID()).thenReturn(USER_AUTHOR);
+        Mockito.when(basicResolver.getResource(PATH_TARGET + PATH_CHILD_A)).thenReturn(mockTargetResource);
+
+        ResolveContext<Void> resolveContext = newResolveContext(basicResolver);
+        ResourceContext resourceContext = Mockito.mock(ResourceContext.class);
+
+        RelayProvider provider = newProvider(context.getService(ResourceResolverFactory.class), relay);
+        Resource result = provider.getResource(resolveContext, PATH_SOURCE + PATH_CHILD_A, resourceContext, null);
+
         assertNotNull(result);
-        assertEquals(PATH_SOURCE, result.getPath());
-        Mockito.verify(mockFactory).getResourceResolver(
-            Mockito.argThat(map -> "svcUser".equals(map.get(ResourceResolverFactory.USER))
-                && java.util.Arrays.equals(
-                "svcPass".toCharArray(),
-                (char[]) map.get(ResourceResolverFactory.PASSWORD))));
+        assertTrue(result instanceof RelayResource);
+        assertEquals(PATH_SOURCE + PATH_CHILD_A, result.getPath());
+    }
+
+    @Test
+    public void shouldFallBackToOriginalResolver() throws LoginException {
+        String brokenService = "broken-service";
+        RelayInfo relay = newRelayInfo(
+            PATH_SOURCE, PATH_TARGET,
+            Collections.singletonList(newMapping(USER_AUTHOR, brokenService)),
+            Collections.emptyList());
+
+        Resource mockTargetResource = Mockito.mock(Resource.class);
+        Mockito.when(mockTargetResource.getPath()).thenReturn(PATH_TARGET + PATH_CHILD_A);
+        Mockito.when(mockTargetResource.getResourceMetadata()).thenReturn(new ResourceMetadata());
+
+        ResourceResolverFactory factory = Mockito.mock(ResourceResolverFactory.class);
+        Mockito.when(factory.getServiceResourceResolver(Mockito.any()))
+            .thenThrow(new LoginException("No service user"));
+
+        ResourceResolver basicResolver = Mockito.mock(ResourceResolver.class);
+        Mockito.when(basicResolver.getUserID()).thenReturn(USER_AUTHOR);
+        Mockito.when(basicResolver.getResource(PATH_TARGET + PATH_CHILD_A)).thenReturn(mockTargetResource);
+
+        ResolveContext<Void> resolveContext = newResolveContext(basicResolver);
+        ResourceContext resourceContext = Mockito.mock(ResourceContext.class);
+
+        RelayProvider provider = newProvider(factory, relay);
+        Resource result = provider.getResource(resolveContext, PATH_SOURCE + PATH_CHILD_A, resourceContext, null);
+
+        // LoginException is caught and the original resolver is used as fallback
+        assertNotNull(result);
+        assertTrue(result instanceof RelayResource);
+        assertEquals(PATH_SOURCE + PATH_CHILD_A, result.getPath());
+        Mockito.verify(basicResolver).getResource(PATH_TARGET + PATH_CHILD_A);
     }
 
     /* ---------------
        Utility methods
        --------------- */
 
-    private RelayProvider newProvider() {
-        return RelayProvider
-            .builder()
-            .resolverFactory(Mockito.mock(ResourceResolverFactory.class))
-            .source(PATH_SOURCE)
-            .target(PATH_TARGET)
-            .build();
+    private RelayProvider newProvider(RelayInfo relay) {
+        return new RelayProvider(context.getService(ResourceResolverFactory.class), relay);
     }
 
-    private RelayProvider newProvider(ResourceResolverFactory factory) {
-        return RelayProvider
-            .builder()
-            .resolverFactory(factory)
-            .source(PATH_SOURCE)
-            .target(PATH_TARGET)
-            .build();
+    private static RelayProvider newProvider(ResourceResolverFactory factory, RelayInfo relay) {
+        return new RelayProvider(factory, relay);
     }
 
-    @SuppressWarnings("unchecked")
+    private static RelayInfo newRelayInfo(String source, String target) {
+        return newRelayInfo(source, target, Collections.emptyList(), Collections.emptyList());
+    }
+
+    private static RelayInfo newRelayInfo(
+        String source,
+        String target,
+        Collection<RelayMapping> userMappings,
+        Collection<ChangeSample> changeSamples) {
+        return new RelayInfo(newMapping(source, target), userMappings, changeSamples);
+    }
+
+    private static RelayMapping newMapping(String from, String to) {
+        return ObjectConversionUtil.toObject(
+            "{\"from\":\"" + from + "\",\"to\":\"" + to + "\"}",
+            RelayMapping.class);
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private static ChangeSample newChangeSample(String path) {
+        return ObjectConversionUtil.toObject(
+            "{\"path\":\"" + path + "\"}",
+            ChangeSample.class);
+    }
+
     private ResolveContext<Void> newResolveContext() {
-        ResolveContext<Void> resolveContext = Mockito.mock(ResolveContext.class);
-        Mockito.when(resolveContext.getResourceResolver()).thenReturn(context.resourceResolver());
-        return resolveContext;
+        return newResolveContext(context.resourceResolver());
     }
 
     @SuppressWarnings("unchecked")
-    private ResolveContext<Void> newResolveContextWithParent(
-        ResourceProvider<Void> parentProvider,
-        ResolveContext<Void> parentContext) {
-
+    private static ResolveContext<Void> newResolveContext(ResourceResolver resolver) {
         ResolveContext<Void> resolveContext = Mockito.mock(ResolveContext.class);
-        Mockito.when(resolveContext.getResourceResolver()).thenReturn(context.resourceResolver());
-        // doReturn avoids generic wildcard type mismatch between ResourceProvider<?> and ResourceProvider<Void>
-        Mockito.doReturn(parentProvider).when(resolveContext).getParentResourceProvider();
-        Mockito.doReturn(parentContext).when(resolveContext).getParentResolveContext();
+        Mockito.when(resolveContext.getResourceResolver()).thenReturn(resolver);
         return resolveContext;
     }
 
-    private static ResourceResolverFactory newMockFactory() throws LoginException {
-        ResourceResolverFactory mockFactory = Mockito.mock(ResourceResolverFactory.class);
-        Mockito.when(mockFactory.getServiceResourceResolver(Mockito.anyMap()))
-            .thenReturn(Mockito.mock(ResourceResolver.class));
-        return mockFactory;
+    private static ProviderContext newMockProviderContext(ObservationReporter reporter) {
+        ProviderContext providerContext = Mockito.mock(ProviderContext.class);
+        Mockito.when(providerContext.getObservationReporter()).thenReturn(reporter);
+        return providerContext;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ResourceProvider<Void> newMockProvider() {
+        return Mockito.mock(ResourceProvider.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ResolveContext<Void> newMockResolveContext() {
+        return Mockito.mock(ResolveContext.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ArgumentCaptor<Collection<ResourceChange>> changeCaptor() {
+        return (ArgumentCaptor<Collection<ResourceChange>>) (ArgumentCaptor<?>) ArgumentCaptor.forClass(Collection.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static ArgumentCaptor<List<ResourceChange>> listChangeCaptor() {
+        return (ArgumentCaptor<List<ResourceChange>>) (ArgumentCaptor<?>) ArgumentCaptor.forClass(List.class);
     }
 }
