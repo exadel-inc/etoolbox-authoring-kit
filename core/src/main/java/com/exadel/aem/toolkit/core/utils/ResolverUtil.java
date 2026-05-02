@@ -71,6 +71,24 @@ public class ResolverUtil {
         @Nonnull ResourceResolverFactory factory,
         String user) throws LoginException {
 
+        Bundle bundle = FrameworkUtil.getBundle(ResolverUtil.class);
+        BundleContext context = bundle != null ? bundle.getBundleContext() : null;
+        return newResolver(factory, user, context);
+    }
+
+    /**
+     * Creates a new {@link ResourceResolver} instance for the given user identifier using the provided resource
+     * resolver factory and bundle context
+     * @param factory The {@code ResourceResolverFactory} instance
+     * @param user    The user identifier string
+     * @param context The {@code BundleContext} instance to use for locating the target bundle
+     * @return New instance of {@code ResourceResolver}
+     * @throws LoginException If the resolver cannot be created
+     */
+    static ResourceResolver newResolver(
+        @Nonnull ResourceResolverFactory factory,
+        String user,
+        BundleContext context) throws LoginException {
         if (StringUtils.isBlank(user)) {
             return newResolver(factory);   // Use the default eak-service resolver
         }
@@ -81,13 +99,11 @@ public class ResolverUtil {
 
         String localizedUserId = StringUtils.substringBefore(user, CoreConstants.SEPARATOR_AT);
         String bundleId = StringUtils.substringAfter(user, CoreConstants.SEPARATOR_AT);
-        Bundle bundle = FrameworkUtil.getBundle(ResolverUtil.class);
-        BundleContext bundleContext = bundle != null ? bundle.getBundleContext() : null;
-        if (bundleContext == null) {
+        if (context == null) {
             throw new LoginException("Not running in an OSGi container");
         }
         Bundle targetBundle = Arrays
-            .stream(bundleContext.getBundles())
+            .stream(context.getBundles())
             .filter(b -> StringUtils.equals(b.getSymbolicName(), bundleId))
             .findFirst()
             .orElse(null);
