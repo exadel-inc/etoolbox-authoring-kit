@@ -15,19 +15,16 @@ package com.exadel.aem.toolkit.core.optionprovider.services.impl.resolvers;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ValueMap;
-import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.day.cq.commons.jcr.JcrConstants;
-import com.adobe.granite.ui.components.ds.ValueMapResource;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -35,6 +32,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.exadel.aem.toolkit.core.optionprovider.OptionProviderConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.impl.PathParameters;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
+import com.exadel.aem.toolkit.core.utils.ResourceFactory;
 
 /**
  * Implements {@link OptionSourceResolver} to transfer the directly provided name-value pairs into the options data
@@ -65,28 +63,24 @@ class InlineOptionSourceResolver implements OptionSourceResolver {
             if (!(node instanceof ObjectNode)) {
                 continue;
             }
-            ValueMapBuilder valueMapBuilder = new ValueMapBuilder();
+            Map<String, Object> properties = new HashMap<>();
             for (Iterator<String> propertyNames = node.fieldNames(); propertyNames.hasNext();) {
                 String propertyName = propertyNames.next();
                 String propertyValue = node.get(propertyName).asText();
-                valueMapBuilder.put(propertyName, propertyValue);
+                properties.put(propertyName, propertyValue);
                 if (propertyName.equals(params.getTextMember()) && StringUtils.isNotEmpty(propertyValue)) {
-                    valueMapBuilder.put(OptionProviderConstants.PARAMETER_NAME, propertyValue);
+                    properties.put(OptionProviderConstants.PARAMETER_NAME, propertyValue);
                 }
             }
-            ValueMap valueMap = valueMapBuilder.build();
-            Resource child = new ValueMapResource(
-                request.getResourceResolver(),
-                valueMap.get(OptionProviderConstants.PARAMETER_NAME, StringUtils.EMPTY),
-                JcrConstants.NT_UNSTRUCTURED,
-                valueMap);
+            Resource child = ResourceFactory.newResource(request.getResourceResolver())
+                .path(properties.getOrDefault(OptionProviderConstants.PARAMETER_NAME, StringUtils.EMPTY).toString())
+                .properties(properties)
+                .build();
             children.add(child);
         }
-        return new ValueMapResource(
-            request.getResourceResolver(),
-            StringUtils.EMPTY,
-            JcrConstants.NT_UNSTRUCTURED,
-            new ValueMapDecorator(Collections.emptyMap()),
-            children);
+        return ResourceFactory
+            .newResource(request.getResourceResolver())
+            .children(children)
+            .build();
     }
 }

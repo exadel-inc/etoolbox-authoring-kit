@@ -19,7 +19,6 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,15 +26,13 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ValueMap;
-import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.day.cq.commons.jcr.JcrConstants;
-import com.adobe.granite.ui.components.ds.ValueMapResource;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.OptionProviderConstants;
+import com.exadel.aem.toolkit.core.utils.ResourceFactory;
 
 /**
  * Invoked by {@link ClassOptionSourceResolver} to convert a Java enum into an options data source
@@ -64,23 +61,21 @@ class EnumResolverHelper {
     Resource resolve(SlingHttpServletRequest request) {
         List<Resource> children = new ArrayList<>();
         for (Object enumConstant : source.getEnumConstants()) {
-            ValueMap valueMap = new ValueMapDecorator(buildPropertyMap(enumConstant));
-            children.add(new ValueMapResource(
-                request.getResourceResolver(),
-                valueMap.get(OptionProviderConstants.PARAMETER_NAME, String.class),
-                JcrConstants.NT_UNSTRUCTURED,
-                new ValueMapDecorator(buildPropertyMap(enumConstant))));
+            Map<String, Object> valueMap = buildPropertyMap(enumConstant);
+            children.add(ResourceFactory
+                .newResource(request.getResourceResolver())
+                .path(valueMap.getOrDefault(OptionProviderConstants.PARAMETER_NAME, StringUtils.EMPTY).toString())
+                .properties(valueMap)
+                .build());
         }
-        return new ValueMapResource(
-            request.getResourceResolver(),
-            StringUtils.EMPTY,
-            JcrConstants.NT_UNSTRUCTURED,
-            new ValueMapDecorator(Collections.emptyMap()),
-            children);
+        return ResourceFactory
+            .newResource(request.getResourceResolver())
+            .children(children)
+            .build();
     }
 
     /**
-     * Creates a {@link ValueMap} instance representing a single data source option for the given enum constant
+     * Creates a {@code Map} instance representing a single data source option for the given enum constant
      * @param enumConstant An enum object
      * @return {@link Map} object
      */

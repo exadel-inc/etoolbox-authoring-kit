@@ -20,7 +20,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -43,17 +42,14 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ValueMap;
-import org.apache.sling.api.wrappers.ValueMapDecorator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.day.cq.commons.jcr.JcrConstants;
-import com.adobe.granite.ui.components.ds.ValueMapResource;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.optionprovider.services.impl.PathParameters;
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
+import com.exadel.aem.toolkit.core.utils.ResourceFactory;
 
 /**
  * Implements {@link OptionSourceResolver} to facilitate extracting option data sources from HTTP endpoints
@@ -212,12 +208,10 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
                 if (!nextField.getValue().isObject()) {
                     continue;
                 }
-                ValueMap valueMap = createValueMap(nextField.getValue());
-                Resource resource = new ValueMapResource(
-                    request.getResourceResolver(),
-                    path + CoreConstants.SEPARATOR_SLASH + nextField.getKey(),
-                    JcrConstants.NT_UNSTRUCTURED,
-                    valueMap);
+                Resource resource = ResourceFactory.newResource(request.getResourceResolver())
+                    .path(path, nextField.getKey())
+                    .properties(createPropertiesMap(nextField.getValue()))
+                    .build();
                 children.add(resource);
             }
         } else if (node.isArray()) {
@@ -228,34 +222,29 @@ class HttpOptionSourceResolver implements OptionSourceResolver {
                 if (!nextElement.isObject()) {
                     continue;
                 }
-                ValueMap valueMap = createValueMap(nextElement);
-                Resource resource = new ValueMapResource(
-                    request.getResourceResolver(),
-                    path + CoreConstants.SEPARATOR_SLASH + CoreConstants.NN_ITEM + elementIndex++,
-                    JcrConstants.NT_UNSTRUCTURED,
-                    valueMap);
+                Resource resource = ResourceFactory.newResource(request.getResourceResolver())
+                    .path(path, CoreConstants.NN_ITEM + elementIndex++)
+                    .properties(createPropertiesMap(nextElement))
+                    .build();
                 children.add(resource);
             }
         }
-        return new ValueMapResource(
-            request.getResourceResolver(),
-            path,
-            JcrConstants.NT_UNSTRUCTURED,
-            new ValueMapDecorator(Collections.emptyMap()),
-            children);
+        return ResourceFactory.newResource(request.getResourceResolver())
+            .path(path)
+            .children(children)
+            .build();
     }
 
     /**
      * Called by {@link HttpOptionSourceResolver#createResource(SlingHttpServletRequest, String, JsonNode)} to convert a
-     * particular {@link JsonNode} into a {@code ValueMap} containing all the keys and values contained in the node
+     * particular {@link JsonNode} into a {@code Map} containing all the keys and values contained in the node
      * @param jsonNode {@link JsonNode} object containing values for the value map
-     * @return {@link ValueMap} object
+     * @return {@code Map} object
      */
-    private static ValueMap createValueMap(JsonNode jsonNode) {
-        Map<String, Object> sourceMap = StreamSupport
+    private static Map<String, Object> createPropertiesMap(JsonNode jsonNode) {
+        return StreamSupport
             .stream(Spliterators.spliteratorUnknownSize(jsonNode.fields(), Spliterator.ORDERED), false)
             .collect(Collectors.toMap(Map.Entry::getKey, field -> field.getValue().asText()));
-        return new ValueMapDecorator(sourceMap);
     }
 
     /* ----------------

@@ -45,6 +45,7 @@ import com.day.cq.wcm.api.WCMException;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.lists.models.SimpleListItem;
+import com.exadel.aem.toolkit.core.utils.ResourceFactory;
 
 /**
  * Contains methods for manipulating EToolbox Lists
@@ -216,7 +217,7 @@ public class ListHelper {
         List<Resource> resources = values.stream()
             .map(mapping)
             .filter(Objects::nonNull)
-            .map(properties -> ListResourceUtil.createValueMapResource(resourceResolver, properties))
+            .map(properties -> ResourceFactory.newResource(resourceResolver).properties(properties).build())
             .collect(Collectors.toList());
 
         return createResourceList(resourceResolver, path, resources);
@@ -245,7 +246,7 @@ public class ListHelper {
             reportNoItems(path);
         }
 
-        List<Resource> resources = ListResourceUtil.mapToValueMapResources(resourceResolver, values);
+        List<Resource> resources = ListResourceUtil.mapToResources(resourceResolver, values);
         return createResourceList(resourceResolver, path, resources);
     }
 

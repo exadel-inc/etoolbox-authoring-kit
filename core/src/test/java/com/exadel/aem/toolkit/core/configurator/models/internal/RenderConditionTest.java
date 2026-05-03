@@ -20,7 +20,6 @@ import javax.jcr.Session;
 import javax.jcr.security.AccessControlManager;
 import javax.jcr.security.Privilege;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ValueMap;
@@ -44,7 +43,6 @@ import org.osgi.service.metatype.MetaTypeInformation;
 import org.osgi.service.metatype.MetaTypeService;
 import org.osgi.service.metatype.ObjectClassDefinition;
 import com.adobe.granite.ui.components.ExpressionResolver;
-import com.adobe.granite.ui.components.ds.ValueMapResource;
 import com.adobe.granite.ui.components.rendercondition.SimpleRenderCondition;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
@@ -55,6 +53,7 @@ import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
 import com.exadel.aem.toolkit.core.configurator.services.ConfigChangeListener;
+import com.exadel.aem.toolkit.core.utils.ResourceFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RenderConditionTest {
@@ -318,11 +317,10 @@ public class RenderConditionTest {
 
     private void createAndInvokeRenderCondition(String feature) {
         ValueMap valueMap = new ValueMapDecorator(Collections.singletonMap("feature", feature));
-        Resource resource = new ValueMapResource(
-            context.resourceResolver(),
-            StringUtils.EMPTY,
-            "etoolbox-authoring-kit/configurator/components/rendercondition",
-            valueMap);
+        Resource resource = ResourceFactory.newResource(context.resourceResolver())
+            .resourceType("etoolbox-authoring-kit/configurator/components/rendercondition")
+            .properties(valueMap)
+            .build();
         context.request().setResource(resource);
         context.request().adaptTo(RenderCondition.class);
     }
