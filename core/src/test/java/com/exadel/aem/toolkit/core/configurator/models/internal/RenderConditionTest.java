@@ -324,7 +324,7 @@ public class RenderConditionTest {
             "etoolbox-authoring-kit/configurator/components/rendercondition",
             valueMap);
         context.request().setResource(resource);
-        RenderCondition model = context.request().adaptTo(RenderCondition.class);
+        context.request().adaptTo(RenderCondition.class);
     }
 
     private void assertRenderCondition(boolean expected) {
