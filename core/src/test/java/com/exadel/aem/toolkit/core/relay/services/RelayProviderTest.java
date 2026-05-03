@@ -322,8 +322,7 @@ public class RelayProviderTest {
 
         Collection<ResourceChange> changes = captor.getValue();
         assertEquals(1, changes.size());
-        // PathSampler's second createChanges() call returns the raw cached paths (still target-prefixed)
-        assertEquals(PATH_TARGET + PATH_CHILD_A, changes.iterator().next().getPath());
+        assertEquals(PATH_SOURCE + PATH_CHILD_A, changes.iterator().next().getPath());
     }
 
     /* --------------------
