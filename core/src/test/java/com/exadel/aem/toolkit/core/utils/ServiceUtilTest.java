@@ -38,6 +38,10 @@ public class ServiceUtilTest {
     @Rule
     public final AemContext context = AemContextFactory.newInstance();
 
+    /* ---------------------
+       Consumer and Function
+       --------------------- */
+
     @Test
     public void shouldInvokeConsumerAndReturnFunctionResult() {
         AtomicReference<StubService> capturedService = new AtomicReference<>();
@@ -140,6 +144,126 @@ public class ServiceUtilTest {
         assertEquals(DEFAULT_VALUE, result);
     }
 
+    /* -------------------------
+       BiConsumer and BiFunction
+       ------------------------- */
+
+    @Test
+    public void shouldInvokeBiConsumerAndBiFunction() {
+        MockContext biConsumerCtx = newMockContextReturningService();
+        AtomicBoolean biConsumerInvoked = new AtomicBoolean(false);
+        ServiceUtil.withService(
+            StubService.class,
+            biConsumerCtx.bundleContext,
+            (s, release) -> {
+                biConsumerInvoked.set(true);
+                release.run();
+            });
+        assertTrue(biConsumerInvoked.get());
+        Mockito.verify(biConsumerCtx.bundleContext).ungetService(biConsumerCtx.serviceRef);
+
+        MockContext biFunctionCtx = newMockContextReturningService();
+        String result = ServiceUtil.withService(
+            StubService.class,
+            biFunctionCtx.bundleContext,
+            (s, release) -> {
+                release.run();
+                return s.getValue();
+            },
+            DEFAULT_VALUE);
+        assertEquals(STUB_VALUE, result);
+        Mockito.verify(biFunctionCtx.bundleContext).ungetService(biFunctionCtx.serviceRef);
+    }
+
+    @Test
+    public void shouldSkipBiVariantsWhenUnavailable() {
+        AtomicBoolean consumerInvoked = new AtomicBoolean(false);
+
+        // No service registered: null reference
+        ServiceUtil.withService(
+            StubService.class,
+            context.bundleContext(),
+            (s, release) -> consumerInvoked.set(true));
+        assertFalse(consumerInvoked.get());
+
+        String result1 = ServiceUtil.withService(
+            StubService.class,
+            context.bundleContext(),
+            (s, release) -> s.getValue(),
+            DEFAULT_VALUE);
+        assertEquals(DEFAULT_VALUE, result1);
+
+        // Non-null reference but getService returns null
+        BundleContext mockCtx = newMockContextWithNullService();
+        ServiceUtil.withService(StubService.class, mockCtx, (s, release) -> consumerInvoked.set(true));
+        assertFalse(consumerInvoked.get());
+
+        String result2 = ServiceUtil.withService(
+            StubService.class,
+            mockCtx,
+            (s, release) -> s.getValue(),
+            DEFAULT_VALUE);
+        assertEquals(DEFAULT_VALUE, result2);
+    }
+
+    @Test
+    public void shouldSwallowBiCallbackExceptions() {
+        // BiConsumer throws RuntimeException: exception swallowed, service released directly
+        MockContext biConsumerCtx = newMockContextReturningService();
+        ServiceUtil.withService(
+            StubService.class,
+            biConsumerCtx.bundleContext,
+            (s, release) -> { throw new RuntimeException(TEST_EXCEPTION_MESSAGE); });
+        Mockito.verify(biConsumerCtx.bundleContext).ungetService(biConsumerCtx.serviceRef);
+
+        // BiFunction throws RuntimeException: default returned, service released directly
+        MockContext biFunctionCtx = newMockContextReturningService();
+        String result = ServiceUtil.withService(
+            StubService.class,
+            biFunctionCtx.bundleContext,
+            (s, release) -> { throw new RuntimeException(TEST_EXCEPTION_MESSAGE); },
+            DEFAULT_VALUE);
+        assertEquals(DEFAULT_VALUE, result);
+        Mockito.verify(biFunctionCtx.bundleContext).ungetService(biFunctionCtx.serviceRef);
+    }
+
+    /* --------------
+       Context errors
+       -------------- */
+
+    @Test
+    public void shouldHandleContextException() {
+        AtomicBoolean consumerInvoked = new AtomicBoolean(false);
+        BundleContext throwingCtx = newMockContextThrowingOnGetReference();
+
+        // Consumer: getServiceReference throws -> consumer not invoked
+        ServiceUtil.withService(StubService.class, throwingCtx, s -> consumerInvoked.set(true));
+        assertFalse(consumerInvoked.get());
+
+        // Function: getServiceReference throws -> default returned
+        String result1 = ServiceUtil.withService(
+            StubService.class,
+            throwingCtx,
+            StubService::getValue,
+            DEFAULT_VALUE);
+        assertEquals(DEFAULT_VALUE, result1);
+
+        // BiConsumer: getServiceReference throws -> consumer not invoked
+        ServiceUtil.withService(
+            StubService.class,
+            throwingCtx,
+            (s, release) -> consumerInvoked.set(true));
+        assertFalse(consumerInvoked.get());
+
+        // BiFunction: getServiceReference throws -> default returned
+        String result2 = ServiceUtil.withService(
+            StubService.class,
+            throwingCtx,
+            (s, release) -> s.getValue(),
+            DEFAULT_VALUE);
+        assertEquals(DEFAULT_VALUE, result2);
+    }
+
     private static BundleContext newMockContextWithNullService() {
         BundleContext mockContext = Mockito.mock(BundleContext.class);
         @SuppressWarnings("unchecked")
@@ -166,6 +290,13 @@ public class ServiceUtilTest {
         Mockito.when(mockContext.getService(mockRef)).thenReturn(new StubServiceImpl());
         Mockito.when(mockContext.ungetService(mockRef)).thenThrow(new IllegalStateException("Unget failed"));
         return new MockContext(mockContext, mockRef);
+    }
+
+    private static BundleContext newMockContextThrowingOnGetReference() {
+        BundleContext mockContext = Mockito.mock(BundleContext.class);
+        Mockito.when(mockContext.getServiceReference(StubService.class))
+            .thenThrow(new IllegalStateException("Bundle context invalid"));
+        return mockContext;
     }
 
     private interface StubService {
