@@ -109,6 +109,8 @@ public class ResolverUtil {
             .orElse(null);
         if (targetBundle == null) {
             throw new LoginException("Could not locate required bundle: " + bundleId);
+        } else if (targetBundle.getBundleContext() == null) {
+            throw new LoginException("Bundle " + bundleId + " is not active");
         }
 
         AtomicReference<LoginException> nestedException = new AtomicReference<>();
