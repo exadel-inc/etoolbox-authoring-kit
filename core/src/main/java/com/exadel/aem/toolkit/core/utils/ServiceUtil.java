@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.utils;
 
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.function.Consumer;
@@ -129,11 +130,19 @@ public class ServiceUtil {
                 LOG.debug(ERROR_RETRIEVAL, serviceClass.getName());
                 return;
             }
+            AtomicBoolean alreadyReleased = new AtomicBoolean(false);
             try {
-                consumer.accept(service, () -> ungetService(context, reference));
+                consumer.accept(
+                    service,
+                    () -> {
+                        alreadyReleased.set(true);
+                        ungetService(context, reference);
+                    });
             } catch (RuntimeException e) {
                 LOG.error(ERROR_RUNNING, serviceClass.getName(), e);
-                ungetService(context, reference);
+                if (!alreadyReleased.get()) {
+                    ungetService(context, reference);
+                }
             }
         } catch (IllegalArgumentException | IllegalStateException e) {
             LOG.error(ERROR_HANDLING, serviceClass.getName(), e);
@@ -238,11 +247,19 @@ public class ServiceUtil {
                 LOG.debug(ERROR_RETRIEVAL, serviceClass.getName());
                 return defaultValue;
             }
+            AtomicBoolean alreadyReleased = new AtomicBoolean(false);
             try {
-                result = processor.apply(service, () -> ungetService(context, reference));
+                result = processor.apply(
+                    service,
+                    () -> {
+                        alreadyReleased.set(true);
+                        ungetService(context, reference);
+                    });
             } catch (RuntimeException e) {
                 LOG.error(ERROR_RUNNING, serviceClass.getName(), e);
-                ungetService(context, reference);
+                if (!alreadyReleased.get()) {
+                    ungetService(context, reference);
+                }
                 return defaultValue;
             }
         } catch (IllegalArgumentException | IllegalStateException e) {
