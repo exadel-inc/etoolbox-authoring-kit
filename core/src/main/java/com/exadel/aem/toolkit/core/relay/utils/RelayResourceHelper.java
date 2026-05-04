@@ -131,6 +131,8 @@ public class RelayResourceHelper {
      */
     public static Iterator<Resource> listChildren(Resource target, String path) {
         if (target instanceof RelayResource) {
+            // This will effectively wrap the children of the "physical" resource concealed within the relay resource
+            // into the relay resourcw facades of their own
             return target.listChildren();
         }
         return StreamSupport.stream(Spliterators.spliteratorUnknownSize(target.listChildren(), 0), false)

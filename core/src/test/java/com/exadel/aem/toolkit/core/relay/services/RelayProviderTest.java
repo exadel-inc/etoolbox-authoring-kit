@@ -199,12 +199,14 @@ public class RelayProviderTest {
         ResourceProvider<Void> mockProvider = newMockProvider();
         ResolveContext<Void> parentCtx = newMockResolveContext();
         Resource fallbackResource = context.create().resource("/content/fallback");
-        Mockito.when(mockProvider.getResource(Mockito.any(), Mockito.eq(PATH_SOURCE), Mockito.isNull(), Mockito.any()))
+        Mockito
+            .when(mockProvider.getResource(Mockito.any(), Mockito.eq(PATH_SOURCE), Mockito.isNull(), Mockito.any()))
             .thenReturn(fallbackResource);
 
         Resource parent = context.create().resource(PATH_SOURCE);
         Resource expectedChild = context.create().resource(parent, "page1");
-        Mockito.when(mockProvider.listChildren(Mockito.any(), Mockito.any()))
+        Mockito
+            .when(mockProvider.listChildren(Mockito.any(), Mockito.any()))
             .thenReturn(Collections.singletonList(expectedChild).iterator());
 
         ResolveContext<Void> resolveContext = newResolveContext();

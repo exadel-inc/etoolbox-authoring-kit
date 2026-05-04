@@ -126,8 +126,9 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
             return null;
         } else if (!(targetResource instanceof RelayResource)) {
             // We have fallen back to an "original" resource, so we should iterate through it without any mapping
-            return RelayResourceHelper.listChildren(context, parent);
+            return RelayResourceHelper.listChildren(context, targetResource);
         }
+        // This method call exerts the path mapping logic for the children of the target resource
         return RelayResourceHelper.listChildren(targetResource, parent.getPath());
     }
 
