@@ -142,6 +142,8 @@ public class RelayProviderHost {
                     provider,
                     properties);
                 registrations.put(registration, provider);
+                // Add newly registered path to providedPaths to prevent overlap with remaining relays
+                providedPaths.put(StringUtils.stripEnd(relay.getSource(), CoreConstants.SEPARATOR_SLASH), "this config");
             }
         } finally {
             lock.unlock();
@@ -227,6 +229,7 @@ public class RelayProviderHost {
      * @return A map of JCR path-to-provider name entries; might be empty but never null
      */
     private static Map<String, String> getExternallyProvidedPaths(BundleContext context) {
+        Map<String, String> result = new HashMap<>();
         ServiceReference<?>[] serviceReferences = null;
         try {
             serviceReferences = context.getServiceReferences(ResourceProvider.class.getName(), null);
@@ -234,9 +237,8 @@ public class RelayProviderHost {
             LOG.warn("Could not collect info on predefined resource providers", e);
         }
         if (serviceReferences == null) {
-            return Collections.emptyMap();
+            return result;
         }
-        Map<String, String> result = new HashMap<>();
         for (ServiceReference<?> ref : serviceReferences) {
             Object providedPath = ref.getProperty(ResourceProvider.PROPERTY_ROOT);
             Object providerId = ref.getProperty(ResourceProvider.PROPERTY_NAME);
