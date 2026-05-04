@@ -44,9 +44,7 @@ public class RelayResource extends ResourceWrapper {
         // because the {@code original} resource is already locked by Sling
         this.resourceMetadata = new ResourceMetadata();
         this.resourceMetadata.putAll((ResourceMetadata) original.getResourceMetadata().clone());
-        if (this.resourceMetadata.containsKey(ResourceMetadata.RESOLUTION_PATH)) {
-            this.resourceMetadata.put(ResourceMetadata.RESOLUTION_PATH, path);
-        }
+        this.resourceMetadata.put(ResourceMetadata.RESOLUTION_PATH, path);
     }
 
     /**
