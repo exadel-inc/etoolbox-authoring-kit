@@ -20,7 +20,9 @@ import java.util.Iterator;
 import java.util.Map;
 import javax.annotation.Nonnull;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.observation.ResourceChangeListener;
 import org.apache.sling.spi.resource.provider.ResolveContext;
 import org.apache.sling.spi.resource.provider.ResourceContext;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
@@ -37,6 +39,7 @@ import com.exadel.aem.toolkit.core.AemContextFactory;
 public class RelayProviderHostTest {
 
     private static final String PATH_MAPPING_A = "{\"from\":\"/content/source\",\"to\":\"/content/target\"}";
+    private static final String PATH_MAPPING_A_NEW_TARGET = "{\"from\":\"/content/source\",\"to\":\"/content/target-updated\"}";
     private static final String PATH_MAPPING_B = "{\"from\":\"/content/source2\",\"to\":\"/content/target2\"}";
     private static final String PATH_MAPPING_MISSING_TO = "{\"from\":\"/content/source\"}";
 
@@ -101,6 +104,21 @@ public class RelayProviderHostTest {
     }
 
     @Test
+    public void shouldReregisterWhenTargetChangesOnReactivate() throws InvalidSyntaxException {
+        RelayProviderHost host = context.registerInjectActivateService(
+            new RelayProviderHost(),
+            newProps(true, PATH_MAPPING_A));
+
+        assertEquals(1, countRegisteredProviders());
+        assertEquals("/content/target", getRegisteredTarget("/content/source"));
+
+        MockOsgi.activate(host, context.bundleContext(), newProps(true, PATH_MAPPING_A_NEW_TARGET));
+
+        assertEquals(1, countRegisteredProviders());
+        assertEquals("/content/target-updated", getRegisteredTarget("/content/source"));
+    }
+
+    @Test
     public void shouldUnregisterRemovedMappingOnReactivate() throws InvalidSyntaxException {
         RelayProviderHost host = context.registerInjectActivateService(
             new RelayProviderHost(),
@@ -151,6 +169,24 @@ public class RelayProviderHostTest {
         ServiceReference<?>[] refs = context.bundleContext()
             .getAllServiceReferences(ResourceProvider.class.getName(), null);
         return refs != null ? refs.length : 0;
+    }
+
+    @SuppressWarnings("SameParameterValue")
+    private String getRegisteredTarget(String sourcePath) throws InvalidSyntaxException {
+        ServiceReference<?>[] refs = context
+            .bundleContext()
+            .getAllServiceReferences(ResourceProvider.class.getName(), null);
+        if (refs == null) {
+            return null;
+        }
+        for (ServiceReference<?> ref : refs) {
+            Object root = ref.getProperty(ResourceProvider.PROPERTY_ROOT);
+            if (sourcePath.equals(root)) {
+                String[] paths = (String[]) ref.getProperty(ResourceChangeListener.PATHS);
+                return ArrayUtils.isNotEmpty(paths) ? paths[0] : null;
+            }
+        }
+        return null;
     }
 
     private static Map<String, Object> newProps(boolean enabled, String... pathMappings) {

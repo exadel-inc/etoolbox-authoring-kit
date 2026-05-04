@@ -89,10 +89,20 @@ public class RelayProviderHost {
                     .filter(relay -> StringUtils.equals(relay.getSource(), existingRoot))
                     .findFirst()
                     .orElse(null);
+                boolean shouldUnregister = false;
                 if (matchingRelay != null) {
-                    registrations.get(registration).update(matchingRelay);
-                    relays.remove(matchingRelay);
+                    String[] existingObservedPaths = (String[]) registration.getReference().getProperty(ResourceChangeListener.PATHS);
+                    String existingTarget = ArrayUtils.isNotEmpty(existingObservedPaths) ? existingObservedPaths[0] : null;
+                    if (StringUtils.equals(existingTarget, matchingRelay.getTarget())) {
+                        registrations.get(registration).update(matchingRelay);
+                        relays.remove(matchingRelay);
+                    } else {
+                        shouldUnregister = true;
+                    }
                 } else {
+                    shouldUnregister = true;
+                }
+                if (shouldUnregister) {
                     try {
                         registration.unregister();
                         iterator.remove();
