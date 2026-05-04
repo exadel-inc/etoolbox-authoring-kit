@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.ResourceResolverFactory;
+import org.apache.sling.api.resource.observation.ExternalResourceChangeListener;
 import org.apache.sling.api.resource.observation.ResourceChangeListener;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.osgi.framework.BundleContext;
@@ -134,7 +135,10 @@ public class RelayProviderHost {
                 properties.put(ResourceProvider.PROPERTY_ROOT, relay.getSource());
                 properties.put(ResourceChangeListener.PATHS, new String[]{relay.getTarget()});
                 ServiceRegistration<?> registration = context.registerService(
-                    new String[]{ResourceProvider.class.getName(), ResourceChangeListener.class.getName()},
+                    new String[]{
+                        ResourceProvider.class.getName(),
+                        ResourceChangeListener.class.getName(),
+                        ExternalResourceChangeListener.class.getName()},
                     provider,
                     properties);
                 registrations.put(registration, provider);
