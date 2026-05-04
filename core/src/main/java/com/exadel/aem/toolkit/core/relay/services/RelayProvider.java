@@ -66,8 +66,9 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
      * component is activated or its configuration is updated to apply the new configuration to this provider instance
      * @param model The {@link RelayInfo} model containing the new configuration for this provider
      */
-    void update(RelayInfo model) {
+    synchronized void update(RelayInfo model) {
         this.relay = model;
+        this.sampler = null;   // We will create a new sampler with the updated configuration when the provider is started
     }
 
     /* ------------------------
