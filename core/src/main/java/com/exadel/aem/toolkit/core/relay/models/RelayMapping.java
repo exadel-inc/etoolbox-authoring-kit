@@ -20,13 +20,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Represents a source-to-target mapping entry used for path or user identity translation.
+ * Represents a source-to-target mapping entry used for path or user identity translation. Mappings are designed so that
+ * a set of mappings can only contain entries with different sources ({@code from}-s) to avoid ambiguity as to which
+ * mapping to apply for a given source value.
  * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
  * code</p>
  */
 public class RelayMapping {
-
-    private static final int HASH_SEED = 31;
 
     private final String from;
     private final String to;
@@ -75,7 +75,7 @@ public class RelayMapping {
             return false;
         }
         RelayMapping mapping = (RelayMapping) other;
-        return Objects.equals(from, mapping.from) && Objects.equals(to, mapping.to);
+        return Objects.equals(from, mapping.from);
     }
 
     /**
@@ -83,8 +83,6 @@ public class RelayMapping {
      */
     @Override
     public int hashCode() {
-        int result = Objects.hashCode(from);
-        result = HASH_SEED * result + Objects.hashCode(to);
-        return result;
+        return Objects.hashCode(from);
     }
 }

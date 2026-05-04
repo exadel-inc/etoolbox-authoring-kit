@@ -13,11 +13,11 @@
  */
 package com.exadel.aem.toolkit.core.relay.models;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.exadel.aem.toolkit.core.utils.ObjectConversionUtil;
@@ -36,9 +36,8 @@ public class RelayMappingTest {
         assertEquals(PATH_TARGET, valid.getTo());
         assertTrue(valid.isValid());
 
-        // isValid requires non-blank from and to
-        assertFalse(newMapping("", PATH_TARGET).isValid());
-        assertFalse(newMapping(PATH_SOURCE, "").isValid());
+        assertFalse(newMapping(StringUtils.EMPTY, PATH_TARGET).isValid());
+        assertFalse(newMapping(PATH_SOURCE, StringUtils.EMPTY).isValid());
         assertFalse(newMapping(null, PATH_TARGET).isValid());
         assertFalse(newMapping(PATH_SOURCE, null).isValid());
     }
@@ -50,10 +49,8 @@ public class RelayMappingTest {
 
         assertEquals(a, b);
         assertEquals(a.hashCode(), b.hashCode());
-
+        assertEquals(a, newMapping(PATH_SOURCE, PATH_OTHER));
         assertNotEquals(a, newMapping(PATH_OTHER, PATH_TARGET));
-        assertNotEquals(a, newMapping(PATH_SOURCE, PATH_OTHER));
-        assertNotNull(a);
     }
 
     private static RelayMapping newMapping(String from, String to) {
