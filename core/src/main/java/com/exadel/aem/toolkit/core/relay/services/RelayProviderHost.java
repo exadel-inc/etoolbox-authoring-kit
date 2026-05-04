@@ -14,11 +14,13 @@
 package com.exadel.aem.toolkit.core.relay.services;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -185,7 +187,7 @@ public class RelayProviderHost {
             return Collections.emptyList();
         }
 
-        Set<RelayMapping> pathMappings = new HashSet<>();
+        Set<RelayMapping> pathMappings = new LinkedHashSet<>();
         for (String mappingSource : ArrayUtils.nullToEmpty(config.pathMappings())) {
             RelayMapping mapping = ObjectConversionUtil.toObject(mappingSource, RelayMapping.class);
             if  (mapping != null && mapping.isValid()) {
@@ -221,6 +223,7 @@ public class RelayProviderHost {
         }
 
         return pathMappings.stream()
+            .sorted(Comparator.comparingInt(m -> m.getFrom().length()))
             .map(m -> new RelayInfo(m, userMappings, samples))
             .collect(Collectors.toList());
     }

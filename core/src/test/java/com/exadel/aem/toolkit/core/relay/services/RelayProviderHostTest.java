@@ -21,6 +21,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.observation.ResourceChangeListener;
 import org.apache.sling.spi.resource.provider.ResolveContext;
@@ -38,10 +39,20 @@ import com.exadel.aem.toolkit.core.AemContextFactory;
 
 public class RelayProviderHostTest {
 
+    private static final String PATH_SOURCE = "/content/source";
+
     private static final String PATH_MAPPING_A = "{\"from\":\"/content/source\",\"to\":\"/content/target\"}";
     private static final String PATH_MAPPING_A_NEW_TARGET = "{\"from\":\"/content/source\",\"to\":\"/content/target-updated\"}";
     private static final String PATH_MAPPING_B = "{\"from\":\"/content/source2\",\"to\":\"/content/target2\"}";
     private static final String PATH_MAPPING_MISSING_TO = "{\"from\":\"/content/source\"}";
+    private static final String PATH_MAPPING_A_DUP_SOURCE = "{\"from\":\"/content/source\",\"to\":\"/content/other\"}";
+
+    private static final String USER_MAPPING_A = "{\"from\":\"admin\",\"to\":\"service-user\"}";
+    private static final String USER_MAPPING_A_DUP = "{\"from\":\"admin\",\"to\":\"other-service\"}";
+    private static final String USER_MAPPING_INVALID = "{\"from\":\"admin\"}";
+
+    private static final String CHANGE_SAMPLE_A = "{\"path\":\"/content/dam\"}";
+    private static final String CHANGE_SAMPLE_BLANK_PATH = "{\"path\":\"\"}";
 
     @Rule
     public final AemContext context = AemContextFactory.newInstance();
@@ -49,6 +60,27 @@ public class RelayProviderHostTest {
     /* ------------------
        Service activation
        ------------------ */
+
+    @Test
+    public void shouldRegisterForEachValidMapping() throws InvalidSyntaxException {
+        context.registerInjectActivateService(
+            new RelayProviderHost(),
+            newProps(true, PATH_MAPPING_A, PATH_MAPPING_B));
+
+        assertEquals(2, countRegisteredProviders());
+    }
+
+    @Test
+    public void shouldParseUserMappingsAndSamples() throws InvalidSyntaxException {
+        context.registerInjectActivateService(
+            new RelayProviderHost(),
+            newExtendedProps(
+                true,
+                new String[]{PATH_MAPPING_A},
+                new String[]{StringUtils.EMPTY, USER_MAPPING_INVALID, USER_MAPPING_A, USER_MAPPING_A_DUP},
+                new String[]{StringUtils.EMPTY, CHANGE_SAMPLE_BLANK_PATH, CHANGE_SAMPLE_A}));
+        assertEquals(1, countRegisteredProviders());
+    }
 
     @Test
     public void shouldNotRegisterForInvalidConfig() throws InvalidSyntaxException {
@@ -66,24 +98,54 @@ public class RelayProviderHostTest {
     }
 
     @Test
-    public void shouldRegisterForEachValidMapping() throws InvalidSyntaxException {
+    public void shouldSkipDuplicatePathMappings() throws InvalidSyntaxException {
+        // Blank entry → null mapping → skipped; second mapping with same source → skipped
         context.registerInjectActivateService(
             new RelayProviderHost(),
-            newProps(true, PATH_MAPPING_A, PATH_MAPPING_B));
-
-        assertEquals(2, countRegisteredProviders());
+            newProps(true, StringUtils.EMPTY, PATH_MAPPING_A, PATH_MAPPING_A_DUP_SOURCE));
+        assertEquals(1, countRegisteredProviders());
     }
 
     @Test
     public void shouldSkipShadowedPath() throws InvalidSyntaxException {
-        Dictionary<String, Object> extProps = new Hashtable<>();
-        extProps.put(ResourceProvider.PROPERTY_ROOT, "/content/source");
-        extProps.put(ResourceProvider.PROPERTY_NAME, "external-provider");
-        context.bundleContext().registerService(ResourceProvider.class.getName(), new StubResourceProvider(), extProps);
+        context.bundleContext().registerService(
+            ResourceProvider.class.getName(),
+            new StubResourceProvider(),
+            newExtProviderProps("external-provider", PATH_SOURCE));
 
         context.registerInjectActivateService(new RelayProviderHost(), newProps(true, PATH_MAPPING_A));
 
         assertEquals(1, countRegisteredProviders());
+    }
+
+    @Test
+    public void shouldSkipShadowingByUnnamedProvider() throws InvalidSyntaxException {
+        // Null PROPERTY_NAME → fallback to bundle symbolic name → relay is still shadowed
+        context.bundleContext().registerService(
+            ResourceProvider.class.getName(),
+            new StubResourceProvider(),
+            newExtProviderProps(null, PATH_SOURCE));
+        context.registerInjectActivateService(new RelayProviderHost(), newProps(true, PATH_MAPPING_A));
+        assertEquals(1, countRegisteredProviders());
+
+        // Empty PROPERTY_NAME → same fallback behavior
+        context.bundleContext().registerService(
+            ResourceProvider.class.getName(),
+            new StubResourceProvider(),
+            newExtProviderProps("", "/content/source2"));
+        context.registerInjectActivateService(new RelayProviderHost(), newProps(true, PATH_MAPPING_B));
+        assertEquals(2, countRegisteredProviders());
+    }
+
+    @Test
+    public void shouldRegisterWithRootlessExternalProvider() throws InvalidSyntaxException {
+        // Provider with no PROPERTY_ROOT → not in the provided-paths map → relay is not shadowed
+        context.bundleContext().registerService(
+            ResourceProvider.class.getName(),
+            new StubResourceProvider(),
+            newExtProviderProps("rootless-provider", null));
+        context.registerInjectActivateService(new RelayProviderHost(), newProps(true, PATH_MAPPING_A));
+        assertEquals(2, countRegisteredProviders());
     }
 
     /* ---------------------
@@ -104,18 +166,18 @@ public class RelayProviderHostTest {
     }
 
     @Test
-    public void shouldReregisterWhenTargetChangesOnReactivate() throws InvalidSyntaxException {
+    public void shouldReregisterWhenTargetChanges() throws InvalidSyntaxException {
         RelayProviderHost host = context.registerInjectActivateService(
             new RelayProviderHost(),
             newProps(true, PATH_MAPPING_A));
 
         assertEquals(1, countRegisteredProviders());
-        assertEquals("/content/target", getRegisteredTarget("/content/source"));
+        assertEquals("/content/target", getRegisteredTarget(PATH_SOURCE));
 
         MockOsgi.activate(host, context.bundleContext(), newProps(true, PATH_MAPPING_A_NEW_TARGET));
 
         assertEquals(1, countRegisteredProviders());
-        assertEquals("/content/target-updated", getRegisteredTarget("/content/source"));
+        assertEquals("/content/target-updated", getRegisteredTarget(PATH_SOURCE));
     }
 
     @Test
@@ -189,10 +251,34 @@ public class RelayProviderHostTest {
         return null;
     }
 
+    private static Dictionary<String, Object> newExtProviderProps(String name, String root) {
+        Dictionary<String, Object> props = new Hashtable<>();
+        if (root != null) {
+            props.put(ResourceProvider.PROPERTY_ROOT, root);
+        }
+        if (name != null) {
+            props.put(ResourceProvider.PROPERTY_NAME, name);
+        }
+        return props;
+    }
+
     private static Map<String, Object> newProps(boolean enabled, String... pathMappings) {
         Map<String, Object> props = new HashMap<>();
         props.put("enabled", enabled);
         props.put("pathMappings", pathMappings);
+        return props;
+    }
+
+    private static Map<String, Object> newExtendedProps(
+        boolean enabled,
+        String[] pathMappings,
+        String[] userMappings,
+        String[] announcedPaths) {
+        Map<String, Object> props = new HashMap<>();
+        props.put("enabled", enabled);
+        props.put("pathMappings", pathMappings);
+        props.put("userMappings", userMappings);
+        props.put("announcedPaths", announcedPaths);
         return props;
     }
 
