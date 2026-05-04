@@ -17,34 +17,28 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.UnaryOperator;
 
+import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.spi.resource.provider.ResolveContext;
 import org.apache.sling.spi.resource.provider.ResourceContext;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.relay.models.RelayResource;
 
-@RunWith(MockitoJUnitRunner.class)
 public class RelayResourceHelperTest {
 
     private static final String PATH_TARGET = "/content/target";
@@ -58,179 +52,195 @@ public class RelayResourceHelperTest {
     public void shouldResolveResource() {
         context.create().resource(PATH_TARGET);
         ResourceResolver resolver = context.resourceResolver();
+        ResourceResolverFactory resolverFactory = context.getService(ResourceResolverFactory.class);
 
-        // Resource found → returned directly
-        Resource found = RelayResourceHelper.getResource(
-            resolver,
-            UnaryOperator.identity(),
-            PATH_TARGET);
-        assertNotNull(found);
-        assertEquals(PATH_TARGET, found.getPath());
+        assertNotNull(resolverFactory);
 
-        // Resource not found → null
-        Resource notFound = RelayResourceHelper.getResource(
-            resolver,
-            UnaryOperator.identity(),
-            PATH_TARGET + "/missing");
-        assertNull(notFound);
+        // userId matches resolver's own ID → uses original resolver
+        Resource sameUserResult = RelayResourceHelper.getResource(resolver, resolverFactory, resolver.getUserID(), PATH_TARGET);
+        assertNotNull(sameUserResult);
+        assertEquals(PATH_TARGET, sameUserResult.getPath());
+
+        // userId is null → no subsidiary resolver lookup; uses original resolver
+        Resource nullUserResult = RelayResourceHelper.getResource(resolver, resolverFactory, null, PATH_TARGET);
+        assertNotNull(nullUserResult);
+        assertEquals(PATH_TARGET, nullUserResult.getPath());
+
+        // resource not found → null
+        Resource missingTarget = RelayResourceHelper.getResource(resolver, resolverFactory, resolver.getUserID(), PATH_TARGET + "/missing");
+        assertNull(missingTarget);
     }
 
     @Test
     public void shouldTrackSubsidiaryResolver() {
-        Resource targetResource = context.create().resource(PATH_TARGET);
-
-        ResourceResolver modifiedResolver = Mockito.mock(ResourceResolver.class);
-        Mockito.when(modifiedResolver.getResource(PATH_TARGET)).thenReturn(targetResource);
-        Mockito.when(modifiedResolver.getUserID()).thenReturn("modified-user");
-
         Map<String, Object> propertyMap = new HashMap<>();
-        ResourceResolver basicResolver = Mockito.mock(ResourceResolver.class);
-        Mockito.when(basicResolver.getPropertyMap()).thenReturn(propertyMap);
+        ResourceResolver resolver = Mockito.mock(ResourceResolver.class);
+        Mockito.when(resolver.getPropertyMap()).thenReturn(propertyMap);
 
-        // Modified resolver → stored as subsidiary in the basic resolver's property map
-        RelayResourceHelper.getResource(
-            basicResolver,
-            resolver -> modifiedResolver,
-            PATH_TARGET);
-        assertTrue(propertyMap.get("subsidiary") instanceof RelayResourceHelper.ResolverHolder);
+        ResourceResolverFactory resolverFactory = context.getService(ResourceResolverFactory.class);
+        assertNotNull(resolverFactory);
 
-        // Second call with a different modified resolver → existing subsidiary is closed, new one stored
-        ResourceResolver nextResolver = Mockito.mock(ResourceResolver.class);
-        Mockito.when(nextResolver.getResource(PATH_TARGET)).thenReturn(targetResource);
-        Mockito.when(nextResolver.getUserID()).thenReturn("next-user");
+        RelayResourceHelper.getResource(resolver, resolverFactory, "modified-user", PATH_TARGET);
 
-        RelayResourceHelper.getResource(
-            basicResolver,
-            resolver -> nextResolver,
-            PATH_TARGET);
-        Mockito.verify(modifiedResolver).close();
-        assertTrue(propertyMap.get(RelayResourceHelper.KEY_SUBSIDIARY) instanceof RelayResourceHelper.ResolverHolder);
+        Object stored = propertyMap.get(ResourceResolver.class.getName() + "@modified-user");
+        assertTrue(stored instanceof ResourceResolver);
     }
 
     @Test
-    public void shouldHandleConcurrentSubsidiaryAccess() throws InterruptedException {
-        Resource targetResource = context.create().resource(PATH_TARGET);
+    public void shouldReuseExistingSubsidiaryResolver() {
+        Map<String, Object> propertyMap = new HashMap<>();
+        ResourceResolver resolver = Mockito.mock(ResourceResolver.class);
+        Mockito.when(resolver.getPropertyMap()).thenReturn(propertyMap);
 
-        int threadCount = 8;
-        Map<String, Object> propertyMap = new ConcurrentHashMap<>();
-        ResourceResolver basicResolver = Mockito.mock(ResourceResolver.class);
-        Mockito.when(basicResolver.getPropertyMap()).thenReturn(propertyMap);
+        ResourceResolverFactory resolverFactory = context.getService(ResourceResolverFactory.class);
+        assertNotNull(resolverFactory);
 
-        AtomicInteger closedCount = new AtomicInteger();
-        ResourceResolver[] resolvers = new ResourceResolver[threadCount];
-        for (int i = 0; i < threadCount; i++) {
-            ResourceResolver mock = Mockito.mock(ResourceResolver.class);
-            Mockito.when(mock.getResource(PATH_TARGET)).thenReturn(targetResource);
-            Mockito.when(mock.getUserID()).thenReturn("user-" + i);
-            Mockito.doAnswer(inv -> {
-                closedCount.incrementAndGet();
-                return null;
-            }).when(mock).close();
-            resolvers[i] = mock;
-        }
+        RelayResourceHelper.getResource(resolver, resolverFactory, "modified-user", PATH_TARGET);
+        Object firstResolver = propertyMap.get(ResourceResolver.class.getName() + "@modified-user");
 
-        ExecutorService executor = Executors.newFixedThreadPool(threadCount);
-        CountDownLatch startLatch = new CountDownLatch(1);
-        for (ResourceResolver resolver : resolvers) {
-            executor.submit(() -> {
-                try {
-                    startLatch.await();
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-                RelayResourceHelper.getResource(
-                    basicResolver,
-                    r -> resolver,
-                    PATH_TARGET);
-            });
-        }
-        startLatch.countDown();
-        executor.shutdown();
-        assertTrue(executor.awaitTermination(5, TimeUnit.SECONDS));
+        RelayResourceHelper.getResource(resolver, resolverFactory, "modified-user", PATH_TARGET);
+        Object secondResolver = propertyMap.get(ResourceResolver.class.getName() + "@modified-user");
 
-        assertNotNull(propertyMap.get(RelayResourceHelper.KEY_SUBSIDIARY));
-        assertEquals(threadCount - 1, closedCount.get());
+        assertSame(firstResolver, secondResolver);
     }
 
     @Test
-    public void shouldDelegateGetResourceToParentProvider() {
-        Resource targetResource = context.create().resource(PATH_TARGET);
+    public void shouldStoreSentinelWhenLoginFails() throws LoginException {
+        Map<String, Object> propertyMap = new HashMap<>();
+        ResourceResolver resolver = Mockito.mock(ResourceResolver.class);
+        Mockito.when(resolver.getPropertyMap()).thenReturn(propertyMap);
 
+        ResourceResolverFactory resolverFactory = Mockito.mock(ResourceResolverFactory.class);
+        Mockito.when(resolverFactory.getServiceResourceResolver(Mockito.any()))
+            .thenThrow(new LoginException("Simulated login failure"));
+
+        // First call: LoginException → sentinel stored; original resolver used as fallback
+        RelayResourceHelper.getResource(resolver, resolverFactory, "blocked-user", PATH_TARGET);
+
+        Object stored = propertyMap.get(ResourceResolver.class.getName() + "@blocked-user");
+        assertNotNull(stored);
+        assertFalse(stored instanceof ResourceResolver); // sentinel, not a resolver
+        Mockito.verify(resolver).getResource(PATH_TARGET); // original resolver was used
+        Mockito.verify(resolverFactory, Mockito.times(1)).getServiceResourceResolver(Mockito.any());
+
+        // Second call with same userId: sentinel already in map, factory not called again
+        RelayResourceHelper.getResource(resolver, resolverFactory, "blocked-user", PATH_TARGET);
+        Mockito.verify(resolverFactory, Mockito.times(1)).getServiceResourceResolver(Mockito.any());
+    }
+
+    @Test
+    public void shouldDelegateToParentProvider() {
+        Resource fallback = context.create().resource(PATH_TARGET + PATH_CHILD);
         ResourceProvider<Void> mockProvider = newMockProvider();
-        ResolveContext<Void> mockParentContext = newMockResolveContext();
-        ResourceContext mockResourceContext = Mockito.mock(ResourceContext.class);
-        Mockito.when(mockProvider.getResource(Mockito.any(), Mockito.eq(PATH_TARGET), Mockito.any(), Mockito.any()))
-            .thenReturn(targetResource);
+        ResolveContext<Void> parentCtx = newMockResolveContext();
+        Mockito.when(mockProvider.getResource(Mockito.same(parentCtx), Mockito.eq(PATH_TARGET + PATH_CHILD), Mockito.any(), Mockito.isNull()))
+            .thenReturn(fallback);
 
-        ResolveContext<Void> mockResolveContext = newMockResolveContext();
-        Mockito.doReturn(mockProvider).when(mockResolveContext).getParentResourceProvider();
-        Mockito.doReturn(mockParentContext).when(mockResolveContext).getParentResolveContext();
+        ResolveContext<Void> resolveContext = newMockResolveContext();
+        Mockito.doReturn(mockProvider).when(resolveContext).getParentResourceProvider();
+        Mockito.doReturn(parentCtx).when(resolveContext).getParentResolveContext();
 
-        // Happy path → delegates to parent provider
-        Resource result = RelayResourceHelper.getResource(
-            mockResolveContext,
-            PATH_TARGET,
-            mockResourceContext,
-            null);
+        ResourceContext resourceContext = Mockito.mock(ResourceContext.class);
+
+        Resource result = RelayResourceHelper.getResource(resolveContext, PATH_TARGET + PATH_CHILD, resourceContext, null);
+
         assertNotNull(result);
-        assertEquals(PATH_TARGET, result.getPath());
-
-        // Null context → null
-        assertNull(RelayResourceHelper.getResource(null, PATH_TARGET, mockResourceContext, null));
-
-        // Null parent provider → null
-        ResolveContext<Void> noProviderContext = newMockResolveContext();
-        Mockito.doReturn(null).when(noProviderContext).getParentResourceProvider();
-        assertNull(RelayResourceHelper.getResource(noProviderContext, PATH_TARGET, mockResourceContext, null));
+        assertEquals(PATH_TARGET + PATH_CHILD, result.getPath());
+        Mockito.verify(mockProvider).getResource(Mockito.same(parentCtx), Mockito.eq(PATH_TARGET + PATH_CHILD), Mockito.same(resourceContext), Mockito.isNull());
     }
 
     @Test
-    public void shouldDelegateListChildrenToParentProvider() {
+    public void shouldReturnNullWithoutContext() {
+        ResourceContext resourceContext = Mockito.mock(ResourceContext.class);
+
+        // null resolveContext
+        assertNull(RelayResourceHelper.getResource(null, PATH_TARGET, resourceContext, null));
+
+        // missing parent resource provider
+        ResolveContext<Void> noProvider = newMockResolveContext();
+        Mockito.doReturn(null).when(noProvider).getParentResourceProvider();
+        Mockito.doReturn(newMockResolveContext()).when(noProvider).getParentResolveContext();
+        assertNull(RelayResourceHelper.getResource(noProvider, PATH_TARGET, resourceContext, null));
+
+        // missing parent resolve context
+        ResolveContext<Void> noParentCtx = newMockResolveContext();
+        Mockito.doReturn(newMockProvider()).when(noParentCtx).getParentResourceProvider();
+        Mockito.doReturn(null).when(noParentCtx).getParentResolveContext();
+        assertNull(RelayResourceHelper.getResource(noParentCtx, PATH_TARGET, resourceContext, null));
+    }
+
+    @Test
+    public void shouldListChildrenWithOverriddenPath() {
         Resource parent = context.create().resource(PATH_TARGET);
-        Resource child = context.create().resource(PATH_TARGET + PATH_CHILD);
-
-        ResourceProvider<Void> mockProvider = newMockProvider();
-        ResolveContext<Void> mockParentContext = newMockResolveContext();
-        Mockito.when(mockProvider.listChildren(Mockito.any(), Mockito.eq(parent)))
-            .thenReturn(Collections.singletonList(child).iterator());
-
-        ResolveContext<Void> mockResolveContext = newMockResolveContext();
-        Mockito.doReturn(mockProvider).when(mockResolveContext).getParentResourceProvider();
-        Mockito.doReturn(mockParentContext).when(mockResolveContext).getParentResolveContext();
-
-        // Happy path → delegates to parent provider
-        Iterator<Resource> result = RelayResourceHelper.listChildren(mockResolveContext, parent);
-        assertNotNull(result);
-        assertTrue(result.hasNext());
-        assertEquals(PATH_TARGET + PATH_CHILD, result.next().getPath());
-
-        // Null context → null
-        assertNull(RelayResourceHelper.listChildren(null, parent));
-
-        // Null parent provider → null
-        ResolveContext<Void> noProviderContext = newMockResolveContext();
-        Mockito.doReturn(null).when(noProviderContext).getParentResourceProvider();
-        assertNull(RelayResourceHelper.listChildren(noProviderContext, parent));
-    }
-
-    @Test
-    public void shouldListChildrenFromTarget() {
-        Resource target = context.create().resource(PATH_TARGET);
         context.create().resource(PATH_TARGET + PATH_CHILD);
 
-        // Non-RelayResource → children wrapped in RelayResource using the supplied exposed path
-        Iterator<Resource> result = RelayResourceHelper.listChildren(target, PATH_EXPOSED);
-        assertNotNull(result);
-        assertTrue(result.hasNext());
-        assertEquals(PATH_EXPOSED + PATH_CHILD, result.next().getPath());
+        Iterator<Resource> children = RelayResourceHelper.listChildren(parent, PATH_EXPOSED);
 
-        // RelayResource → listChildren() passthrough; the path argument is ignored and the
-        // relay resource's own path is used when mapping child names
-        RelayResource relayTarget = new RelayResource(target, PATH_EXPOSED);
-        Iterator<Resource> relayResult = RelayResourceHelper.listChildren(relayTarget, "/content/ignored");
-        assertNotNull(relayResult);
-        assertTrue(relayResult.hasNext());
-        assertEquals(PATH_EXPOSED + PATH_CHILD, relayResult.next().getPath());
+        assertNotNull(children);
+        assertTrue(children.hasNext());
+        Resource child = children.next();
+        assertEquals(PATH_EXPOSED + PATH_CHILD, child.getPath());
+        assertTrue(child instanceof RelayResource);
+        assertFalse(children.hasNext());
+    }
+
+    @Test
+    public void shouldListChildrenOfUnwrappedRelay() {
+        Resource original = context.create().resource(PATH_TARGET);
+        context.create().resource(PATH_TARGET + PATH_CHILD);
+        RelayResource relay = new RelayResource(original, PATH_EXPOSED);
+
+        // target is a RelayResource → helper must unwrap and use the underlying resource's children
+        Iterator<Resource> children = RelayResourceHelper.listChildren(relay, PATH_EXPOSED);
+
+        assertNotNull(children);
+        assertTrue(children.hasNext());
+        Resource child = children.next();
+        assertEquals(PATH_EXPOSED + PATH_CHILD, child.getPath());
+        assertTrue(child instanceof RelayResource);
+        assertFalse(children.hasNext());
+    }
+
+    @Test
+    public void shouldDelegateListChildrenToParent() {
+        Resource parent = context.create().resource(PATH_TARGET);
+        Resource expectedChild = context.create().resource(PATH_TARGET + PATH_CHILD);
+
+        ResourceProvider<Void> mockProvider = newMockProvider();
+        ResolveContext<Void> parentCtx = newMockResolveContext();
+        Mockito.when(mockProvider.listChildren(Mockito.same(parentCtx), Mockito.same(parent)))
+            .thenReturn(Collections.singletonList(expectedChild).iterator());
+
+        ResolveContext<Void> resolveContext = newMockResolveContext();
+        Mockito.doReturn(mockProvider).when(resolveContext).getParentResourceProvider();
+        Mockito.doReturn(parentCtx).when(resolveContext).getParentResolveContext();
+
+        Iterator<Resource> children = RelayResourceHelper.listChildren(resolveContext, parent);
+
+        assertNotNull(children);
+        assertTrue(children.hasNext());
+        assertEquals(PATH_TARGET + PATH_CHILD, children.next().getPath());
+        Mockito.verify(mockProvider).listChildren(Mockito.same(parentCtx), Mockito.same(parent));
+    }
+
+    @Test
+    public void shouldReturnNullChildrenWithoutContext() {
+        Resource parent = context.create().resource(PATH_TARGET);
+
+        // null resolveContext
+        assertNull(RelayResourceHelper.listChildren(null, parent));
+
+        // missing parent resource provider
+        ResolveContext<Void> noProvider = newMockResolveContext();
+        Mockito.doReturn(null).when(noProvider).getParentResourceProvider();
+        Mockito.doReturn(newMockResolveContext()).when(noProvider).getParentResolveContext();
+        assertNull(RelayResourceHelper.listChildren(noProvider, parent));
+
+        // missing parent resolve context
+        ResolveContext<Void> noParentCtx = newMockResolveContext();
+        Mockito.doReturn(newMockProvider()).when(noParentCtx).getParentResourceProvider();
+        Mockito.doReturn(null).when(noParentCtx).getParentResolveContext();
+        assertNull(RelayResourceHelper.listChildren(noParentCtx, parent));
     }
 
     /* ---------------

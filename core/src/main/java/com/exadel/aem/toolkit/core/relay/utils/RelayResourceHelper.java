@@ -13,15 +13,15 @@
  */
 package com.exadel.aem.toolkit.core.relay.utils;
 
-import java.io.Closeable;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Spliterators;
-import java.util.function.UnaryOperator;
 import java.util.stream.StreamSupport;
+import javax.annotation.Nonnull;
 
+import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.spi.resource.provider.ResolveContext;
 import org.apache.sling.spi.resource.provider.ResourceContext;
 import org.apache.sling.spi.resource.provider.ResourceProvider;
@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.relay.models.RelayResource;
+import com.exadel.aem.toolkit.core.utils.ResolverUtil;
 
 /**
  * Provides utility methods for resolving and listing Sling resources within the relay infrastructure
@@ -40,61 +41,62 @@ public class RelayResourceHelper {
 
     private static final Logger LOG = LoggerFactory.getLogger(RelayResourceHelper.class);
 
-    static final String KEY_SUBSIDIARY = "subsidiary";
-
     /**
      * Default (instantiation-blocking) constructor
      */
     private RelayResourceHelper() {}
 
     /**
-     * Resolves a resource at the provided path using a potentially modified {@link ResourceResolver}. Returns
-     * the resolved resource or {@code null} when the path cannot be resolved. Manages the lifecycle of any
-     * subsidiary resolver created by the {@code resolverModifier}
-     * @param basicResolver    The base {@link ResourceResolver} instance used for resolution
-     * @param resolverModifier A {@code UnaryOperator} that optionally produces an alternative {@code ResourceResolver}
-     *                         from the provided one
-     * @param path             JCR path of the resource to resolve
+     * Resolves a resource at the provided path using a potentially modified {@link ResourceResolver}. Returns the
+     * resolved resource or {@code null} when the path cannot be resolved
+     * @param resolver        The base {@code ResourceResolver} instance used for resolution
+     * @param resolverFactory The {@link ResourceResolverFactory} instance used to create subsidiary resolvers if
+     *                        needed
+     * @param userId          A nullable user ID to impersonate when creating a subsidiary resolver
+     * @param path            A non-null JCR path of the resource to resolve
      * @return A nullable {@link Resource} instance
      */
     public static Resource getResource(
-        ResourceResolver basicResolver,
-        UnaryOperator<ResourceResolver> resolverModifier,
-        String path) {
+        @Nonnull ResourceResolver resolver,
+        @Nonnull ResourceResolverFactory resolverFactory,
+        String userId,
+        @Nonnull String path) {
 
-        ResourceResolver effectiveResolver = resolverModifier.apply(basicResolver);
+        ResourceResolver effectiveResolver = resolver;
+        if (userId != null && !userId.equals(resolver.getUserID())) {
+            String key = ResourceResolver.class.getName() + CoreConstants.SEPARATOR_AT + userId;
+            // We are going to create another ResourceResolver for a mapped user ID. We need it to live as long
+            // as the resource(-s) we have resolved with it live. To achieve that, we put it into the property map
+            // of the basic ResourceResolver so that it will be automatically closed by Sling.
+            // See https://sling.apache.org/apidocs/sling12/org/apache/sling/api/resource/ResourceResolver.html#getPropertyMap
+            Object subsidiaryResolver = resolver
+                .getPropertyMap()
+                .computeIfAbsent(key, k -> {
+                    try {
+                        LOG.debug("Creating subsidiary resolver for user {} to resolve {}", userId, path);
+                        return ResolverUtil.newResolver(resolverFactory, userId);
+                    } catch (LoginException e) {
+                        LOG.warn("Failed to create subsidiary resolver for user {} to resolve {}", userId, path);
+                        return new Object(); // A sentinel value to avoid repeated attempts to create a resolver for the same user ID
+                    }
+                });
+            if ((subsidiaryResolver instanceof ResourceResolver)) {
+                effectiveResolver = (ResourceResolver) subsidiaryResolver;
+            }
+        }
         Resource result = effectiveResolver.getResource(path);
         if (result == null) {
             LOG.debug("Could not resolve {} with user {}", path, effectiveResolver.getUserID());
-            if (!effectiveResolver.equals(basicResolver)) {
-                effectiveResolver.close();
-            }
-            return null;
+        } else {
+            LOG.debug("Resolved {} to {} with user {}", path, result.getPath(), effectiveResolver.getUserID());
         }
-        if (!effectiveResolver.equals(basicResolver)) {
-            // We have created another {@link ResourceResolver} via the {@code resolverModifier}. We cannot close it
-            // in place - instead, we need it to live as long as the resource(-s) we have resolved with it live.
-            // To achieve that, we put it into the property map of the {@code basicResolver} so that it will be
-            // automatically closed when the {@code basicResolver} is closed by Sling.
-            // A {@link SubsidiaryHolder} wrapper is used so that the swap-and-close of replaced resolvers is atomic.
-            // See https://sling.apache.org/apidocs/sling12/org/apache/sling/api/resource/ResourceResolver.html#getPropertyMap
-            Map<String, Object> propertyMap = basicResolver.getPropertyMap();
-            propertyMap.compute(KEY_SUBSIDIARY, (key, existing) -> {
-                if (existing instanceof ResolverHolder) {
-                    ((ResolverHolder) existing).swap(effectiveResolver);
-                    return existing;
-                }
-                return new ResolverHolder(effectiveResolver);
-            });
-        }
-        LOG.debug("Resolved {} to {} with user {}", path, result.getPath(), effectiveResolver.getUserID());
         return result;
     }
 
     /**
      * Delegates resource resolution for the provided path to a parent {@link ResourceProvider} obtained from the given
      * {@link ResolveContext}. This is generally used as a fallback method for
-     * {@link #getResource(ResourceResolver, UnaryOperator, String)}
+     * {@link #getResource(ResourceResolver, ResourceResolverFactory, String, String)}
      * @param resolveContext  {@link ResolveContext} from which the parent provider and parent context are extracted
      * @param path            JCR path of the resource to resolve
      * @param resourceContext {@link ResourceContext} for the resolution request
@@ -130,12 +132,8 @@ public class RelayResourceHelper {
      * @return A non-null {@code Iterator} of {@link Resource} instances
      */
     public static Iterator<Resource> listChildren(Resource target, String path) {
-        if (target instanceof RelayResource) {
-            // This will effectively wrap the children of the "physical" resource concealed within the relay resource
-            // into the relay resourcw facades of their own
-            return target.listChildren();
-        }
-        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(target.listChildren(), 0), false)
+        Resource effectiveTarget = target instanceof RelayResource ? ((RelayResource) target).getResource() : target;
+        return StreamSupport.stream(Spliterators.spliteratorUnknownSize(effectiveTarget.listChildren(), 0), false)
             .map(child -> new RelayResource(child, path + CoreConstants.SEPARATOR_SLASH + child.getName()))
             .map(Resource.class::cast)
             .iterator();
@@ -182,50 +180,5 @@ public class RelayResourceHelper {
      */
     private static void reportFallingBack(String path) {
         LOG.debug("Falling back to parent resource provider for {}", path);
-    }
-
-    /* ------------------
-       Subsidiary classes
-       ------------------ */
-
-    /**
-     * A thread-safe {@link Closeable} wrapper around a subsidiary {@link ResourceResolver}. Stored in the property
-     * map of a base resolver so that Sling automatically closes the held resolver when the base resolver is closed.
-     * The {@link #swap(ResourceResolver)} method atomically replaces the held resolver, closing the previous one
-     */
-    static class ResolverHolder implements Closeable {
-
-        private volatile ResourceResolver resolver;
-
-        /**
-         * Creates a new holder with the provided resolver
-         * @param resolver Initial subsidiary {@link ResourceResolver}
-         */
-        ResolverHolder(ResourceResolver resolver) {
-            this.resolver = resolver;
-        }
-
-        /**
-         * Atomically replaces the held resolver with a new one, closing the previous resolver if present
-         * @param newResolver The replacement {@link ResourceResolver}
-         */
-        synchronized void swap(ResourceResolver newResolver) {
-            if (resolver != null) {
-                LOG.warn("A subsidiary resolver for {} will close", resolver.getUserID());
-                resolver.close();
-            }
-            resolver = newResolver;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        public synchronized void close() {
-            if (resolver != null) {
-                resolver.close();
-                resolver = null;
-            }
-        }
     }
 }
