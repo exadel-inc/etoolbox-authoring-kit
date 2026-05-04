@@ -20,7 +20,6 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.resource.observation.ExternalResourceChangeListener;
@@ -88,7 +87,7 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
         if (!RelayPathHelper.isSubpath(path, localRelay.getSource())) {
             return null;
         }
-        String targetPath = localRelay.getTarget() + StringUtils.substring(path, localRelay.getSource().length());
+        String targetPath = RelayPathHelper.replace(path, localRelay.getSource(), localRelay.getTarget());
         Resource resolved = RelayResourceHelper.getResource(
             context.getResourceResolver(),
             resolverFactory,

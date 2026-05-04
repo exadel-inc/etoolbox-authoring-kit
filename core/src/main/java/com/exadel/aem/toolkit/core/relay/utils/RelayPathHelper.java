@@ -52,12 +52,15 @@ public class RelayPathHelper {
      * @return A transformed path string
      */
     public static String replace(String path, String source, String target) {
-        if (StringUtils.equals(path, source)) {
-            return target;
+        String normalizedPath = StringUtils.stripEnd(path, CoreConstants.SEPARATOR_SLASH);
+        String normalizedSource = StringUtils.stripEnd(source, CoreConstants.SEPARATOR_SLASH);
+        String normalizedTarget = StringUtils.stripEnd(target, CoreConstants.SEPARATOR_SLASH);
+        if (StringUtils.equals(normalizedPath, normalizedSource)) {
+            return normalizedTarget;
         }
-        if (StringUtils.startsWith(path, source + CoreConstants.SEPARATOR_SLASH)) {
-            return target + path.substring(source.length());
+        if (StringUtils.startsWith(normalizedPath, normalizedSource + CoreConstants.SEPARATOR_SLASH)) {
+            return normalizedTarget + normalizedPath.substring(normalizedSource.length());
         }
-        return path;
+        return normalizedPath;
     }
 }
