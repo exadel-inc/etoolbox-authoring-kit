@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -55,8 +56,6 @@ class PathSampler {
     private String source;
     private String target;
 
-    private Collection<String> paths;
-
     /**
      * Default (instantiation-restricting) constructor
      */
@@ -68,15 +67,7 @@ class PathSampler {
      * @return A non-null, possibly empty collection of {@code ResourceChange} instances
      */
     Collection<ResourceChange> createChanges() {
-        if (paths != null) {
-            return paths
-                .stream()
-                .map(p -> RelayPathHelper.isSubpath(p, target) ?  RelayPathHelper.replace(p, target, source) : p)
-                .map(path -> new ResourceChange(ResourceChange.ChangeType.CHANGED, path, false))
-                .collect(Collectors.toList());
-        }
-
-        paths = new HashSet<>();
+        Set<String> paths = new HashSet<>();
 
         ResourceResolver resolver = null;
         try {

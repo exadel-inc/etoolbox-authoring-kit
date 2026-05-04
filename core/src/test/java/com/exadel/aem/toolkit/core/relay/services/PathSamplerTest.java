@@ -13,7 +13,6 @@
  */
 package com.exadel.aem.toolkit.core.relay.services;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -133,40 +132,6 @@ public class PathSamplerTest {
         assertTrue(paths.contains(PATH_SOURCE + PATH_CHILD));
         // Path outside target is returned unchanged
         assertTrue(paths.contains("/content/unrelated/page"));
-    }
-
-    /* --------------
-       Result caching
-       -------------- */
-
-    @Test
-    public void shouldCacheResolvedPaths() {
-        // Wrap samples in a spy list so we can count iterations
-        List<ChangeSample> spySamples = Mockito.spy(
-            new ArrayList<>(Collections.singletonList(newChangeSample(PATH_TARGET + PATH_CHILD)))
-        );
-
-        PathSampler sampler = PathSampler
-            .builder()
-            .source(PATH_SOURCE)
-            .target(PATH_TARGET)
-            .samples(spySamples)
-            .build();
-
-        // First call — samples are iterated to build the path set
-        Collection<ResourceChange> firstResult = sampler.createChanges();
-        assertEquals(1, firstResult.size());
-        assertEquals(PATH_SOURCE + PATH_CHILD, firstResult.iterator().next().getPath());
-        Mockito.verify(spySamples, Mockito.atLeastOnce()).iterator();
-
-        //noinspection unchecked
-        Mockito.clearInvocations(spySamples);
-
-        // Second call — must return the cached result without re-iterating samples
-        Collection<ResourceChange> secondResult = sampler.createChanges();
-        assertEquals(1, secondResult.size());
-        assertEquals(PATH_SOURCE + PATH_CHILD, secondResult.iterator().next().getPath());
-        Mockito.verify(spySamples, Mockito.never()).iterator();
     }
 
     /* ----------------
