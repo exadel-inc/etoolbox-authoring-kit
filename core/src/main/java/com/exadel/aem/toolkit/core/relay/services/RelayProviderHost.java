@@ -142,6 +142,8 @@ public class RelayProviderHost {
                     provider,
                     properties);
                 registrations.put(registration, provider);
+                // Add newly registered path to providedPaths to prevent overlap with remaining relays
+                providedPaths.put(StringUtils.stripEnd(relay.getSource(), CoreConstants.SEPARATOR_SLASH), "this config");
             }
         } finally {
             lock.unlock();
