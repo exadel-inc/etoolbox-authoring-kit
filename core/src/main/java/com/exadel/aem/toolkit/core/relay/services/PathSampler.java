@@ -156,13 +156,14 @@ class PathSampler {
      * preexisting resolver if the associated user ID differs
      * @param existing Existing resolver, or {@code null}
      * @param userId   User ID to obtain a resolver for; might be {@code null} or empty for the default resolver
-     * @return A {@code ResourceResolver} instance for the provided user ID, or the preexisting resolver if still valid
+     * @return A {@code ResourceResolver} instance for the provided user ID, a pre-existent resolver if still valid for
+     * the current user, or {@code null} if the resolver cannot be created
      */
     private ResourceResolver rotateResolver(ResourceResolver existing, String userId) {
-        if (existing != null && StringUtils.isNotEmpty(userId)) {
-            if (userId.equals(existing.getPropertyMap().get(PROPERTY_USER_ID))) {
-                return existing;
-            }
+        if (existing != null
+            && StringUtils.isNotEmpty(userId)
+            && userId.equals(existing.getPropertyMap().get(PROPERTY_USER_ID))) {
+            return existing;
         }
         try {
             ResourceResolver newResolver = ResolverUtil.newResolver(resolverFactory, userId);
@@ -173,7 +174,7 @@ class PathSampler {
             return newResolver;
         } catch (LoginException e) {
             LOG.error("Failed to create a resource resolver for {}", userId, e);
-            return existing;
+            return null;
         }
     }
 
