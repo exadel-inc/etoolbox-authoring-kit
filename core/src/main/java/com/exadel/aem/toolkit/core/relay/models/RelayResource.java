@@ -16,10 +16,12 @@ package com.exadel.aem.toolkit.core.relay.models;
 import java.util.Iterator;
 import javax.annotation.Nonnull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceMetadata;
 import org.apache.sling.api.resource.ResourceWrapper;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.relay.utils.RelayResourceHelper;
 
 /**
@@ -39,12 +41,46 @@ public class RelayResource extends ResourceWrapper {
      */
     public RelayResource(@Nonnull Resource original, @Nonnull String path) {
         super(original);
-        this.path = path;
+        this.path = StringUtils.stripEnd(path, CoreConstants.SEPARATOR_SLASH);
         // We must create a copy of the resource metadata to avoid the "{@code JcrNodeResourceMetadata is locked}" exception
         // because the {@code original} resource is already locked by Sling
         this.resourceMetadata = new ResourceMetadata();
         this.resourceMetadata.putAll((ResourceMetadata) original.getResourceMetadata().clone());
-        this.resourceMetadata.put(ResourceMetadata.RESOLUTION_PATH, path);
+        this.resourceMetadata.put(ResourceMetadata.RESOLUTION_PATH, this.path);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Resource getChild(@Nonnull String relativePath) {
+        String fullPath = path + CoreConstants.SEPARATOR_SLASH + StringUtils.strip(relativePath, CoreConstants.SEPARATOR_SLASH);
+        return getResourceResolver().getResource(fullPath);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    @Nonnull
+    public String getName() {
+        return path.contains(CoreConstants.SEPARATOR_SLASH)
+            ? StringUtils.substringAfterLast(path, CoreConstants.SEPARATOR_SLASH)
+            : path;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Resource getParent() {
+        String parentPath = StringUtils.contains(path, CoreConstants.SEPARATOR_SLASH)
+            ? StringUtils.substringBeforeLast(path, CoreConstants.SEPARATOR_SLASH)
+            : null;
+        if (StringUtils.isBlank(parentPath)) {
+            return null;
+        }
+        return getResourceResolver().getResource(parentPath);
     }
 
     /**

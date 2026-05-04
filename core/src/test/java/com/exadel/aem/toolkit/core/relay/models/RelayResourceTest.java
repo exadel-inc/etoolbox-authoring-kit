@@ -24,6 +24,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -34,6 +35,7 @@ public class RelayResourceTest {
     private static final String PATH_TARGET = "/content/target";
     private static final String PATH_SOURCE = "/content/source";
     private static final String PATH_CHILD = "/child";
+    private static final String PATH_NO_SLASH = "noSlash";
 
     @Rule
     public final AemContext context = AemContextFactory.newInstance();
@@ -47,6 +49,54 @@ public class RelayResourceTest {
         assertSame(plain, relay.getResource());
         assertNotSame(plain.getResourceMetadata(), relay.getResourceMetadata());
         assertEquals(PATH_SOURCE, relay.getResourceMetadata().get(ResourceMetadata.RESOLUTION_PATH));
+    }
+
+    @Test
+    public void shouldGetName() {
+        Resource plain = context.create().resource(PATH_TARGET);
+
+        assertEquals("source", new RelayResource(plain, PATH_SOURCE).getName());
+        // Path without any slash: returned as-is
+        assertEquals(PATH_NO_SLASH, new RelayResource(plain, PATH_NO_SLASH).getName());
+    }
+
+    @Test
+    public void shouldGetParent() {
+        final String pathRelayParent = "/relay";
+        Resource original = context.create().resource(PATH_TARGET);
+        context.create().resource(pathRelayParent);
+
+        RelayResource relay = new RelayResource(original, pathRelayParent + "/item");
+        Resource parent = relay.getParent();
+        assertNotNull(parent);
+        assertEquals(pathRelayParent, parent.getPath());
+
+        // Top-level path: substringBeforeLast("/top", "/") is blank → null
+        assertNull(new RelayResource(original, "/top").getParent());
+
+        // Path with no slash: no parent branch → null
+        assertNull(new RelayResource(original, PATH_NO_SLASH).getParent());
+
+        // Parent /missing does not exist in resolver → null
+        assertNull(new RelayResource(original, "/missing/item").getParent());
+    }
+
+    @Test
+    public void shouldGetChild() {
+        Resource original = context.create().resource(PATH_TARGET);
+        context.create().resource(PATH_SOURCE + PATH_CHILD);
+        RelayResource relay = new RelayResource(original, PATH_SOURCE);
+
+        Resource child = relay.getChild("child");
+        assertNotNull(child);
+        assertEquals(PATH_SOURCE + PATH_CHILD, child.getPath());
+
+        // Relative path with leading/trailing slashes is stripped
+        Resource childFromSlashed = relay.getChild("/child/");
+        assertNotNull(childFromSlashed);
+        assertEquals(PATH_SOURCE + PATH_CHILD, childFromSlashed.getPath());
+
+        assertNull(relay.getChild("nonexistent"));
     }
 
     @Test
