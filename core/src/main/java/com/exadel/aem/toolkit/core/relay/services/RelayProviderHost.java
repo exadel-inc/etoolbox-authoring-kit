@@ -180,6 +180,10 @@ public class RelayProviderHost {
         for (String mappingSource : ArrayUtils.nullToEmpty(config.pathMappings())) {
             RelayMapping mapping = ObjectConversionUtil.toObject(mappingSource, RelayMapping.class);
             if  (mapping != null && mapping.isValid()) {
+                if (pathMappings.contains(mapping)) {
+                    LOG.warn("Skipping duplicate path mapping with source {} and target {}", mapping.getFrom(), mapping.getTo());
+                    continue;
+                }
                 pathMappings.add(mapping);
             }
         }
@@ -191,6 +195,10 @@ public class RelayProviderHost {
         for (String mappingSource : ArrayUtils.nullToEmpty(config.userMappings())) {
             RelayMapping mapping = ObjectConversionUtil.toObject(mappingSource, RelayMapping.class);
             if (mapping != null && mapping.isValid()) {
+                if (userMappings.contains(mapping)) {
+                    LOG.warn("Skipping duplicate user mapping with source {} and target {}", mapping.getFrom(), mapping.getTo());
+                    continue;
+                }
                 userMappings.add(mapping);
             }
         }
