@@ -168,10 +168,8 @@ class PathSampler {
      * @return A {@code ResourceResolver} instance for the provided user ID, or the preexisting resolver if still valid
      */
     private ResourceResolver rotateResolver(ResourceResolver existing, String userId) {
-        if (existing != null) {
-            boolean userIdMatches = StringUtils.isEmpty(userId)
-                || userId.equals(existing.getPropertyMap().get(PROPERTY_USER_ID));
-            if (userIdMatches) {
+        if (existing != null && StringUtils.isNotEmpty(userId)) {
+            if (userId.equals(existing.getPropertyMap().get(PROPERTY_USER_ID))) {
                 return existing;
             }
         }
