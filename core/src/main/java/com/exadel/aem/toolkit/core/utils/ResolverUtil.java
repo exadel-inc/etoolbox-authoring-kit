@@ -37,7 +37,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
  */
 public class ResolverUtil {
 
-    private static final String SERVICE_USER_ID = "eak-service";
+    public static final String SERVICE_USER_ID = "eak-service";
 
     /**
      * Default (instantiation-restricting) constructor
