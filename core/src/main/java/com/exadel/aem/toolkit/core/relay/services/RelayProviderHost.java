@@ -95,7 +95,10 @@ public class RelayProviderHost {
                     String[] existingObservedPaths = (String[]) registration.getReference().getProperty(ResourceChangeListener.PATHS);
                     String existingTarget = ArrayUtils.isNotEmpty(existingObservedPaths) ? existingObservedPaths[0] : null;
                     if (StringUtils.equals(existingTarget, matchingRelay.getTarget())) {
-                        registrations.get(registration).update(matchingRelay);
+                        RelayProvider provider = registrations.get(registration);
+                        provider.announceStop();
+                        provider.update(matchingRelay);
+                        provider.announceStart();
                         relays.remove(matchingRelay);
                     } else {
                         shouldUnregister = true;

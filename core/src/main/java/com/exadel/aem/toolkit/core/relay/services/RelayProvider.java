@@ -61,14 +61,24 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
         update(relay);
     }
 
+    /* -----------------
+       Fields assignment
+       ----------------- */
+
     /**
      * Updates the configuration of this provider based on the given relay model. This method is called when the OSGi
      * component is activated or its configuration is updated to apply the new configuration to this provider instance
      * @param model The {@link RelayInfo} model containing the new configuration for this provider
      */
     synchronized void update(RelayInfo model) {
-        this.relay = model;
-        this.sampler = null;   // We will create a new sampler with the updated configuration when the provider is started
+        relay = model;
+        sampler = PathSampler
+            .builder()
+            .resolverFactory(resolverFactory)
+            .source(model.getSource())
+            .target(model.getTarget())
+            .samples(model.getChangeSamples())
+            .build();
     }
 
     /* ------------------------
@@ -144,11 +154,7 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
             .target(localRelay.getTarget())
             .samples(localRelay.getChangeSamples())
             .build();
-
-        Collection<ResourceChange> changes = sampler.createChanges();
-        if (!changes.isEmpty()) {
-            providerContext.getObservationReporter().reportChanges(changes, false);
-        }
+        announce(sampler, providerContext);
     }
 
     /**
@@ -158,11 +164,8 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
     public void stop() {
         RelayInfo localRelay = relay;   // Use a local copy to avoid potential race conditions with the update() method
         LOG.info("Relay provider for {} -> {} is stopping", localRelay.getSource(), localRelay.getTarget());
-        if (getProviderContext() != null && sampler != null) {
-            Collection<ResourceChange> declaredChanges = sampler.createChanges();
-            if (!declaredChanges.isEmpty()) {
-                getProviderContext().getObservationReporter().reportChanges(declaredChanges, false);
-            }
+        if (sampler != null && getProviderContext() != null) {
+            announce(sampler, getProviderContext());
         }
         sampler = null;
         super.stop();
@@ -188,6 +191,46 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
                 change.isExternal()))
             .collect(Collectors.toList());
         getProviderContext().getObservationReporter().reportChanges(mappedChanges, false);
+    }
+
+    /* -------------
+       Announcements
+       ------------- */
+
+    /**
+     * Announces the configured change samples as resource changes, generally to indicate that the relay is starting and
+     * trigger any necessary updates in the system
+     */
+    void announceStart() {
+        PathSampler localSampler = sampler;   // Use a local copy to avoid potential race conditions
+        if (localSampler != null && getProviderContext() != null) {
+            announce(sampler, getProviderContext());
+        }
+    }
+
+    /**
+     * Announces the configured change samples as resource changes, generally to indicate that the relay is stopping and
+     * trigger any necessary updates in the system
+     */
+    void announceStop() {
+        PathSampler localSampler = sampler;
+        if (localSampler != null && getProviderContext() != null) {
+            announce(sampler, getProviderContext());
+        }
+    }
+
+    /**
+     * Generates resource changes based on the configured change samples and reports them through the observation
+     * reporter
+     * @param sampler         The {@link PathSampler} instance used to generate the resource changes to report
+     * @param providerContext The {@link ProviderContext} instance used to access the observation reporter for reporting
+     *                        the generated changes
+     */
+    private static void announce(PathSampler sampler, ProviderContext providerContext) {
+        Collection<ResourceChange> changes = sampler.createChanges();
+        if (!changes.isEmpty()) {
+            providerContext.getObservationReporter().reportChanges(changes, false);
+        }
     }
 }
 
