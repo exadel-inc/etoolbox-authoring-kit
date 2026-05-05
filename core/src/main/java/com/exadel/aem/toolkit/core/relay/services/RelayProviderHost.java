@@ -98,9 +98,9 @@ public class RelayProviderHost {
                     String existingTarget = ArrayUtils.isNotEmpty(existingObservedPaths) ? existingObservedPaths[0] : null;
                     if (StringUtils.equals(existingTarget, matchingRelay.getTarget())) {
                         RelayProvider provider = registrations.get(registration);
-                        provider.announceStop();
+                        provider.announce();
                         provider.update(matchingRelay);
-                        provider.announceStart();
+                        provider.announce();
                         relays.remove(matchingRelay);
                     } else {
                         shouldUnregister = true;

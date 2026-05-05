@@ -213,24 +213,13 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
        ------------- */
 
     /**
-     * Announces the configured change samples as resource changes, generally to indicate that the relay is starting and
-     * trigger any necessary updates in the system
+     * Announces the configured change samples as resource changes, generally to indicate that the relay is changing
+     * state and trigger any necessary updates in the system
      */
-    void announceStart() {
-        PathSampler localSampler = sampler;   // Use a local copy to avoid potential race conditions
-        if (localSampler != null && getProviderContext() != null) {
-            announce(sampler, getProviderContext());
-        }
-    }
-
-    /**
-     * Announces the configured change samples as resource changes, generally to indicate that the relay is stopping and
-     * trigger any necessary updates in the system
-     */
-    void announceStop() {
+    void announce() {
         PathSampler localSampler = sampler;
         if (localSampler != null && getProviderContext() != null) {
-            announce(sampler, getProviderContext());
+            announce(localSampler, getProviderContext());
         }
     }
 
