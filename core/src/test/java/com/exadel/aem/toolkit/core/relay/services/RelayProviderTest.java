@@ -200,7 +200,7 @@ public class RelayProviderTest {
         ResolveContext<Void> parentCtx = newMockResolveContext();
         Resource fallbackResource = context.create().resource("/content/fallback");
         Mockito
-            .when(mockProvider.getResource(Mockito.any(), Mockito.eq(PATH_SOURCE), Mockito.isNull(), Mockito.any()))
+            .when(mockProvider.getResource(Mockito.any(), Mockito.eq(PATH_SOURCE), Mockito.any(), Mockito.any()))
             .thenReturn(fallbackResource);
 
         Resource parent = context.create().resource(PATH_SOURCE);
@@ -604,6 +604,11 @@ public class RelayProviderTest {
         return new RelayProvider(factory, relay);
     }
 
+    @SuppressWarnings("unchecked")
+    private static ResourceProvider<Void> newMockProvider() {
+        return Mockito.mock(ResourceProvider.class);
+    }
+
     private static RelayInfo newRelayInfo(String source, String target) {
         return newRelayInfo(source, target, Collections.emptyList(), Collections.emptyList());
     }
@@ -640,20 +645,15 @@ public class RelayProviderTest {
         return resolveContext;
     }
 
+    @SuppressWarnings("unchecked")
+    private static ResolveContext<Void> newMockResolveContext() {
+        return Mockito.mock(ResolveContext.class);
+    }
+
     private static ProviderContext newMockProviderContext(ObservationReporter reporter) {
         ProviderContext providerContext = Mockito.mock(ProviderContext.class);
         Mockito.when(providerContext.getObservationReporter()).thenReturn(reporter);
         return providerContext;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static ResourceProvider<Void> newMockProvider() {
-        return Mockito.mock(ResourceProvider.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    private static ResolveContext<Void> newMockResolveContext() {
-        return Mockito.mock(ResolveContext.class);
     }
 
     @SuppressWarnings("unchecked")
