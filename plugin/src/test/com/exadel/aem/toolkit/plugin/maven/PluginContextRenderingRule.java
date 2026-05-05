@@ -78,7 +78,6 @@ public class PluginContextRenderingRule extends PluginContextRule {
     }
 
     private void test(Class<?> component, String createdFilesPath, Path sampleFilesPath, Consumer<FileSystem> preparation) {
-        setUp();
         if (preparation != null) {
             preparation.accept(fileSystem);
         }
@@ -96,8 +95,6 @@ public class PluginContextRenderingRule extends PluginContextRule {
             LOG.error(INSTANTIATION_EXCEPTION_MESSAGE, component.getName(), cnfEx);
         } catch (IOException ioEx) {
             LOG.error(CLEANUP_EXCEPTION_MESSAGE, component.getName(), ioEx);
-        } finally {
-            tearDown();
         }
     }
 
