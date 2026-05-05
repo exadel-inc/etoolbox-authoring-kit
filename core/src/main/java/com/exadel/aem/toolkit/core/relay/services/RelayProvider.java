@@ -131,7 +131,7 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
         if (targetResource != null) {
             targetResource = new RelayResource(targetResource, path);
         } else {
-            targetResource = RelayResourceHelper.getResource(context, path, null, parent);
+            targetResource = RelayResourceHelper.getResource(context, path, ResourceContext.EMPTY_CONTEXT, parent);
         }
         if (targetResource == null) {
             return null;
