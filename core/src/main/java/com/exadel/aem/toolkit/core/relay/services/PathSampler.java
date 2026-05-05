@@ -96,7 +96,7 @@ class PathSampler {
         // All resolved paths must point to source instead of target
         return paths
             .stream()
-            .map(p -> RelayPathHelper.isSubpath(p, target) ?  RelayPathHelper.replace(p, target, source) : p)
+            .map(p -> RelayPathHelper.isSamePathOrSubpath(p, target) ?  RelayPathHelper.replace(p, target, source) : p)
             .map(path -> new ResourceChange(ResourceChange.ChangeType.CHANGED, path, false))
             .collect(Collectors.toList());
     }

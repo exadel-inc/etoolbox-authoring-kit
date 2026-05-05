@@ -13,14 +13,31 @@
  */
 package com.exadel.aem.toolkit.core.relay.utils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 public class RelayPathHelperTest {
 
     private static final String PATH_SOURCE = "/content/source";
     private static final String PATH_TARGET = "/content/target";
+
+    @Test
+    public void shouldCheckForSamePathOrSubpath() {
+        assertTrue(RelayPathHelper.isSamePathOrSubpath(PATH_SOURCE, PATH_SOURCE));
+        assertTrue(RelayPathHelper.isSamePathOrSubpath(PATH_SOURCE + "/child", PATH_SOURCE));
+        assertTrue(RelayPathHelper.isSamePathOrSubpath(PATH_SOURCE + "/a/b/c", PATH_SOURCE));
+        assertTrue(RelayPathHelper.isSamePathOrSubpath(PATH_SOURCE + "/", PATH_SOURCE));
+        assertTrue(RelayPathHelper.isSamePathOrSubpath(PATH_SOURCE, PATH_SOURCE + "/"));
+
+        assertFalse(RelayPathHelper.isSamePathOrSubpath("/content/other", PATH_SOURCE));
+        assertFalse(RelayPathHelper.isSamePathOrSubpath(PATH_SOURCE + "-extra", PATH_SOURCE));
+        assertFalse(RelayPathHelper.isSamePathOrSubpath(null, PATH_SOURCE));
+        assertTrue(RelayPathHelper.isSamePathOrSubpath(StringUtils.EMPTY, null));
+    }
 
     @Test
     public void shouldReplacePrefix() {

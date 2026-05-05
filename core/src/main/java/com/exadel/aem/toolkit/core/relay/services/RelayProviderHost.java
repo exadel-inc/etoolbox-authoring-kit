@@ -122,10 +122,10 @@ public class RelayProviderHost {
             }
 
             // Register providers for the remaining new relays that didn't match any existing ones
-            Map<String, String> providedPaths = getExternallyProvidedPaths(context);
+            Map<String, String> providedPaths = getAlreadyProvidedPaths(context);
             for (RelayInfo relay : relays) {
                 String shadowedEntries = providedPaths.entrySet().stream()
-                    .filter(e -> RelayPathHelper.isSubpath(e.getKey(), relay.getSource()))
+                    .filter(e -> RelayPathHelper.isSamePathOrSubpath(e.getKey(), relay.getSource()))
                     .map(e -> e.getKey() + " by " + e.getValue())
                     .collect(Collectors.joining(CoreConstants.SEPARATOR_COMMA + StringUtils.SPACE));
                 if (!shadowedEntries.isEmpty()) {
@@ -234,7 +234,7 @@ public class RelayProviderHost {
      * @param context OSGi {@link BundleContext} used to query registered provider services
      * @return A map of JCR path-to-provider name entries; might be empty but never null
      */
-    private static Map<String, String> getExternallyProvidedPaths(BundleContext context) {
+    private static Map<String, String> getAlreadyProvidedPaths(BundleContext context) {
         Map<String, String> result = new HashMap<>();
         ServiceReference<?>[] serviceReferences = null;
         try {

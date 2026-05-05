@@ -95,12 +95,12 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
         @Nonnull ResourceContext resourceContext,
         @Nullable Resource parent) {
         RelayInfo localRelay = relay;   // Use a local copy to avoid potential race conditions with the update() method
-        if (!RelayPathHelper.isSubpath(path, localRelay.getSource())) {
+        if (!RelayPathHelper.isSamePathOrSubpath(path, localRelay.getSource())) {
             return null;
         }
         String targetPath = RelayPathHelper.replace(path, localRelay.getSource(), localRelay.getTarget());
         // Break the re-entry cycle: if targetPath is still under source, resolve via parent provider
-        if (RelayPathHelper.isSubpath(targetPath, localRelay.getSource())) {
+        if (RelayPathHelper.isSamePathOrSubpath(targetPath, localRelay.getSource())) {
             Resource resolved = RelayResourceHelper.getResource(context, targetPath, resourceContext, parent);
             return resolved != null ? new RelayResource(resolved, path) : null;
         }

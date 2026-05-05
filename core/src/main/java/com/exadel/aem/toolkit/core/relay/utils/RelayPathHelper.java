@@ -36,7 +36,7 @@ public class RelayPathHelper {
      * @param root Root JCR path to check against
      * @return True or false
      */
-    public static boolean isSubpath(String path, String root) {
+    public static boolean isSamePathOrSubpath(String path, String root) {
         String normalizedPath = StringUtils.stripEnd(path, CoreConstants.SEPARATOR_SLASH);
         String normalizedRoot = StringUtils.stripEnd(StringUtils.defaultString(root), CoreConstants.SEPARATOR_SLASH);
         return StringUtils.equals(normalizedPath, normalizedRoot)
