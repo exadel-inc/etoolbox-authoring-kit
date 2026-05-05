@@ -71,13 +71,8 @@ public class RelayResourceTest {
         assertNotNull(parent);
         assertEquals(pathRelayParent, parent.getPath());
 
-        // Top-level path: substringBeforeLast("/top", "/") is blank → null
-        assertNull(new RelayResource(original, "/top").getParent());
-
-        // Path with no slash: no parent branch → null
+        assertNotNull(new RelayResource(original, "/top").getParent());
         assertNull(new RelayResource(original, PATH_NO_SLASH).getParent());
-
-        // Parent /missing does not exist in resolver → null
         assertNull(new RelayResource(original, "/missing/item").getParent());
     }
 

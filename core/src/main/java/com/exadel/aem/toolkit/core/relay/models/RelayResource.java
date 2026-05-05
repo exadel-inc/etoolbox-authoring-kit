@@ -74,11 +74,12 @@ public class RelayResource extends ResourceWrapper {
      */
     @Override
     public Resource getParent() {
-        String parentPath = StringUtils.contains(path, CoreConstants.SEPARATOR_SLASH)
-            ? StringUtils.substringBeforeLast(path, CoreConstants.SEPARATOR_SLASH)
-            : null;
-        if (StringUtils.isBlank(parentPath)) {
+        if (!StringUtils.contains(path, CoreConstants.SEPARATOR_SLASH)) {
             return null;
+        }
+        String parentPath = StringUtils.substringBeforeLast(path, CoreConstants.SEPARATOR_SLASH);
+        if (parentPath.isEmpty()) {
+            parentPath = CoreConstants.SEPARATOR_SLASH;
         }
         return getResourceResolver().getResource(parentPath);
     }
