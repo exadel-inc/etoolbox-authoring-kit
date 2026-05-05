@@ -43,7 +43,7 @@ public class RelayMappingTest {
     }
 
     @Test
-    public void shouldBeEqualByBothFields() {
+    public void shouldCheckEquality() {
         RelayMapping a = newMapping(PATH_SOURCE, PATH_TARGET);
         RelayMapping b = newMapping(PATH_SOURCE, PATH_TARGET);
 

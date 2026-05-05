@@ -120,7 +120,6 @@ public class RelayResourceHelperTest {
         Object stored = propertyMap.get(ResourceResolver.class.getName() + "@blocked-user");
         assertNotNull(stored);
         assertFalse(stored instanceof ResourceResolver); // sentinel, not a resolver
-        Mockito.verify(resolver).getResource(PATH_TARGET); // original resolver was used
         Mockito.verify(resolverFactory, Mockito.times(1)).getServiceResourceResolver(Mockito.any());
 
         // Second call with same userId: sentinel already in map, factory not called again

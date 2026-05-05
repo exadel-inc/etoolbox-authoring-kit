@@ -82,13 +82,16 @@ public class RelayResourceHelper {
                 });
             if ((subsidiaryResolver instanceof ResourceResolver)) {
                 effectiveResolver = (ResourceResolver) subsidiaryResolver;
+            } else {
+                LOG.debug("Could not resolve {} with user {} due to a user mapping/login failure", path, userId);
+                return null;
             }
         }
         Resource result = effectiveResolver.getResource(path);
         if (result == null) {
-            LOG.debug("Could not resolve {} with user {}", path, effectiveResolver.getUserID());
+            LOG.debug("Could not retrieve {} with user {}", path, effectiveResolver.getUserID());
         } else {
-            LOG.debug("Resolved {} to {} with user {}", path, result.getPath(), effectiveResolver.getUserID());
+            LOG.debug("Retrieved {} -> {} with user {}", path, result.getPath(), effectiveResolver.getUserID());
         }
         return result;
     }

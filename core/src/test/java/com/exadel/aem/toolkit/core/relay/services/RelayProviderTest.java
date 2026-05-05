@@ -679,11 +679,10 @@ public class RelayProviderTest {
     }
 
     @Test
-    public void shouldFallBackToOriginalResolver() throws LoginException {
-        String brokenService = "broken-service";
+    public void shouldReturnNullForInvalidMapping() throws LoginException {
         RelayInfo relay = newRelayInfo(
             PATH_SOURCE, PATH_TARGET,
-            Collections.singletonList(newMapping(USER_AUTHOR, brokenService)),
+            Collections.singletonList(newMapping(USER_AUTHOR, "broken-service")),
             Collections.emptyList());
 
         Resource mockTargetResource = Mockito.mock(Resource.class);
@@ -691,7 +690,8 @@ public class RelayProviderTest {
         Mockito.when(mockTargetResource.getResourceMetadata()).thenReturn(new ResourceMetadata());
 
         ResourceResolverFactory factory = Mockito.mock(ResourceResolverFactory.class);
-        Mockito.when(factory.getServiceResourceResolver(Mockito.any()))
+        Mockito
+            .when(factory.getServiceResourceResolver(Mockito.any()))
             .thenThrow(new LoginException("No service user"));
 
         ResourceResolver basicResolver = Mockito.mock(ResourceResolver.class);
@@ -704,11 +704,7 @@ public class RelayProviderTest {
         RelayProvider provider = newProvider(factory, relay);
         Resource result = provider.getResource(resolveContext, PATH_SOURCE + PATH_CHILD_A, resourceContext, null);
 
-        // LoginException is caught and the original resolver is used as fallback
-        assertNotNull(result);
-        assertTrue(result instanceof RelayResource);
-        assertEquals(PATH_SOURCE + PATH_CHILD_A, result.getPath());
-        Mockito.verify(basicResolver).getResource(PATH_TARGET + PATH_CHILD_A);
+        assertNull(result);
     }
 
     /* ---------------
