@@ -114,7 +114,8 @@ public class RelayProviderTest {
         ResourceProvider<Void> mockProvider = newMockProvider();
         ResolveContext<Void> parentCtx = newMockResolveContext();
         Resource fallbackResource = context.create().resource(PATH_SOURCE + PATH_CHILD_A);
-        Mockito.when(mockProvider.getResource(Mockito.any(), Mockito.eq(PATH_SOURCE + PATH_CHILD_A), Mockito.any(), Mockito.any()))
+        Mockito
+            .when(mockProvider.getResource(Mockito.any(), Mockito.eq(PATH_SOURCE + PATH_CHILD_A), Mockito.any(), Mockito.any()))
             .thenReturn(fallbackResource);
 
         ResolveContext<Void> resolveContext = newResolveContext();
@@ -138,6 +139,63 @@ public class RelayProviderTest {
         ResourceContext resourceContext = Mockito.mock(ResourceContext.class);
 
         Resource result = provider.getResource(resolveContext, PATH_SOURCE + PATH_CHILD_A, resourceContext, null);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void shouldResolveNestedRelayViaParentProvider() {
+        // Nested relay: target is under source (e.g. /content/source → /content/source/alias).
+        // getResource() must use the re-entry guard and resolve targetPath through the parent provider
+        // to avoid re-entering the relay, and wrap the result as a RelayResource at the original path.
+        String nestedTarget = PATH_SOURCE + "/alias";
+        String requestPath = PATH_SOURCE + PATH_CHILD_A;
+        String targetPath = nestedTarget + PATH_CHILD_A;
+
+        ResourceProvider<Void> mockProvider = newMockProvider();
+        ResolveContext<Void> parentCtx = newMockResolveContext();
+
+        Resource actualResource = context.create().resource(targetPath);
+        Mockito.when(mockProvider.getResource(Mockito.any(), Mockito.eq(targetPath), Mockito.any(), Mockito.any()))
+            .thenReturn(actualResource);
+
+        ResolveContext<Void> resolveContext = newResolveContext();
+        Mockito.doReturn(mockProvider).when(resolveContext).getParentResourceProvider();
+        Mockito.doReturn(parentCtx).when(resolveContext).getParentResolveContext();
+
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, nestedTarget));
+        ResourceContext resourceContext = Mockito.mock(ResourceContext.class);
+
+        Resource result = provider.getResource(resolveContext, requestPath, resourceContext, null);
+
+        assertNotNull(result);
+        assertTrue(result instanceof RelayResource);
+        assertEquals(requestPath, result.getPath());
+        Mockito.verify(mockProvider).getResource(Mockito.any(), Mockito.eq(targetPath), Mockito.any(), Mockito.any());
+    }
+
+    @Test
+    public void shouldReturnNullForNestedRelayWhenParentMisses() {
+        // Nested relay: when the parent provider cannot resolve the remapped target,
+        // getResource() must return null rather than falling through to the full resolver.
+        String nestedTarget = PATH_SOURCE + "/alias";
+        String requestPath = PATH_SOURCE + PATH_CHILD_A;
+        String targetPath = nestedTarget + PATH_CHILD_A;
+
+        ResourceProvider<Void> mockProvider = newMockProvider();
+        ResolveContext<Void> parentCtx = newMockResolveContext();
+
+        Mockito.when(mockProvider.getResource(Mockito.any(), Mockito.eq(targetPath), Mockito.any(), Mockito.any()))
+            .thenReturn(null);
+
+        ResolveContext<Void> resolveContext = newResolveContext();
+        Mockito.doReturn(mockProvider).when(resolveContext).getParentResourceProvider();
+        Mockito.doReturn(parentCtx).when(resolveContext).getParentResolveContext();
+
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, nestedTarget));
+        ResourceContext resourceContext = Mockito.mock(ResourceContext.class);
+
+        Resource result = provider.getResource(resolveContext, requestPath, resourceContext, null);
 
         assertNull(result);
     }
@@ -188,6 +246,67 @@ public class RelayProviderTest {
         ResolveContext<Void> resolveContext = newResolveContext();
 
         Resource parent = context.create().resource(PATH_SOURCE);
+
+        Iterator<Resource> result = provider.listChildren(resolveContext, parent);
+
+        assertNull(result);
+    }
+
+    @Test
+    public void shouldListChildrenViaParentProvider() {
+        // Nested relay: target is under source (e.g. /content/source → /content/source/alias).
+        // listChildren() must use the re-entry guard and resolve the target resource through the parent
+        // provider instead of the full resource resolver to avoid infinite remapping.
+        String nestedTarget = PATH_SOURCE + "/alias";
+
+        ResourceProvider<Void> mockProvider = newMockProvider();
+        ResolveContext<Void> parentCtx = newMockResolveContext();
+
+        Resource parent = context.create().resource(PATH_SOURCE);
+        Resource aliasResource = context.create().resource(nestedTarget);
+        Resource childResource = context.create().resource(nestedTarget + PATH_CHILD_A);
+
+        Mockito.when(mockProvider.getResource(
+                Mockito.any(), Mockito.eq(nestedTarget), Mockito.any(), Mockito.any()))
+            .thenReturn(aliasResource);
+        Mockito.when(mockProvider.listChildren(Mockito.any(), Mockito.any()))
+            .thenReturn(Collections.singletonList(childResource).iterator());
+
+        ResolveContext<Void> resolveContext = newResolveContext();
+        Mockito.doReturn(mockProvider).when(resolveContext).getParentResourceProvider();
+        Mockito.doReturn(parentCtx).when(resolveContext).getParentResolveContext();
+
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, nestedTarget));
+
+        Iterator<Resource> result = provider.listChildren(resolveContext, parent);
+
+        assertNotNull(result);
+        assertTrue(result.hasNext());
+        Resource child = result.next();
+        assertEquals(PATH_SOURCE + PATH_CHILD_A, child.getPath());
+        assertTrue(child instanceof RelayResource);
+        assertFalse(result.hasNext());
+    }
+
+    @Test
+    public void shouldReturnNullForNestedRelayWhenTargetNotFound() {
+        // Nested relay: target is under source. When the parent provider cannot resolve the target,
+        // listChildren() must return null (no fallback that would re-enter the relay).
+        String nestedTarget = PATH_SOURCE + "/alias";
+
+        ResourceProvider<Void> mockProvider = newMockProvider();
+        ResolveContext<Void> parentCtx = newMockResolveContext();
+
+        Mockito.when(mockProvider.getResource(
+                Mockito.any(), Mockito.eq(nestedTarget), Mockito.any(), Mockito.any()))
+            .thenReturn(null);
+
+        ResolveContext<Void> resolveContext = newResolveContext();
+        Mockito.doReturn(mockProvider).when(resolveContext).getParentResourceProvider();
+        Mockito.doReturn(parentCtx).when(resolveContext).getParentResolveContext();
+
+        RelayProvider provider = newProvider(newRelayInfo(PATH_SOURCE, nestedTarget));
+        Resource parent = context.create().resource(PATH_SOURCE + "/alias").getParent();
 
         Iterator<Resource> result = provider.listChildren(resolveContext, parent);
 
