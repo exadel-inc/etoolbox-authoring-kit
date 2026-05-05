@@ -294,6 +294,10 @@ public class ConfigDefinition {
      * does not exist
      */
     private static ConfigDefinition from(String pid, BundleContext context) {
+        if (context == null) {
+            LOG.error("Cannot retrieve configuration for {}: no bundle context available", pid);
+            return EMPTY;
+        }
         Configuration configuration = ServiceUtil.withService(
             ConfigurationAdmin.class,
             context,
