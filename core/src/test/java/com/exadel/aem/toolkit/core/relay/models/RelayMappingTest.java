@@ -30,16 +30,19 @@ public class RelayMappingTest {
 
     @Test
     public void shouldReturnPropertiesAndValidity() {
-        RelayMapping valid = newMapping(PATH_SOURCE, PATH_TARGET);
+        RelayMapping mapping = newMapping(PATH_SOURCE, PATH_TARGET);
 
-        assertEquals(PATH_SOURCE, valid.getFrom());
-        assertEquals(PATH_TARGET, valid.getTo());
-        assertTrue(valid.isValid());
+        assertEquals(PATH_SOURCE, mapping.getFrom());
+        assertEquals(PATH_TARGET, mapping.getTo());
+        assertTrue(mapping.isValid());
 
         assertFalse(newMapping(StringUtils.EMPTY, PATH_TARGET).isValid());
         assertFalse(newMapping(PATH_SOURCE, StringUtils.EMPTY).isValid());
         assertFalse(newMapping(null, PATH_TARGET).isValid());
         assertFalse(newMapping(PATH_SOURCE, null).isValid());
+        assertFalse(newMapping(PATH_SOURCE, PATH_SOURCE).isValid());
+        assertFalse(newMapping(PATH_SOURCE, PATH_SOURCE + "/child").isValid());
+        assertFalse(newMapping(PATH_SOURCE + "/child", PATH_SOURCE).isValid());
     }
 
     @Test

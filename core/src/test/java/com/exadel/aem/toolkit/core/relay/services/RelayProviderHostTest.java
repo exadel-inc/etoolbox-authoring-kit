@@ -43,9 +43,12 @@ public class RelayProviderHostTest {
 
     private static final String PATH_MAPPING_A = "{\"from\":\"/content/source\",\"to\":\"/content/target\"}";
     private static final String PATH_MAPPING_A_NEW_TARGET = "{\"from\":\"/content/source\",\"to\":\"/content/target-updated\"}";
+    private static final String PATH_MAPPING_A_NESTED_SOURCE = "{\"from\":\"/content/source\",\"to\":\"/content\"}";
+    private static final String PATH_MAPPING_A_NESTED_TARGET = "{\"from\":\"/content/source\",\"to\":\"/content/source/child\"}";
+    private static final String PATH_MAPPING_A_DUP_SOURCE = "{\"from\":\"/content/source\",\"to\":\"/content/other\"}";
+
     private static final String PATH_MAPPING_B = "{\"from\":\"/content/source2\",\"to\":\"/content/target2\"}";
     private static final String PATH_MAPPING_MISSING_TO = "{\"from\":\"/content/source\"}";
-    private static final String PATH_MAPPING_A_DUP_SOURCE = "{\"from\":\"/content/source\",\"to\":\"/content/other\"}";
 
     private static final String USER_MAPPING_A = "{\"from\":\"admin\",\"to\":\"service-user\"}";
     private static final String USER_MAPPING_A_DUP = "{\"from\":\"admin\",\"to\":\"other-service\"}";
@@ -99,10 +102,15 @@ public class RelayProviderHostTest {
 
     @Test
     public void shouldSkipDuplicatePathMappings() throws InvalidSyntaxException {
-        // Blank entry → null mapping → skipped; second mapping with same source → skipped
         context.registerInjectActivateService(
             new RelayProviderHost(),
-            newProps(true, StringUtils.EMPTY, PATH_MAPPING_A, PATH_MAPPING_A_DUP_SOURCE));
+            newProps(
+                true,
+                StringUtils.EMPTY,
+                PATH_MAPPING_A,
+                PATH_MAPPING_A_NESTED_SOURCE,
+                PATH_MAPPING_A_NESTED_TARGET,
+                PATH_MAPPING_A_DUP_SOURCE));
         assertEquals(1, countRegisteredProviders());
     }
 

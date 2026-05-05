@@ -21,7 +21,9 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * Represents the set of data required to configure and operate a {@code RelayProvider}.
+ * Represents the set of data required to configure and operate a {@code RelayProvider}. Every entry must at least have
+ * a valid path mapping for path translation. Mapped paths should not be the same or parent/child of each other to avoid
+ * traversal ambiguity.
  * <p><u>Note</u>: This class is not a part of the public API and is subject to change. Do not use it in your own
  * code</p>
  */

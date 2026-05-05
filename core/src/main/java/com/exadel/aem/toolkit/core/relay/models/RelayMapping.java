@@ -19,6 +19,8 @@ import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.exadel.aem.toolkit.core.relay.utils.RelayPathHelper;
+
 /**
  * Represents a source-to-target mapping entry used for path or user identity translation. Mappings are designed so that
  * a set of mappings can only contain entries with different sources ({@code from}-s) to avoid ambiguity as to which
@@ -63,7 +65,9 @@ public class RelayMapping {
      * @return True or false
      */
     public boolean isValid() {
-        return StringUtils.isNoneBlank(getFrom(), getTo());
+        return StringUtils.isNoneBlank(getFrom(), getTo())
+            && !RelayPathHelper.isSamePathOrSubpath(getFrom(), getTo())
+            && !RelayPathHelper.isSamePathOrSubpath(getTo(), getFrom());
     }
 
     /**
