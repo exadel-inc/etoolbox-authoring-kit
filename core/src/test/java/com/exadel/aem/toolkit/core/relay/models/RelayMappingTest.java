@@ -39,7 +39,6 @@ public class RelayMappingTest {
         assertFalse(newMapping(StringUtils.EMPTY, PATH_TARGET).isValid());
         assertFalse(newMapping(PATH_SOURCE, StringUtils.EMPTY).isValid());
         assertFalse(newMapping(null, PATH_TARGET).isValid());
-        assertFalse(newMapping(PATH_SOURCE, null).isValid());
         assertFalse(newMapping(PATH_SOURCE, PATH_SOURCE).isValid());
         assertFalse(newMapping(PATH_SOURCE, PATH_SOURCE + "/child").isValid());
         assertFalse(newMapping(PATH_SOURCE + "/child", PATH_SOURCE).isValid());

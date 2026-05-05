@@ -37,8 +37,11 @@ public class RelayPathHelper {
      * @return True or false
      */
     public static boolean isSamePathOrSubpath(String path, String root) {
-        String normalizedPath = StringUtils.stripEnd(path, CoreConstants.SEPARATOR_SLASH);
-        String normalizedRoot = StringUtils.stripEnd(StringUtils.defaultString(root), CoreConstants.SEPARATOR_SLASH);
+        if (StringUtils.isAllEmpty(path, root)) {
+            return true;
+        }
+        String normalizedPath = normalize(path);
+        String normalizedRoot = normalize(root);
         return StringUtils.equals(normalizedPath, normalizedRoot)
                 || StringUtils.startsWith(normalizedPath, normalizedRoot + CoreConstants.SEPARATOR_SLASH);
     }
@@ -52,9 +55,9 @@ public class RelayPathHelper {
      * @return A transformed path string
      */
     public static String replace(String path, String source, String target) {
-        String normalizedPath = StringUtils.stripEnd(path, CoreConstants.SEPARATOR_SLASH);
-        String normalizedSource = StringUtils.stripEnd(source, CoreConstants.SEPARATOR_SLASH);
-        String normalizedTarget = StringUtils.stripEnd(target, CoreConstants.SEPARATOR_SLASH);
+        String normalizedPath = normalize(path);
+        String normalizedSource = normalize(source);
+        String normalizedTarget = normalize(target);
         if (StringUtils.equals(normalizedPath, normalizedSource)) {
             return normalizedTarget;
         }
@@ -62,5 +65,19 @@ public class RelayPathHelper {
             return normalizedTarget + normalizedPath.substring(normalizedSource.length());
         }
         return normalizedPath;
+    }
+
+    /**
+     * Normalizes the provided path by stripping trailing slashes and replacing an empty result with a single slash
+     * @param path JCR path to normalize
+     * @return A normalized path string
+     */
+    private static String normalize(String path) {
+        if (StringUtils.isBlank(path)) {
+            return path;
+        }
+        return StringUtils.defaultIfEmpty(
+            StringUtils.stripEnd(path, CoreConstants.SEPARATOR_SLASH),
+            CoreConstants.SEPARATOR_SLASH);
     }
 }

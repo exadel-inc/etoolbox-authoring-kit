@@ -190,7 +190,10 @@ public class RelayProviderHost {
         Set<RelayMapping> pathMappings = new LinkedHashSet<>();
         for (String mappingSource : ArrayUtils.nullToEmpty(config.pathMappings())) {
             RelayMapping mapping = ObjectConversionUtil.toObject(mappingSource, RelayMapping.class);
-            if  (mapping != null && mapping.isValid()) {
+            if  (mapping != null
+                && mapping.isValid()
+                && StringUtils.startsWith(mapping.getFrom(), CoreConstants.SEPARATOR_SLASH)
+                && StringUtils.startsWith(mapping.getTo(), CoreConstants.SEPARATOR_SLASH)) {
                 if (pathMappings.contains(mapping)) {
                     LOG.warn("Skipping duplicate path mapping with source {} and target {}", mapping.getFrom(), mapping.getTo());
                     continue;

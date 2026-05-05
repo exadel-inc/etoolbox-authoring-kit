@@ -41,7 +41,9 @@ public class RelayResource extends ResourceWrapper {
      */
     public RelayResource(@Nonnull Resource original, @Nonnull String path) {
         super(original);
-        this.path = StringUtils.stripEnd(path, CoreConstants.SEPARATOR_SLASH);
+        this.path = StringUtils.defaultIfEmpty(
+            StringUtils.stripEnd(path, CoreConstants.SEPARATOR_SLASH),
+            CoreConstants.SEPARATOR_SLASH);
         // We must create a copy of the resource metadata to avoid the "{@code JcrNodeResourceMetadata is locked}" exception
         // because the {@code original} resource is already locked by Sling
         this.resourceMetadata = new ResourceMetadata();
