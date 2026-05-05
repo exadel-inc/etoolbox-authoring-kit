@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.relay.utils.RelayPathHelper;
 
 /**
@@ -65,7 +66,8 @@ public class RelayMapping {
      * @return True or false
      */
     public boolean isValid() {
-        return StringUtils.isNoneBlank(getFrom(), getTo())
+        return StringUtils.startsWith(getFrom(), CoreConstants.SEPARATOR_SLASH)
+            && StringUtils.startsWith(getTo(), CoreConstants.SEPARATOR_SLASH)
             && !RelayPathHelper.isSamePathOrSubpath(getFrom(), getTo())
             && !RelayPathHelper.isSamePathOrSubpath(getTo(), getFrom());
     }
