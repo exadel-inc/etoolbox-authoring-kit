@@ -13,6 +13,7 @@
  */
 package com.exadel.aem.toolkit.core.utils;
 
+import java.io.Closeable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.concurrent.atomic.AtomicReference;
@@ -125,7 +126,7 @@ public class ResolverUtil {
                     // By adding the callback to the resolver's property map, we ensure that the obtained service
                     // will be unget no sooner than the resolver is closed
                     // See https://sling.apache.org/apidocs/sling12/org/apache/sling/api/resource/ResourceResolver.html#getPropertyMap
-                    resolver.getPropertyMap().put("unget", (AutoCloseable) callback::run);
+                    resolver.getPropertyMap().put("unget", (Closeable) callback::run);
                     return resolver;
                 } catch (LoginException e) {
                     nestedException.set(e);
