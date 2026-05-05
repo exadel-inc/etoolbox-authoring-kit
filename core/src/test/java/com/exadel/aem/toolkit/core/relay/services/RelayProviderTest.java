@@ -105,10 +105,6 @@ public class RelayProviderTest {
         assertNull(result);
     }
 
-    /* ---------------------------------------
-       getResource(): parent provider fallback
-       --------------------------------------- */
-
     @Test
     public void shouldFallBackToParentProvider() {
         ResourceProvider<Void> mockProvider = newMockProvider();

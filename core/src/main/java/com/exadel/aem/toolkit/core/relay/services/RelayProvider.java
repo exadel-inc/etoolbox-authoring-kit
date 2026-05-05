@@ -127,31 +127,31 @@ class RelayProvider extends ResourceProvider<Void> implements ResourceChangeList
         // Re-entry guard: same as getResource() — if targetPath is still under source,
         // resolve via the parent provider to break the cycle
         if (RelayPathHelper.isSamePathOrSubpath(targetPath, localRelay.getSource())) {
-            Resource targetResource = RelayResourceHelper.getResource(context, targetPath, ResourceContext.EMPTY_CONTEXT, parent);
-            if (targetResource == null) {
+            Resource resolved = RelayResourceHelper.getResource(context, targetPath, ResourceContext.EMPTY_CONTEXT, parent);
+            if (resolved == null) {
                 return null;
             }
-            return RelayResourceHelper.listChildren(targetResource, path);
+            return RelayResourceHelper.listChildren(resolved, path);
         }
 
-        Resource targetResource = RelayResourceHelper.getResource(
+        Resource resolved = RelayResourceHelper.getResource(
             context.getResourceResolver(),
             resolverFactory,
             localRelay.getUserMapping(context.getResourceResolver().getUserID()),
             targetPath);
-        if (targetResource != null) {
-            targetResource = new RelayResource(targetResource, path);
+        if (resolved != null) {
+            resolved = new RelayResource(resolved, path);
         } else {
-            targetResource = RelayResourceHelper.getResource(context, path, ResourceContext.EMPTY_CONTEXT, parent);
+            resolved = RelayResourceHelper.getResource(context, path, ResourceContext.EMPTY_CONTEXT, parent);
         }
-        if (targetResource == null) {
+        if (resolved == null) {
             return null;
-        } else if (!(targetResource instanceof RelayResource)) {
+        } else if (!(resolved instanceof RelayResource)) {
             // We have fallen back to an "original" resource, so we should iterate through it without any mapping
-            return RelayResourceHelper.listChildren(context, targetResource);
+            return RelayResourceHelper.listChildren(context, resolved);
         }
         // This method call exerts the path mapping logic for the children of the target resource
-        return RelayResourceHelper.listChildren(targetResource, parent.getPath());
+        return RelayResourceHelper.listChildren(resolved, parent.getPath());
     }
 
     /**
