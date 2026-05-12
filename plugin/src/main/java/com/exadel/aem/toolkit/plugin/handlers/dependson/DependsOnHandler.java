@@ -65,15 +65,23 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
      * @param target Resulting {@code Target} object
      */
     private static void handleDependsOn(DependsOn value, Target target) {
-        if (StringUtils.isAnyBlank(value.query(), value.action())) {
+        String query = value.query();
+        String[] actions = value.action();
+
+        if (StringUtils.isBlank(query) || actions.length == 0 || Arrays.stream(actions).anyMatch(StringUtils::isBlank)) {
             PluginRuntime.context().getExceptionHandler().handle(new ValidationException(EMPTY_VALUES_EXCEPTION_MESSAGE));
             return;
         }
         Map<String, Object> valueMap = Maps.newHashMap();
-        String escapedQuery = escapeValue(value.query());
+        String escapedQuery = escapeValue(query);
         valueMap.put(DialogConstants.PN_DEPENDS_ON, escapedQuery);
-        valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, value.action());
+
+        String actionValue = actions.length > 1
+            ? String.join(DialogConstants.SEPARATOR_COMMA, actions)
+            : actions[0];
+        valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, actionValue);
         valueMap.putAll(buildParamsMap(value, 0));
+
         target.getOrCreateTarget(CoreConstants.NN_GRANITE_DATA).attributes(valueMap);
     }
 
@@ -84,32 +92,35 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
      */
     private static void handleDependsOnConfig(DependsOnConfig value, Target target) {
         List<DependsOn> validDeclarations = Arrays.stream(value.value())
-                .filter(dependsOn -> StringUtils.isNoneBlank(dependsOn.action(), dependsOn.query()))
-                .collect(Collectors.toList());
+            .filter(dependsOn -> StringUtils.isNotBlank(dependsOn.query())
+                && dependsOn.action().length > 0
+                && Arrays.stream(dependsOn.action()).allMatch(StringUtils::isNotBlank))
+            .collect(Collectors.toList());
 
         if (value.value().length != validDeclarations.size()) {
             PluginRuntime.context().getExceptionHandler()
-                    .handle(new ValidationException(EMPTY_VALUES_EXCEPTION_MESSAGE));
+                .handle(new ValidationException(EMPTY_VALUES_EXCEPTION_MESSAGE));
         }
 
         Map<String, Object> valueMap = new HashMap<>();
 
         String queries = validDeclarations.stream()
-                .map(DependsOn::query)
-                .map(str -> StringUtils.replace(str, ";", "\\\\;"))
-                .collect(Collectors.joining(DialogConstants.SEPARATOR_SEMICOLON));
+            .map(DependsOn::query)
+            .map(str -> StringUtils.replace(str, ";", "\\\\;"))
+            .collect(Collectors.joining(DialogConstants.SEPARATOR_SEMICOLON));
         String actions = validDeclarations.stream()
-                .map(DependsOn::action)
-                .collect(Collectors.joining(DialogConstants.SEPARATOR_SEMICOLON));
+            .map(dependsOn -> dependsOn.action().length > 1
+                ? String.join(DialogConstants.SEPARATOR_COMMA, dependsOn.action())
+                : dependsOn.action()[0])
+            .filter(StringUtils::isNotBlank)
+            .collect(Collectors.joining(DialogConstants.SEPARATOR_SEMICOLON));
 
         valueMap.put(DialogConstants.PN_DEPENDS_ON, queries);
         valueMap.put(DialogConstants.PN_DEPENDS_ON_ACTION, actions);
-
         Map<String, Integer> counter = new HashMap<>();
         validDeclarations.stream()
-                // Counting actions separately
-                .map(dependsOn -> DependsOnHandler.buildParamsMap(dependsOn, counter.merge(dependsOn.action(), 1, Integer::sum) - 1))
-                .forEach(valueMap::putAll);
+            .map(dependsOn -> DependsOnHandler.buildParamsMap(dependsOn, counter.merge(String.join(",", dependsOn.action()), 1, Integer::sum) - 1))
+            .forEach(valueMap::putAll);
 
         target.getOrCreateTarget(CoreConstants.NN_GRANITE_DATA).attributes(valueMap);
     }
@@ -129,7 +140,7 @@ public class DependsOnHandler implements BiConsumer<Source, Target> {
             String paramName = StringUtils.joinWith(
                 CoreConstants.SEPARATOR_HYPHEN,
                 DialogConstants.PN_DEPENDS_ON,
-                dependsOn.action(),
+                String.join(DialogConstants.SEPARATOR_COMMA, dependsOn.action()),
                 param.name());
             if (index > 0) {
                 paramName = StringUtils.joinWith(CoreConstants.SEPARATOR_HYPHEN, paramName, index);

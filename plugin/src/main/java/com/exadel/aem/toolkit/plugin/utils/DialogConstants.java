@@ -29,6 +29,7 @@ public class DialogConstants {
     public static final String WILDCARD = "*";
 
     public static final String SEPARATOR_DOT = ".";
+    public static final String SEPARATOR_COMMA = ",";
     public static final String SEPARATOR_SEMICOLON = ";";
 
     public static final String RELATIVE_PATH_PREFIX = CoreConstants.RELATIVE_PATH_PREFIX;

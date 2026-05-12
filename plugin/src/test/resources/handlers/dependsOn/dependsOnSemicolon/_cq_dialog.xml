@@ -41,9 +41,19 @@
                                      renderHidden="{Boolean}false"
                                      required="{Boolean}false">
                         <granite:data jcr:primaryType="nt:unstructured"
-                                      dependsOn="'\\;' === '\\;';'\\;' === '\\;'"
+                                      dependsOn="@field1 === '\\;';'\\;' === '\\;'"
                                       dependsOnAction="visible;required"/>
                     </multipleActions>
+                    <multipleActionsPerQuery jcr:primaryType="nt:unstructured"
+                                     sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
+                                     disabled="{Boolean}false"
+                                     name="./multipleActionsPerQuery"
+                                     renderHidden="{Boolean}false"
+                                     required="{Boolean}false">
+                        <granite:data jcr:primaryType="nt:unstructured"
+                                      dependsOn="'\\;' === '\\;'"
+                                      dependsOnAction="visible,required"/>
+                    </multipleActionsPerQuery>
                     <literalEscapingSpecialCharactersTest jcr:primaryType="nt:unstructured"
                           sling:resourceType="granite/ui/components/coral/foundation/form/textfield"
                           name="./literalEscapingSpecialCharactersTest"
