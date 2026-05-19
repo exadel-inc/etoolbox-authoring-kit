@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import javax.jcr.Session;
@@ -269,31 +270,40 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
         if (configsToReset.isEmpty() && configsToUpdate.isEmpty()) {
             return;
         }
-        asyncExecutionScheduler.submit(() -> {
-            try (ResourceResolver resolver = ResolverUtil.newResolver(resourceResolverFactory)) {
-                resolver.refresh();
-                for (String path : configsToUpdate) {
-                    Resource resource = resolveWithRetry(resolver, path);
-                    if (resource == null) {
-                        LOG.warn(
-                            "Resource at {} could not be resolved after {} attempt(s) following a change event",
-                            path,
-                            resolveRetryCount);
-                        configsToReset.add(path);
-                    } else {
-                        updateConfiguration(resource);
+        ScheduledExecutorService scheduler = asyncExecutionScheduler;
+        if (scheduler == null || scheduler.isShutdown()) {
+            LOG.debug("Ignoring configuration change event: listener is not active");
+            return;
+        }
+        try {
+            scheduler.submit(() -> {
+                try (ResourceResolver resolver = ResolverUtil.newResolver(resourceResolverFactory)) {
+                    resolver.refresh();
+                    for (String path : configsToUpdate) {
+                        Resource resource = resolveWithRetry(resolver, path);
+                        if (resource == null) {
+                            LOG.warn(
+                                "Resource at {} could not be resolved after {} attempt(s) following a change event",
+                                path,
+                                resolveRetryCount);
+                            configsToReset.add(path);
+                        } else {
+                            updateConfiguration(resource);
+                        }
                     }
+                    for (String path : configsToReset) {
+                        resetConfiguration(extractPid(path));
+                    }
+                    if (resolver.hasChanges()) {
+                        resolver.commit();
+                    }
+                } catch (LoginException | PersistenceException e) {
+                    LOG.error("Failed to process configuration changes", e);
                 }
-                for (String path : configsToReset) {
-                    resetConfiguration(extractPid(path));
-                }
-                if (resolver.hasChanges()) {
-                    resolver.commit();
-                }
-            } catch (LoginException | PersistenceException e) {
-                LOG.error("Failed to process configuration changes", e);
-            }
-        });
+            });
+        } catch (RejectedExecutionException e) {
+            LOG.debug("Ignoring configuration change event: scheduler has been shut down");
+        }
     }
 
     /* -------------------
@@ -446,19 +456,24 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
      */
     private Resource resolveWithRetry(ResourceResolver resolver, String path) {
         Resource resource = resolver.getResource(path);
-        for (int attempt = 1; attempt <= resolveRetryCount && resource == null; attempt++) {
+        for (int attempt = 1; attempt < resolveRetryCount && resource == null; attempt++) {
             LOG.debug(
                 "Resource at {} not visible yet (attempt {}/{}); waiting {}ms before retry",
-                path, attempt, resolveRetryCount + 1, resolveRetryDelay);
+                path, attempt + 1, resolveRetryCount, resolveRetryDelay);
             if (resolveRetryDelay > 0) {
+                ScheduledExecutorService delay = delayScheduler;
+                if (delay == null || delay.isShutdown()) {
+                    LOG.debug("Delay scheduler is no longer available; aborting retry for {}", path);
+                    return null;
+                }
                 try {
-                    delayScheduler.schedule(() -> {}, resolveRetryDelay, TimeUnit.MILLISECONDS).get();
+                    delay.schedule(() -> {}, resolveRetryDelay, TimeUnit.MILLISECONDS).get();
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     LOG.warn("Interrupted while waiting to retry resource resolution at {}", path);
                     return null;
-                } catch (ExecutionException e) {
-                    LOG.warn("Delay task failed while retrying resource resolution at {}", path, e);
+                } catch (ExecutionException | RejectedExecutionException e) {
+                    LOG.debug("Delay scheduling failed during shutdown; aborting retry for {}", path);
                     return null;
                 }
             }

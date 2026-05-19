@@ -15,6 +15,8 @@ package com.exadel.aem.toolkit.core.configurator.services;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,11 +27,16 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.jcr.Session;
 
+import org.apache.sling.api.resource.LoginException;
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.PersistenceException;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.resource.ResourceResolverFactory;
 import org.apache.sling.api.resource.observation.ResourceChange;
 import org.apache.sling.jcr.resource.internal.JcrResourceChange;
@@ -37,7 +44,6 @@ import org.apache.sling.settings.SlingSettingsService;
 import org.apache.sling.testing.mock.sling.services.MockSlingSettingService;
 import org.junit.Rule;
 import org.junit.Test;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import io.wcm.testing.mock.aem.junit.AemContext;
@@ -179,6 +185,39 @@ public class ConfigChangeListenerTest {
     }
 
     @Test
+    public void shouldUpdateConfigurationAfterFailure() throws NoSuchFieldException, InterruptedException, PersistenceException {
+        StubConfiguration config = new StubConfiguration(TEST_PID);
+        StubConfigurationAdmin admin = new StubConfigurationAdmin();
+        admin.register(TEST_PID, config);
+
+        // Activate first (with no resources present, so activation does nothing)
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(
+            admin, newConfig(true, new String[0], 2, 0L));
+
+        // Create the resource after activation so it is found only on the retry attempt
+        Map<String, Object> props = new HashMap<>();
+        props.put("test.property", "retry.value");
+        context.create().resource(PATH_DATA, props);
+        context.resourceResolver().commit();
+
+        // Replace the factory with one that returns null on the very first getResource(PATH_DATA) call
+        ResourceResolverFactory realFactory = context.getService(ResourceResolverFactory.class);
+        PrivateAccessor.setField(
+            configChangeListener,
+            FIELD_RESOURCE_RESOLVER_FACTORY,
+            new FailFirstResourceResolverFactory(realFactory, PATH_DATA));
+
+        ResourceChange change = new JcrResourceChange(ResourceChange.ChangeType.CHANGED, PATH_DATA, false, null);
+        configChangeListener.onChange(Collections.singletonList(change));
+
+        Thread.sleep(500);
+        Dictionary<String, ?> lastUpdate = config.lastUpdate();
+        assertNotNull(lastUpdate);
+        assertEquals("retry.value", lastUpdate.get("test.property"));
+        assertEquals(1, config.updateCount());
+    }
+
+    @Test
     public void shouldUpdateOnPublishNonDataNodeChange() throws IOException, NoSuchFieldException, InterruptedException {
         StubConfiguration config = new StubConfiguration(TEST_PID);
         StubConfigurationAdmin admin = new StubConfigurationAdmin();
@@ -201,8 +240,9 @@ public class ConfigChangeListenerTest {
         configChangeListener.onChange(Collections.singletonList(change));
 
         Thread.sleep(500);
-        assertNotNull(config.lastUpdate());
-        assertEquals("test.value", config.lastUpdate().get("test.property"));
+        Dictionary<String, ?> lastUpdate = config.lastUpdate();
+        assertNotNull(lastUpdate);
+        assertEquals("test.value", lastUpdate.get("test.property"));
     }
 
     /* ---------------------
@@ -534,11 +574,20 @@ public class ConfigChangeListenerTest {
     }
 
     private static ConfigChangeListenerConfiguration newConfig(boolean enabled, String[] cleanUp) {
+        return newConfig(enabled, cleanUp, 0, 10L);
+    }
+
+    private static ConfigChangeListenerConfiguration newConfig(
+            boolean enabled,
+            String[] cleanUp,
+            int retryCount,
+            long retryDelay) {
+
         return new ConfigChangeListenerConfiguration() {
             @Override public boolean enabled() { return enabled; }
             @Override public String[] cleanUp() { return cleanUp; }
-            @Override public int resolveRetryCount() { return 0; }
-            @Override public long resolveRetryDelay() { return 0L; }
+            @Override public int resolveRetryCount() { return retryCount; }
+            @Override public long resolveRetryDelay() { return retryDelay; }
             @Override public Class<? extends Annotation> annotationType() { return ConfigChangeListenerConfiguration.class; }
         };
     }
@@ -570,7 +619,7 @@ public class ConfigChangeListenerTest {
         }
 
         @Override
-        public void update(Dictionary<String, ?> properties) throws IOException {
+        public void update(Dictionary<String, ?> properties) {
             Hashtable<String, Object> copy = new Hashtable<>();
             Enumeration<String> keys = properties.keys();
             while (keys.hasMoreElements()) {
@@ -581,8 +630,8 @@ public class ConfigChangeListenerTest {
             props = copy;
         }
 
-        @Override public void update() throws IOException { /* no-op */ }
-        @Override public void delete() throws IOException { /* no-op */ }
+        @Override public void update() { /* no-op */ }
+        @Override public void delete() { /* no-op */ }
         @Override public long getChangeCount() { return updates.size(); }
 
         Dictionary<String, ?> lastUpdate() {
@@ -617,18 +666,78 @@ public class ConfigChangeListenerTest {
         public Configuration getConfiguration(String pid) throws IOException { return getConfiguration(pid, null); }
 
         @Override
-        public Configuration createFactoryConfiguration(String factoryPid) throws IOException {
+        public Configuration createFactoryConfiguration(String factoryPid) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public Configuration createFactoryConfiguration(String factoryPid, String location) throws IOException {
+        public Configuration createFactoryConfiguration(String factoryPid, String location) {
             throw new UnsupportedOperationException();
         }
 
         @Override
-        public Configuration[] listConfigurations(String filter) throws InvalidSyntaxException, IOException {
+        public Configuration[] listConfigurations(String filter) {
             return null;
+        }
+    }
+
+    private static class FailFirstResourceResolverFactory implements ResourceResolverFactory {
+
+        private final ResourceResolverFactory delegate;
+        private final String failPath;
+
+        FailFirstResourceResolverFactory(ResourceResolverFactory delegate, String failPath) {
+            this.delegate = delegate;
+            this.failPath = failPath;
+        }
+
+        @Override
+        @Nonnull
+        public ResourceResolver getServiceResourceResolver(Map<String, Object> authInfo) throws LoginException {
+            ResourceResolver real = delegate.getServiceResourceResolver(authInfo);
+            AtomicBoolean firstCall = new AtomicBoolean(true);
+            return (ResourceResolver) Proxy.newProxyInstance(
+                ResourceResolver.class.getClassLoader(),
+                new Class[]{ResourceResolver.class},
+                (proxy, method, args) -> {
+                    if ("getResource".equals(method.getName())
+                            && args != null
+                            && args.length == 1
+                            && failPath.equals(args[0])
+                            && firstCall.getAndSet(false)) {
+                        return null;
+                    }
+                    try {
+                        return method.invoke(real, args);
+                    } catch (InvocationTargetException e) {
+                        throw e.getCause();
+                    }
+                });
+        }
+
+        @Override
+        @Nonnull
+        public ResourceResolver getResourceResolver(Map<String, Object> authInfo) throws LoginException {
+            return delegate.getResourceResolver(authInfo);
+        }
+
+        @Override
+        @Nonnull
+        @SuppressWarnings("deprecation")
+        public ResourceResolver getAdministrativeResourceResolver(Map<String, Object> authInfo) throws LoginException {
+            return delegate.getAdministrativeResourceResolver(authInfo);
+        }
+
+        @Override
+        @Nullable
+        public ResourceResolver getThreadResourceResolver() {
+            return delegate.getThreadResourceResolver();
+        }
+
+        @Override
+        @Nonnull
+        public List<String> getSearchPath() {
+            return delegate.getSearchPath();
         }
     }
 }
