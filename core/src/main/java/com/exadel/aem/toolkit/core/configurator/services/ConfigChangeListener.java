@@ -278,7 +278,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
                         LOG.warn(
                             "Resource at {} could not be resolved after {} attempt(s) following a change event",
                             path,
-                            resolveRetryCount + 1);
+                            resolveRetryCount);
                         configsToReset.add(path);
                     } else {
                         updateConfiguration(resource);
