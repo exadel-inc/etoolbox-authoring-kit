@@ -71,6 +71,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
     private static final Logger LOG = LoggerFactory.getLogger(ConfigChangeListener.class);
 
     private static final int ASYNC_THREAD_COUNT = 5;
+    private static final long TERMINATION_TIMEOUT = 1000L;
 
     private static final String UPDATABLE_CONFIG_TOKEN = "?";
 
@@ -91,25 +92,25 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
        Service registration
        -------------------- */
 
-    private ServiceRegistration<ResourceChangeListener> registration;
+    private volatile ServiceRegistration<ResourceChangeListener> registration;
 
     /* --------------------
        Configuration values
        -------------------- */
 
-    private int resolveRetryCount;
+    private volatile int resolveRetryCount;
 
-    private long resolveRetryDelay;
+    private volatile long resolveRetryDelay;
 
     /* ----------------
        Async processing
        ---------------- */
 
     // Used for asynchronous processing of resource change events. Kept separate from delayScheduler to avoid thread-starvation
-    private ScheduledExecutorService asyncExecutor;
+    private volatile ScheduledExecutorService asyncExecutionScheduler;
 
     // Used for timing retry delays in resolveWithRetry. Kept separate from asyncExecutor to avoid thread-starvation
-    private ScheduledExecutorService delayScheduler;
+    private volatile ScheduledExecutorService delayScheduler;
 
     /* --------------------
        Startup and shutdown
@@ -138,7 +139,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
         if (!config.enabled()) {
             return;
         }
-        asyncExecutor = Executors.newScheduledThreadPool(ASYNC_THREAD_COUNT);
+        asyncExecutionScheduler = Executors.newScheduledThreadPool(ASYNC_THREAD_COUNT);
         delayScheduler = Executors.newSingleThreadScheduledExecutor();
         Dictionary<String, Object> properties = new Hashtable<>();
         properties.put(ResourceChangeListener.PATHS, new String[]{ConfiguratorConstants.ROOT_PATH});
@@ -194,20 +195,28 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
      * Cleans up the instance, unregistering the resource change listener if it was registered previously
      */
     @Deactivate
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private void deactivate() {
         LOG.info("Configuration change listener is shutting down");
-        if (asyncExecutor != null) {
-            asyncExecutor.shutdown();
-            asyncExecutor = null;
-        }
-        if (delayScheduler != null) {
-            delayScheduler.shutdown();
-            delayScheduler = null;
-        }
         if (registration != null) {
             registration.unregister();
-            registration = null;
         }
+        try {
+            if (asyncExecutionScheduler != null) {
+                asyncExecutionScheduler.shutdownNow();
+                asyncExecutionScheduler.awaitTermination(TERMINATION_TIMEOUT, TimeUnit.MILLISECONDS);
+            }
+            if (delayScheduler != null) {
+                delayScheduler.shutdownNow();
+                delayScheduler.awaitTermination(TERMINATION_TIMEOUT, TimeUnit.MILLISECONDS);
+            }
+        } catch (InterruptedException e) {
+            LOG.debug("Interrupted while waiting for async tasks to finish during shutdown", e);
+            Thread.currentThread().interrupt();
+        }
+        registration = null;
+        asyncExecutionScheduler = null;
+        delayScheduler = null;
         resolveRetryCount = 0;
         resolveRetryDelay = 0L;
     }
@@ -260,7 +269,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
         if (configsToReset.isEmpty() && configsToUpdate.isEmpty()) {
             return;
         }
-        asyncExecutor.submit(() -> {
+        asyncExecutionScheduler.submit(() -> {
             try (ResourceResolver resolver = ResolverUtil.newResolver(resourceResolverFactory)) {
                 resolver.refresh();
                 for (String path : configsToUpdate) {
@@ -431,7 +440,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
      * Resolves a {@link Resource} at the given path with retry. The delay between retries is handled by scheduling a
      * no-op task on {@link #delayScheduler} and blocking on its future, so the calling thread parks instead of sleeping
      * and can be interrupted cleanly
-     * @param resolver The resolver to use for path lookup
+     * @param resolver A non-null resolver to use for path lookup
      * @param path     Absolute JCR path of the resource
      * @return The resolved {@link Resource}, or {@code null} if it remains unresolvable after all retries
      */
