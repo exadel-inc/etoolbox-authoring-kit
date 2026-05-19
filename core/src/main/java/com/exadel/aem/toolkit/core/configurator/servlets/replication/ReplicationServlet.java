@@ -15,6 +15,7 @@ package com.exadel.aem.toolkit.core.configurator.servlets.replication;
 
 import java.io.IOException;
 import java.util.Objects;
+import javax.annotation.Nonnull;
 import javax.jcr.Session;
 import javax.servlet.Servlet;
 
@@ -25,7 +26,6 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
-import org.jetbrains.annotations.NotNull;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.component.annotations.Activate;
 import org.osgi.service.component.annotations.Component;
@@ -100,8 +100,8 @@ public class ReplicationServlet extends SlingAllMethodsServlet {
      */
     @Override
     protected void doPost(
-        @NotNull SlingHttpServletRequest request,
-        @NotNull SlingHttpServletResponse response) throws IOException {
+        @Nonnull SlingHttpServletRequest request,
+        @Nonnull SlingHttpServletResponse response) throws IOException {
 
         if (!configChangeListener.isEnabled()) {
             sendError(response, SlingHttpServletResponse.SC_SERVICE_UNAVAILABLE, ConfigAccess.DISABLED.getError());

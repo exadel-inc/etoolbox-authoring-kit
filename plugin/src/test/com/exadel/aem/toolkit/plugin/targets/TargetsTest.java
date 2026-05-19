@@ -20,6 +20,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -28,6 +29,7 @@ import com.exadel.aem.toolkit.api.annotations.meta.Scopes;
 import com.exadel.aem.toolkit.api.handlers.Target;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.adapters.DomAdapter;
+import com.exadel.aem.toolkit.plugin.maven.PluginContextRule;
 import com.exadel.aem.toolkit.plugin.maven.PluginRuntime;
 
 public class TargetsTest {
@@ -42,6 +44,9 @@ public class TargetsTest {
     private static final String PN_ORDINAL = "ordinal";
 
     private static final int TIER_1_CHILD_COUNT = 10;
+
+    @Rule
+    public PluginContextRule context = new PluginContextRule();
 
     private Target testable;
 

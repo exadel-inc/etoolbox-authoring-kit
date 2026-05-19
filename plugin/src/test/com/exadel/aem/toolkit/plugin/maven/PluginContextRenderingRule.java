@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.slf4j.Logger;
@@ -51,10 +52,6 @@ public class PluginContextRenderingRule extends PluginContextRule {
     }
 
     public void test(Class<?> component) {
-        boolean adHocInitialization = !isContextInitialized();
-        if (adHocInitialization) {
-            initializeContext();
-        }
         String subfolderName = TestConstants.RESOURCE_FOLDER_COMPONENTS + PATH_POSTFIX_GENERIC;
         if (component.getSimpleName().endsWith(KEYWORD_WIDGET)) {
             subfolderName = TestConstants.RESOURCE_FOLDER_WIDGETS;
@@ -63,10 +60,7 @@ public class PluginContextRenderingRule extends PluginContextRule {
         }
         test(component,
             subfolderName,
-            StringUtils.uncapitalize(StringUtils.removePattern(component.getSimpleName(), SUFFIX_PATTERN)));
-        if (adHocInitialization) {
-            closeContext();
-        }
+            StringUtils.uncapitalize(RegExUtils.removePattern(component.getSimpleName(), SUFFIX_PATTERN)));
     }
 
     public void test(Class<?> component, String... pathElements) {

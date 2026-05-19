@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Assert;
+import org.junit.Rule;
 import org.junit.Test;
 
 import com.exadel.aem.toolkit.api.annotations.main.Setting;
@@ -28,6 +29,7 @@ import com.exadel.aem.toolkit.api.handlers.Source;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ScriptedFieldset1;
 import com.exadel.aem.toolkit.plugin.handlers.common.cases.components.ScriptedFieldset2;
+import com.exadel.aem.toolkit.plugin.maven.PluginContextRule;
 import com.exadel.aem.toolkit.plugin.sources.Sources;
 import com.exadel.aem.toolkit.plugin.utils.DialogConstants;
 
@@ -35,6 +37,9 @@ public class ScriptingHelperTest {
 
     private static final String SCRIPT_CONTAINER = "Lorem {ipsum dolor} ${sit amet}, consectetur \"${adipiscing} elit\","
         + "sed do @{eiusmod tempor} incididunt ut @labore et @dolore 'magna @aliqua'";
+
+    @Rule
+    public PluginContextRule context = new PluginContextRule();
 
     @Test
     public void testInlineScriptExtraction() {

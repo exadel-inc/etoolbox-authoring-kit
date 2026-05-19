@@ -77,6 +77,25 @@ public class ObjectConversionUtil {
     }
 
     /**
+     * Parses the provided string value that expectedly represents a JSON into an object of given {@code type}
+     * @param value String value; a non-null string is expected
+     * @param type  Class of the target object
+     * @param <T>   Type of the target object
+     * @return An instance of the target type, or null if conversion fails
+     */
+    public static <T> T toObject(String value, Class<T> type) {
+        if (StringUtils.isBlank(value)) {
+            return null;
+        }
+        try {
+            return OBJECT_MAPPER.readValue(value, type);
+        } catch (IOException e) {
+            LOG.error(EXCEPTION_COULD_NOT_READ, e);
+            return null;
+        }
+    }
+
+    /**
      * Analyzes the structure of the given Java entity and converts its available methods and accessors into the
      * property map. The method reveals the same fields and methods that the {@code Jackson} serializer would find
      * @param value An arbitrary object
@@ -87,8 +106,8 @@ public class ObjectConversionUtil {
             return OBJECT_MAPPER.convertValue(value, PROPERTY_MAP_REFERENCE);
         } catch (IllegalArgumentException e) {
             LOG.error(EXCEPTION_COULD_NOT_READ, e);
+            return Collections.emptyMap();
         }
-        return Collections.emptyMap();
     }
 
     /**

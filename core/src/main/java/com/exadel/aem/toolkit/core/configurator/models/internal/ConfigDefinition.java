@@ -42,6 +42,7 @@ import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
 import com.exadel.aem.toolkit.core.configurator.utils.PermissionUtil;
 import com.exadel.aem.toolkit.core.configurator.utils.RequestUtil;
+import com.exadel.aem.toolkit.core.utils.ServiceUtil;
 
 /**
  * Represents a configuration definition, i.e., a set of configuration attributes united by the same PID together
@@ -293,17 +294,15 @@ public class ConfigDefinition {
      * does not exist
      */
     private static ConfigDefinition from(String pid, BundleContext context) {
-        ConfigurationAdmin configurationAdmin;
-        MetaTypeService metaTypeService;
-        try {
-            configurationAdmin = Objects.requireNonNull(context.getService(context.getServiceReference(ConfigurationAdmin.class)));
-            metaTypeService = Objects.requireNonNull(context.getService(context.getServiceReference(MetaTypeService.class)));
-        } catch (RuntimeException e) {
-            LOG.error("Could not acquire OSGi entity", e);
+        if (context == null) {
+            LOG.error("Cannot retrieve configuration for {}: no bundle context available", pid);
             return EMPTY;
         }
-
-        Configuration configuration = getConfigurationObject(configurationAdmin, pid);
+        Configuration configuration = ServiceUtil.withService(
+            ConfigurationAdmin.class,
+            context,
+            ca -> getConfigurationObject(ca, pid),
+            null);
         if (configuration == null) {
             return EMPTY;
         }
@@ -312,25 +311,31 @@ public class ConfigDefinition {
             && !StringUtils.equals(configuration.getPid(), configuration.getFactoryPid());
         String metatypePid = isFactoryInstance ? configuration.getFactoryPid() : configuration.getPid();
 
-        for (Bundle bundle : context.getBundles()) {
-            MetaTypeInformation metaTypeInformation = metaTypeService.getMetaTypeInformation(bundle);
-            if (metaTypeInformation == null) {
-                continue;
-            }
-            ObjectClassDefinition ocd;
-            try {
-                ocd = Objects.requireNonNull(metaTypeInformation.getObjectClassDefinition(metatypePid, null));
-            } catch (IllegalArgumentException | NullPointerException e) {
-                // Not an error: this actually happens if the configuration is not present in the current bundle
-                continue;
-            }
-            ConfigDefinition result = from(configuration, ocd);
-            result.isFactory = ArrayUtils.contains(metaTypeInformation.getFactoryPids(), pid);
-            result.pid = pid;
-            result.factoryPid = configuration.getFactoryPid();
-            return result;
-        }
-        return EMPTY;
+        return ServiceUtil.withService(
+            MetaTypeService.class,
+            context,
+            mts -> {
+                for (Bundle bundle : context.getBundles()) {
+                    MetaTypeInformation metaTypeInformation = mts.getMetaTypeInformation(bundle);
+                    if (metaTypeInformation == null) {
+                        continue;
+                    }
+                    ObjectClassDefinition ocd;
+                    try {
+                        ocd = Objects.requireNonNull(metaTypeInformation.getObjectClassDefinition(metatypePid, null));
+                    } catch (IllegalArgumentException | NullPointerException e) {
+                        // Not an error: this actually happens if the configuration is not present in the current bundle
+                        continue;
+                    }
+                    ConfigDefinition result = from(configuration, ocd);
+                    result.isFactory = ArrayUtils.contains(metaTypeInformation.getFactoryPids(), pid);
+                    result.pid = pid;
+                    result.factoryPid = configuration.getFactoryPid();
+                    return result;
+                }
+                return EMPTY;
+            },
+            EMPTY);
     }
 
     /**

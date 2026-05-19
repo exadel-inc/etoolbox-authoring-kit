@@ -14,13 +14,13 @@
 
 package com.exadel.aem.toolkit.core.configurator.servlets.form;
 
+import javax.annotation.Nonnull;
 import javax.servlet.Servlet;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.apache.sling.api.servlets.SlingSafeMethodsServlet;
-import org.jetbrains.annotations.NotNull;
 import org.osgi.service.component.annotations.Component;
 
 import com.exadel.aem.toolkit.core.configurator.models.internal.ConfigDefinition;
@@ -45,7 +45,7 @@ public class ConfigDataSource extends SlingSafeMethodsServlet {
      * @param response The HTTP response
      */
     @Override
-    protected void doGet(@NotNull SlingHttpServletRequest request, @NotNull SlingHttpServletResponse response) {
+    protected void doGet(@Nonnull SlingHttpServletRequest request, @Nonnull SlingHttpServletResponse response) {
         ConfigDefinition config = ConfigDefinition.from(request);
         if (config == null || !config.isValid()) {
             return;

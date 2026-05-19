@@ -51,6 +51,7 @@ import org.slf4j.LoggerFactory;
 
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
+import com.exadel.aem.toolkit.core.utils.ResolverUtil;
 import com.exadel.aem.toolkit.core.utils.ValueMapUtil;
 
 /**
@@ -96,7 +97,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
     @Activate
     void activate(BundleContext context, ConfigChangeListenerConfiguration config) {
         LOG.info("Configuration change listener is {}", config.enabled() ? "enabled" : "disabled");
-        try (ResourceResolver resolver = newResolver()) {
+        try (ResourceResolver resolver = ResolverUtil.newResolver(resourceResolverFactory)) {
             if (ArrayUtils.isNotEmpty(config.cleanUp())) {
                 activateWithCleanUp(resolver, config.cleanUp());
             }
@@ -225,7 +226,7 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
             return;
         }
         asyncExecutor.submit(() -> {
-            try (ResourceResolver resolver = newResolver()) {
+            try (ResourceResolver resolver = ResolverUtil.newResolver(resourceResolverFactory)) {
                 for (String path : configsToUpdate) {
                     Resource resource = resolver.getResource(path);
                     if (resource == null) {
@@ -245,21 +246,6 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
                 LOG.error("Failed to process configuration changes", e);
             }
         });
-    }
-
-    /* --------------------
-       Sling instance logic
-       -------------------- */
-
-    /**
-     * Creates a new {@link ResourceResolver} instance for accessing repository resources
-     * @return New instance of {@code ResourceResolver}
-     * @throws LoginException If the resolver cannot be created
-     */
-    private ResourceResolver newResolver() throws LoginException {
-        return resourceResolverFactory.getServiceResourceResolver(
-            Collections.singletonMap(ResourceResolverFactory.SUBSERVICE, "eak-service")
-        );
     }
 
     /* -------------------
