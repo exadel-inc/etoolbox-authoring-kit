@@ -14,14 +14,18 @@
 package com.exadel.aem.toolkit.core.configurator.services;
 
 import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import javax.jcr.Session;
 
 import org.apache.sling.api.resource.ModifiableValueMap;
 import org.apache.sling.api.resource.PersistenceException;
@@ -33,22 +37,21 @@ import org.apache.sling.settings.SlingSettingsService;
 import org.apache.sling.testing.mock.sling.services.MockSlingSettingService;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 import io.wcm.testing.mock.aem.junit.AemContext;
 import junitx.util.PrivateAccessor;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import com.exadel.aem.toolkit.core.AemContextFactory;
 import com.exadel.aem.toolkit.core.CoreConstants;
 import com.exadel.aem.toolkit.core.configurator.ConfiguratorConstants;
 
-@RunWith(MockitoJUnitRunner.class)
 public class ConfigChangeListenerTest {
 
     private static final String FIELD_CONFIG_ADMIN = "configurationAdmin";
@@ -56,107 +59,96 @@ public class ConfigChangeListenerTest {
     private static final String FIELD_SLING_SETTINGS_SERVICE = "slingSettingsService";
 
     private static final String TEST_PID = "com.example.test.Config";
+    private static final String PATH_CONFIG = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID;
+    private static final String PATH_DATA = PATH_CONFIG + ConfiguratorConstants.SUFFIX_SLASH_DATA;
 
     @Rule
     public AemContext context = AemContextFactory.newInstance();
 
-    @Test
-    public void shouldProcessEnabledProperty() throws Exception {
-        ConfigChangeListener configChangeListener = registerInjectActivateListener();
-        assertNotNull(PrivateAccessor.getField(configChangeListener, "registration"));
+    /* ----------
+       Activation
+       ---------- */
 
-        ConfigChangeListenerConfiguration mockConfig = Mockito.mock(ConfigChangeListenerConfiguration.class);
-        Mockito.when(mockConfig.enabled()).thenReturn(false);
-        configChangeListener = registerInjectActivateListener(mockConfig);
-        assertNull(PrivateAccessor.getField(configChangeListener, "registration"));
+    @Test
+    public void shouldProcessEnabledProperty() throws NoSuchFieldException {
+        ConfigChangeListener configChangeListener = registerInjectActivateListener();
+        assertTrue(configChangeListener.isEnabled());
+
+        configChangeListener = registerInjectActivateListener(newConfig(false));
+        assertFalse(configChangeListener.isEnabled());
     }
 
     @Test
     public void shouldCleanUpConfigurationsOnActivate() throws PersistenceException, NoSuchFieldException {
-        String configPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID;
-
-        context.create().resource(configPath);
+        context.create().resource(PATH_CONFIG);
         context.resourceResolver().commit();
 
-        assertNotNull(context.resourceResolver().getResource(configPath));
+        assertNotNull(context.resourceResolver().getResource(PATH_CONFIG));
 
-        ConfigChangeListenerConfiguration mockConfig = Mockito.mock(ConfigChangeListenerConfiguration.class);
-        Mockito.when(mockConfig.enabled()).thenReturn(true);
-        Mockito.when(mockConfig.cleanUp()).thenReturn(new String[] {TEST_PID, "com.example.test.AnotherConfig"});
-        registerInjectActivateListener(mockConfig);
+        registerInjectActivateListener(newConfig(true, new String[]{TEST_PID, "com.example.test.AnotherConfig"}));
 
-        assertNull(context.resourceResolver().getResource(ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID));
+        assertNull(context.resourceResolver().getResource(PATH_CONFIG));
     }
 
     @Test
     public void shouldUpdateConfigurationsOnActivate() throws IOException, NoSuchFieldException {
-        String configPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID;
-        context.create().resource(configPath);
-
-        String dataPath = configPath + ConfiguratorConstants.SUFFIX_SLASH_DATA;
+        context.create().resource(PATH_CONFIG);
         Map<String, Object> props = new HashMap<>();
         props.put("test.property", "test.value");
         props.put("test.number", 42);
-        context.create().resource(dataPath, props);
+        context.create().resource(PATH_DATA, props);
         context.resourceResolver().commit();
 
-        ConfigurationAdmin configurationAdmin = new ConfigurationAdminFacade(context.getService(ConfigurationAdmin.class));
-        registerInjectActivateListener(configurationAdmin);
+        ConfigurationAdmin configAdmin = new ConfigurationAdminFacade(context.getService(ConfigurationAdmin.class));
+        registerInjectActivateListener(configAdmin);
 
-        Configuration configuration = configurationAdmin.getConfiguration(TEST_PID, null);
+        Configuration configuration = configAdmin.getConfiguration(TEST_PID, null);
         assertNotNull(configuration);
         assertEquals("test.value", configuration.getProperties().get("test.property"));
         assertEquals(42, configuration.getProperties().get("test.number"));
     }
 
-    @Test
-    public void shouldProcessResourceChangeEvents() throws IOException, NoSuchFieldException {
-        String configPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID;
-        context.create().resource(configPath);
+    /* ------------
+       Deactivation
+       ------------ */
 
-        String dataPath = configPath + ConfiguratorConstants.SUFFIX_SLASH_DATA;
+    @Test
+    public void shouldDeactivateCleanly() throws Throwable {
+        ConfigChangeListener configChangeListener = registerInjectActivateListener();
+        assertTrue(configChangeListener.isEnabled());
+
+        PrivateAccessor.invoke(configChangeListener, "deactivate", new Class[0], new Object[0]);
+
+        assertFalse(configChangeListener.isEnabled());
+    }
+
+    /* --------------
+       Change events
+       -------------- */
+
+    @Test
+    public void shouldProcessResourceChangeEvents() throws IOException, NoSuchFieldException, InterruptedException {
+        context.create().resource(PATH_CONFIG);
         Map<String, Object> props = new HashMap<>();
         props.put("test.property", "updated.value");
-        context.create().resource(dataPath, props);
+        context.create().resource(PATH_DATA, props);
         context.resourceResolver().commit();
 
-        ConfigurationAdmin configurationAdmin = new ConfigurationAdminFacade(context.getService(ConfigurationAdmin.class));
+        ConfigurationAdmin configAdmin = new ConfigurationAdminFacade(context.getService(ConfigurationAdmin.class));
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(configAdmin);
 
-        ResourceChange change = new JcrResourceChange(
-            ResourceChange.ChangeType.CHANGED,
-            dataPath,
-            false,
-            null);
-
-        ConfigChangeListener configChangeListener = registerInjectActivateListener(configurationAdmin);
+        ResourceChange change = new JcrResourceChange(ResourceChange.ChangeType.CHANGED, PATH_DATA, false, null);
         configChangeListener.onChange(Collections.singletonList(change));
 
-        assertNotNull(configurationAdmin);
-        Configuration configuration = configurationAdmin.getConfiguration(TEST_PID, null);
+        Thread.sleep(500);
+        Configuration configuration = configAdmin.getConfiguration(TEST_PID, null);
         assertNotNull(configuration);
         assertEquals("updated.value", configuration.getProperties().get("test.property"));
     }
 
     @Test
-    public void shouldHandleResourceRemovalEvents() throws IOException, NoSuchFieldException, InterruptedException {
-        Configuration mockConfig = buildMockConfiguration("test.property$backup$", "original.value");
-        ConfigurationAdmin mockConfigurationAdmin = buildMockConfigurationAdmin(mockConfig);
-
-        ResourceChange change = new JcrResourceChange(
-            ResourceChange.ChangeType.REMOVED,
-            ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + ConfiguratorConstants.SUFFIX_SLASH_DATA,
-            false,
-            null);
-
-        ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
-        configChangeListener.onChange(Collections.singletonList(change));
-
-        Thread.sleep(500); // Allow some time for async processing
-        Mockito.verify(mockConfig).update(new Hashtable<>(Collections.singletonMap("test.property", "original.value")));
-    }
-
-    @Test
-    public void shouldIgnoreNonAccountableChanges() throws IOException, NoSuchFieldException, InterruptedException {
+    public void shouldIgnoreNonAccountableChanges() throws NoSuchFieldException, InterruptedException {
+        // Root removal and non-data ADDED are ignored in author mode; in publish mode, non-data ADDED is processed
         ResourceChange rootChange = new JcrResourceChange(
             ResourceChange.ChangeType.REMOVED,
             ConfiguratorConstants.ROOT_PATH,
@@ -164,290 +156,348 @@ public class ConfigChangeListenerTest {
             null);
         ResourceChange nonDataChange = new JcrResourceChange(
             ResourceChange.ChangeType.ADDED,
-            ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID,
+            PATH_CONFIG,
             false,
             null);
         List<ResourceChange> changes = Arrays.asList(rootChange, nonDataChange);
 
-        ConfigurationAdmin mockConfigurationAdmin = Mockito.mock(ConfigurationAdmin.class);
+        StubConfigurationAdmin admin = new StubConfigurationAdmin();
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(admin);
 
-        ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
+        MockSlingSettingService settingsService = (MockSlingSettingService) context.getService(SlingSettingsService.class);
+        assertNotNull(settingsService);
 
-        MockSlingSettingService mockSlingSettingsService = (MockSlingSettingService) context.getService(SlingSettingsService.class);
-        assertNotNull(mockSlingSettingsService);
-
-        mockSlingSettingsService.setRunModes(Collections.singleton("author"));
+        settingsService.setRunModes(Collections.singleton("author"));
         configChangeListener.onChange(changes);
-
         Thread.sleep(500);
-        Mockito.verify(mockConfigurationAdmin, Mockito.never()).getConfiguration(Mockito.anyString(), Mockito.isNull());
+        assertEquals(0, admin.callCount);
 
-        mockSlingSettingsService.setRunModes(Collections.singleton("publish"));
+        settingsService.setRunModes(Collections.singleton("publish"));
         configChangeListener.onChange(changes);
-
         Thread.sleep(500);
-        Mockito.verify(mockConfigurationAdmin, Mockito.times(1))
-            .getConfiguration(Mockito.anyString(), Mockito.isNull());
+        assertEquals(1, admin.callCount);
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void shouldUpdateForeignConfigurationBundleLocation() throws Exception {
-        String foreignPid = "foreign.bundle.Config";
-        String foreignBundleLocation = "test";
-        Configuration foreignConfig = Mockito.mock(Configuration.class);
-        ConfigurationAdmin mockConfigurationAdmin = Mockito.mock(ConfigurationAdmin.class);
-        Mockito.when(mockConfigurationAdmin.getConfiguration(Mockito.eq(foreignPid), Mockito.isNull())).thenReturn(foreignConfig);
-        Mockito.when(foreignConfig.getBundleLocation()).thenReturn(foreignBundleLocation);
+    public void shouldUpdateOnPublishNonDataNodeChange() throws IOException, NoSuchFieldException, InterruptedException {
+        StubConfiguration config = new StubConfiguration(TEST_PID);
+        StubConfigurationAdmin admin = new StubConfigurationAdmin();
+        admin.register(TEST_PID, config);
 
-        Map<String, Object> configProps = new HashMap<>();
-        configProps.put("foreign.property", "foreign.value");
-        context.create().resource(
-            ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + foreignPid + ConfiguratorConstants.SUFFIX_SLASH_DATA,
-            configProps);
-        context.resourceResolver().commit();
+        MockSlingSettingService settingsService = (MockSlingSettingService) context.getService(SlingSettingsService.class);
+        assertNotNull(settingsService);
+        settingsService.setRunModes(Collections.singleton("publish"));
 
-        registerInjectActivateListener(mockConfigurationAdmin);
+        // Register listener before creating JCR resources so activation finds nothing
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(admin);
 
-        Mockito.verify(foreignConfig).setBundleLocation("?" + foreignBundleLocation);
-        Mockito.verify(foreignConfig).update(Mockito.any(Dictionary.class));
-    }
-
-    @SuppressWarnings("unchecked")
-    @Test
-    public void shouldNotUpdateConfigurationWhenPropertiesAreEqual() throws Exception {
-        Configuration mockConfig = buildMockConfiguration(
-            "test.property", "test.value",
-            "test.number", 42);
-        ConfigurationAdmin mockConfigurationAdmin = buildMockConfigurationAdmin(mockConfig);
-
-        ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
-
-        String configPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID;
-        String dataPath = configPath + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         Map<String, Object> props = new HashMap<>();
         props.put("test.property", "test.value");
-        props.put("test.number", 42);
-        context.create().resource(dataPath, props);
+        context.create().resource(PATH_DATA, props);
         context.resourceResolver().commit();
 
-        ResourceChange change = new JcrResourceChange(
-            ResourceChange.ChangeType.CHANGED,
-            dataPath,
-            false,
-            null);
+        // ADDED on the parent node (non-data path) simulates a publish replication
+        ResourceChange change = new JcrResourceChange(ResourceChange.ChangeType.ADDED, PATH_CONFIG, false, null);
         configChangeListener.onChange(Collections.singletonList(change));
 
         Thread.sleep(500);
-        Mockito.verify(mockConfig, Mockito.never()).update(Mockito.any(Dictionary.class));
-        Mockito.verify(mockConfigurationAdmin).getConfiguration(TEST_PID, null);
+        assertNotNull(config.lastUpdate());
+        assertEquals("test.value", config.lastUpdate().get("test.property"));
     }
 
-    @SuppressWarnings("unchecked")
+    /* ---------------------
+       Configuration update
+       --------------------- */
+
     @Test
-    public void shouldHandlePartialConfiguration() throws Exception {
-        Configuration mockConfig = buildMockConfiguration(
+    public void shouldNotUpdateConfigurationWhenPropertiesAreEqual() throws IOException, NoSuchFieldException, InterruptedException {
+        StubConfiguration config = new StubConfiguration(TEST_PID,
+            "test.property", "test.value",
+            "test.number", 42);
+        StubConfigurationAdmin admin = new StubConfigurationAdmin();
+        admin.register(TEST_PID, config);
+
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(admin);
+
+        Map<String, Object> props = new HashMap<>();
+        props.put("test.property", "test.value");
+        props.put("test.number", 42);
+        context.create().resource(PATH_DATA, props);
+        context.resourceResolver().commit();
+
+        ResourceChange change = new JcrResourceChange(ResourceChange.ChangeType.CHANGED, PATH_DATA, false, null);
+        configChangeListener.onChange(Collections.singletonList(change));
+
+        Thread.sleep(500);
+        assertEquals(0, config.updateCount());
+        assertEquals(1, admin.callCount);
+    }
+
+    @Test
+    public void shouldUpdateForeignConfigurationBundleLocation() throws IOException, NoSuchFieldException {
+        String foreignPid = "foreign.bundle.Config";
+        String foreignDataPath = ConfiguratorConstants.ROOT_PATH
+            + CoreConstants.SEPARATOR_SLASH + foreignPid + ConfiguratorConstants.SUFFIX_SLASH_DATA;
+
+        StubConfiguration foreignConfig = new StubConfiguration(foreignPid);
+        foreignConfig.setBundleLocation("test");
+        foreignConfig.bundleLocationHistory.clear(); // discard the setup call from recorded history
+
+        StubConfigurationAdmin admin = new StubConfigurationAdmin();
+        admin.register(foreignPid, foreignConfig);
+
+        Map<String, Object> configProps = new HashMap<>();
+        configProps.put("foreign.property", "foreign.value");
+        context.create().resource(foreignDataPath, configProps);
+        context.resourceResolver().commit();
+
+        registerInjectActivateListener(admin);
+
+        assertTrue(foreignConfig.bundleLocationHistory.contains("?test"));
+        assertTrue(foreignConfig.updateCount() > 0);
+    }
+
+    @Test
+    public void shouldHandlePartialConfiguration() throws IOException, NoSuchFieldException, InterruptedException {
+        StubConfiguration config = new StubConfiguration(TEST_PID,
             "existing.property", "existing.value",
             "another.property", "another.value",
             "numeric.property", 42,
             "boolean.property", true);
-        ConfigurationAdmin mockConfigurationAdmin = buildMockConfigurationAdmin(mockConfig);
+        StubConfigurationAdmin admin = new StubConfigurationAdmin();
+        admin.register(TEST_PID, config);
 
-        MockSlingSettingService mockSlingSettingsService = (MockSlingSettingService) context.getService(SlingSettingsService.class);
-        assertNotNull(mockSlingSettingsService);
-        mockSlingSettingsService.setRunModes(Collections.singleton("publish"));
+        MockSlingSettingService settingsService = (MockSlingSettingService) context.getService(SlingSettingsService.class);
+        assertNotNull(settingsService);
+        settingsService.setRunModes(Collections.singleton("publish"));
 
-        ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(admin);
 
-        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         Map<String, Object> partialProps = new HashMap<>();
         partialProps.put("existing.property", "modified.value");
         partialProps.put("another.property", "another.modified.value");
         partialProps.put("numeric.property", 99);
         partialProps.put("boolean.property", false);
-        context.create().resource(dataPath, partialProps);
+        context.create().resource(PATH_DATA, partialProps);
 
-        Resource testResource = context.resourceResolver().getResource(ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID);
+        Resource testResource = context.resourceResolver().getResource(PATH_CONFIG);
         ModifiableValueMap valueMap = Objects.requireNonNull(testResource).adaptTo(ModifiableValueMap.class);
         assertNotNull(valueMap);
-        valueMap.put(ConfiguratorConstants.PN_REPLICATION_PROPS, new String[] {"numeric.property", "boolean.property"});
+        valueMap.put(ConfiguratorConstants.PN_REPLICATION_PROPS, new String[]{"numeric.property", "boolean.property"});
         context.resourceResolver().commit();
 
-        ResourceChange change = new JcrResourceChange(
-            ResourceChange.ChangeType.ADDED,
-            dataPath,
-            false,
-            null);
+        ResourceChange change = new JcrResourceChange(ResourceChange.ChangeType.ADDED, PATH_DATA, false, null);
         configChangeListener.onChange(Collections.singletonList(change));
 
         Thread.sleep(500);
-        Mockito.verify(mockConfig).update(Mockito.argThat(dict -> {
-            Dictionary<String, Object> d = (Dictionary<String, Object>) dict;
-            return "existing.value".equals(d.get("existing.property"))
-                && "another.value".equals(d.get("another.property"))
-                && Integer.valueOf(99).equals(d.get("numeric.property"))
-                && Boolean.FALSE.equals(d.get("boolean.property"));
-        }));
+        Dictionary<String, ?> result = config.lastUpdate();
+        assertNotNull(result);
+        assertEquals("existing.value", result.get("existing.property"));
+        assertEquals("another.value", result.get("another.property"));
+        assertEquals(99, result.get("numeric.property"));
+        assertEquals(Boolean.FALSE, result.get("boolean.property"));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void shouldHandlePartialConfigurationWithNewProperty() throws Exception {
-        Configuration mockConfig = buildMockConfiguration("existing.property", "existing.value");
-        ConfigurationAdmin mockConfigurationAdmin = buildMockConfigurationAdmin(mockConfig);
+    public void shouldHandlePartialConfigurationWithNewProperty() throws IOException, NoSuchFieldException, InterruptedException {
+        StubConfiguration config = new StubConfiguration(TEST_PID, "existing.property", "existing.value");
+        StubConfigurationAdmin admin = new StubConfigurationAdmin();
+        admin.register(TEST_PID, config);
 
-        MockSlingSettingService mockSlingSettingsService = (MockSlingSettingService) context.getService(SlingSettingsService.class);
-        assertNotNull(mockSlingSettingsService);
-        mockSlingSettingsService.setRunModes(Collections.singleton("publish"));
+        MockSlingSettingService settingsService = (MockSlingSettingService) context.getService(SlingSettingsService.class);
+        assertNotNull(settingsService);
+        settingsService.setRunModes(Collections.singleton("publish"));
 
-        ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(admin);
 
-        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         Map<String, Object> partialProps = new HashMap<>();
         partialProps.put("new.property", "new.value");
-        context.create().resource(dataPath, partialProps);
+        context.create().resource(PATH_DATA, partialProps);
         context.resourceResolver().commit();
 
-        ResourceChange change = new JcrResourceChange(
-            ResourceChange.ChangeType.CHANGED,
-            dataPath,
-            false,
-            null);
+        ResourceChange change = new JcrResourceChange(ResourceChange.ChangeType.CHANGED, PATH_DATA, false, null);
         configChangeListener.onChange(Collections.singletonList(change));
 
         Thread.sleep(500);
-        Mockito.verify(mockConfig).update(Mockito.argThat(dict -> {
-            Dictionary<String, Object> d = (Dictionary<String, Object>) dict;
-            return "existing.value".equals(d.get("existing.property"))
-                && "new.value".equals(d.get("new.property"));
-        }));
+        Dictionary<String, ?> result = config.lastUpdate();
+        assertNotNull(result);
+        assertEquals("existing.value", result.get("existing.property"));
+        assertEquals("new.value", result.get("new.property"));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void shouldCreateBackup() throws Exception {
-        Configuration mockConfig = buildMockConfiguration(
+    public void shouldCreateBackup() throws IOException, NoSuchFieldException, InterruptedException {
+        StubConfiguration config = new StubConfiguration(TEST_PID,
             "original.property", "original.value",
             "another.property", 100);
-        ConfigurationAdmin mockConfigurationAdmin = buildMockConfigurationAdmin(mockConfig);
+        StubConfigurationAdmin admin = new StubConfigurationAdmin();
+        admin.register(TEST_PID, config);
 
-        ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(admin);
 
-        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         Map<String, Object> updateProps = new HashMap<>();
         updateProps.put("original.property", "updated.value");
-        context.create().resource(dataPath, updateProps);
+        context.create().resource(PATH_DATA, updateProps);
         context.resourceResolver().commit();
 
-        ResourceChange change = new JcrResourceChange(
-            ResourceChange.ChangeType.CHANGED,
-            dataPath,
-            false,
-            null);
+        ResourceChange change = new JcrResourceChange(ResourceChange.ChangeType.CHANGED, PATH_DATA, false, null);
         configChangeListener.onChange(Collections.singletonList(change));
 
         Thread.sleep(500);
-        Mockito.verify(mockConfig).update(Mockito.argThat(dict -> {
-            Dictionary<String, Object> d = (Dictionary<String, Object>) dict;
-            return "updated.value".equals(d.get("original.property"))
-                && Integer.valueOf(100).equals(d.get("another.property"))
-                && "original.value".equals(d.get("original.property" + ConfiguratorConstants.SUFFIX_BACKUP))
-                && Integer.valueOf(100).equals(d.get("another.property" + ConfiguratorConstants.SUFFIX_BACKUP));
-        }));
+        Dictionary<String, ?> result = config.lastUpdate();
+        assertNotNull(result);
+        assertEquals("updated.value", result.get("original.property"));
+        assertEquals(100, result.get("another.property"));
+        assertEquals("original.value", result.get("original.property" + ConfiguratorConstants.SUFFIX_BACKUP));
+        assertEquals(100, result.get("another.property" + ConfiguratorConstants.SUFFIX_BACKUP));
     }
 
-    @SuppressWarnings("unchecked")
     @Test
-    public void shouldPreserveBackupValuesWhenUpdatingPartialConfiguration() throws Exception {
-        Configuration mockConfig = buildMockConfiguration(
+    public void shouldCreateRemoveMarkerBackup() throws IOException, NoSuchFieldException {
+        // When the original config has no real data, the backup is {$backup$: remove} so
+        // a subsequent reset will erase all applied properties rather than restoring old values
+        StubConfiguration config = new StubConfiguration(TEST_PID);
+        StubConfigurationAdmin admin = new StubConfigurationAdmin();
+        admin.register(TEST_PID, config);
+
+        Map<String, Object> updateProps = new HashMap<>();
+        updateProps.put("new.property", "new.value");
+        context.create().resource(PATH_DATA, updateProps);
+        context.resourceResolver().commit();
+
+        registerInjectActivateListener(admin);
+
+        Dictionary<String, ?> result = config.lastUpdate();
+        assertNotNull(result);
+        assertEquals("new.value", result.get("new.property"));
+        assertEquals(Session.ACTION_REMOVE, result.get(ConfiguratorConstants.SUFFIX_BACKUP));
+    }
+
+    @Test
+    public void shouldPreserveBackupValuesWhenUpdatingPartialConfiguration() throws IOException, NoSuchFieldException, InterruptedException {
+        StubConfiguration config = new StubConfiguration(TEST_PID,
             "property.one", "current.value.one",
             "property.two", "current.value.two",
-            "property.one$backup$", "original.value.one",
-            "property.two$backup$", "original.value.two");
-        ConfigurationAdmin mockConfigurationAdmin = buildMockConfigurationAdmin(mockConfig);
+            "property.one" + ConfiguratorConstants.SUFFIX_BACKUP, "original.value.one",
+            "property.two" + ConfiguratorConstants.SUFFIX_BACKUP, "original.value.two");
+        StubConfigurationAdmin admin = new StubConfigurationAdmin();
+        admin.register(TEST_PID, config);
 
-        ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(admin);
 
-        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + ConfiguratorConstants.SUFFIX_SLASH_DATA;
         Map<String, Object> partialProps = new HashMap<>();
         partialProps.put("property.one", "updated.value.one");
-        context.create().resource(dataPath, partialProps);
+        context.create().resource(PATH_DATA, partialProps);
         context.resourceResolver().commit();
 
-        ResourceChange change = new JcrResourceChange(
-            ResourceChange.ChangeType.CHANGED,
-            dataPath,
-            false,
-            null);
+        ResourceChange change = new JcrResourceChange(ResourceChange.ChangeType.CHANGED, PATH_DATA, false, null);
         configChangeListener.onChange(Collections.singletonList(change));
 
         Thread.sleep(500);
-        Mockito.verify(mockConfig).update(Mockito.argThat(dict -> {
-            Dictionary<String, Object> d = (Dictionary<String, Object>) dict;
-            return "updated.value.one".equals(d.get("property.one"))
-                && "current.value.two".equals(d.get("property.two"))
-                && "original.value.one".equals(d.get("property.one" + ConfiguratorConstants.SUFFIX_BACKUP))
-                && "original.value.two".equals(d.get("property.two" + ConfiguratorConstants.SUFFIX_BACKUP));
-        }));
+        Dictionary<String, ?> result = config.lastUpdate();
+        assertNotNull(result);
+        assertEquals("updated.value.one", result.get("property.one"));
+        assertEquals("current.value.two", result.get("property.two"));
+        assertEquals("original.value.one", result.get("property.one" + ConfiguratorConstants.SUFFIX_BACKUP));
+        assertEquals("original.value.two", result.get("property.two" + ConfiguratorConstants.SUFFIX_BACKUP));
     }
 
-    @SuppressWarnings("unchecked")
+    /* --------------------
+       Configuration reset
+       -------------------- */
+
     @Test
-    public void shouldRestoreConfigurationFromBackup() throws IOException, NoSuchFieldException, InterruptedException {
-        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + ConfiguratorConstants.SUFFIX_SLASH_DATA;
-        context.resourceResolver().commit();
+    public void shouldRestoreConfigurationFromBackup() throws NoSuchFieldException, InterruptedException {
+        StubConfiguration config = new StubConfiguration(TEST_PID,
+            "property.one", "modified.value",
+            "property.two", 200,
+            "property.one" + ConfiguratorConstants.SUFFIX_BACKUP, "original.value",
+            "property.two" + ConfiguratorConstants.SUFFIX_BACKUP, 100);
+        StubConfigurationAdmin admin = new StubConfigurationAdmin();
+        admin.register(TEST_PID, config);
 
-        Dictionary<String, Object> configProps = new Hashtable<>();
-        configProps.put("property.one", "modified.value");
-        configProps.put("property.two", 200);
-        configProps.put("property.one" + ConfiguratorConstants.SUFFIX_BACKUP, "original.value");
-        configProps.put("property.two" + ConfiguratorConstants.SUFFIX_BACKUP, 100);
-
-        Configuration mockConfig = Mockito.mock(Configuration.class);
-        Mockito.when(mockConfig.getProperties()).thenReturn(configProps);
-        ConfigurationAdmin mockConfigurationAdmin = Mockito.mock(ConfigurationAdmin.class);
-        Mockito.when(mockConfigurationAdmin.getConfiguration(TEST_PID, null)).thenReturn(mockConfig);
-
-        ResourceChange change = new JcrResourceChange(
-            ResourceChange.ChangeType.REMOVED,
-            dataPath,
-            false,
-            null);
-
-        ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
+        ResourceChange change = new JcrResourceChange(ResourceChange.ChangeType.REMOVED, PATH_DATA, false, null);
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(admin);
         configChangeListener.onChange(Collections.singletonList(change));
 
         Thread.sleep(500);
-        Mockito.verify(mockConfig).update(Mockito.argThat(dict -> {
-            Dictionary<String, Object> d = (Dictionary<String, Object>) dict;
-            return "original.value".equals(d.get("property.one"))
-                && Integer.valueOf(100).equals(d.get("property.two"))
-                && d.get("property.one" + ConfiguratorConstants.SUFFIX_BACKUP) == null
-                && d.get("property.two" + ConfiguratorConstants.SUFFIX_BACKUP) == null;
-        }));
+        Dictionary<String, ?> result = config.lastUpdate();
+        assertNotNull(result);
+        assertEquals("original.value", result.get("property.one"));
+        assertEquals(100, result.get("property.two"));
+        assertNull(result.get("property.one" + ConfiguratorConstants.SUFFIX_BACKUP));
+        assertNull(result.get("property.two" + ConfiguratorConstants.SUFFIX_BACKUP));
     }
+
+    @Test
+    public void shouldNotResetWithoutBackup() throws NoSuchFieldException, InterruptedException {
+        StubConfiguration config = new StubConfiguration(TEST_PID, "property", "value");
+        StubConfigurationAdmin admin = new StubConfigurationAdmin();
+        admin.register(TEST_PID, config);
+
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(admin);
+
+        ResourceChange change = new JcrResourceChange(ResourceChange.ChangeType.REMOVED, PATH_DATA, false, null);
+        configChangeListener.onChange(Collections.singletonList(change));
+
+        Thread.sleep(500);
+        assertEquals(0, config.updateCount());
+    }
+
+    @Test
+    public void shouldEraseConfigOnRemoveMarkerBackup() throws NoSuchFieldException, InterruptedException {
+        StubConfiguration config = new StubConfiguration(TEST_PID,
+            ConfiguratorConstants.SUFFIX_BACKUP, Session.ACTION_REMOVE);
+        StubConfigurationAdmin admin = new StubConfigurationAdmin();
+        admin.register(TEST_PID, config);
+
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(admin);
+
+        ResourceChange change = new JcrResourceChange(ResourceChange.ChangeType.REMOVED, PATH_DATA, false, null);
+        configChangeListener.onChange(Collections.singletonList(change));
+
+        Thread.sleep(500);
+        Dictionary<String, ?> result = config.lastUpdate();
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void shouldFallbackToResetWhenResourceMissing() throws NoSuchFieldException, InterruptedException {
+        // Data path does not exist  resolved resource will be null, triggering reset instead of update
+        StubConfiguration config = new StubConfiguration(TEST_PID,
+            "test.property" + ConfiguratorConstants.SUFFIX_BACKUP, "original.value");
+        StubConfigurationAdmin admin = new StubConfigurationAdmin();
+        admin.register(TEST_PID, config);
+
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(admin);
+
+        ResourceChange change = new JcrResourceChange(ResourceChange.ChangeType.CHANGED, PATH_DATA, false, null);
+        configChangeListener.onChange(Collections.singletonList(change));
+
+        Thread.sleep(500);
+        Dictionary<String, ?> result = config.lastUpdate();
+        assertNotNull(result);
+        assertEquals("original.value", result.get("test.property"));
+    }
+
+    /* ---------------
+       Error handling
+       --------------- */
 
     @Test
     public void shouldHandleException() throws IOException, NoSuchFieldException, InterruptedException {
-        String dataPath = ConfiguratorConstants.ROOT_PATH + CoreConstants.SEPARATOR_SLASH + TEST_PID + ConfiguratorConstants.SUFFIX_SLASH_DATA;
-        context.create().resource(dataPath);
+        context.create().resource(PATH_DATA);
         context.resourceResolver().commit();
 
-        ConfigurationAdmin mockConfigurationAdmin = Mockito.mock(ConfigurationAdmin.class);
-        Mockito.when(mockConfigurationAdmin.getConfiguration(TEST_PID, null))
-            .thenThrow(new IOException("NOT AN EXCEPTION: testing ConfigChangeListener logic"));
+        StubConfigurationAdmin admin = new StubConfigurationAdmin(true);
 
-        ResourceChange change = new JcrResourceChange(
-            ResourceChange.ChangeType.CHANGED,
-            dataPath,
-            false,
-            null);
-
-        ConfigChangeListener configChangeListener = registerInjectActivateListener(mockConfigurationAdmin);
+        ResourceChange change = new JcrResourceChange(ResourceChange.ChangeType.CHANGED, PATH_DATA, false, null);
+        ConfigChangeListener configChangeListener = registerInjectActivateListener(admin);
         configChangeListener.onChange(Collections.singletonList(change));
 
-        Thread.sleep(500); // Allow some time for async processing
-        Mockito.verify(mockConfigurationAdmin, Mockito.atLeastOnce()).getConfiguration(TEST_PID, null);
+        Thread.sleep(500);
+        assertTrue(admin.callCount >= 1);
     }
 
     /* ---------------
@@ -455,9 +505,7 @@ public class ConfigChangeListenerTest {
        --------------- */
 
     private ConfigChangeListener registerInjectActivateListener() throws NoSuchFieldException {
-        ConfigChangeListenerConfiguration mockConfig = Mockito.mock(ConfigChangeListenerConfiguration.class);
-        Mockito.when(mockConfig.enabled()).thenReturn(true);
-        return registerInjectActivateListener(context.getService(ConfigurationAdmin.class), mockConfig);
+        return registerInjectActivateListener(context.getService(ConfigurationAdmin.class), newConfig(true));
     }
 
     @SuppressWarnings("UnusedReturnValue")
@@ -466,9 +514,7 @@ public class ConfigChangeListenerTest {
     }
 
     private ConfigChangeListener registerInjectActivateListener(ConfigurationAdmin configurationAdmin) throws NoSuchFieldException {
-        ConfigChangeListenerConfiguration mockConfig = Mockito.mock(ConfigChangeListenerConfiguration.class);
-        Mockito.when(mockConfig.enabled()).thenReturn(true);
-        return registerInjectActivateListener(configurationAdmin, mockConfig);
+        return registerInjectActivateListener(configurationAdmin, newConfig(true));
     }
 
     private ConfigChangeListener registerInjectActivateListener(
@@ -483,19 +529,106 @@ public class ConfigChangeListenerTest {
         return configChangeListener;
     }
 
-    private static Configuration buildMockConfiguration(Object... properties) {
-        Configuration mockConfig = Mockito.mock(Configuration.class);
-        Dictionary<String, Object> props = new Hashtable<>();
-        for (int i = 0; i < properties.length; i += 2) {
-            props.put(properties[i].toString(), properties[i + 1]);
-        }
-        Mockito.when(mockConfig.getProperties()).thenReturn(props);
-        return mockConfig;
+    private static ConfigChangeListenerConfiguration newConfig(boolean enabled) {
+        return newConfig(enabled, new String[0]);
     }
 
-    private static ConfigurationAdmin buildMockConfigurationAdmin(Configuration config) throws IOException {
-        ConfigurationAdmin mockConfigurationAdmin = Mockito.mock(ConfigurationAdmin.class);
-        Mockito.when(mockConfigurationAdmin.getConfiguration(TEST_PID, null)).thenReturn(config);
-        return mockConfigurationAdmin;
+    private static ConfigChangeListenerConfiguration newConfig(boolean enabled, String[] cleanUp) {
+        return new ConfigChangeListenerConfiguration() {
+            @Override public boolean enabled() { return enabled; }
+            @Override public String[] cleanUp() { return cleanUp; }
+            @Override public int resolveRetryCount() { return 0; }
+            @Override public long resolveRetryDelay() { return 0L; }
+            @Override public Class<? extends Annotation> annotationType() { return ConfigChangeListenerConfiguration.class; }
+        };
+    }
+
+    private static class StubConfiguration implements Configuration {
+
+        private final String pid;
+        private Dictionary<String, Object> props = new Hashtable<>();
+        private final List<Dictionary<String, ?>> updates = new ArrayList<>();
+        final List<String> bundleLocationHistory = new ArrayList<>();
+        private String bundleLocation;
+
+        StubConfiguration(String pid, Object... entries) {
+            this.pid = pid;
+            for (int i = 0; i + 1 < entries.length; i += 2) {
+                props.put(String.valueOf(entries[i]), entries[i + 1]);
+            }
+        }
+
+        @Override public String getPid() { return pid; }
+        @Override public String getFactoryPid() { return null; }
+        @Override public Dictionary<String, Object> getProperties() { return props; }
+        @Override public String getBundleLocation() { return bundleLocation; }
+
+        @Override
+        public void setBundleLocation(String location) {
+            bundleLocationHistory.add(location);
+            bundleLocation = location;
+        }
+
+        @Override
+        public void update(Dictionary<String, ?> properties) throws IOException {
+            Hashtable<String, Object> copy = new Hashtable<>();
+            Enumeration<String> keys = properties.keys();
+            while (keys.hasMoreElements()) {
+                String key = keys.nextElement();
+                copy.put(key, properties.get(key));
+            }
+            updates.add(copy);
+            props = copy;
+        }
+
+        @Override public void update() throws IOException { /* no-op */ }
+        @Override public void delete() throws IOException { /* no-op */ }
+        @Override public long getChangeCount() { return updates.size(); }
+
+        Dictionary<String, ?> lastUpdate() {
+            return updates.isEmpty() ? null : updates.get(updates.size() - 1);
+        }
+
+        int updateCount() { return updates.size(); }
+    }
+
+    private static class StubConfigurationAdmin implements ConfigurationAdmin {
+
+        private final Map<String, Configuration> configs = new HashMap<>();
+        private final boolean throwOnGet;
+        int callCount = 0;
+
+        StubConfigurationAdmin() { this(false); }
+
+        StubConfigurationAdmin(boolean throwOnGet) { this.throwOnGet = throwOnGet; }
+
+        void register(String pid, Configuration config) { configs.put(pid, config); }
+
+        @Override
+        public Configuration getConfiguration(String pid, String location) throws IOException {
+            callCount++;
+            if (throwOnGet) {
+                throw new IOException("NOT AN EXCEPTION: testing ConfigChangeListener logic");
+            }
+            return configs.get(pid);
+        }
+
+        @Override
+        public Configuration getConfiguration(String pid) throws IOException { return getConfiguration(pid, null); }
+
+        @Override
+        public Configuration createFactoryConfiguration(String factoryPid) throws IOException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Configuration createFactoryConfiguration(String factoryPid, String location) throws IOException {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Configuration[] listConfigurations(String filter) throws InvalidSyntaxException, IOException {
+            return null;
+        }
     }
 }
