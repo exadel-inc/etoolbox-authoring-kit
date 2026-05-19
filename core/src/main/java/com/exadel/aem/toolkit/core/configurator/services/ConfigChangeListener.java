@@ -21,8 +21,10 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.jcr.Session;
 
 import org.apache.commons.lang3.ArrayUtils;
@@ -72,6 +74,10 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
 
     private static final String UPDATABLE_CONFIG_TOKEN = "?";
 
+    /* -----------
+       Injectables
+       ----------- */
+
     @Reference
     private transient ConfigurationAdmin configurationAdmin;
 
@@ -81,9 +87,29 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
     @Reference
     private transient SlingSettingsService slingSettingsService;
 
-    private ExecutorService asyncExecutor;
+    /* --------------------
+       Service registration
+       -------------------- */
 
     private ServiceRegistration<ResourceChangeListener> registration;
+
+    /* --------------------
+       Configuration values
+       -------------------- */
+
+    private int resolveRetryCount;
+
+    private long resolveRetryDelay;
+
+    /* ----------------
+       Async processing
+       ---------------- */
+
+    // Used for asynchronous processing of resource change events. Kept separate from delayScheduler to avoid thread-starvation
+    private ScheduledExecutorService asyncExecutor;
+
+    // Used for timing retry delays in resolveWithRetry. Kept separate from asyncExecutor to avoid thread-starvation
+    private ScheduledExecutorService delayScheduler;
 
     /* --------------------
        Startup and shutdown
@@ -97,6 +123,8 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
     @Activate
     void activate(BundleContext context, ConfigChangeListenerConfiguration config) {
         LOG.info("Configuration change listener is {}", config.enabled() ? "enabled" : "disabled");
+        resolveRetryCount = Math.max(0, config.resolveRetryCount());
+        resolveRetryDelay = Math.max(0L, config.resolveRetryDelay());
         try (ResourceResolver resolver = ResolverUtil.newResolver(resourceResolverFactory)) {
             if (ArrayUtils.isNotEmpty(config.cleanUp())) {
                 activateWithCleanUp(resolver, config.cleanUp());
@@ -110,7 +138,8 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
         if (!config.enabled()) {
             return;
         }
-        asyncExecutor = Executors.newFixedThreadPool(ASYNC_THREAD_COUNT);
+        asyncExecutor = Executors.newScheduledThreadPool(ASYNC_THREAD_COUNT);
+        delayScheduler = Executors.newSingleThreadScheduledExecutor();
         Dictionary<String, Object> properties = new Hashtable<>();
         properties.put(ResourceChangeListener.PATHS, new String[]{ConfiguratorConstants.ROOT_PATH});
         properties.put(ResourceChangeListener.CHANGES, new String[]{"ADDED", "CHANGED", "REMOVED"});
@@ -171,10 +200,16 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
             asyncExecutor.shutdown();
             asyncExecutor = null;
         }
+        if (delayScheduler != null) {
+            delayScheduler.shutdown();
+            delayScheduler = null;
+        }
         if (registration != null) {
             registration.unregister();
             registration = null;
         }
+        resolveRetryCount = 0;
+        resolveRetryDelay = 0L;
     }
 
     /* -------------
@@ -227,10 +262,14 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
         }
         asyncExecutor.submit(() -> {
             try (ResourceResolver resolver = ResolverUtil.newResolver(resourceResolverFactory)) {
+                resolver.refresh();
                 for (String path : configsToUpdate) {
-                    Resource resource = resolver.getResource(path);
+                    Resource resource = resolveWithRetry(resolver, path);
                     if (resource == null) {
-                        // Config removal may produce a {@code CHANGE} event, but then the resource cannot be found
+                        LOG.warn(
+                            "Resource at {} could not be resolved after {} attempt(s) following a change event",
+                            path,
+                            resolveRetryCount + 1);
                         configsToReset.add(path);
                     } else {
                         updateConfiguration(resource);
@@ -387,6 +426,38 @@ public class ConfigChangeListener implements ResourceChangeListener, ExternalRes
     /* ---------------
        Utility methods
        --------------- */
+
+    /**
+     * Resolves a {@link Resource} at the given path with retry. The delay between retries is handled by scheduling a
+     * no-op task on {@link #delayScheduler} and blocking on its future, so the calling thread parks instead of sleeping
+     * and can be interrupted cleanly
+     * @param resolver The resolver to use for path lookup
+     * @param path     Absolute JCR path of the resource
+     * @return The resolved {@link Resource}, or {@code null} if it remains unresolvable after all retries
+     */
+    private Resource resolveWithRetry(ResourceResolver resolver, String path) {
+        Resource resource = resolver.getResource(path);
+        for (int attempt = 1; attempt <= resolveRetryCount && resource == null; attempt++) {
+            LOG.debug(
+                "Resource at {} not visible yet (attempt {}/{}); waiting {}ms before retry",
+                path, attempt, resolveRetryCount + 1, resolveRetryDelay);
+            if (resolveRetryDelay > 0) {
+                try {
+                    delayScheduler.schedule(() -> {}, resolveRetryDelay, TimeUnit.MILLISECONDS).get();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    LOG.warn("Interrupted while waiting to retry resource resolution at {}", path);
+                    return null;
+                } catch (ExecutionException e) {
+                    LOG.warn("Delay task failed while retrying resource resolution at {}", path, e);
+                    return null;
+                }
+            }
+            resolver.refresh();
+            resource = resolver.getResource(path);
+        }
+        return resource;
+    }
 
     /**
      * Determines whether the current Sling instance is an author instance
