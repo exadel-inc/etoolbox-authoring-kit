@@ -37,4 +37,23 @@ public @interface ConfigChangeListenerConfiguration {
      */
     @AttributeDefinition(name = "Clean up PIDs", description = "List of configuration PIDs to clean up on startup")
     String[] cleanUp() default {};
+
+    /**
+     * Defines the number of retries when a resource cannot be immediately resolved after a change event. A value of
+     * {@code 0} disables retrying
+     * @return Retry count
+     */
+    @AttributeDefinition(
+        name = "Resource-resolve retry count",
+        description = "Number of times to retry resolving a changed resource before treating it as removed")
+    int resolveRetryCount() default 3;
+
+    /**
+     * Defines the delay in milliseconds between consecutive resource-resolve retries
+     * @return Delay in milliseconds
+     */
+    @AttributeDefinition(
+        name = "Resource-resolve retry delay (ms)",
+        description = "Milliseconds to wait between resource-resolve retries")
+    long resolveRetryDelay() default 200L;
 }
