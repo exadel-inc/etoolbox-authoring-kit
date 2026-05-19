@@ -21,8 +21,8 @@
         const list = document.getElementById('config-list');
         Coral.commons.ready(list, function () {
             const extras = document.getElementById('config-list-extras');
-            list.innerHTML += extras.content.querySelector('div').innerHTML;
             Coral.commons.nextFrame(function () {
+                list.innerHTML += extras.content.querySelector('div').innerHTML;
                 extras.remove();
             });
         });
